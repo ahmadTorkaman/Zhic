@@ -20,6 +20,7 @@ asset — every architectural decision is graded against both bars.
 | [`data-schemas.md`](./data-schemas.md) | Every collection, field, relation, and validation rule. |
 | [`admin-panels.md`](./admin-panels.md) | Admin UX, screens, roles, and workflow specs. |
 | [`seo.md`](./seo.md) | SEO playbook: metadata, structured data, performance, content strategy. |
+| [`lab.md`](./lab.md) | The `/lab` experimentation surface — purpose, rules, robots policy. |
 
 ## Operating principles
 

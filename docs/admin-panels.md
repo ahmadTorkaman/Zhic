@@ -41,6 +41,26 @@ guardrails. Field-level definitions live in `data-schemas.md`.
 
 Two-factor authentication is required for `admin` and `editor`.
 
+### Editorial team & the "primary editor" convention
+
+There can be **multiple users with the `editor` role** — this avoids the
+single-reviewer bottleneck (vacations, sick days, time zones). Any user
+with the editor role can approve any article in `in_review`. `admin` can
+also approve as the absolute fallback.
+
+To preserve accountability, `siteSettings.primaryEditor` (a relation to
+a `users` record) designates one editor as the default reviewer. The
+primary editor:
+
+- Receives the default "Submitted for review" notification.
+- Is shown next to their name in the audit log.
+- Is the fallback for any review queue routing rules added later.
+
+This is a soft convention, not a permission boundary. We deliberately
+did **not** introduce a separate "co-editor" role — capabilities should
+be encoded by roles, not org charts. If the team grows, simply add more
+users to the `editor` role.
+
 Sensitive actions ALWAYS require a confirmation modal: price change,
 slug change, publish, unpublish, delete, redirect creation, user role
 change.
@@ -169,6 +189,44 @@ Dedicated screen for the WebXR assets:
 - Validation badges: ✅ within budget, ⚠ over budget, ❌ broken (missing
   scene, no materials, etc).
 - "Open in editor" link to a hosted glTF inspector for ad-hoc fixes.
+
+#### In-admin glTF compressor pipeline
+
+Editors will not always receive pre-optimized files from the brand or
+from a 3D vendor. The admin therefore runs a server-side compressor on
+upload so the public site never serves a fat glTF.
+
+Pipeline (executed in a background job, not in the upload request):
+
+1. **Validate** — parse the glTF/GLB. Reject anything missing a `scene`.
+2. **Geometry** — apply Draco compression (level 7 default).
+3. **Textures** — convert PNG/JPG to KTX2 (UASTC + Zstd) with a
+   `--quality 200` preset for hero models, `--quality 150` for others.
+4. **Mesh ops** — `gltf-transform`: weld + dedup + prune unused nodes.
+5. **Quantization** — quantize positions, normals, UVs to int16/int8
+   where safe.
+6. **Polycount check** — warn at > 80k, hard-fail at > 100k triangles.
+7. **Re-export** — write a new GLB. Store both the original and the
+   compressed version in `media`; the public site only ever serves the
+   compressed one.
+8. **Optional USDZ** — if no USDZ was uploaded, attempt automatic glTF →
+   USDZ conversion via `usd-from-gltf`. Result is flagged "auto" so
+   editors can override with a hand-tuned file.
+9. **Metrics** — record before/after file size, polycount, texture
+   memory, and material variant list back onto the `media` document.
+10. **Notify** — toast in admin + audit log entry. If compression fails,
+    the original is kept but the model is marked `needs_attention` and
+    a banner appears on the product.
+
+Tooling: `gltf-transform` CLI (Apache 2.0) wrapped in a Node worker; KTX2
+via `KTX-Software`. Both run on the same Next.js host (since Payload is
+in-process). For very large jobs we can offload to a queue (BullMQ +
+Redis) in Phase 4 if needed.
+
+Editors see this pipeline as a single button: **"Optimize for web."** The
+result is a clear before/after card with file size, polycount, and a
+side-by-side `<model-viewer>` preview so they can verify nothing visual
+broke.
 
 ### 5.2c Editorial review queue
 
@@ -428,8 +486,11 @@ These are the things the admin must NOT allow, ever.
    the US? (Affects hosting / latency.)
 3. Do we need a public-facing "newsroom" RSS feed in addition to the
    journal?
-4. Should the editorial review queue support a "co-editor" role that can
-   approve in editor's absence, or is a single editor enough?
-5. For 3D assets, do we want to host an in-admin glTF compressor (run
-   draco/KTX2 on upload) or rely on the brand to deliver pre-optimized
-   files?
+
+Resolved (carried into the spec above):
+
+- **Co-editor role?** No new role. Multiple users may hold the existing
+  `editor` role; `siteSettings.primaryEditor` designates the default
+  reviewer for accountability. See §2 "Editorial team."
+- **In-admin glTF compressor?** Yes — pipeline documented in §5.2b.
+- **Payload hosting?** Same Next.js process at `/admin`. One deploy.

@@ -403,6 +403,9 @@ discriminated by `kind`.
 | `dominantColor` | text | auto | for blur placeholders |
 | `polycount` | number | auto | 3D models only — read from glTF |
 | `materialVariants` | text[] | auto | 3D models — list from `KHR_materials_variants` |
+| `optimizedFile` | upload | auto | 3D models — output of in-admin compressor (draco + KTX2). Public site serves this, not `file`. |
+| `optimizationStatus` | enum | auto | `pending`, `optimizing`, `optimized`, `failed`, `needs_attention` |
+| `optimizationMetrics` | group | auto | bytesBefore, bytesAfter, polyBefore, polyAfter, textureMemBefore, textureMemAfter |
 | `decorative` | boolean | no | when true, alt is not required |
 
 Constraints (enforced at upload):
@@ -412,9 +415,12 @@ Constraints (enforced at upload):
   Editors are warned that mp4/webm is preferred for anything > 1 s; GIF
   is allowed because the brand is providing them.
 - **Video:** ≤ 8 MB, ≤ 12 s for hero scrub video.
-- **glTF / GLB:** ≤ 2 MB, draco-compressed, ≤ 100k triangles, KTX2
-  textures preferred. Auto-rejected if missing a `scene` or has more
-  than 4 material slots without variants declared.
+- **glTF / GLB:** uploads up to 25 MB are accepted because the in-admin
+  compressor (admin §5.2b) will draco + KTX2 + quantize them down to the
+  ≤ 2 MB serving budget. Auto-rejected if missing a `scene`, or if it
+  still exceeds 100k triangles after compression, or if it has more than
+  4 material slots without variants declared. The public site only ever
+  serves `optimizedFile`, never the raw upload.
 - **USDZ:** ≤ 8 MB. Optional iOS Quick Look pair for any GLB.
 - **PDF:** ≤ 10 MB.
 - Alt text required for images, GIFs, and 3D models (unless
@@ -617,6 +623,7 @@ Global config editable by admins.
 | `analytics` | group | ga4Id, plausibleDomain, gscVerification, bingVerification |
 | `consentBanner` | group | enabled, copy, links |
 | `headerAnnouncement` | group | enabled, copy, link |
+| `primaryEditor` | relation → `users` | the editorial sign-off "default reviewer" — see admin §2 |
 
 ---
 

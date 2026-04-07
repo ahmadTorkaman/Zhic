@@ -68,7 +68,11 @@ See `sitemap.md` for the conventions. Enforced rules:
 - `app/sitemap.ts` generates from CMS data, including `lastmod` from each
   document's `updatedAt` and `priority`/`changefreq` per collection.
 - Sitemap is split if it exceeds 10,000 URLs (sitemap index).
-- `app/robots.ts` allows everything except `/admin`, `/api`, `/preview`.
+- `app/robots.ts` allows everything except `/admin`, `/api`, `/preview`,
+  and `/lab`. Even though Payload, the API surface, and the lab also set
+  `noindex` at the layout level, robots.txt is the belt-and-braces
+  guarantee that crawlers never enter those subtrees in the first place.
+- The sitemap generator skips any route matching `^/(admin|api|preview|lab)(/|$)`.
 - robots.txt references the sitemap URL.
 - Submitted to Google Search Console and Bing Webmaster.
 
