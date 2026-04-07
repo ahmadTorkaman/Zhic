@@ -15,15 +15,23 @@ system wins for visual decisions but SEO wins for structural ones
 
 ## 1. SEO posture
 
-Zhic is a high-consideration, low-volume luxury brand. We compete for:
+Zhic is a high-consideration, low-volume luxury brand. The site is
+**lead-gen, not e-commerce** — every conversion goal ends in an inquiry,
+showroom appointment, or trade application, never a checkout. SEO is
+graded by qualified inquiries, not orders.
+
+We compete for:
 
 - **Brand queries** ("zhic", "zhic bed") — must always rank #1.
 - **Product queries** ("aurora bed", "linen platform bed") — must rank in
   top 3 for hero models.
 - **Editorial queries** ("how to style a linen bed", "oak vs walnut bed
   frame") — won via the journal, top 5 is the goal.
-- **Local queries** ("luxury bed showroom new york") — won via
-  `LocalBusiness` and Google Business Profile.
+- **Local queries** ("luxury bed showroom new york", "boutique bedroom
+  furniture {city}") — won via per-showroom `LocalBusiness` schema and
+  per-location Google Business Profiles. Zhic operates **several
+  showrooms**, each with its own `/showrooms/[slug]` page and its own
+  `LocalBusiness` JSON-LD.
 
 We do not compete on price, generic mattress queries, or affiliate-style
 listicles.
@@ -71,8 +79,10 @@ Emitted server-side as `<script type="application/ld+json">` blocks.
 | Page type | Schema |
 | --- | --- |
 | Site-wide root | `Organization`, `WebSite` (with `SearchAction` if /search ships) |
-| Home + showroom | `LocalBusiness` |
-| Product detail | `Product` (+ `AggregateRating` if reviews exist), `BreadcrumbList` |
+| Home | `Organization` (no `LocalBusiness` here — homepage is brand-level, not location-level) |
+| Showroom index | `ItemList` of all `LocalBusiness` entries |
+| Showroom detail | `LocalBusiness` (or `FurnitureStore`), `BreadcrumbList` |
+| Product detail | `Product` with guidance pricing only, no checkout `offers` (+ `AggregateRating` if reviews exist), `BreadcrumbList`, optional `3DModel` |
 | Product index | `CollectionPage`, `BreadcrumbList` |
 | Article | `Article`, `BreadcrumbList` |
 | Journal index / archives | `Blog`, `CollectionPage` |
@@ -120,12 +130,11 @@ Tactics:
 - `/search` pages are `noindex, follow`.
 - Legal pages are indexed but `priority: 0.1` in sitemap.
 
-### 2.7 Internationalization (Phase 5)
+### 2.7 Internationalization
 
-- `next-intl` (or Payload localization) with prefixed locale paths.
-- `hreflang` link tags emitted on every localized page, including `x-default`.
-- Per-locale sitemaps under a sitemap index.
-- `LocalBusiness` schema includes `availableLanguage`.
+Out of scope. Site is English-only by decision. Schemas keep `(L)` fields
+for forward-compatibility but no `hreflang`, no locale prefix, no
+per-locale sitemap. Revisit only if business strategy changes.
 
 ---
 
@@ -149,11 +158,29 @@ Every template ships with this checklist green before merge.
 - [ ] Meta title `"{name} — {tagline} — Zhic"`, fall back if no tagline.
 - [ ] Meta description = short description, ≤ 160 chars.
 - [ ] OG image = cover image at 1200×630 (Next/OG composes brand frame).
-- [ ] `Product` JSON-LD with all required fields.
+- [ ] `Product` JSON-LD with all required fields. **No checkout `offers`**
+      — pricing is guidance, the URL points to the inquiry CTA.
 - [ ] `BreadcrumbList` JSON-LD.
-- [ ] Image alt text on every gallery image.
+- [ ] Image alt text on every gallery image, GIF, and 3D model.
+- [ ] 3D viewer is **click-to-load** (not auto-loaded) so it never
+      becomes the LCP element. Poster image is real, branded, eager.
+- [ ] glTF is draco-compressed, ≤ 2 MB. USDZ ≤ 8 MB.
+- [ ] GIFs have explicit width/height to avoid CLS, and only loop while
+      in-viewport (use `IntersectionObserver` to pause off-screen).
 - [ ] At least 3 internal links: collection, related products, journal.
 - [ ] Structured specs (dimensions, materials) in semantic `<dl>`.
+
+### Showroom detail
+
+- [ ] H1 = showroom name.
+- [ ] `LocalBusiness` JSON-LD with name, image, address, geo, telephone,
+      `openingHoursSpecification`, url, sameAs (Google Business Profile).
+- [ ] `BreadcrumbList` JSON-LD.
+- [ ] NAP (name/address/phone) consistent with the matching Google
+      Business Profile.
+- [ ] Embedded map.
+- [ ] Inquiry CTA + appointment CTA.
+- [ ] Internal link to nearest related products / featured products.
 
 ### Article
 
@@ -228,15 +255,28 @@ Search Console performance is reviewed monthly.
 
 ## 5. Local SEO
 
-For the New York atelier / showroom:
+Zhic operates **several showrooms**. Each one is a distinct local entity
+in Google's eyes and must be treated as such.
 
-- `LocalBusiness` JSON-LD on `/`, `/showroom`, `/contact` with NAP
-  (name, address, phone), hours, image, geo coordinates.
-- Google Business Profile claimed and synced (manually by marketing).
-- Showroom address consistent across site, GBP, and any directories.
-- `/showroom` page features address, map embed, hours, parking,
-  appointment CTA.
-- Encourage Google reviews via post-appointment email (Phase 4).
+- One `showrooms` document per location → one `/showrooms/[slug]` page
+  → one `LocalBusiness` JSON-LD block.
+- One Google Business Profile per location, claimed and managed by
+  marketing. NAP consistent between admin, page, and GBP.
+- `/showrooms` index page emits an `ItemList` referencing every location
+  and renders a multi-pin map.
+- Every showroom page includes: address, map embed, hours, holiday
+  hours, parking, transit notes, appointment CTA, inquiry CTA, gallery,
+  optional featured products.
+- Encourage Google reviews via post-appointment email (Phase 4), per
+  location.
+- Internal linking: the homepage's footer "Visit" column lists all
+  showrooms; the contact page links to the showrooms index; the journal
+  bio block links to the nearest showroom when an article is location-
+  tagged.
+
+> The homepage itself is brand-level, not location-level. It does **not**
+> emit `LocalBusiness` schema — that lives on the showroom pages where
+> it's accurate. The homepage emits `Organization` only.
 
 ---
 

@@ -36,7 +36,7 @@ guardrails. Field-level definitions live in `data-schemas.md`.
 | --- | --- | --- | --- |
 | `admin` | Founder, lead engineer | Everything, including users, settings, redirects, schema migrations. | — |
 | `editor` | Marketing lead | All content CRUD, publish, schedule, manage media, manage redirects, edit SEO. | Manage users, change roles, edit site settings. |
-| `marketing` | Marketing assistant | Draft and edit content, edit SEO fields. Cannot publish or change prices. | Publish, change price, manage redirects, manage users, settings. |
+| `marketing` | Marketing assistant | Draft and edit content, submit articles for review, edit SEO fields. Cannot publish or change prices. | Publish, approve articles, change price, manage redirects, manage users, settings. |
 | `viewer` | Stakeholder, agency | Read-only across the admin. | Any write. |
 
 Two-factor authentication is required for `admin` and `editor`.
@@ -64,8 +64,13 @@ CATALOG
   · Categories
   · Tags
   · Materials
+  · 3D models               ← custom view
   · Variants overview        ← custom view
   · Reviews
+
+LOCATIONS
+  · Showrooms
+  · Appointments
 
 CONTENT
   · Journal articles
@@ -78,7 +83,6 @@ CONTENT
 
 EVENTS
   · Events
-  · Appointments
 
 MARKETING
   · Promotions
@@ -110,10 +114,13 @@ SETTINGS
 The home screen the editor sees on login. Three stacked cards:
 
 1. **Today**
-   - Drafts awaiting publish.
+   - **Articles awaiting your review** (editor-only badge — drives the
+     editorial sign-off workflow).
+   - Drafts in progress.
    - Scheduled-to-publish in next 7 days.
    - Unanswered form submissions count.
-   - Pending reviews / appointments / trade applications count.
+   - Pending appointments per showroom.
+   - Pending reviews / trade applications count.
 2. **Content calendar (mini)**
    - Month view, shows scheduled articles, events, promotions.
 3. **Performance snapshot**
@@ -149,6 +156,34 @@ The single most-requested workflow. A spreadsheet-like table.
 
 Cross-cutting view of every variant across every product, useful for stock
 syncing and audits.
+
+### 5.2b 3D model manager
+
+Dedicated screen for the WebXR assets:
+
+- Lists every product alongside its 3D coverage: glTF / USDZ / poster
+  presence, file size, polycount, KTX2 status, last updated.
+- Inline `<model-viewer>` preview for any selected model — orbit, zoom,
+  test AR via QR code on a phone.
+- Bulk download / re-upload.
+- Validation badges: ✅ within budget, ⚠ over budget, ❌ broken (missing
+  scene, no materials, etc).
+- "Open in editor" link to a hosted glTF inspector for ad-hoc fixes.
+
+### 5.2c Editorial review queue
+
+Surfaces every article currently in `in_review` status. Editor-only.
+
+- Columns: title, author, submitted at, time-in-queue, category,
+  word count.
+- Click → opens article in a "review mode" view: read-only body on the
+  left, comment thread on the right, big **Approve** / **Request
+  changes** buttons at the bottom.
+- Approving moves status to `approved`; the editor can then publish
+  immediately or schedule.
+- Requesting changes captures notes (richText) and bounces the article
+  back to `changes_requested`, notifying the original author.
+- Every transition writes to `auditLog`.
 
 ### 5.3 Content calendar
 
@@ -250,31 +285,61 @@ Standard layout:
 
 Total time: under 15 seconds.
 
-### 7.2 Editor publishes a new journal article
+### 7.2 Marketing drafts an article and editor signs off
 
-1. Content → Journal articles → New.
+1. **Marketing** logs in → Content → Journal articles → New.
 2. Title, slug auto-fills.
 3. Drag cover image into media slot → Alt text required → save.
 4. Write body in MDX block editor; insert "Featured product" block, link
    to Aurora.
 5. SEO tab: meta title, meta description (live preview of Google snippet),
    pick OG image.
-6. Save draft → click "Preview" → opens public URL with draft token.
-7. Click "Schedule" → pick date/time → confirm.
-8. On the scheduled time, Payload publishes, ISR revalidates, sitemap
-   updates, optional Slack notification fires.
+6. Save draft → click **"Submit for review."** Status moves to
+   `in_review`. Marketing can no longer publish from here.
+7. **Editor** sees a badge on the dashboard → opens the editorial review
+   queue → opens the article in review mode.
+8. Editor either:
+   - Clicks **Approve** → status `approved` → editor can publish now or
+     schedule, OR
+   - Clicks **Request changes** → leaves comments → status
+     `changes_requested` → notification sent to the original author, who
+     iterates and re-submits.
+9. On publish (manual or scheduled), Payload publishes, ISR revalidates,
+   sitemap updates, optional Slack notification fires, and the audit log
+   records the full transition history.
 
-### 7.3 Editor adds a new product
+### 7.3 Editor adds a new product (with GIFs and a 3D model)
 
 1. Catalog → Products → New.
-2. Fill core fields: name, slug, taglines, description, price, SKU,
-   dimensions, materials, lead time.
+2. Fill core fields: name, slug, taglines, description, price (guidance),
+   SKU, dimensions, materials, lead time.
 3. Add variants (size + finish + price delta).
-4. Upload gallery images (≥ 3, alt text enforced).
-5. SEO tab: review auto-generated meta, override if needed.
-6. Save draft → preview → publish.
-7. ISR revalidates `/products`, `/products/[slug]`, sitemap. JSON-LD
-   `Product` block emitted automatically.
+4. **Stills:** upload gallery images (≥ 3, alt text enforced).
+5. **GIFs:** upload atelier loops / fabric drape / light play GIFs (alt
+   text required, ≤ 3 MB each, ≤ 8 s).
+6. **3D model:** upload `.glb` (≤ 2 MB, draco-compressed) and optional
+   `.usdz` (iOS Quick Look). The admin runs validation: polycount,
+   material variants, missing scene. Set the poster frame, alt text,
+   default camera orbit, and (optional) variant bindings.
+7. Inline `<model-viewer>` preview confirms the model loads and AR works.
+8. SEO tab: review auto-generated meta, override if needed.
+9. Save draft → preview → publish.
+10. ISR revalidates `/products`, `/products/[slug]`, sitemap. JSON-LD
+    `Product` block emitted automatically.
+
+### 7.3b Editor adds a new showroom
+
+1. Locations → Showrooms → New.
+2. Name, slug, headline, description.
+3. Cover image + gallery (alt text enforced).
+4. Address (street/city/region/postal/country) → geo lat/lng auto-resolves
+   from address (with manual override).
+5. Hours, holiday hours, parking, transit.
+6. Optional: Google Business Profile URL, manager assignment.
+7. Save → preview → publish.
+8. ISR revalidates `/showrooms` and `/showrooms/[slug]`. `LocalBusiness`
+   JSON-LD is emitted on the slug page; the index page emits an
+   `ItemList` of all showrooms.
 
 ### 7.4 Editor renames a slug
 
@@ -301,9 +366,15 @@ These are the things the admin must NOT allow, ever.
 - Publishing a product without: cover image (with alt), price, dimensions,
   meta title, meta description.
 - Publishing an article without: cover image (with alt), excerpt, meta
-  title, meta description.
-- Uploading an image > 4 MB or a video > 8 MB without an admin override.
-- Uploading an image without alt text (unless `decorative: true`).
+  title, meta description, **and editor approval (`approved` status).**
+  Marketing role can never publish, even if it tries via API.
+- Publishing a showroom without: cover image, address, geo, hours.
+- Uploading an image > 4 MB, GIF > 3 MB, video > 8 MB, glTF > 2 MB, or
+  USDZ > 8 MB without an admin override.
+- Uploading a glTF that fails validation (no scene, broken materials,
+  polycount above budget).
+- Uploading an image, GIF, or 3D model without alt text (unless
+  `decorative: true`).
 - Deleting a product or article that has inbound internal links — must
   show the list and force resolution.
 - Saving a slug that collides with another in the same collection.
@@ -351,13 +422,14 @@ These are the things the admin must NOT allow, ever.
 
 ## 12. Open admin questions
 
-1. Self-host Payload in the same Next process (`/admin` route group) or as
-   a separate service?
-2. Do we need a "client preview" link that exposes a draft to a single
+1. Do we need a "client preview" link that exposes a draft to a single
    external reviewer (e.g. PR / press), without logging them in?
-3. Approval workflow: do articles need editorial sign-off before publish,
-   or is single-author publish OK?
-4. Multi-region: any chance the admin needs to be reachable from outside
+2. Multi-region: any chance the admin needs to be reachable from outside
    the US? (Affects hosting / latency.)
-5. Do we need a public-facing "newsroom" RSS feed in addition to the
+3. Do we need a public-facing "newsroom" RSS feed in addition to the
    journal?
+4. Should the editorial review queue support a "co-editor" role that can
+   approve in editor's absence, or is a single editor enough?
+5. For 3D assets, do we want to host an in-admin glTF compressor (run
+   draco/KTX2 on upload) or rely on the brand to deliver pre-optimized
+   files?

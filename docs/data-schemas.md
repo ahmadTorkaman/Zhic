@@ -44,9 +44,11 @@ The core commerce-adjacent collection. Each product is one bed model.
 | `dimensions` | group | yes | width, length, height (cm + in) |
 | `weightKg` | number | no | |
 | `variants` | array | no | see §1.1 |
-| `gallery` | relation[] → `media` | yes | min 3, ordered |
+| `gallery` | relation[] → `media` | yes | min 3 stills, ordered |
 | `coverImage` | relation → `media` | yes | inherits from gallery[0] if unset |
+| `gifs` | relation[] → `media` | no | atelier loops, fabric drape, light play; mime `image/gif` or animated webp |
 | `videos` | relation[] → `media` | no | mp4/webm only |
+| `model3d` | group | no | WebXR / 3D viewer config — see §1.2 |
 | `featured` | boolean | no | shows on homepage if true |
 | `featuredOrder` | number | no | manual ordering |
 | `relatedProducts` | relation[] → `products` | no | manual cross-sell |
@@ -57,7 +59,37 @@ The core commerce-adjacent collection. Each product is one bed model.
 | `status` | enum | yes | draft / scheduled / published |
 | `publishedAt` | datetime | no | |
 
-### 1.1 `variants` (array, embedded)
+### 1.2 `model3d` (group, embedded)
+
+Drives the WebXR / 3D viewer on the product detail page. The viewer is
+implemented with `<model-viewer>` so glTF feeds Android Scene Viewer and
+USDZ feeds iOS Quick Look.
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `gltf` | relation → `media` | yes (if any 3D) | `.glb` preferred, draco-compressed, ≤ 2 MB |
+| `usdz` | relation → `media` | no | iOS Quick Look fallback, ≤ 8 MB |
+| `poster` | relation → `media` | yes | still shown before user clicks to load 3D |
+| `alt` | text | yes | a11y label for the 3D viewer |
+| `cameraOrbit` | text | no | initial camera, e.g. `0deg 75deg 105%` |
+| `cameraTarget` | text | no | initial target, e.g. `0m 0.5m 0m` |
+| `exposure` | number | no | 0–2, default 1 |
+| `shadowIntensity` | number | no | 0–1, default 0.5 |
+| `arEnabled` | boolean | no | default true |
+| `arPlacement` | enum | no | `floor`, `wall`; default `floor` |
+| `variantBindings` | array | no | maps product variants to glTF material variants — see §1.3 |
+
+### 1.3 `variantBindings` (array, embedded under model3d)
+
+Optional mapping so that selecting a product variant in the UI swaps the
+3D material via the glTF `KHR_materials_variants` extension.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `productVariantSku` | text | matches a sku in §1.4 variants |
+| `gltfVariantName` | text | name as authored in the glTF |
+
+### 1.4 `variants` (array, embedded)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -69,25 +101,30 @@ The core commerce-adjacent collection. Each product is one bed model.
 | `availability` | enum | overrides product availability |
 | `image` | relation → `media` | optional variant image |
 
-### 1.2 Indexes
+### 1.5 Indexes
 
 - `slug` unique
 - `sku` unique
 - `(featured, featuredOrder)` for homepage queries
 - `(status, publishedAt)` for sitemap
 
-### 1.3 Hooks
+### 1.6 Hooks
 
 - On `slug` change: insert `{ from, to, type: 301 }` into `redirects`.
 - On `basePrice` / `salePrice` change: append entry to `priceHistory` and
   audit log.
 - On publish: revalidate `/products`, `/products/[slug]`, `/`, sitemap.
 
-### 1.4 JSON-LD output
+### 1.7 JSON-LD output
 
 `Product` schema with `name`, `image`, `description`, `sku`, `brand:
-"Zhic"`, `offers: { price, priceCurrency, availability, url }`,
-`material`, optional `aggregateRating` from reviews.
+"Zhic"`, `material`, and optional `aggregateRating` from reviews.
+
+Because Zhic is **lead-gen, not e-commerce**, the `offers` block is
+emitted with `priceSpecification` (guidance pricing) and a `url` that
+points to the inquiry CTA, NOT a checkout. `availability` is set from
+`availability` field but interpreted as production status, not
+warehouse stock.
 
 ---
 
@@ -167,8 +204,49 @@ Long-form editorial content. The site's primary SEO engine.
 | `readingTimeMinutes` | number | auto | computed from body |
 | `featured` | boolean | no | homepage teaser |
 | `seo` | group | yes | |
-| `status` | enum | yes | |
+| `status` | enum | yes | extended for editorial sign-off — see §6.1 |
+| `reviewState` | group | yes | editorial review metadata — see §6.1 |
 | `publishedAt` | datetime | no | scheduled publish supported |
+
+### 6.1 Editorial sign-off workflow
+
+Articles use an extended `status` enum to enforce editor approval before
+anything goes live:
+
+```
+draft → in_review → approved → scheduled → published
+                        ↓
+                    changes_requested
+```
+
+| Status | Who can move it forward | Notes |
+| --- | --- | --- |
+| `draft` | marketing, editor, admin | Author is iterating. Not visible publicly. |
+| `in_review` | editor, admin | Author has clicked "Submit for review." Surfaces in the editor's review queue on the dashboard. |
+| `changes_requested` | marketing, editor, admin | Editor has rejected with comments; goes back to author. |
+| `approved` | editor, admin | Editor approves; now publishable. |
+| `scheduled` | editor, admin | Approved + has a future `publishedAt`. |
+| `published` | editor, admin | Live. |
+
+`reviewState` group:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `submittedBy` | relation → `users` | who submitted for review |
+| `submittedAt` | datetime | |
+| `reviewedBy` | relation → `users` | who approved or rejected |
+| `reviewedAt` | datetime | |
+| `reviewNotes` | richText | editor comments visible to the author |
+| `history` | array | append-only log of state transitions |
+
+Hooks:
+
+- Transition to `in_review` notifies all `editor` users (email + admin
+  dashboard badge).
+- Transition to `changes_requested` notifies the original `submittedBy`.
+- Transition to `published` requires `approved` as the prior state and is
+  blocked for `marketing` role.
+- Every transition writes to `auditLog`.
 
 JSON-LD: `Article` with `headline`, `image`, `author`, `datePublished`,
 `dateModified`, `publisher`.
@@ -195,6 +273,50 @@ JSON-LD: `Article` with `headline`, `image`, `author`, `datePublished`,
 | `name` (L) | text |
 | `slug` | text (unique) |
 | `description` (L) | textarea |
+
+---
+
+## 8b. `showrooms`
+
+Each physical Zhic location. There are several. Each one renders its own
+public page at `/showrooms/[slug]` and emits its own `LocalBusiness`
+JSON-LD.
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `name` | text | yes | e.g. "Zhic — New York" |
+| `slug` | text | yes (unique) | |
+| `headline` | text | no | poetic one-liner |
+| `description` | richText | yes | |
+| `coverImage` | relation → `media` | yes | |
+| `gallery` | relation[] → `media` | yes | min 3 |
+| `address` | group | yes | street, city, region, postalCode, country |
+| `geo` | group | yes | lat, lng |
+| `phone` | text | no | |
+| `email` | email | no | |
+| `hours` | array | yes | items: { day, opens, closes, closed } |
+| `holidayHours` | array | no | items: { date, opens, closes, note } |
+| `appointmentOnly` | boolean | no | default false |
+| `parkingNotes` | textarea | no | |
+| `transitNotes` | textarea | no | |
+| `publicTransport` | textarea | no | |
+| `featuredProducts` | relation[] → `products` | no | hand-picked highlights |
+| `manager` | relation → `users` | no | who handles inquiries |
+| `googleBusinessProfileUrl` | url | no | |
+| `mapEmbedUrl` | url | no | optional override; default rendered from geo |
+| `seo` | group | yes | |
+| `status` | enum | yes | draft / published |
+
+Hooks:
+
+- On publish: revalidate `/showrooms`, `/showrooms/[slug]`, and the
+  homepage if it features showroom strip.
+- New `appointments` records carry a relation to a showroom doc.
+
+JSON-LD: a `LocalBusiness` (or appropriate subtype like `FurnitureStore`)
+emitted on `/showrooms/[slug]` with `name`, `image`, `address`, `geo`,
+`telephone`, `openingHoursSpecification`, `url`, plus an aggregate
+`ItemList` on `/showrooms` referencing all locations.
 
 ---
 
@@ -262,27 +384,41 @@ Block validation enforces token-bound options (no freeform colors).
 
 ## 11. `media`
 
-Central asset library.
+Central asset library. Stills, GIFs, video, 3D, and PDFs all live here,
+discriminated by `kind`.
 
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |
-| `file` | upload | yes | image, video, pdf |
-| `alt` (L) | text | yes for images | enforced |
+| `file` | upload | yes | image, gif, video, glb/gltf, usdz, pdf |
+| `kind` | enum | auto | `image`, `gif`, `video`, `model_gltf`, `model_usdz`, `pdf` |
+| `alt` (L) | text | yes for image/gif/model | enforced |
 | `caption` (L) | text | no | |
 | `credit` | text | no | photographer / source |
-| `focalPoint` | group { x, y } | no | for art-directed crops |
+| `focalPoint` | group { x, y } | no | for art-directed crops (images only) |
 | `tags` | text[] | no | |
-| `width` / `height` | number | auto | |
+| `width` / `height` | number | auto | image / video / gif |
+| `durationMs` | number | auto | gif / video |
 | `mime` | text | auto | |
-| `bytes` | number | auto | enforced max per type |
+| `bytes` | number | auto | enforced max per kind |
 | `dominantColor` | text | auto | for blur placeholders |
+| `polycount` | number | auto | 3D models only — read from glTF |
+| `materialVariants` | text[] | auto | 3D models — list from `KHR_materials_variants` |
+| `decorative` | boolean | no | when true, alt is not required |
 
 Constraints (enforced at upload):
 
-- Image: ≤ 4 MB, ≥ 1200px on long edge for hero/cover.
-- Video: ≤ 8 MB, ≤ 12 s for hero scrub video.
-- PDF: ≤ 10 MB.
-- Alt text required for images (except `decorative: true`).
+- **Image:** ≤ 4 MB, ≥ 1200px on long edge for hero/cover.
+- **GIF / animated webp:** ≤ 3 MB, ≤ 8 s loop, ≤ 1200px long edge.
+  Editors are warned that mp4/webm is preferred for anything > 1 s; GIF
+  is allowed because the brand is providing them.
+- **Video:** ≤ 8 MB, ≤ 12 s for hero scrub video.
+- **glTF / GLB:** ≤ 2 MB, draco-compressed, ≤ 100k triangles, KTX2
+  textures preferred. Auto-rejected if missing a `scene` or has more
+  than 4 material slots without variants declared.
+- **USDZ:** ≤ 8 MB. Optional iOS Quick Look pair for any GLB.
+- **PDF:** ≤ 10 MB.
+- Alt text required for images, GIFs, and 3D models (unless
+  `decorative: true`).
 
 ---
 
@@ -335,11 +471,13 @@ application, newsletter, RSVP.
 
 | Field | Type | Required |
 | --- | --- | --- |
+| `showroom` | relation → `showrooms` | yes |
 | `name` | text | yes |
 | `email` | email | yes |
 | `phone` | text | no |
 | `partySize` | number | yes |
 | `requestedAt` | datetime | yes |
+| `interests` | relation[] → `products` | no |
 | `notes` | textarea | no |
 | `status` | enum (`pending`, `confirmed`, `declined`, `completed`, `no_show`) | yes |
 | `confirmedAt` | datetime | no |
@@ -519,9 +657,17 @@ products ─┬─ collections
           ├─ categories
           ├─ tags
           ├─ materials
-          ├─ media (gallery, cover, videos)
+          ├─ media (gallery, cover, gifs, videos, model3d.gltf/usdz/poster)
           ├─ products (related, pairsWith)
           └─ reviews
+
+showrooms ┬─ media (cover, gallery)
+          ├─ products (featured)
+          └─ users (manager)
+
+appointments ─┬─ showrooms
+              ├─ products (interests)
+              └─ users (assignedTo)
 
 articles ─┬─ authors
           ├─ journalCategories

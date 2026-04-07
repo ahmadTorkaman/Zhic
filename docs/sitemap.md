@@ -8,8 +8,8 @@ not here, it does not exist.
 
 - Lowercase, hyphenated, ASCII-only.
 - No trailing slashes.
-- Localized paths use the `/{locale}` prefix once Phase 5 lands; the default
-  locale (`en`) is served at the root with no prefix.
+- English only. There is no `/{locale}` prefix. Schemas keep `(L)` fields
+  for forward compatibility but no second locale is on the roadmap.
 - Slugs are stable. Renaming a slug auto-creates a 301 in the redirects
   collection.
 - Query strings are never canonical; `?utm_*` is stripped from canonical
@@ -29,8 +29,9 @@ not here, it does not exist.
 | `/journal/tag/[slug]` | `JournalArchive` | `articles` filtered | 2 | `CollectionPage` | E.g. /journal/tag/linen. |
 | `/about` | `AboutPage` | `pages.about` singleton | 1 | `AboutPage`, `Organization` | Brand story, atelier. |
 | `/atelier` | `Page` | `pages` doc | 2 | `Place` | Process, craft, photographs. |
-| `/showroom` | `ShowroomPage` | `pages.showroom` singleton | 4 | `LocalBusiness`, `Place` | NY showroom, hours, map, booking CTA. |
-| `/showroom/book` | `BookingForm` | `appointments` collection | 4 | none (form) | Calendar-driven appointment form. |
+| `/showrooms` | `ShowroomIndex` | `showrooms` collection | 2 | `ItemList` | Index of all showroom locations with map. |
+| `/showrooms/[slug]` | `ShowroomDetail` | `showrooms` doc | 2 | `LocalBusiness`, `Place`, `BreadcrumbList` | Per-location: hours, map, gallery, inquiry CTA. |
+| `/showrooms/[slug]/book` | `BookingForm` | `appointments` collection | 4 | none (form) | Per-location appointment form. |
 | `/events` | `EventIndex` | `events` collection | 4 | `ItemList` | Upcoming + past events. |
 | `/events/[slug]` | `EventDetail` | `events` doc | 4 | `Event` | Single event with RSVP. |
 | `/contact` | `ContactPage` | `pages.contact` singleton | 1 | `ContactPage` | Form + email + showroom address. |
@@ -68,12 +69,23 @@ Sections, in order, all CMS-driven:
 
 ### `ProductDetail`
 
+The site is lead-gen, so the right column ends in **"Inquire"** and
+**"Book a showroom visit"**, never "Add to cart."
+
 1. Sticky breadcrumb.
-2. Gallery (left) + buy column (right) on desktop; stacked on mobile.
+2. Media stage (left) + inquiry column (right) on desktop; stacked on
+   mobile. The media stage is a tabbed/segmented viewer:
+   - **Stills** — gallery of high-res photographs.
+   - **Motion** — looping GIFs (atelier process, fabric drape, light play).
+   - **3D / WebXR** — interactive glTF model via `<model-viewer>`. On
+     supported devices a "View in your room" button enters AR (Scene
+     Viewer on Android, Quick Look via USDZ on iOS). The 3D viewer is
+     click-to-load to protect LCP.
 3. Specs accordion (dimensions, materials, weight, lead time, care).
 4. Long description.
 5. "In the atelier" — process imagery.
-6. Variants picker (size, finish).
+6. Variants picker (size, finish). Selecting a variant updates the
+   inquiry payload and, where authored, swaps the 3D material.
 7. "Pairs with" — curated cross-sell.
 8. Related products.
 9. Reviews (Phase 4+).
@@ -120,7 +132,7 @@ Journal         → /journal
 About           → /about
   ├ Our story        → /about
   ├ The atelier      → /atelier
-  └ Showroom         → /showroom
+  └ Showrooms        → /showrooms (mega-menu lists each location)
 Contact         → /contact
 ```
 
@@ -128,7 +140,7 @@ Contact         → /contact
 
 ```
 Collection         About            Visit            Service
-- All beds         - Our story      - Showroom       - Contact
+- All beds         - Our story      - Showrooms      - Contact
 - Collections      - The atelier    - Events         - FAQ
 - New arrivals     - Journal        - Book a visit   - Care & warranty
                    - Press          - Trade          - Shipping & returns

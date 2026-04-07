@@ -47,18 +47,47 @@ asset — every architectural decision is graded against both bars.
   `src/app/layout.tsx`.
 - No CMS, no admin, no sitemap, no JSON-LD, no product detail pages, no blog.
 
-## Stack decisions (proposed, see roadmap)
+## Locked product decisions
+
+These are confirmed and drive everything else in this folder:
+
+- **Business model:** lead generation, not e-commerce. Every product page
+  ends in an "Inquire" CTA, never an "Add to cart." No Stripe, no checkout,
+  no inventory sync. Prices are displayed as guidance.
+- **Locales:** English only. Schemas keep their localization fields for
+  optional future use, but no second locale is on the roadmap.
+- **Showrooms:** several. Each showroom is its own document with its own
+  `LocalBusiness` schema and its own `/showrooms/[slug]` page.
+- **Editorial workflow:** every article requires editorial sign-off before
+  publish. Marketing drafts → editor reviews → editor publishes.
+- **Product media:** every product carries (a) a still image gallery,
+  (b) one or more **GIFs** (atelier loops, fabric drape, light play), and
+  (c) one or more **3D models in glTF / GLB** (with optional USDZ for
+  iOS Quick Look) for **WebXR** product viewing.
+- **Brand specs:** the company is providing typography, color, logo, and
+  photography rules. The design system in `design-system.md` is a working
+  draft until those land — placeholder values get replaced, the structure
+  stays.
+- **Admin hosting:** Payload 3 mounted in the same Next.js process at
+  `/admin`. One deploy, one Postgres, shared TypeScript types.
+
+## Stack decisions
 
 - **Framework:** Next.js 16 App Router (already in place).
 - **Styling:** Tailwind v4 with a tokenized theme layer (see design system).
 - **Motion:** GSAP + Lenis (already in place) + Framer Motion for component
   micro-interactions.
-- **CMS / Admin:** Payload 3 (self-hosted, Next-native, TypeScript).
+- **CMS / Admin:** Payload 3, mounted in the same Next.js app at `/admin`.
 - **Database:** PostgreSQL (Payload-managed schema).
-- **Media:** S3-compatible bucket (Cloudflare R2 or AWS S3) with on-the-fly
-  resizing via Next/Image.
-- **Search (later):** Typesense or Meilisearch.
-- **Analytics:** GA4 + Plausible (privacy-friendly redundancy) + Search Console.
+- **Media:** S3-compatible bucket (Cloudflare R2 or AWS S3) for stills,
+  GIFs, video, and 3D assets. Stills served via Next/Image; 3D served via
+  `<model-viewer>` or react-three-fiber for WebXR.
+- **3D / WebXR:** glTF/GLB primary, USDZ secondary for iOS Quick Look.
+  Rendering via Google's `<model-viewer>` web component (zero-config AR on
+  Android + iOS) or react-three-fiber for fully custom scenes.
+- **Search (later):** Typesense or Meilisearch. Out of scope until Phase 5.
+- **Analytics:** GA4 + Plausible (privacy-friendly redundancy) + Search
+  Console.
 - **Email / forms:** Resend for transactional, Klaviyo for marketing.
-- **Hosting:** Vercel for the Next app, Railway/Fly for Payload + Postgres,
-  or a single self-hosted node — to be decided in Phase 1.
+- **Hosting:** Vercel for the Next app (which includes Payload), managed
+  Postgres on Neon or Supabase, S3-compatible storage on Cloudflare R2.
