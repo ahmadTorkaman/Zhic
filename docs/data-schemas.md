@@ -403,9 +403,9 @@ discriminated by `kind`.
 | `dominantColor` | text | auto | for blur placeholders |
 | `polycount` | number | auto | 3D models only — read from glTF |
 | `materialVariants` | text[] | auto | 3D models — list from `KHR_materials_variants` |
-| `optimizedFile` | upload | auto | 3D models — output of in-admin compressor (draco + KTX2). Public site serves this, not `file`. |
-| `optimizationStatus` | enum | auto | `pending`, `optimizing`, `optimized`, `failed`, `needs_attention` |
-| `optimizationMetrics` | group | auto | bytesBefore, bytesAfter, polyBefore, polyAfter, textureMemBefore, textureMemAfter |
+| `hasDraco` | boolean | auto | 3D models — true if KHR_draco_mesh_compression is present |
+| `hasKtx2` | boolean | auto | 3D models — true if all textures use KHR_texture_basisu |
+| `validationWarnings` | text[] | auto | 3D models — non-blocking issues from the validator |
 | `decorative` | boolean | no | when true, alt is not required |
 
 Constraints (enforced at upload):
@@ -415,12 +415,13 @@ Constraints (enforced at upload):
   Editors are warned that mp4/webm is preferred for anything > 1 s; GIF
   is allowed because the brand is providing them.
 - **Video:** ≤ 8 MB, ≤ 12 s for hero scrub video.
-- **glTF / GLB:** uploads up to 25 MB are accepted because the in-admin
-  compressor (admin §5.2b) will draco + KTX2 + quantize them down to the
-  ≤ 2 MB serving budget. Auto-rejected if missing a `scene`, or if it
-  still exceeds 100k triangles after compression, or if it has more than
-  4 material slots without variants declared. The public site only ever
-  serves `optimizedFile`, never the raw upload.
+- **glTF / GLB:** ≤ 2 MB warn / ≤ 4 MB hard limit. The 3D artist is
+  expected to deliver an already-optimized export from Blender (draco +
+  KTX2; see admin §5.2b "Blender export preset"). The admin runs a
+  read-only validator on upload — it does not transform the file. Auto-
+  rejected if missing a `scene`, over 100k triangles, over 4 MB, or
+  missing alt text. Warnings (no draco, no KTX2, > 80k triangles, > 2 MB)
+  appear inline so the artist can fix and re-upload.
 - **USDZ:** ≤ 8 MB. Optional iOS Quick Look pair for any GLB.
 - **PDF:** ≤ 10 MB.
 - Alt text required for images, GIFs, and 3D models (unless

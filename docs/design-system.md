@@ -64,12 +64,18 @@ Rules:
 
 ### 2.2 Typography
 
-Two families, both already wired in `src/app/layout.tsx`:
+Two families. **Both must be loaded via `next/font/local`, not
+`next/font/google`** — Google Fonts is intermittently blocked from Iran
+(we already hit this in `next build`), and self-hosted woff2 files are
+also faster for everyone. The current placeholder pairing is:
 
 - **Display — Cormorant Garamond.** Used for H1, H2, hero, pull quotes.
   Weights 300–600. Tracks tight on large sizes (-0.01em), loose on small
   caps (0.08em).
 - **Body — Inter.** Used for everything else. Weights 300–500. Never bold.
+
+Both files live in `src/fonts/` once Phase 1 starts. The brand spec
+hand-off may replace one or both — the loading strategy stays the same.
 
 Type scale (modular, ratio 1.25, base 16px):
 

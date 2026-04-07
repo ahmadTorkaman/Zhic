@@ -190,43 +190,85 @@ Dedicated screen for the WebXR assets:
   scene, no materials, etc).
 - "Open in editor" link to a hosted glTF inspector for ad-hoc fixes.
 
-#### In-admin glTF compressor pipeline
+#### Asset preparation: Blender export, not server-side compression
 
-Editors will not always receive pre-optimized files from the brand or
-from a 3D vendor. The admin therefore runs a server-side compressor on
-upload so the public site never serves a fat glTF.
+We deliberately do **not** run an in-admin compression pipeline. Server-
+side glTF transforms are blind, hard to verify visually, and prone to
+quietly producing broken or ugly results. Instead the workflow is:
 
-Pipeline (executed in a background job, not in the upload request):
+1. The 3D artist prepares the model in **Blender**.
+2. They export with the documented Blender preset (see below), which
+   handles draco geometry compression, KTX2 textures, polycount
+   decimation, and material variants.
+3. They visually verify the exported `.glb` in a local viewer (Blender's
+   own preview, `<model-viewer>` running locally, or Babylon Sandbox).
+4. They upload the already-optimized `.glb` to the admin.
+5. The admin **validates** the upload — it does not transform it.
 
-1. **Validate** — parse the glTF/GLB. Reject anything missing a `scene`.
-2. **Geometry** — apply Draco compression (level 7 default).
-3. **Textures** — convert PNG/JPG to KTX2 (UASTC + Zstd) with a
-   `--quality 200` preset for hero models, `--quality 150` for others.
-4. **Mesh ops** — `gltf-transform`: weld + dedup + prune unused nodes.
-5. **Quantization** — quantize positions, normals, UVs to int16/int8
-   where safe.
-6. **Polycount check** — warn at > 80k, hard-fail at > 100k triangles.
-7. **Re-export** — write a new GLB. Store both the original and the
-   compressed version in `media`; the public site only ever serves the
-   compressed one.
-8. **Optional USDZ** — if no USDZ was uploaded, attempt automatic glTF →
-   USDZ conversion via `usd-from-gltf`. Result is flagged "auto" so
-   editors can override with a hand-tuned file.
-9. **Metrics** — record before/after file size, polycount, texture
-   memory, and material variant list back onto the `media` document.
-10. **Notify** — toast in admin + audit log entry. If compression fails,
-    the original is kept but the model is marked `needs_attention` and
-    a banner appears on the product.
+This puts visual control where it belongs (with the artist, in front of
+their eyes) and keeps the admin small.
 
-Tooling: `gltf-transform` CLI (Apache 2.0) wrapped in a Node worker; KTX2
-via `KTX-Software`. Both run on the same Next.js host (since Payload is
-in-process). For very large jobs we can offload to a queue (BullMQ +
-Redis) in Phase 4 if needed.
+#### Admin validator (server-side, validation only)
 
-Editors see this pipeline as a single button: **"Optimize for web."** The
-result is a clear before/after card with file size, polycount, and a
-side-by-side `<model-viewer>` preview so they can verify nothing visual
-broke.
+On glTF/GLB upload the admin runs a fast read-only check and either
+accepts, warns, or rejects:
+
+| Check | Threshold | Action if exceeded |
+| --- | --- | --- |
+| File size | > 2 MB | warn; > 4 MB reject |
+| Triangle count | > 80k warn; > 100k reject |
+| Has a `scene` | required | reject |
+| Texture format | KTX2 preferred | warn if any PNG/JPG |
+| Has draco compression | preferred | warn if absent |
+| Material slots without variants | > 4 | warn |
+| Missing `alt` text on the model3d group | required | reject |
+
+Warnings appear inline next to the upload and are also shown as badges
+in the 3D model manager so artists can fix and re-upload. Rejections
+block the save entirely.
+
+#### Blender export preset (documentation only)
+
+The artist follows this preset every time. We will publish it as both
+a written checklist and a downloadable Blender operator preset
+(`zhic-web-glb.py`) once Phase 2 starts.
+
+Export settings (Blender → File → Export → glTF 2.0):
+
+- **Format:** `glTF Binary (.glb)`
+- **Include:** Selected Objects, Visible Objects only.
+- **Transform:** +Y Up.
+- **Geometry:**
+  - Apply Modifiers: on
+  - UVs, Normals, Tangents: on
+  - Vertex Colors: only if used
+  - Compression (Draco): on, level 6
+- **Animation:** off (unless the model has animation, which beds do not).
+- **Materials:**
+  - Material Variants: on if the product has variant bindings
+  - Image format: KTX2 (requires the KHR_texture_basisu add-on)
+  - KTX2 quality: 200 for hero models, 150 otherwise
+- **Decimation (do this in Blender, not in the exporter):**
+  - Target: ≤ 100k triangles total, ≤ 80k preferred
+  - Preserve sharp edges with the Decimate modifier in `Planar` mode
+    where possible
+- **Final pre-flight in Blender:**
+  - Apply all transforms (`Ctrl+A → All Transforms`)
+  - Origin to bottom-center for floor placement in AR
+  - Verify scale is in meters (a King bed is ~2.0 m × 2.1 m × 1.2 m)
+  - Verify the model is centered on origin
+  - Bake any procedural materials to image textures before export
+
+USDZ pair (for iOS Quick Look):
+
+- Generated separately via Reality Composer (macOS), Apple's
+  `usdzconvert`, or Blender's USD exporter.
+- Same physical scale as the glb.
+- ≤ 8 MB.
+- Optional but recommended for hero products.
+
+If the artist follows this preset the validator will pass on the first
+try and the file will be well inside the 2 MB serving budget.
 
 ### 5.2c Editorial review queue
 
@@ -492,5 +534,7 @@ Resolved (carried into the spec above):
 - **Co-editor role?** No new role. Multiple users may hold the existing
   `editor` role; `siteSettings.primaryEditor` designates the default
   reviewer for accountability. See §2 "Editorial team."
-- **In-admin glTF compressor?** Yes — pipeline documented in §5.2b.
+- **In-admin glTF compressor?** No. The 3D artist optimizes in Blender
+  with a documented export preset; the admin only validates the upload.
+  See §5.2b "Asset preparation."
 - **Payload hosting?** Same Next.js process at `/admin`. One deploy.

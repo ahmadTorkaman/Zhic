@@ -74,21 +74,71 @@ These are confirmed and drive everything else in this folder:
 
 ## Stack decisions
 
+The team is **based in Iran**, which constrains hosting and SaaS choices
+because most US-based providers (Vercel, Netlify, Cloudflare R2, AWS,
+Resend, Sentry, sometimes Google Fonts and GA4) restrict access from
+Iranian IPs or exclude Iran in their terms of service. The stack below
+is chosen so that:
+
+- The team can administer the site reliably from inside Iran.
+- The public site is reachable globally with no degraded experience for
+  US/EU visitors (the brand's primary market).
+- We avoid any vendor whose ToS would put the project at risk of being
+  shut off.
+
+Stack:
+
 - **Framework:** Next.js 16 App Router (already in place).
 - **Styling:** Tailwind v4 with a tokenized theme layer (see design system).
 - **Motion:** GSAP + Lenis (already in place) + Framer Motion for component
   micro-interactions.
 - **CMS / Admin:** Payload 3, mounted in the same Next.js app at `/admin`.
-- **Database:** PostgreSQL (Payload-managed schema).
-- **Media:** S3-compatible bucket (Cloudflare R2 or AWS S3) for stills,
-  GIFs, video, and 3D assets. Stills served via Next/Image; 3D served via
-  `<model-viewer>` or react-three-fiber for WebXR.
+- **Database:** PostgreSQL, self-hosted alongside the app on the same VPS
+  (managed Postgres providers like Neon and Supabase are unreliable from
+  Iran).
+- **Media:** S3-compatible object storage. **Hetzner Object Storage**
+  (EU) is the primary choice. Backblaze B2 is the fallback (need to
+  re-verify ToS for Iran). Cloudflare R2 and AWS S3 are explicitly off
+  the table.
 - **3D / WebXR:** glTF/GLB primary, USDZ secondary for iOS Quick Look.
   Rendering via Google's `<model-viewer>` web component (zero-config AR on
-  Android + iOS) or react-three-fiber for fully custom scenes.
-- **Search (later):** Typesense or Meilisearch. Out of scope until Phase 5.
-- **Analytics:** GA4 + Plausible (privacy-friendly redundancy) + Search
-  Console.
-- **Email / forms:** Resend for transactional, Klaviyo for marketing.
-- **Hosting:** Vercel for the Next app (which includes Payload), managed
-  Postgres on Neon or Supabase, S3-compatible storage on Cloudflare R2.
+  Android + iOS). Asset preparation happens in **Blender** with a
+  documented export preset; the admin only validates uploads.
+- **Fonts:** **self-hosted via `next/font/local`**, not `next/font/google`.
+  Google Fonts is intermittently blocked from Iran (and we already hit
+  this in the local `next build`), and self-hosted fonts are also faster
+  for everyone.
+- **Search (later):** Typesense or Meilisearch, self-hosted. Out of scope
+  until Phase 5.
+- **Analytics:** **Plausible, self-hosted** on the same VPS. No GA4 — it
+  is unreliable from Iran and adds GDPR overhead for no upside on a
+  privacy-respecting brand. Search Console for indexation data only.
+- **Email / forms:** **Postmark** (or Mailgun EU) for transactional;
+  newsletter delivery via a self-hosted Listmonk instance or Mailerlite
+  (EU). Klaviyo and Resend are off the table.
+- **Error monitoring:** **Glitchtip** (self-hosted, Sentry-compatible).
+- **Hosting:** **Hetzner Cloud (Germany)**, single VPS to start
+  (CPX21 / CPX31 class), running the Next + Payload app, Postgres,
+  Plausible, and Glitchtip side by side via Docker Compose or systemd.
+  EU jurisdiction, reachable from Iran without a VPN, reachable from
+  the world. We can split services to multiple VPSes once traffic
+  justifies it.
+- **CDN (optional, Phase 4):** Bunny CDN (EU-based, Iran-friendly) in
+  front of the Hetzner origin for static assets and image delivery.
+- **CI / CD:** GitHub Actions runs from outside Iran so npm installs and
+  builds work. Deployment to Hetzner via SSH from the Action runner.
+- **Domain & DNS:** registrar that accepts Iranian customers (e.g. Gandi,
+  Hetzner DNS). Avoid GoDaddy / Namecheap if they block Iranian payment
+  methods.
+
+Open verification items before Phase 1 starts:
+
+- Confirm Hetzner account creation works from Iran (or set up via a
+  collaborator, then transfer).
+- Verify Backblaze B2 ToS for Iranian customers (may not be needed if
+  Hetzner Object Storage is sufficient).
+- Verify Postmark accepts signups from Iran; otherwise fall back to
+  Mailgun EU.
+- Confirm a workable Search Console + Google Business Profile
+  verification path (may need a non-Iranian phone number for SMS
+  verification on GBP).

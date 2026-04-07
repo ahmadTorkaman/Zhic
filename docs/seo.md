@@ -300,14 +300,22 @@ Out of scope for the build but documented for marketing:
 
 ## 7. Analytics & monitoring
 
-- **GA4** for behavior.
-- **Plausible** for privacy-respecting redundancy and a public dashboard
-  if marketing wants one.
+The team is in Iran, which makes US-based analytics SaaS unreliable.
+The stack is therefore self-hosted wherever possible.
+
+- **Plausible (self-hosted on Hetzner)** is the only behavioral
+  analytics tool. No GA4 — it is intermittently blocked from Iran, adds
+  GDPR friction, and is not worth the redundancy for a quiet luxury
+  brand. Plausible's lightweight script also wins on CWV.
 - **Search Console** for indexation, clicks, impressions, CWV field data.
-- **Bing Webmaster** for completeness.
-- **Vercel Analytics** (or RUM equivalent) for real-user CWV.
-- **Sentry** for client-side errors that might indicate broken pages.
-- All four wired in Phase 1 behind a consent banner.
+  Verification may require a non-Iranian phone number for some flows;
+  plan ahead.
+- **Bing Webmaster Tools** for completeness.
+- **Glitchtip (self-hosted, Sentry-compatible)** for client-side errors
+  that might indicate broken pages.
+- All wired in Phase 1 behind a consent banner. The consent banner is
+  still needed because Plausible, even self-hosted, must respect user
+  preference under EU rules for EU visitors.
 
 KPI dashboard surfaces:
 
