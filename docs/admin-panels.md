@@ -1,11 +1,25 @@
 # Admin Panels
 
-The admin platform spec. Built on Payload 3 (mounted at `/admin`), with
-custom views layered on top of the default Payload UI for the high-frequency
-flows: pricing, publishing, content calendar, and the lead inbox.
+The admin platform spec. Built on Payload 3, served by `services/api`
+(its own Next.js app — see `architecture.md` §5), and exposed publicly
+at `admin.zhic.ir` via a Caddy rewrite to the `/admin` path on
+`services/api`. Custom views are layered on top of Payload's default
+admin UI for the high-frequency flows: pricing, publishing, content
+calendar, the order desk, the factor desk, and the inbox.
 
-This document covers screens, roles, workflows, and the non-negotiable UX
-guardrails. Field-level definitions live in `data-schemas.md`.
+This document covers screens, roles, workflows, and the non-negotiable
+UX guardrails for the **content / catalog / commerce admin** that ships
+in Phases 1–4. The deeper CRM, ERP, and MES surfaces live in their own
+apps (`apps/crm`, `apps/erp`, `apps/mes`) and are scoped in their
+respective phase docs and in `discovery.md`. The factor viewer (the
+end-user-facing one) lives in `apps/factor`; this document covers only
+the **issuing** side of factor management, which lives inside the admin.
+
+Field-level definitions live in `data-schemas.md`. Architectural
+context lives in `architecture.md`. The `apps/admin` vs Payload-as-admin
+question is held open in `README.md` "What is deliberately not decided
+yet"; this document describes the Payload-as-admin path that ships
+first.
 
 ---
 
@@ -32,14 +46,28 @@ guardrails. Field-level definitions live in `data-schemas.md`.
 
 ## 2. Roles & permissions
 
+Roles are defined once in `public.users.role` (see `data-schemas.md`
+§1) and apply across every app. The admin enforces them via Payload
+access control, which is the ultimate source of truth.
+
 | Role | Description | Can do | Cannot |
 | --- | --- | --- | --- |
-| `admin` | Founder, lead engineer | Everything, including users, settings, redirects, schema migrations. | — |
-| `editor` | Marketing lead | All content CRUD, publish, schedule, manage media, manage redirects, edit SEO. | Manage users, change roles, edit site settings. |
-| `marketing` | Marketing assistant | Draft and edit content, submit articles for review, edit SEO fields. Cannot publish or change prices. | Publish, approve articles, change price, manage redirects, manage users, settings. |
-| `viewer` | Stakeholder, agency | Read-only across the admin. | Any write. |
+| `admin` | Founder, lead engineer | Everything, including users, settings, redirects, schema migrations, factor numbering format, payment provider config. | — |
+| `editor` | Marketing / content lead | All content CRUD, publish, schedule, manage media, manage redirects, edit SEO. | Manage users, change roles, edit `siteSettings`, change prices, manage orders. |
+| `marketing` | Marketing assistant | Draft and edit content, submit articles for review, edit SEO fields. | Publish, approve articles, change prices, manage redirects, manage users, settings, orders. |
+| `sales` | HQ sales staff | Read products and customers, create orders manually, edit customer profile, view factors. | Change prices, change product fields, manage users, publish content, issue refunds (Phase 4 may relax this). |
+| `showroom_manager` | Per-showroom manager | Everything `sales` can do, plus: manage their own showroom's stock, confirm transfers in, see their showroom's KPIs and order pipeline. | Edit other showrooms, change prices, edit catalog, manage users. |
+| `showroom_staff` | Showroom floor staff | Read catalog, create orders, look up customers, see floor stock at their location. | Edit any catalog or customer field they didn't create, edit other showrooms' data, change prices. |
+| `accountant` | Finance | Issue and void factors, run finance reports, approve refunds, edit finance-relevant `siteSettings` (factor numbering, VAT rate, bank info). | Edit catalog, publish content, manage users. |
+| `factory_supervisor` | MES — Phase 6 | Manage work orders, BOMs, routings inside `apps/mes`. | Edit `commerce` directly. |
+| `factory_worker` | MES — Phase 6 | Update work-order state from the floor inside `apps/mes`. | Anything else. |
+| `viewer` | Stakeholder | Read-only across the admin. | Any write. |
+| `customer` | Storefront customer | Not an admin role. Listed for completeness — customers never see the admin. | Anything in admin. |
 
-Two-factor authentication is required for `admin` and `editor`.
+**Two-factor authentication is required for `admin`, `editor`, and
+`accountant`.** Phone+OTP via `packages/sms` is the primary auth for
+all staff (see `architecture.md` §7); password-based login is
+bootstrap-only for the founding admin account.
 
 ### Editorial team & the "primary editor" convention
 
@@ -69,15 +97,17 @@ change.
 
 ## 3. Information architecture
 
-Left-rail navigation, grouped:
+The admin is RTL by default (Persian-first; see `design-system.md`
+§2.4 for logical-property rules). Left-rail in LTR maps to the
+right-rail in RTL automatically. Groups, in order:
 
 ```
 DASHBOARD
-  · Home
-  · Content calendar
-  · Inbox
+  · Home (داشبورد)
+  · Content calendar (تقویم محتوا)
+  · Inbox (صندوق ورودی)
 
-CATALOG
+CATALOG (کاتالوگ)
   · Products
   · Quick price editor      ← custom view
   · Collections
@@ -85,14 +115,34 @@ CATALOG
   · Tags
   · Materials
   · 3D models               ← custom view
-  · Variants overview        ← custom view
+  · Variants overview       ← custom view
   · Reviews
 
-LOCATIONS
-  · Showrooms
-  · Appointments
+COMMERCE (فروش)            ← Phase 3+
+  · Customers
+  · Orders                  ← custom view (the order desk)
+  · Carts (live + abandoned)
+  · Payments
+  · Promotions / discount codes
+  · Returns
 
-CONTENT
+INVENTORY (موجودی)          ← Phase 3+
+  · Stock locations
+  · Stock levels
+  · Stock transfers
+  · Cycle counts (Phase 5)
+
+FACTORS (فاکتورها)          ← Phase 3+ (the issuing side)
+  · Issued factors
+  · Adjustment factors
+  · Voided factors
+  · Numbering & sequences   ← custom view, accountant-restricted
+
+LOCATIONS (شوروم‌ها)
+  · Showrooms
+  · Appointments            ← Phase 4
+
+CONTENT (محتوا)
   · Journal articles
   · Authors
   · Journal categories
@@ -101,31 +151,36 @@ CONTENT
   · Press
   · FAQ
 
-EVENTS
+EVENTS (رویدادها)
   · Events
 
-MARKETING
+MARKETING (بازاریابی)
   · Promotions
-  · Newsletter
+  · Newsletter (SMS / email)
   · Forms
   · Submissions
 
 SEO
-  · SEO control center       ← custom view
+  · SEO control center      ← custom view
   · Redirects
   · Sitemap status
   · Broken links / 404s
   · Search Console (embed)
 
-MEDIA
+MEDIA (رسانه)
   · Library
 
-SETTINGS
+SETTINGS (تنظیمات)
   · Site settings
   · Users & roles
   · Audit log
-  · Integrations
+  · Integrations            (SMS provider, payment provider, object storage)
 ```
+
+Items above marked **Phase 3+** appear in the left rail starting in
+Phase 3 when the corresponding collections exist. Showroom managers,
+sales staff, accountants, and factory roles see only the groups
+their role is allowed to read.
 
 ---
 
@@ -144,10 +199,16 @@ The home screen the editor sees on login. Three stacked cards:
 2. **Content calendar (mini)**
    - Month view, shows scheduled articles, events, promotions.
 3. **Performance snapshot**
-   - GA4 sessions last 7d vs prior 7d.
+   - **Plausible** sessions last 7d vs prior 7d (self-hosted; no GA4).
    - Search Console clicks/impressions last 7d.
    - Top 5 landing pages.
    - Core Web Vitals status (green/amber/red).
+4. **Commerce snapshot (Phase 3+)**
+   - Orders placed last 7d vs prior 7d (toman, Persian digits).
+   - Pending orders awaiting payment / production / dispatch.
+   - Today's factor count and total issued (toman).
+   - Stock alerts: variants below `reorderPoint`.
+   - For showroom roles: scoped to their own showroom only.
 
 ---
 
@@ -157,20 +218,26 @@ The home screen the editor sees on login. Three stacked cards:
 
 The single most-requested workflow. A spreadsheet-like table.
 
-- Columns: thumbnail, name, SKU, status, base price, sale price, currency,
-  availability, last changed, actions.
-- Inline edit on price columns. Tab to next row. Cmd+S commits.
-- Filters: collection, category, status, availability, currency, "has sale
-  price."
-- Bulk select → bulk edit modal: percent change, fixed change, set value,
-  toggle availability, set currency, schedule price change for date X.
+- Columns: thumbnail, Persian name, SKU, status, base price (toman),
+  sale price (toman), availability, last changed, actions.
+- All prices edited and displayed in **toman** (Persian digits, ٬
+  separator) but stored as integer **rials** via `packages/money`.
+  The conversion is invisible to the editor; the column header
+  reads "قیمت پایه (تومان)".
+- Inline edit on price columns. Tab to next row. Ctrl+S commits.
+- Filters: collection, category, status, availability, "has sale
+  price," "below reorder point."
+- Bulk select → bulk edit modal: percent change, fixed change
+  (toman), set value (toman), toggle availability, schedule price
+  change for date X (Jalali date picker).
 - Every commit:
-  - Writes to `auditLog` with before/after.
-  - Appends to `priceHistory`.
+  - Writes to `auditLog` with before/after (in rials).
+  - Appends to `priceHistory` (in rials).
   - Triggers ISR revalidation of affected pages.
-  - Optionally sends a Slack message to #marketing.
+  - Optional notification to a configured channel (Telegram /
+    Eitaa / email — no Slack assumption baked in).
 - Undo last action button (5-minute window).
-- Export CSV.
+- Export CSV with both rial and toman columns.
 
 ### 5.2 Variants overview
 
@@ -333,6 +400,71 @@ and surfaces:
 Filterable: by user, by collection, by action, by date. Diff view shows
 before/after JSON. Cannot be edited or deleted, even by admins.
 
+### 5.8 Order desk (Phase 3+)
+
+The operator screen for managing real orders. Sales, showroom managers,
+showroom staff, and admins use it daily.
+
+- List view columns: order number, Persian customer name, channel,
+  origin showroom, total (toman), payment status, fulfillment status,
+  placed at (Jalali), assigned staff.
+- Filters: status, payment status, channel, showroom, date range
+  (Jalali picker), assigned staff, "needs my attention".
+- Saved views: "Today's orders," "Awaiting payment," "Awaiting
+  dispatch," "My showroom — open," "All cancelled this month."
+- Detail view: full order with line items, payments timeline, factor
+  link, delivery record, audit history. Status transitions are
+  buttons; each one writes to `auditLog`.
+- "Manual order entry" — for showroom walk-ins and phone orders.
+  Picks customer (or creates one with phone+name), picks line items,
+  picks delivery method and address, captures payment (cash / card
+  POS / bank transfer / online link), and issues a factor.
+- Showroom-scoped roles see **only their showroom's orders**. HQ
+  sales and admin see everything.
+- Refund flow gated to `accountant` and `admin`; `showroom_manager`
+  may request a refund which an accountant must approve.
+
+### 5.9 Factor desk (Phase 3+)
+
+The accountant's workspace.
+
+- List of issued factors (Persian, Jalali dates, toman totals).
+- Filters: date range, issuing showroom, kind (`original`,
+  `adjustment`, `void`), customer.
+- Detail view: the factor as printed, the customer snapshot, the
+  seller snapshot at issue time, links to the underlying order and
+  payments.
+- "Issue adjustment" creates a new immutable adjustment factor with
+  `parentInvoiceId` set; never edits the original (see
+  `data-schemas.md` §19).
+- "Void" creates a void record but leaves the original on file.
+- "Re-print" regenerates the cached PDF.
+- "Export to accounting software" exports to whatever format the
+  business's accountant uses (decided in Discovery / Phase 5).
+
+### 5.10 Numbering & sequences (accountant + admin only)
+
+Custom view for the factor numbering format and per-showroom
+sequences.
+
+- Reads/writes `siteSettings.invoiceNumberFormat`.
+- Shows the next sequence number per showroom.
+- Allows manual reset only with admin override (e.g., annual reset
+  if the format includes the year).
+- Every change writes to `auditLog` and is gated by 2FA.
+
+### 5.11 Stock manager (Phase 3+)
+
+- Per-location stock-level grid: variant rows × location columns,
+  showing on-hand, reserved, available, reorder point.
+- Inline edit on `onHand` writes a `stock_adjust` audit row with a
+  required reason.
+- "Create transfer" picks source and destination locations, selects
+  variants and quantities, dispatches at source.
+- Receiving screen at the destination confirms qty received,
+  records discrepancies, requires accountant review on mismatch.
+- Cycle-count workflow ships in Phase 5.
+
 ---
 
 ## 6. Standard collection screens (Payload defaults, customized)
@@ -372,16 +504,17 @@ Standard layout:
 
 ## 7. Workflow walkthroughs
 
-### 7.1 Editor changes the price of "Aurora" from $4,200 to $4,400
+### 7.1 Editor changes the price of "آرورا" from ۸٬۴۰۰٬۰۰۰ to ۸٬۸۰۰٬۰۰۰ تومان
 
-1. Login → Dashboard.
+1. Login (phone+OTP) → Dashboard.
 2. Catalog → Quick price editor.
-3. Search "Aurora" → click base price cell → type `4400` → Enter.
-4. Confirmation modal: "Change Aurora base price from $4,200 to $4,400?"
-   → Confirm.
-5. Inline toast: "Price updated. Reverted in 5 min if needed."
-6. Audit log + price history written. ISR revalidates `/products/aurora`
-   and `/products` and `/`.
+3. Search "آرورا" → click base price cell → type `8800000` → Enter.
+4. Confirmation modal: "تغییر قیمت پایه‌ی آرورا از ۸٬۴۰۰٬۰۰۰ به
+   ۸٬۸۰۰٬۰۰۰ تومان؟" → Confirm.
+5. Inline toast: "قیمت به‌روزرسانی شد. تا ۵ دقیقه قابل بازگردانی است."
+6. `auditLog` + `priceHistory` rows written (in **rials** —
+   `84000000` → `88000000`). ISR revalidates `/products/aurora`,
+   `/products`, and `/`.
 
 Total time: under 15 seconds.
 
@@ -430,16 +563,52 @@ Total time: under 15 seconds.
 ### 7.3b Editor adds a new showroom
 
 1. Locations → Showrooms → New.
-2. Name, slug, headline, description.
-3. Cover image + gallery (alt text enforced).
-4. Address (street/city/region/postal/country) → geo lat/lng auto-resolves
-   from address (with manual override).
-5. Hours, holiday hours, parking, transit.
-6. Optional: Google Business Profile URL, manager assignment.
+2. Persian name, ASCII slug, headline, description.
+3. Cover image + gallery (Persian alt text enforced).
+4. Address (Iranian fields: province, city, district, street,
+   plaque, unit, postal code) → geo lat/lng auto-resolves from
+   address with manual override (Neshan or Google Maps geocoder).
+5. Hours (Persian day names, Persian-digit times), holiday hours
+   (Iranian holidays — Nowruz, Sizdah Bedar, Tasua, Ashura),
+   parking, transit.
+6. Optional: Google Business Profile URL, **Neshan** profile URL,
+   manager assignment (`showroom_manager` role).
 7. Save → preview → publish.
-8. ISR revalidates `/showrooms` and `/showrooms/[slug]`. `LocalBusiness`
-   JSON-LD is emitted on the slug page; the index page emits an
-   `ItemList` of all showrooms.
+8. ISR revalidates `/showrooms` and `/showrooms/[slug]`.
+   `LocalBusiness` (`FurnitureStore`) JSON-LD is emitted on the
+   slug page; the index page emits an `ItemList` of all showrooms.
+
+### 7.6 Showroom staff places a walk-in order and issues a factor (Phase 3+)
+
+1. Showroom staff logs in (phone+OTP) on a showroom tablet.
+2. Commerce → Orders → "ثبت سفارش جدید."
+3. Customer lookup by phone. If new, creates a customer with phone +
+   Persian name. If the customer wants a tax-compliant factor,
+   captures national ID + economic code.
+4. Picks line items from the catalog; variant picker shows
+   per-location stock for this showroom.
+5. Picks delivery method (in-showroom pickup, courier, white-glove).
+6. Records payment: cash / card POS / bank transfer / online link
+   (the last generates a `packages/payments` link the customer can
+   pay from their phone).
+7. On payment confirmation, order moves to `confirmed`, stock is
+   reserved, and the system issues a factor with the next per-showroom
+   sequence number from `siteSettings.invoiceNumberFormat`.
+8. Factor opens in print view (`packages/invoices` template). Staff
+   prints two copies — one for the customer, one for the showroom file.
+9. Customer receives an SMS confirmation with the order number via
+   `packages/sms`.
+
+### 7.7 Accountant issues an adjustment factor (Phase 3+)
+
+1. Factors → Issued factors → search by factor number.
+2. Open the factor → "Issue adjustment."
+3. Enter the adjustment line items and reason.
+4. Submit → a new adjustment factor is created with `parentInvoiceId`
+   pointing at the original. The original stays read-only.
+5. The adjustment carries the next sequence number; both factors
+   appear in the customer's account and in any export.
+6. `auditLog` records the issuing accountant and the reason.
 
 ### 7.4 Editor renames a slug
 
@@ -486,24 +655,50 @@ These are the things the admin must NOT allow, ever.
 
 ## 9. Notifications
 
-- Email on: new contact form submission, new trade application, new
-  appointment request, scheduled publish failure.
-- Slack (optional, configured in integrations) on: publish, price change,
-  new submission, CWV regression.
-- Daily digest email at 8am to `editor` and `admin` summarizing yesterday.
+- **SMS** (via `packages/sms`, Kavenegar first) on: new appointment
+  request to the assigned showroom manager, order confirmation to
+  the customer, OTP delivery, refund initiated.
+- **Email** on: new contact form submission, new trade application,
+  scheduled publish failure, factor issuance receipt to the
+  accountant. Email provider is whichever transactional service
+  accepts Iranian signups (Mailgun EU is the current candidate; see
+  `README.md` stack decisions).
+- **Optional channel** (Telegram / Eitaa / email digest) on:
+  publish, price change, new submission, CWV regression. Channel is
+  configurable in integrations and defaults to email for the
+  founding team.
+- **Daily digest email** at 8am Tehran time to `editor`, `admin`,
+  and `accountant` summarizing yesterday.
 
 ---
 
 ## 10. Integrations
 
-- **Klaviyo** — newsletter signups, transactional sends.
-- **Resend** — admin transactional email (form confirmations, password
-  resets).
-- **Google Search Console** — embedded dashboard via API.
-- **GA4** — embedded dashboard via API.
-- **Stripe** (optional, Phase 5) — checkout if e-commerce is added.
-- **Akismet** (or similar) — spam filtering on form submissions.
-- **Slack** — notifications.
+The integration list is constrained by what works reliably from
+inside Iran. See `README.md` "Stack decisions (Iran-aware)" for the
+rationale.
+
+- **`packages/sms`** — Kavenegar first; MelliPayamak / Ghasedak as
+  pluggable adapters. The wrapper is provider-agnostic; call sites
+  never know which provider is configured.
+- **`packages/payments`** — ZarinPal / IDPay / Zibal. Final
+  provider chosen in Phase 3. Same wrapper pattern.
+- **Plausible (self-hosted on Hetzner)** — embedded dashboard for
+  the storefront analytics tile. **No GA4.**
+- **Search Console** — embedded dashboard via API for SEO control
+  center. Verification may need a non-Iranian phone for some flows.
+- **Glitchtip (self-hosted, Sentry-compatible)** — error
+  monitoring for the admin and the storefront.
+- **Object storage** — Hetzner Object Storage default; a domestic
+  Iranian S3 candidate evaluated in parallel.
+- **Spam filtering** — a self-hosted or Iran-friendly equivalent
+  for `formSubmissions`. No US-based SaaS dependency.
+
+The earlier list of US-based marketing tools (Klaviyo, Resend,
+Stripe, Slack) is gone. Klaviyo / Resend are replaced by SMS-first
+flows + a transactional email provider that accepts Iranian signups.
+Stripe is replaced by `packages/payments`. Slack is replaced by an
+optional Telegram / Eitaa / email channel.
 
 ---
 
@@ -522,19 +717,38 @@ These are the things the admin must NOT allow, ever.
 
 ## 12. Open admin questions
 
-1. Do we need a "client preview" link that exposes a draft to a single
-   external reviewer (e.g. PR / press), without logging them in?
-2. Multi-region: any chance the admin needs to be reachable from outside
-   the US? (Affects hosting / latency.)
-3. Do we need a public-facing "newsroom" RSS feed in addition to the
-   journal?
+1. **`apps/admin` vs Payload-as-admin.** This document describes the
+   Payload-as-admin path. The decision to graduate any specific
+   surface (the order desk, the showroom-manager dashboard) into a
+   custom `apps/admin` or `apps/crm` is held open in `README.md`
+   and unblocked by Discovery (`discovery.md` §13).
+2. **Showroom scope vs CRM scope.** Several screens described here
+   (order desk, stock manager, factor desk) overlap with what
+   `apps/crm` will eventually own. The split is decided after
+   Discovery — until then, these live in the Payload admin.
+3. **Client preview link.** Do we need a draft-preview URL that
+   exposes a single article to an external reviewer (PR / press)
+   without logging them in?
+4. **Public RSS feed.** Should `/journal` expose an RSS feed for
+   Persian readers who use feed readers?
+5. **In-admin Persian / Arabic character normalization.** Do we run
+   the ZWNJ / Arabic-yeh normalization on every text field at
+   write-time, at read-time, or both? (Currently planned: write-time
+   via a Payload field hook, with a CI check on the rendered output.)
 
 Resolved (carried into the spec above):
 
-- **Co-editor role?** No new role. Multiple users may hold the existing
-  `editor` role; `siteSettings.primaryEditor` designates the default
-  reviewer for accountability. See §2 "Editorial team."
-- **In-admin glTF compressor?** No. The 3D artist optimizes in Blender
-  with a documented export preset; the admin only validates the upload.
-  See §5.2b "Asset preparation."
-- **Payload hosting?** Same Next.js process at `/admin`. One deploy.
+- **Co-editor role?** No new role. Multiple users may hold the
+  existing `editor` role; `siteSettings.primaryEditorId` designates
+  the default reviewer for accountability. See §2.
+- **In-admin glTF compressor?** No. The 3D artist optimizes in
+  Blender with a documented export preset; the admin only validates
+  the upload. See §5.2b.
+- **Payload hosting?** Payload runs as `services/api`, its own
+  Next.js app, exposed at `admin.zhic.ir` via Caddy. **Not** mounted
+  inside `apps/web`. See `architecture.md` §5.
+- **GA4?** No. Plausible only.
+- **Klaviyo / Resend / Stripe / Slack?** No. SMS-first via
+  `packages/sms`, payments via `packages/payments`, email via an
+  Iran-friendly transactional provider, notifications via Telegram /
+  Eitaa / email — never US-based marketing SaaS.

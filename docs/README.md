@@ -23,18 +23,17 @@ independent Node processes.
 | [`roadmap.md`](./roadmap.md) | Phased delivery plan from today's mockup to the full platform. |
 | [`architecture.md`](./architecture.md) | Monorepo layout, apps, packages, services, deployment, auth, data flow. |
 | [`discovery.md`](./discovery.md) | Template for reverse-engineering the existing showroom managers app and the existing workflow. |
-| [`sitemap.md`](./sitemap.md) | Public URL structure, page templates, information architecture. **Pending Persian-first rewrite.** |
-| [`design-system.md`](./design-system.md) | Brand tokens, typography, color, grid, motion, components. **Pending RTL / Persian rewrite.** |
-| [`data-schemas.md`](./data-schemas.md) | Every collection, field, relation, validation rule. **Pending e-commerce + Iran-aware rewrite.** |
-| [`admin-panels.md`](./admin-panels.md) | Admin UX, screens, roles, workflows. **Pending rewrite after Discovery.** |
-| [`seo.md`](./seo.md) | SEO playbook: metadata, structured data, performance, content strategy. **Pending Persian / Iran rewrite.** |
+| [`sitemap.md`](./sitemap.md) | Public URL structure, page templates, information architecture. Persian-first, ASCII slugs, real commerce surfaces. |
+| [`design-system.md`](./design-system.md) | Brand tokens, typography, color, grid, motion, components. Persian/RTL primary, with a separate operator-app vocabulary. |
+| [`data-schemas.md`](./data-schemas.md) | Every collection, field, relation, validation rule across `public` / `commerce` / `crm` / `erp` / `mes` / `content` schemas. Rial-integer money, phone-as-PK, factor numbering. |
+| [`admin-panels.md`](./admin-panels.md) | Admin UX, screens, roles, workflows for Phases 1–4 (Payload-as-admin). Deeper CRM/ERP surfaces are gated on Discovery and live in their respective phase docs. |
+| [`seo.md`](./seo.md) | SEO playbook: Persian metadata, structured data, performance budgets, Iran-aware analytics, local SEO for Iranian showrooms. |
 | [`lab.md`](./lab.md) | The `/lab` experimentation surface — purpose, rules, robots policy. |
 
-The files marked **pending** still carry a lot of the earlier "NY luxury
-atelier" framing. They are being revised in sequence; see `roadmap.md` for
-the order. The three files at the top of the table (`roadmap`,
-`architecture`, `discovery`) are the ones that reflect the current scope
-and should be read first.
+All files now reflect the locked Persian-first commerce platform
+scope. The three at the top (`roadmap`, `architecture`, `discovery`)
+are the entry points; the rest implement the decisions captured
+there.
 
 ---
 

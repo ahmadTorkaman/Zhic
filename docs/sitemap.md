@@ -1,154 +1,344 @@
 # Sitemap & Information Architecture
 
-Every URL on the public site, with its template, data source, SEO posture,
-and the Phase in which it ships. This is the canonical map — if a page is
-not here, it does not exist.
+Every public URL on `apps/web` (the Persian-first storefront), with its
+template, data source, SEO posture, and the phase in which it ships.
+This is the canonical map — if a page is not here, it does not exist.
 
-## URL conventions
+Operator apps (`apps/crm`, `apps/erp`, `apps/mes`, `apps/factor`) live
+on their own subdomains and are not part of this document; their IA
+lives in `admin-panels.md` and the phase docs.
 
-- Lowercase, hyphenated, ASCII-only.
-- No trailing slashes.
-- English only. There is no `/{locale}` prefix. Schemas keep `(L)` fields
-  for forward compatibility but no second locale is on the roadmap.
-- Slugs are stable. Renaming a slug auto-creates a 301 in the redirects
-  collection.
-- Query strings are never canonical; `?utm_*` is stripped from canonical
-  tags.
+---
 
-## Public URL map
+## 1. URL conventions
+
+The storefront is **Persian-first**, but its URL slugs are **ASCII,
+lowercase, hyphenated**. Persian content lives in the page body, not
+in the path. Reasons:
+
+- Iranian users routinely paste links into apps that mangle non-ASCII
+  characters. ASCII slugs survive every messenger and SMS gateway.
+- Punycode / percent-encoded Persian slugs hurt CTR in search snippets
+  and are unreadable in shared URLs.
+- Search Console, Plausible, log analyzers, and CI link checks all
+  cope better with ASCII.
+
+Rules:
+
+- **Lowercase, hyphenated, ASCII-only slugs.** No diacritics, no
+  Persian characters, no underscores.
+- **No trailing slashes.** `app/` is configured to redirect.
+- **No `/{locale}` prefix.** The site is Persian. English is not on
+  the roadmap. Schemas keep `(L)` markers on translatable fields for
+  forward compatibility, but no second locale ships.
+- **`<html lang="fa" dir="rtl">`** on every page. The shell is RTL.
+  Embedded Latin runs (brand name, SKUs, prices in numeric form) use
+  `dir="ltr"` on a wrapping span.
+- **Slugs are stable.** Renaming a slug auto-creates a 301 in the
+  `redirects` collection (see `data-schemas.md` §`redirects`).
+- **Query strings are never canonical.** `?utm_*` and faceted filter
+  params are stripped from `<link rel="canonical">`.
+- **Persian digits in display, ASCII digits in storage and URLs.**
+  Pagination is `?page=2`, never `?page=۲`. Display layer formats.
+- **Jalali dates in display, ISO 8601 in storage.** URLs that need a
+  date use ISO (`/journal/2026-04-08-...`), not Jalali strings.
+- **Phone numbers in URLs are E.164 ASCII** (`+98...`), never local
+  Persian-digit form.
+
+---
+
+## 2. Public URL map
+
+Phases reference `roadmap.md`. Anything Phase 4+ depends on its
+respective app shipping; the storefront is Phase 1–3 territory.
 
 | Path | Template | Data source | Phase | JSON-LD | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `/` | `HomePage` | `pages.home` singleton | 1 | `Organization`, `LocalBusiness`, `WebSite` | The current landing experience, refactored to read from CMS. |
-| `/products` | `ProductIndex` | `products` collection | 2 | `CollectionPage`, `BreadcrumbList` | Filterable grid: size, material, price band. |
-| `/products/[slug]` | `ProductDetail` | `products` doc | 2 | `Product`, `BreadcrumbList`, optional `AggregateRating` | Gallery, specs, materials, related, "Inquire" CTA. |
-| `/collections/[slug]` | `Collection` | `collections` doc | 2 | `CollectionPage`, `BreadcrumbList` | Curated groupings (e.g. "The Linen Capsule"). |
-| `/journal` | `JournalIndex` | `articles` collection | 2 | `Blog`, `BreadcrumbList` | Editorial archive landing. |
-| `/journal/[slug]` | `Article` | `articles` doc | 2 | `Article`, `BreadcrumbList` | Long-form MDX with TOC. |
-| `/journal/category/[slug]` | `JournalArchive` | `articles` filtered | 2 | `CollectionPage` | E.g. /journal/category/materials. |
-| `/journal/tag/[slug]` | `JournalArchive` | `articles` filtered | 2 | `CollectionPage` | E.g. /journal/tag/linen. |
+| `/` | `HomePage` | `pages.home` singleton | 1 | `Organization`, `WebSite` | Persian hero, featured catalog, journal teaser, showrooms strip. No `LocalBusiness` here — that's per showroom. |
+| `/products` | `ProductIndex` | `products` collection | 1 | `CollectionPage`, `BreadcrumbList` | Filterable grid: category, material, size, price band (toman). |
+| `/products/[slug]` | `ProductDetail` | `products` doc | 1 → 3 | `Product` (with real `Offer` from Phase 3), `BreadcrumbList`, optional `3DModel` | Gallery + GIFs + WebXR 3D + specs. CTA is "افزودن به سبد" once Phase 3 ships; "استعلام قیمت" before that and for `made_to_order` items. |
+| `/collections/[slug]` | `CollectionPage` | `collections` doc | 2 | `CollectionPage`, `BreadcrumbList` | Curated product groupings. |
+| `/categories/[slug]` | `CategoryPage` | `categories` doc | 2 | `CollectionPage`, `BreadcrumbList` | Taxonomy landing (e.g. تخت‌خواب، مبلمان). |
+| `/journal` | `JournalIndex` | `articles` collection | 2 | `Blog`, `BreadcrumbList` | Persian editorial archive. |
+| `/journal/[slug]` | `Article` | `articles` doc | 2 | `Article`, `BreadcrumbList` | Long-form content with TOC. |
+| `/journal/category/[slug]` | `JournalArchive` | `articles` filtered | 2 | `CollectionPage` | |
+| `/journal/tag/[slug]` | `JournalArchive` | `articles` filtered | 2 | `CollectionPage` | |
+| `/showrooms` | `ShowroomIndex` | `showrooms` collection | 1 | `ItemList` | All Iranian showrooms with map (Neshan / OSM embed). |
+| `/showrooms/[slug]` | `ShowroomDetail` | `showrooms` doc | 1 | `LocalBusiness` (`FurnitureStore`), `BreadcrumbList` | Per-location: hours, address, phone, gallery, inquiry CTA. Persian address + Persian-digit hours. |
+| `/showrooms/[slug]/book` | `BookingForm` | `appointments` collection | 4 | none (form) | Per-location appointment form (gated on `apps/crm` Phase 4 backend). |
 | `/about` | `AboutPage` | `pages.about` singleton | 1 | `AboutPage`, `Organization` | Brand story, atelier. |
-| `/atelier` | `Page` | `pages` doc | 2 | `Place` | Process, craft, photographs. |
-| `/showrooms` | `ShowroomIndex` | `showrooms` collection | 2 | `ItemList` | Index of all showroom locations with map. |
-| `/showrooms/[slug]` | `ShowroomDetail` | `showrooms` doc | 2 | `LocalBusiness`, `Place`, `BreadcrumbList` | Per-location: hours, map, gallery, inquiry CTA. |
-| `/showrooms/[slug]/book` | `BookingForm` | `appointments` collection | 4 | none (form) | Per-location appointment form. |
-| `/events` | `EventIndex` | `events` collection | 4 | `ItemList` | Upcoming + past events. |
-| `/events/[slug]` | `EventDetail` | `events` doc | 4 | `Event` | Single event with RSVP. |
-| `/contact` | `ContactPage` | `pages.contact` singleton | 1 | `ContactPage` | Form + email + showroom address. |
-| `/trade` | `TradeProgram` | `pages.trade` singleton | 4 | `Service` | Designer / trade application. |
-| `/trade/apply` | `TradeForm` | `tradeApplications` collection | 4 | none (form) | Application form. |
-| `/press` | `PressIndex` | `pressItems` collection | 4 | `CollectionPage` | Logos + clippings. |
-| `/faq` | `FaqPage` | `pages.faq` singleton | 2 | `FAQPage` | Generates rich-result eligible FAQ schema. |
-| `/care-and-warranty` | `Page` | `pages` doc | 2 | `Article` | Care guides, warranty terms. |
-| `/shipping-and-returns` | `Page` | `pages` doc | 2 | `Article` | Logistics. |
-| `/privacy` | `LegalPage` | `pages` doc | 1 | none | Legal. |
-| `/terms` | `LegalPage` | `pages` doc | 1 | none | Legal. |
+| `/atelier` | `Page` | `pages` doc | 2 | `Place` | Craft, process, photographs. |
+| `/contact` | `ContactPage` | `pages.contact` singleton | 1 | `ContactPage` | Form + phone + showrooms list. |
+| `/faq` | `FaqPage` | `pages.faq` singleton | 2 | `FAQPage` | Persian Q&A with rich-result-eligible schema. |
+| `/care` | `Page` | `pages` doc | 2 | `Article` | Care & warranty content. |
+| `/shipping-and-delivery` | `Page` | `pages` doc | 2 | `Article` | Logistics, lead times per region of Iran. |
+| `/returns` | `Page` | `pages` doc | 2 | `Article` | Return policy, satisfaction window. |
+| **Cart & checkout (Phase 3)** | | | | | |
+| `/cart` | `CartPage` | `carts` for current session | 3 | none | Server-rendered, no flash of empty state. |
+| `/checkout` | `CheckoutPage` | `carts` + `customers` | 3 | none | Multi-step: address → delivery → payment. Blocked behind `noindex`. |
+| `/checkout/payment` | `CheckoutPaymentPage` | `payments` provider redirect | 3 | none | Brief interstitial before gateway redirect. |
+| `/checkout/return` | `CheckoutReturnPage` | `payments` callback | 3 | none | Verifies payment, creates order, redirects to confirmation. |
+| `/order/[id]` | `OrderConfirmationPage` | `orders` doc | 3 | none | Post-checkout success page (signed token in URL). `noindex`. |
+| `/order/[id]/factor` | `FactorViewPage` | `invoices` doc via `packages/invoices` | 3 | none | Print-ready Persian factor. Phase 6 promotes this to `factor.zhic.ir`. |
+| **Customer account (Phase 3)** | | | | | |
+| `/account` | `AccountHome` | `customers` | 3 | none | Login required. Phone+OTP via `packages/auth`. `noindex`. |
+| `/account/orders` | `AccountOrders` | `orders` filtered by customer | 3 | none | |
+| `/account/orders/[id]` | `AccountOrderDetail` | `orders` doc | 3 | none | Status, factor link, items, delivery progress. |
+| `/account/addresses` | `AccountAddresses` | `addresses` | 3 | none | |
+| `/account/profile` | `AccountProfile` | `customers` | 3 | none | Phone (read-only — it's the PK), name, national ID for tax-compliant invoices. |
+| **Auth (Phase 3)** | | | | | |
+| `/login` | `LoginPage` | n/a | 3 | none | Phone-number entry → OTP screen. `noindex`. |
+| `/login/verify` | `OtpVerifyPage` | n/a | 3 | none | OTP entry. `noindex`. |
+| **Legal** | | | | | |
+| `/privacy` | `LegalPage` | `pages` doc | 1 | none | فارسی privacy notice. |
+| `/terms` | `LegalPage` | `pages` doc | 1 | none | فارسی terms of use. |
 | `/accessibility` | `LegalPage` | `pages` doc | 1 | none | Statement. |
-| `/search` | `SearchPage` | search index | 5 | none | Optional, Phase 5. |
-| `/sitemap.xml` | `app/sitemap.ts` | all collections | 1 | n/a | Auto-generated. |
-| `/robots.txt` | `app/robots.ts` | static | 1 | n/a | |
-| `/manifest.webmanifest` | `app/manifest.ts` | static | 1 | n/a | PWA basics. |
+| **Search (Phase 7)** | | | | | |
+| `/search` | `SearchPage` | Typesense / Meilisearch | 7 | none | Optional. `noindex, follow`. |
+| **System** | | | | | |
+| `/sitemap.xml` | `app/sitemap.ts` | all collections | 1 | n/a | Auto-generated. Excludes `noindex` paths. |
+| `/robots.txt` | `app/robots.ts` | static | 1 | n/a | Disallows `/account`, `/checkout`, `/order`, `/login`, `/lab`, `/api`, `/preview`. |
+| `/manifest.webmanifest` | `app/manifest.ts` | static | 1 | n/a | PWA basics (Persian name, RTL splash). |
+| `/opensearch.xml` | `app/opensearch/route.ts` | static | 7 | n/a | When `/search` ships. |
 
-## Page templates
+### Routes that are deliberately NOT in the storefront
 
-Each template is a single React component composed entirely of design-system
-primitives and content blocks. Templates never hardcode copy.
+- **`/admin`** — lives on `admin.zhic.ir`, not on the storefront. The
+  storefront does not link to it from any public page.
+- **`/lab`** — see `lab.md`. Layout-level `noindex`, robots-disallowed,
+  never linked from public navigation.
+- **English mirror.** No `/en`, no `hreflang`, no second locale.
+- **Per-city landing pages** like `/tehran-furniture-store`. Local SEO
+  is handled via `/showrooms/[slug]` + per-location `LocalBusiness`
+  schema, not doorway pages. See `seo.md` §5.
+
+---
+
+## 3. Page templates
+
+Each template is a single React component composed entirely of
+design-system primitives and content blocks. Templates never hardcode
+copy. All templates render RTL.
 
 ### `HomePage`
 
-Sections, in order, all CMS-driven:
+CMS-driven block list, in default order:
 
-1. `HeroBlock` — large headline, sub, CTA, scrubbed video or still.
-2. `MarqueeBlock` — running word marquee (brand pillars).
-3. `FeaturedProductsBlock` — 3–6 cards, hand-picked in CMS.
-4. `EditorialSplitBlock` — image + copy, alternating.
-5. `JournalTeaserBlock` — latest 3 articles.
-6. `TestimonialsBlock` — pull quotes.
-7. `NewsletterBlock` — capture.
-8. `ContactTeaserBlock` — link to /contact.
+1. `HeroBlock` — Persian headline, sub, CTA, scrubbed video or still.
+   Persian-safe hero typography (see `design-system.md` §2.2).
+2. `MarqueeBlock` — running word marquee in Persian. RTL-aware
+   direction (right → left motion, not left → right).
+3. `FeaturedProductsBlock` — 3–6 product cards with toman pricing.
+4. `EditorialSplitBlock` — image + Persian copy, alternating sides
+   (which "side" reverses under RTL automatically).
+5. `JournalTeaserBlock` — latest 3 Persian articles.
+6. `ShowroomsStripBlock` — list of Iranian showrooms, each linking to
+   its detail page.
+7. `TestimonialsBlock` — Persian pull quotes.
+8. `NewsletterBlock` — phone-number-first capture (SMS via
+   `packages/sms`); email is optional secondary.
+9. `ContactTeaserBlock` — link to `/contact`.
 
 ### `ProductDetail`
 
-The site is lead-gen, so the right column ends in **"Inquire"** and
-**"Book a showroom visit"**, never "Add to cart."
+The PDP is the heart of the storefront. From Phase 3 onward it is
+**a real commerce page**, not lead-gen-only.
 
-1. Sticky breadcrumb.
-2. Media stage (left) + inquiry column (right) on desktop; stacked on
-   mobile. The media stage is a tabbed/segmented viewer:
-   - **Stills** — gallery of high-res photographs.
-   - **Motion** — looping GIFs (atelier process, fabric drape, light play).
-   - **3D / WebXR** — interactive glTF model via `<model-viewer>`. On
-     supported devices a "View in your room" button enters AR (Scene
-     Viewer on Android, Quick Look via USDZ on iOS). The 3D viewer is
-     click-to-load to protect LCP.
-3. Specs accordion (dimensions, materials, weight, lead time, care).
-4. Long description.
-5. "In the atelier" — process imagery.
-6. Variants picker (size, finish). Selecting a variant updates the
-   inquiry payload and, where authored, swaps the 3D material.
-7. "Pairs with" — curated cross-sell.
-8. Related products.
-9. Reviews (Phase 4+).
-10. JSON-LD `Product` block.
+Layout (desktop): media stage on the **right** (RTL convention places
+the dominant column on the right), purchase column on the **left**.
+Mobile: stacked, media first.
+
+1. Sticky breadcrumb at the top, RTL chevrons.
+2. Media stage (tabbed):
+   - **تصاویر (Stills)** — gallery of high-res photographs.
+   - **حرکت (Motion)** — looping GIFs (atelier process, fabric drape,
+     light play). GIFs pause when off-screen.
+   - **سه‌بعدی (3D / WebXR)** — interactive glTF model via
+     `<model-viewer>`. AR via Scene Viewer (Android) or Quick Look
+     (iOS / USDZ). **Click-to-load** to protect LCP. See `seo.md`
+     §2.5 and `data-schemas.md` §1.2.
+3. Purchase column:
+   - Product name (Persian), one-line tagline.
+   - Price in **toman**, formatted with Persian digits and thousands
+     separator (٬). All conversion through `packages/money`. The raw
+     rial integer is data-only.
+   - Variant picker (size, finish, fabric). Selecting a variant
+     updates the price, the inquiry payload, and (where authored)
+     the 3D material via `KHR_materials_variants`.
+   - **Primary CTA**:
+     - Phase 1–2: "استعلام قیمت" / "رزرو بازدید از شوروم".
+     - Phase 3+: "افزودن به سبد" for in-stock items;
+       "پیش‌سفارش / استعلام" for `made_to_order` items.
+   - Secondary CTA: "رزرو بازدید از شوروم" (always present).
+   - Stock signal per nearest showroom (Phase 4, sourced from
+     `commerce.stockLevels`).
+   - Lead-time text in Jalali ("تحویل از ۱۵ اردیبهشت ۱۴۰۵").
+4. Specs accordion: dimensions (cm + m), materials, weight, lead time,
+   care, warranty.
+5. Long description (Persian, MDX-driven blocks).
+6. "در کارگاه" — process imagery + caption.
+7. "در کنار آن خوب است" — curated cross-sell (`pairsWith`).
+8. Related products (`relatedProducts`).
+9. Reviews block (Phase 4+).
+10. JSON-LD `Product` block (with real `Offer` from Phase 3 onward).
+
+### `CartPage` (Phase 3)
+
+1. Item rows: image, name, variant, qty stepper, line total in toman.
+2. Summary: subtotal, delivery (estimated, depends on address), tax
+   if applicable, total in toman.
+3. Promo code field.
+4. "ادامه به پرداخت" CTA → `/checkout`.
+5. Empty state: friendly Persian message + link to `/products`.
+
+### `CheckoutPage` (Phase 3)
+
+Multi-step on desktop, single scrolling form on mobile:
+
+1. **Identity** — phone number, OTP, name. Auto-skipped if logged in.
+2. **Address** — saved addresses (if any) + new address form. Persian
+   address fields (province, city, district, street, plaque, unit,
+   postal code). Province dropdown is the canonical Iranian list.
+3. **Delivery method** — courier, in-showroom pickup, white-glove
+   delivery (per region availability).
+4. **Tax-invoice fields (optional)** — national ID + economic code +
+   business name, only if customer wants a tax-compliant factor.
+5. **Payment** — provider chosen in Phase 3 (ZarinPal / IDPay / Zibal).
+   Submitting redirects to the gateway.
+
+The whole flow is `noindex`. The cart is never abandoned by the URL
+strategy — `/cart` is always reachable for an authenticated session.
+
+### `OrderConfirmationPage` (Phase 3)
+
+1. Confirmation headline, order number (formatted with Persian digits).
+2. SMS confirmation notice (sent automatically via `packages/sms`).
+3. Order summary.
+4. "مشاهده فاکتور" → `/order/[id]/factor`.
+5. "پیگیری سفارش" → `/account/orders/[id]`.
+
+### `FactorViewPage` (Phase 3, matures Phase 6)
+
+1. Header: Zhic logo, factor number (per `siteSettings.invoiceNumberFormat`),
+   issue date in Jalali.
+2. Buyer block: name, phone, address, optional national ID + economic
+   code if tax-compliant.
+3. Seller block: legal name, address, national ID, economic code, bank
+   account if printed on factor.
+4. Line items table: row number, name, qty, unit price (toman),
+   line total (toman). Persian digits, thousands separators.
+5. Totals: subtotal, discounts, VAT (if applicable), grand total in
+   toman + رقم به حروف (amount-in-words) for legal copies.
+6. Footer: signature line, stamp area, terms.
+
+Print-first: a `@media print` stylesheet hides chrome. Phase 6
+promotes this template to `apps/factor` on its own subdomain with
+signed-token access for external recipients.
 
 ### `Article`
 
-1. Hero: title, dek, author, date, reading time, cover image.
+1. Hero: title, dek, author, date (Jalali), reading time, cover image.
 2. Auto-generated table of contents (sticky on desktop).
-3. MDX body with custom components (pull quote, image grid, product
-   embed, video).
-4. "Featured products" sidebar/footer.
+3. MDX body with custom blocks: pull quote, image grid, product
+   embed, video, materials reference, factor sample.
+4. "محصولات معرفی‌شده" sidebar/footer.
 5. Author card.
-6. "Continue reading" — 3 related articles.
+6. "ادامه مطالعه" — 3 related Persian articles.
 
-### `EventDetail`
+### `ShowroomDetail`
 
-1. Hero with date, location, hero image.
-2. Description.
-3. RSVP form.
-4. Map.
-5. JSON-LD `Event`.
+1. Hero: showroom name, headline, cover image.
+2. Address (Persian) + map embed.
+3. Hours table (Persian day names, Persian-digit times). Holiday
+   hours table if any.
+4. Phone (clickable `tel:` with E.164), optional email.
+5. Gallery.
+6. Featured products at this location.
+7. CTAs: "تماس" (phone), "رزرو بازدید" (Phase 4), "مسیریابی" (map link).
+8. JSON-LD `LocalBusiness` (`FurnitureStore`).
 
-## Information architecture rules
+---
 
-- **Max two levels of navigation depth** in the primary nav. Anything deeper
-  lives in footer or in-page links.
-- **Footer is the catch-all** for legal, care, trade, press.
-- **Every page must have**: H1, meta title, meta description, OG image,
-  canonical, breadcrumb (except `/`), JSON-LD where applicable.
-- **No orphan pages.** Every URL is linked from at least one indexed page
-  besides the sitemap.
-- **404 page** is branded and offers: search, journal teasers, contact link.
-- **500 page** is branded and silent (no stack traces).
+## 4. Information architecture rules
 
-## Primary navigation (header)
+- **Max two levels of navigation depth** in the primary nav. Anything
+  deeper lives in footer or in-page links.
+- **Footer is the catch-all** for legal, care, shipping, returns,
+  showrooms list, social.
+- **Every page must have**: H1, meta title, meta description, OG
+  image, canonical, breadcrumb (except `/`), JSON-LD where applicable,
+  `lang="fa"`, `dir="rtl"`.
+- **No orphan pages.** Every URL is linked from at least one indexed
+  page besides the sitemap.
+- **404 page** is branded and Persian; offers: search (Phase 7),
+  journal teasers, contact link, link to `/showrooms`.
+- **500 page** is branded, Persian, and silent (no stack traces, no
+  request IDs visible to the user — those go to Glitchtip).
+
+---
+
+## 5. Primary navigation (header)
+
+The header is sticky, RTL, and reads right → left as Persian users
+expect.
 
 ```
-Collection      → /products
-  ├ All beds         → /products
-  ├ By collection    → /collections/[slug] (mega-menu)
-  └ New arrivals     → /products?sort=newest
-Journal         → /journal
-About           → /about
-  ├ Our story        → /about
-  ├ The atelier      → /atelier
-  └ Showrooms        → /showrooms (mega-menu lists each location)
-Contact         → /contact
+خانه           → /
+محصولات        → /products
+  ├ همه‌ی محصولات         → /products
+  ├ بر اساس مجموعه       → /collections/[slug] (mega-menu)
+  └ تازه‌ها              → /products?sort=newest
+ژورنال         → /journal
+درباره‌ی ما    → /about
+  ├ داستان ما           → /about
+  ├ کارگاه              → /atelier
+  └ شوروم‌ها             → /showrooms (mega-menu lists each location)
+تماس           → /contact
 ```
 
-## Footer
+Right side of the header (which on RTL renders on the visual left):
+
+- **Search icon** (Phase 7).
+- **Account icon** → `/account` (Phase 3, login state aware).
+- **Cart icon** with item-count badge → `/cart` (Phase 3).
+
+---
+
+## 6. Footer
 
 ```
-Collection         About            Visit            Service
-- All beds         - Our story      - Showrooms      - Contact
-- Collections      - The atelier    - Events         - FAQ
-- New arrivals     - Journal        - Book a visit   - Care & warranty
-                   - Press          - Trade          - Shipping & returns
-                                                     - Accessibility
-                                                     - Privacy
-                                                     - Terms
+محصولات              درباره‌ی ما       شوروم‌ها              خدمات
+- همه‌ی محصولات      - داستان ما      - فهرست شوروم‌ها     - تماس
+- مجموعه‌ها           - کارگاه          - رزرو بازدید         - پرسش‌های متداول
+- تازه‌ها             - ژورنال          - رویدادها            - مراقبت و گارانتی
+                                                              - ارسال و تحویل
+                                                              - بازگشت کالا
+                                                              - دسترسی‌پذیری
+                                                              - حریم خصوصی
+                                                              - شرایط استفاده
 
-[Newsletter signup]
-[Instagram] [Pinterest] [Email]
-© Zhic, New York
+[فرم خبرنامه — شماره موبایل]
+[اینستاگرام] [تلگرام] [ایمیل]
+© شرکت ژیک — تمام حقوق محفوظ است.
 ```
+
+The newsletter capture is **phone-first** (it dispatches via
+`packages/sms`), with email as an optional secondary field. Email-only
+collection is fine where SMS is undesired.
+
+---
+
+## 7. Phase gating summary
+
+| Phase | Storefront surfaces this phase unlocks |
+| --- | --- |
+| 1 | `/`, `/products`, `/products/[slug]` (lead-gen mode), `/showrooms`, `/showrooms/[slug]`, `/about`, `/contact`, legal, sitemap, robots, manifest |
+| 2 | `/collections/*`, `/categories/*`, `/journal/*`, `/atelier`, `/faq`, `/care`, `/shipping-and-delivery`, `/returns`, full PDP with GIFs and 3D |
+| 3 | `/cart`, `/checkout/*`, `/order/[id]`, `/order/[id]/factor`, `/account/*`, `/login*`. PDP CTA flips from "استعلام" to "افزودن به سبد" for in-stock items |
+| 4 | `/showrooms/[slug]/book`, `/events/*` (if events ship in Phase 4), per-showroom stock signals on PDP |
+| 6 | `/order/[id]/factor` migrates to `factor.zhic.ir` for external recipients |
+| 7 | `/search` |
+
+Anything not in this table is either covered elsewhere (operator
+apps, admin) or is held open until Discovery and the relevant phase
+spec lands.
