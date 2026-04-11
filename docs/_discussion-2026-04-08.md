@@ -2193,6 +2193,19 @@ session, against R1–R16.
 
 ### R17 — Infrastructure costs, pass-through handling, and final Package 1/2 pricing targets (2026-04-11)
 
+**Correction note (2026-04-11, same session).** An earlier draft
+of this R-entry used an incorrect USD/toman rate of ~65,000
+toman/USD. Operator flagged the error: the actual rate is
+**~150,000 toman/USD**. All USD-denominated lines below
+(`zhicwood.com`, ArvanCloud, Hetzner) have been re-computed at
+the corrected rate. The toman fee targets for Package 1 and
+Package 2 are **unchanged** — those are effort-priced, not
+USD-linked — but the pass-through infrastructure total more
+than doubles. The practical impact is the client's total
+out-of-pocket (fee + infra pass-through) is materially higher
+than the earlier draft suggested and must be communicated
+honestly in the master agreement.
+
 **Context.** R1–R16 closed the deal-mechanics, scope, and
 acceptance questions but deliberately left the actual toman
 numbers open. The operator asked to "talk realistic" on Package 1
@@ -2201,7 +2214,8 @@ see on their invoice regardless of who pays: the domain
 `zhicwood.com` (quoted at **$620 USD**) and server hosting inside
 Iran vs. outside.
 
-**Cost research (2026-04-11, web search + stated figures).**
+**Cost research (2026-04-11, web search + stated figures,
+corrected at 150,000 toman/USD).**
 
 *Domain.* `zhicwood.com` at **$620 USD** — operator-reported
 price. Direct verification against a marketplace listing was
@@ -2209,28 +2223,37 @@ attempted and failed (403 on the domain itself; marketplace
 searches for GoDaddy / Afternic / Sedo did not surface the exact
 listing during this session). The number is accepted as
 operator-reported and should be re-confirmed at the point of
-purchase. At a rough ~65,000 toman/USD that is **~40M toman
+purchase. At **~150,000 toman/USD** that is **~93M toman
 one-time**, which is the single biggest infrastructure line item
-in Package 1 — larger than three months of server cost combined.
+in Package 1 by a wide margin — it is roughly a third of the
+Package 1 fee target, and by itself exceeds all other
+infrastructure spending for the entire Package 1 window
+combined.
 
 *Iranian VPS options (production-grade, self-hosted Postgres +
 Payload + Plausible + Glitchtip co-located on one box per
 `README.md`).*
 - **ParsVDS NVMe (Iran).** Entry tier ~220,000 toman/month as of
   late 2025; a production-sized box (≈4 vCPU / 8 GB / NVMe) lands
-  in the **2–4M toman/month** range.
+  in the **2–4M toman/month** range. Priced in IRR directly so
+  the USD/toman correction does not affect this line.
 - **ArvanCloud VPS (Iran).** Published plans start around
   **$90/month** for equivalent specs; billed in IRR, priced to
-  USD.
+  USD. At 150,000 toman/USD that is **~13.5M toman/month** —
+  materially more expensive than ParsVDS and, at production
+  spec, comparable to or more expensive than Hetzner in toman
+  terms.
 - **Hetzner CPX31 (Germany).** EUR 16.49/month currently, rising
   ~April 2026 to roughly $24.99/month. 4 AMD vCPU / 8 GB /
-  160 GB NVMe / 20 TB traffic. **~1.5–2M toman/month.** Cheapest
-  by a wide margin, but only viable if Hetzner signup from Iran
-  actually works — this is an open verification item in
-  `README.md` under "Open verification items before Phase 1
-  starts" and must be confirmed before Package 1 signing, because
-  the hosting line in the client-facing infrastructure budget
-  differs by **~2x** between the two paths.
+  160 GB NVMe / 20 TB traffic. At 150,000 toman/USD the post-
+  April rate is **~3.75M toman/month.** Still the cheapest path,
+  but the margin over ParsVDS entry tiers is much smaller than
+  the earlier (incorrect) draft implied. Hetzner signup from
+  Iran remains an open verification item in `README.md` under
+  "Open verification items before Phase 1 starts" and must be
+  confirmed before Package 1 signing, because the hosting line
+  in the client-facing infrastructure budget differs between
+  paths.
 
 *Other infrastructure for the 3-month Package 1 window.*
 - Object storage (Hetzner Object Storage EU or a domestic
@@ -2245,13 +2268,50 @@ Payload + Plausible + Glitchtip co-located on one box per
 - Glitchtip, Plausible, Listmonk: self-hosted on the same VPS,
   no separate line item.
 
-*Rolled up for 3 months of Package 1 delivery.*
-- Domain (one-time): ~40M toman.
-- VPS — Hetzner path, 3 months: ~5M toman.
-- VPS — Iranian-domestic path, 3 months: ~8–12M toman.
+*Rolled up for 3 months of Package 1 delivery (corrected).*
+- Domain (one-time): **~93M toman**.
+- VPS — Hetzner path, 3 months: **~11M toman**.
+- VPS — ParsVDS-domestic path, 3 months: ~8–12M toman (IRR,
+  unchanged).
+- VPS — ArvanCloud path, 3 months: ~40M toman.
 - Storage + SMS credits + misc: ~3–5M toman.
-- **Total infrastructure: ~48–58M toman, dominated by the
-  domain.**
+- **Total infrastructure (Hetzner path): ~108–113M toman.**
+- **Total infrastructure (ParsVDS path): ~105–115M toman.**
+- **Total infrastructure (ArvanCloud path): ~135–145M toman.**
+- In every scenario the total is **dominated by the domain** —
+  ~80–90% of the infrastructure bill is `zhicwood.com`. The
+  VPS choice only moves the total by a few percent.
+
+**Implication of the correction for negotiating posture.** The
+infrastructure number the client sees on top of the fee is
+**roughly 2x** what the earlier draft implied. Total client
+out-of-pocket for the full Package 1 engagement (fee at target
++ pass-through) is now approximately:
+- **At fee target 280M + Hetzner infra 110M = ~390M toman.**
+- **At fee opening 320M + Hetzner infra 110M = ~430M toman.**
+- **At fee floor 220M + Hetzner infra 110M = ~330M toman.**
+
+If the operator's read of client budget capacity was anchored
+on the earlier (~340M total) framing, that read must be
+revised. Two honest levers are available to bring the total
+down without touching the fee:
+1. **Negotiate the domain.** $620 is a soft number for a
+   `.com` — at 150,000 toman/USD even a $100 reduction is
+   ~15M toman. A fallback `.ir` or alternative `.com` spelling
+   is a real option if the business has flexibility on the
+   exact URL. Operator action item below.
+2. **Accept a cheaper VPS class for the Package 1 window** and
+   only upgrade at Package 2 launch when real commerce traffic
+   arrives. A ParsVDS entry tier at ~220k toman/month is
+   adequate for a pre-commerce landing-page + Payload-admin
+   load, and saves ~10M toman over 3 months vs. a production-
+   spec box. This is a scope-legal simplification because
+   Package 1 does not carry checkout load.
+
+Neither lever is large enough to rescue a client budget that
+cannot absorb ~330M toman total minimum. If the client's actual
+ceiling is below that, R17 forces a Package 1 **scope cut**
+(see below), not a fee cut.
 
 **Decision — commercial handling of infrastructure.**
 Infrastructure is **pass-through at cost**, billed to the client
@@ -2273,9 +2333,14 @@ Rationale:
 4. Iranian SMBs are comfortable with itemized pass-through for
    infrastructure they understand (domain, server, SMS). It is
    the honest framing.
+5. At 150,000 toman/USD, pass-through also **protects the
+   operator from FX risk**: if the USD/toman rate moves between
+   signing and purchase, the client carries that exposure, not
+   the operator. Bundling would have turned every FX tick into
+   an operator loss.
 
 **Decision — Package 1 pricing targets (fee only, infra
-excluded).**
+excluded). Unchanged by R17 correction.**
 - **Target:** **280–300M toman** for Generous Package 1 (R12),
   delivered over approximately 3 calendar months in parallel
   with Discovery (R10).
@@ -2287,6 +2352,33 @@ excluded).**
 - **Payment triggers:** unchanged from R11 — 25/25/25/25 on the
   four visible events (signing / landing-page internally
   reachable / Commerce Pricing Checkpoint / Package 1 close).
+
+These numbers are effort-priced on ~17 effort-weeks at Generous
+Package 1 scope plus solo-operator risk premium. They are not
+USD-linked. The USD/toman correction does not move them.
+
+Rationale for the target band:
+- ~17 effort-weeks of work at Generous Package 1 scope (R12
+  content-ownership split).
+- Solo-operator premium for Shape C scope (R13) carrying the
+  full commerce path: cart, checkout, gateway, factor, returns,
+  promotions, gift cards, delivery-step SMS.
+- R15 acceptance model puts the operator on a real
+  owner-performed Shape R review inside Iran, not a developer
+  self-check — the issues-cap structure has real rework risk
+  that must be priced in.
+- R16 bus-factor mitigation (3-week transparency check, 6-week
+  client exit option) protects the client but does not reduce
+  the operator's exposure to unbilled rework; that exposure is
+  priced into the target band.
+
+The operator's stated comfort range was 100–300M toman. 100M is
+**below floor** and must not be accepted for Generous Package 1
+scope. If the client can only carry 100–150M toman, the honest
+move is to renegotiate the Package 1 **scope** — for example,
+drop from Generous (R12) to Standard (core + editorial +
+journal only, no pillar/category/events/intake), which would
+justify a 120–160M toman target. That scope change is an R-entry
 
 Rationale for the target band:
 - ~17 effort-weeks of work at Generous Package 1 scope (R12
