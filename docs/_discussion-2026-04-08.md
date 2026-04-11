@@ -2474,6 +2474,241 @@ agreement).**
   a **scope change**, not a price change, and ask which Package
   1 scope sub-clauses are being dropped to justify it.
 
+---
+
+### R18 — Worldwide fairness, Claude Code tooling cost, and solo-vs-hire posture for Package 1 (2026-04-11)
+
+**Context.** After R17 landed, the operator asked two linked
+questions: (1) is the Package 1 target fair on a **worldwide**
+scope for a solo developer carrying Shape C, and (2) should a
+hire be considered for Package 1 even though the operator's
+preference is to build everything solo. The operator also
+flagged an operator-side tooling cost R17 missed: a Claude Code
+subscription at **$125 USD/month**, which is a material line
+item that must be factored into the effective rate and into
+the pricing targets.
+
+**Worldwide fairness read.**
+
+At ~150,000 toman/USD, R17's 280–300M toman Package 1 target
+equals **~$1,870–$2,000 USD total** for approximately three
+months of solo work, or roughly **$625–$770 per month** of
+effective monthly compensation for the operator.
+
+Benchmark snapshot for equivalent-scope 3-month fixed-price
+work (senior full-stack Next.js + Payload + commerce):
+- US senior freelancer: **$30,000–60,000**
+- Western EU senior: **$20,000–45,000**
+- Eastern EU senior: **$12,000–24,000**
+- LatAm senior: **$9,000–18,000**
+- South / SE Asia senior: **$6,000–12,000**
+- **R17 target equivalent: ~$2,000 (5–30x below these bands).**
+
+Local Iranian benchmark:
+- A senior Iranian full-stack developer at a top local
+  company earns roughly 50–80M toman/month in salaried work.
+- 280–300M toman over 3 months equates to ~95–100M toman/month,
+  which is above top-end senior-salary territory and sits in
+  senior-consultant territory for the local market.
+
+**Conclusion on fairness.** The R17 target is **fair-to-high
+on the local Iranian scope** and **materially underpriced on
+a worldwide scope**. The arbitrage is structural: Iranian
+senior developers with Next.js 16 + Payload 3 + commerce
+skills frequently work remotely for non-Iranian clients and
+are paid in crypto or foreign transfers at 5–10x local rates,
+so the operator's real opportunity cost (what else they could
+do with three months) is higher than the Iranian client will
+pay. The R17 target reflects that the operator is deliberately
+choosing to serve a local Iranian client at local rates,
+which is a legitimate commercial choice but must be understood
+as such — not as a market-fair global rate.
+
+**Framing guidance for client conversations.** If the client
+pushes back on 280–300M toman, the honest position is *"this
+is senior Iranian consulting rate for a 3-month Shape C
+engagement, priced to the local market."* The operator should
+**not** justify it with *"this is cheap globally"* — that
+framing invites a race to the bottom and ignores that the
+client is paying a local rate.
+
+**Claude Code tooling cost — added to R17 breakdown.**
+
+Claude Code subscription: **$125 USD/month** × 3 months =
+**$375 USD** × 150,000 toman/USD = **~56M toman** over the
+Package 1 window.
+
+**Decision — how Claude Code is handled commercially.** Bake
+into the fee, **not** pass-through. Reasons:
+1. Claude Code is an operator-side development tool, not a
+   client-facing service. The client does not use it and does
+   not know what it is. It is analogous to a JetBrains
+   license, a cloud dev environment, or a GitHub Copilot
+   subscription.
+2. Iranian SMBs will not understand an "AI subscription"
+   line item in a pass-through schedule, and surfacing it
+   risks confusing or alarming the client.
+3. Pass-through as a category should be limited to
+   infrastructure the client actually owns or uses: domain,
+   server, SMS credits, object storage. Operator tooling is
+   cost of doing business.
+
+**Decision — Package 1 fee target revision for tooling cost.**
+R17's 280–300M target was computed on labor only and did not
+account for the ~56M toman Claude Code line. Applying the
+tooling cost to the operator's effective rate drops it
+by roughly ~20% unless the fee compensates. The honest
+correction is to **raise the Package 1 fee target band to
+320–340M toman** to preserve the operator's effective net
+compensation at the originally-intended level.
+
+- **Revised target:** **320–340M toman** (was 280–300M).
+- **Revised floor:** **260M toman** (was 220M). Below 260M
+  the operator is working at a discount after tooling, which
+  is not sustainable for Shape C scope with solo bus-factor.
+- **Revised tactical opening:** **360M toman** (was 320M).
+  Maintains the same ~10–12% headroom above target for
+  negotiation.
+- **Payment triggers:** unchanged — 25/25/25/25 on R11's
+  four visible events.
+
+The 280–300M band from R17 is now the **fallback target** if
+the operator decides to absorb the Claude Code cost personally
+(for strategic reasons, e.g. wanting to land the first Zhic
+engagement even at a reduced margin). That absorption must be
+a deliberate operator choice, not a silent default.
+
+**Package 2 band.** The 500–800M non-binding band from R17 is
+not adjusted here. Package 2 tooling costs will be re-
+evaluated at the R11 Commerce Pricing Checkpoint using the
+then-current Claude Code pricing.
+
+**Solo vs. hire analysis for Package 1.**
+
+The operator's stated preference is to build Package 1 solo
+but is open to considering a hire. R18 evaluates this as a
+commercial decision, not a personal-preference decision.
+
+*Package 1 work breakdown (~17 effort-weeks, Generous scope):*
+- Design system / frontend primitives / GSAP animation: ~6 wks
+- Payload 3 setup + schema + content model + admin: ~5 wks
+- Pillar + category page assembly + SEO surface: ~3 wks
+- Infrastructure / DevOps / deploy / monitoring: ~2 wks
+- Intake form, editorial workflow, integration polish: ~1 wk
+
+A realistic hire on the Iranian market for this work:
+- **Junior dev**: ~30–40M toman/month × 3 = **90–120M toman**
+  total. Can absorb frontend assembly + pillar/category page
+  builds. Cannot be left alone with schema or commerce.
+- **Mid-level dev**: ~50–70M toman/month × 3 =
+  **150–210M toman** total. Can own a vertical slice
+  (e.g. Payload schema + admin, or frontend + animations).
+  Requires ~20% of operator time for onboarding and review
+  in weeks 1–2.
+- **Senior peer**: ~80–100M toman/month × 3 =
+  **240–300M toman** total. Only a senior peer genuinely
+  reduces bus-factor; juniors and mids do not, because the
+  operator still holds all critical knowledge they can't
+  back-fill for.
+
+*Three cost scenarios at revised R18 fee target (320–340M):*
+
+| Scenario | Hire cost | Fee needed | Operator net (approx) |
+|---|---|---|---|
+| Solo | 0 | 320–340M | 320–340M − 56M tooling = ~265–285M |
+| + Junior | 90–120M | 440–480M | 320–340M − 56M − managed |
+| + Mid | 150–210M | 490–560M | 320–340M − 56M − managed |
+| + Senior peer | 240–300M | 580–640M | 320–340M − 56M − managed |
+
+The "fee needed" column assumes the operator does not want to
+subsidize the hire out of the solo fee target. It preserves
+the operator's net compensation at the R18 revised level.
+
+**Three real costs of a hire that the table above does not
+capture:**
+1. **Coordination overhead.** Two people do *not* finish
+   Package 1 in 1.5 months. Realistic speed-up is 1.1–1.3x,
+   not 2x, because of onboarding, review cycles, merge
+   conflicts, and handoff friction. A 3-month calendar becomes
+   maybe 2.5 months.
+2. **Bus-factor is not reduced by juniors or mids.** Only a
+   senior peer who could finish the engagement alone actually
+   reduces bus-factor. A junior or mid hire is a speed hire,
+   not a risk hire, and does not let R16's 3-week/6-week
+   client exit clauses soften.
+3. **The operator becomes a manager.** Solo time becomes
+   review/supervise/unblock time. For an operator whose
+   strength and preference is hands-on building, this is a
+   meaningful context-switch tax and can slow overall throughput
+   in weeks 1–3 even if it speeds it up in weeks 4–12.
+
+**Decision — recommendation against hiring for Package 1.**
+The operator should build Package 1 solo. Reasons:
+
+1. **The commercial math barely works and only if the client
+   accepts a meaningfully higher fee.** Hiring a mid-level dev
+   for Package 1 requires raising the fee target to ~490–560M
+   toman. That pushes the client total out-of-pocket (fee +
+   infrastructure + domain) past ~600M toman, which the
+   operator's earlier client-budget read does not support.
+2. **Bus-factor protection from a junior or mid-level hire is
+   illusory.** Only a senior peer genuinely reduces solo
+   bus-factor, and the cost of a senior peer puts the fee
+   beyond what the client will absorb for Package 1.
+3. **R16's 3-week transparency check and 6-week client exit
+   option are the honest bus-factor mitigation for Package 1**,
+   not a hire. Those clauses are cheaper for everyone and
+   they already exist in the contract design.
+4. **The operator's throughput advantage is in solo deep work**,
+   not in managing a small team for a 3-month engagement. The
+   context-switch tax of becoming a manager in weeks 1–3 is
+   likely to eat any speed-up a hire would bring until late
+   in the engagement.
+5. **Package 2 is the right place to re-evaluate hiring.** The
+   500–800M toman band has room to absorb a hire, the scope
+   (Shape C commerce) splits cleanly into backend/frontend/
+   DevOps verticals, and the operator will have proven their
+   ability to deliver solo on Package 1 before committing to
+   a team structure. Hiring for Package 2 is an **open
+   decision**, not a deferred one — it will be resolved at
+   the R11 Commerce Pricing Checkpoint alongside the Package 2
+   firm price.
+
+**Decision — Package 2 hire posture (non-binding flag).** At
+the R11 Commerce Pricing Checkpoint, one of the questions the
+operator must answer is *"am I building Package 2 solo, or
+with at least one hire?"* This decision drives the firm
+Package 2 number inside the 500–800M band. If the operator
+decides to hire for Package 2, the firm number is likely to
+land in the upper half of the band (650–800M); if solo, in
+the lower half (500–650M). This is a non-binding flag, not a
+commitment — R14's revisable-sketch clause still applies.
+
+**How a future Claude should apply R18.**
+- R18 **supersedes R17 on Package 1 fee targets.** The active
+  numbers are now 320–340M target / 260M floor / 360M
+  opening. R17's 280–300M / 220M / 320M numbers are the
+  **fallback** target if the operator deliberately chooses
+  to absorb Claude Code cost. A fresh Claude drafting the
+  master agreement must use the R18 numbers by default.
+- R18 does **not** change R17's infrastructure pass-through
+  schedule, the commercial handling of infrastructure, or
+  the Package 2 non-binding band. Those stand.
+- Claude Code is **never** a pass-through line in the client
+  master agreement. If a future Claude finds a draft putting
+  "Claude subscription" or "AI tooling" in the client
+  pass-through schedule, treat it as a drafting error and
+  move it into the operator's internal P&L.
+- "Solo for Package 1, re-evaluate for Package 2" is the
+  **binding** team-structure decision. A fresh Claude should
+  not re-litigate it for Package 1 without new operator input.
+- The fairness analysis is **operator-facing background**,
+  not client-facing contract text. A fresh Claude drafting
+  the master agreement should never write phrases like "this
+  is below global market rate" or "the operator is accepting
+  a local-rate discount" in the client document. The number
+  stands on its own as senior Iranian consulting rate.
+
 **How a future Claude should apply this.**
 - R16 is not a new set of scope decisions. It is the **close of
   the decision phase** for this contract conversation. Any
@@ -2502,10 +2737,19 @@ same session.
 - ✅ **Thread 2 — Master milestone shape** (R10–R16)
 - ✅ **Thread 3 — Risks** — consolidated into R16 and into the
   "Risks named in the contract" section of the revised `roadmap.md`.
-- ✅ **Pricing & infrastructure costs** (R17) — Package 1 target
-  280–300M toman, floor 220M, tactical opening 320M; Package 2
-  non-binding band 500–800M toman; infrastructure pass-through
-  at cost.
+- ✅ **Pricing & infrastructure costs** (R17) — initial
+  Package 1 target 280–300M toman, floor 220M, tactical opening
+  320M; Package 2 non-binding band 500–800M toman;
+  infrastructure pass-through at cost.
+- ✅ **Worldwide fairness + Claude Code tooling + solo-vs-hire
+  posture** (R18) — **supersedes R17 on Package 1 fee
+  numbers**: revised target 320–340M toman, floor 260M,
+  tactical opening 360M (raised to absorb ~56M toman Claude
+  Code cost over 3 months). Package 2 band unchanged. Solo
+  for Package 1; hire re-evaluated at R11 Commerce Pricing
+  Checkpoint for Package 2. Worldwide fairness: target is
+  fair-to-high locally, 5–30x below global senior rates —
+  structural local-rate choice, not a negotiation position.
 
 **🔴 unilateral decisions status:** defaulted or deferred per R16.
 Tracked in the "Deferred operator decisions" appendix in the revised
