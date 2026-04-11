@@ -2189,6 +2189,199 @@ R-entry. The canonical risks to carry forward:
 **Thread 2 closed.** Canonical doc revision begins in the same
 session, against R1–R16.
 
+---
+
+### R17 — Infrastructure costs, pass-through handling, and final Package 1/2 pricing targets (2026-04-11)
+
+**Context.** R1–R16 closed the deal-mechanics, scope, and
+acceptance questions but deliberately left the actual toman
+numbers open. The operator asked to "talk realistic" on Package 1
+pricing and to factor in two concrete cost items the client will
+see on their invoice regardless of who pays: the domain
+`zhicwood.com` (quoted at **$620 USD**) and server hosting inside
+Iran vs. outside.
+
+**Cost research (2026-04-11, web search + stated figures).**
+
+*Domain.* `zhicwood.com` at **$620 USD** — operator-reported
+price. Direct verification against a marketplace listing was
+attempted and failed (403 on the domain itself; marketplace
+searches for GoDaddy / Afternic / Sedo did not surface the exact
+listing during this session). The number is accepted as
+operator-reported and should be re-confirmed at the point of
+purchase. At a rough ~65,000 toman/USD that is **~40M toman
+one-time**, which is the single biggest infrastructure line item
+in Package 1 — larger than three months of server cost combined.
+
+*Iranian VPS options (production-grade, self-hosted Postgres +
+Payload + Plausible + Glitchtip co-located on one box per
+`README.md`).*
+- **ParsVDS NVMe (Iran).** Entry tier ~220,000 toman/month as of
+  late 2025; a production-sized box (≈4 vCPU / 8 GB / NVMe) lands
+  in the **2–4M toman/month** range.
+- **ArvanCloud VPS (Iran).** Published plans start around
+  **$90/month** for equivalent specs; billed in IRR, priced to
+  USD.
+- **Hetzner CPX31 (Germany).** EUR 16.49/month currently, rising
+  ~April 2026 to roughly $24.99/month. 4 AMD vCPU / 8 GB /
+  160 GB NVMe / 20 TB traffic. **~1.5–2M toman/month.** Cheapest
+  by a wide margin, but only viable if Hetzner signup from Iran
+  actually works — this is an open verification item in
+  `README.md` under "Open verification items before Phase 1
+  starts" and must be confirmed before Package 1 signing, because
+  the hosting line in the client-facing infrastructure budget
+  differs by **~2x** between the two paths.
+
+*Other infrastructure for the 3-month Package 1 window.*
+- Object storage (Hetzner Object Storage EU or a domestic
+  S3-compatible store): ~300–500k toman/month.
+- Kavenegar SMS credits (launch-volume pre-paid bundle): ~1M
+  toman one-time.
+- Payment gateway setup fees: typically zero; per-transaction
+  cut is taken out of customer payments, not billed to the
+  operator or client.
+- TLS / DNS / registrar renewals past the `zhicwood.com`
+  purchase: negligible in year one.
+- Glitchtip, Plausible, Listmonk: self-hosted on the same VPS,
+  no separate line item.
+
+*Rolled up for 3 months of Package 1 delivery.*
+- Domain (one-time): ~40M toman.
+- VPS — Hetzner path, 3 months: ~5M toman.
+- VPS — Iranian-domestic path, 3 months: ~8–12M toman.
+- Storage + SMS credits + misc: ~3–5M toman.
+- **Total infrastructure: ~48–58M toman, dominated by the
+  domain.**
+
+**Decision — commercial handling of infrastructure.**
+Infrastructure is **pass-through at cost**, billed to the client
+directly (where possible) or reimbursed against receipts. Not
+bundled into the Package 1 fee. The single exception is object
+storage for the Package 1 window, which may be bundled as a
+convenience so the client does not need to set up a second
+vendor relationship before launch.
+
+Rationale:
+1. The $620 domain is a **client-owned business asset**. The
+   operator should never be carrying it on their books.
+2. Bundling pass-through costs into the fee inflates the headline
+   number the client sees for zero operator margin — it makes
+   the engagement look more expensive than it is.
+3. Registering `zhicwood.com` in the client's name from day one
+   removes any "who owns the URL" fight later. This must be in
+   the master agreement.
+4. Iranian SMBs are comfortable with itemized pass-through for
+   infrastructure they understand (domain, server, SMS). It is
+   the honest framing.
+
+**Decision — Package 1 pricing targets (fee only, infra
+excluded).**
+- **Target:** **280–300M toman** for Generous Package 1 (R12),
+  delivered over approximately 3 calendar months in parallel
+  with Discovery (R10).
+- **Floor:** **220M toman.** Below this, the operator walks
+  away — the engagement is not worth the risk at Shape C scope
+  with solo bus-factor.
+- **Tactical opening number:** **320M toman.** Gives explicit
+  room to negotiate down to target without touching the floor.
+- **Payment triggers:** unchanged from R11 — 25/25/25/25 on the
+  four visible events (signing / landing-page internally
+  reachable / Commerce Pricing Checkpoint / Package 1 close).
+
+Rationale for the target band:
+- ~17 effort-weeks of work at Generous Package 1 scope (R12
+  content-ownership split).
+- Solo-operator premium for Shape C scope (R13) carrying the
+  full commerce path: cart, checkout, gateway, factor, returns,
+  promotions, gift cards, delivery-step SMS.
+- R15 acceptance model puts the operator on a real
+  owner-performed Shape R review inside Iran, not a developer
+  self-check — the issues-cap structure has real rework risk
+  that must be priced in.
+- R16 bus-factor mitigation (3-week transparency check, 6-week
+  client exit option) protects the client but does not reduce
+  the operator's exposure to unbilled rework; that exposure is
+  priced into the target band.
+
+The operator's stated comfort range was 100–300M toman. 100M is
+**below floor** and must not be accepted for Generous Package 1
+scope. If the client can only carry 100–150M toman, the honest
+move is to renegotiate the Package 1 **scope** — for example,
+drop from Generous (R12) to Standard (core + editorial +
+journal only, no pillar/category/events/intake), which would
+justify a 120–160M toman target. That scope change is an R-entry
+in its own right and must not be done silently.
+
+**Decision — Package 2 non-binding budget band (in master
+agreement).**
+- **500–800M toman** as the **non-binding indicative band** for
+  Shape C Package 2 (R13) in the master agreement under R14's
+  revisable-sketch clause.
+- Firm Package 2 number is set at the Commerce Pricing
+  Checkpoint (R11) after Discovery outputs land, and may fall
+  inside or outside this band depending on what Discovery
+  surfaces.
+- If the firm number exceeds the top of the band, R11's
+  exit-ramp clause applies: the client may walk away from
+  Package 2 with Package 1 delivered and paid, and the
+  engagement ends there.
+
+**Decision — where these numbers live in the canonical docs.**
+- `roadmap.md` (revised): the Package 1 target / floor / opening
+  numbers go in the Package 1 commercial section, and the
+  Package 2 non-binding band goes in the Package 2 commercial
+  section, both flagged as **operator-facing — not for client
+  document**.
+- The **client-facing master agreement** shows only:
+  - Package 1 fixed fee (the agreed-to number after negotiation,
+    expected to land in the 280–300M target band).
+  - Package 2 non-binding budget band (500–800M toman) with the
+    revisable-sketch clause and the Commerce Pricing Checkpoint
+    language.
+  - Infrastructure as a separate itemized pass-through schedule,
+    not a line in the fee.
+- The `docs/package-signoffs/` stub directory (R15) is also
+  where the signed infrastructure receipt / pass-through
+  reconciliation lives once Package 1 closes.
+
+**Operator action items before signing.**
+1. Re-verify `zhicwood.com` is still listed at $620 USD at the
+   moment of purchase; reserve it under the client's registrant
+   details, not the operator's.
+2. Confirm Hetzner signup from Iran works (`README.md` open
+   verification item) or commit to the Iranian-domestic VPS
+   path; the answer changes the infrastructure line in the
+   client-facing pass-through schedule by ~2x.
+3. Confirm Kavenegar account + test SMS flow (`README.md` open
+   verification item); this drives the SMS credit line in the
+   pass-through schedule.
+4. Confirm which payment gateway the business already has a
+   merchant account with — per `README.md` that one wins by
+   default and removes the Package 3 gateway-selection risk.
+5. Decide which VPS path (Hetzner vs. ParsVDS vs. ArvanCloud) is
+   carried in the client-facing pass-through schedule, and
+   write it as a named row with the monthly toman figure, not a
+   range. Ranges feel evasive in a commercial document.
+
+**How a future Claude should apply R17.**
+- The target / floor / opening numbers in R17 are **operator
+  negotiation posture**, not client-facing contract text. A
+  future Claude revising `roadmap.md` must put them in an
+  operator-only section and must not expose the 320M opening,
+  220M floor, or the 500–800M Package 2 band to the
+  client-facing master agreement draft.
+- The infrastructure pass-through schedule **is** client-facing.
+  A future Claude drafting the master agreement must show the
+  domain, the VPS, the SMS credit, and the storage as itemized
+  rows with current prices, not a lump sum.
+- R17 does not override R11's Commerce Pricing Checkpoint. The
+  Package 2 firm number is still set at the checkpoint. R17
+  only puts a non-binding range around it.
+- If the operator negotiates below floor (220M) in a future
+  session, a fresh Claude reading this file should treat that as
+  a **scope change**, not a price change, and ask which Package
+  1 scope sub-clauses are being dropped to justify it.
+
 **How a future Claude should apply this.**
 - R16 is not a new set of scope decisions. It is the **close of
   the decision phase** for this contract conversation. Any
@@ -2207,8 +2400,9 @@ session, against R1–R16.
 
 ## Session progress / resume marker
 
-**Last touched:** 2026-04-11, discussion phase closed at R16.
-Canonical doc revision began in the same session.
+**Last touched:** 2026-04-11, discussion phase closed at R16,
+pricing / infrastructure cost decisions added as R17 in the
+same session.
 
 **Threads completed:**
 - ✅ **Thread 1 — Deal mechanics** (R1–R5)
@@ -2216,6 +2410,10 @@ Canonical doc revision began in the same session.
 - ✅ **Thread 2 — Master milestone shape** (R10–R16)
 - ✅ **Thread 3 — Risks** — consolidated into R16 and into the
   "Risks named in the contract" section of the revised `roadmap.md`.
+- ✅ **Pricing & infrastructure costs** (R17) — Package 1 target
+  280–300M toman, floor 220M, tactical opening 320M; Package 2
+  non-binding band 500–800M toman; infrastructure pass-through
+  at cost.
 
 **🔴 unilateral decisions status:** defaulted or deferred per R16.
 Tracked in the "Deferred operator decisions" appendix in the revised
