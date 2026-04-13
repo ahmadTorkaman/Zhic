@@ -9,9 +9,9 @@ calendar, the order desk, the factor desk, and the inbox.
 
 This document covers screens, roles, workflows, and the non-negotiable
 UX guardrails for the **content / catalog / commerce admin** that ships
-in Phases 1–4. The deeper CRM, ERP, and MES surfaces live in their own
+in Packages 1–2. The deeper CRM, ERP, and MES surfaces live in their own
 apps (`apps/crm`, `apps/erp`, `apps/mes`) and are scoped in their
-respective phase docs and in `discovery.md`. The factor viewer (the
+respective package docs and in `discovery.md`. The factor viewer (the
 end-user-facing one) lives in `apps/factor`; this document covers only
 the **issuing** side of factor management, which lives inside the admin.
 
@@ -55,12 +55,12 @@ access control, which is the ultimate source of truth.
 | `admin` | Founder, lead engineer | Everything, including users, settings, redirects, schema migrations, factor numbering format, payment provider config. | — |
 | `editor` | Marketing / content lead | All content CRUD, publish, schedule, manage media, manage redirects, edit SEO. | Manage users, change roles, edit `siteSettings`, change prices, manage orders. |
 | `marketing` | Marketing assistant | Draft and edit content, submit articles for review, edit SEO fields. | Publish, approve articles, change prices, manage redirects, manage users, settings, orders. |
-| `sales` | HQ sales staff | Read products and customers, create orders manually, edit customer profile, view factors. | Change prices, change product fields, manage users, publish content, issue refunds (Phase 4 may relax this). |
+| `sales` | HQ sales staff | Read products and customers, create orders manually, edit customer profile, view factors. | Change prices, change product fields, manage users, publish content, issue refunds (Package 3 may relax this). |
 | `showroom_manager` | Per-showroom manager | Everything `sales` can do, plus: manage their own showroom's stock, confirm transfers in, see their showroom's KPIs and order pipeline. | Edit other showrooms, change prices, edit catalog, manage users. |
 | `showroom_staff` | Showroom floor staff | Read catalog, create orders, look up customers, see floor stock at their location. | Edit any catalog or customer field they didn't create, edit other showrooms' data, change prices. |
 | `accountant` | Finance | Issue and void factors, run finance reports, approve refunds, edit finance-relevant `siteSettings` (factor numbering, VAT rate, bank info). | Edit catalog, publish content, manage users. |
-| `factory_supervisor` | MES — Phase 6 | Manage work orders, BOMs, routings inside `apps/mes`. | Edit `commerce` directly. |
-| `factory_worker` | MES — Phase 6 | Update work-order state from the floor inside `apps/mes`. | Anything else. |
+| `factory_supervisor` | MES — Package 4 | Manage work orders, BOMs, routings inside `apps/mes`. | Edit `commerce` directly. |
+| `factory_worker` | MES — Package 4 | Update work-order state from the floor inside `apps/mes`. | Anything else. |
 | `viewer` | Stakeholder | Read-only across the admin. | Any write. |
 | `customer` | Storefront customer | Not an admin role. Listed for completeness — customers never see the admin. | Anything in admin. |
 
@@ -118,21 +118,23 @@ CATALOG (کاتالوگ)
   · Variants overview       ← custom view
   · Reviews
 
-COMMERCE (فروش)            ← Phase 3+
+COMMERCE (فروش)            ← Package 2+
   · Customers
   · Orders                  ← custom view (the order desk)
   · Carts (live + abandoned)
   · Payments
-  · Promotions / discount codes
+  · Promotions              ← custom view (Shape C)
+  · Gift cards              ← custom view (Shape C)
   · Returns
 
-INVENTORY (موجودی)          ← Phase 3+
+INVENTORY (موجودی)          ← Package 2+
   · Stock locations
   · Stock levels
   · Stock transfers
-  · Cycle counts (Phase 5)
+  · Stock reservations      ← custom view (Shape C)
+  · Cycle counts (Package 3+)
 
-FACTORS (فاکتورها)          ← Phase 3+ (the issuing side)
+FACTORS (فاکتورها)          ← Package 2+ (the issuing side)
   · Issued factors
   · Adjustment factors
   · Voided factors
@@ -140,7 +142,7 @@ FACTORS (فاکتورها)          ← Phase 3+ (the issuing side)
 
 LOCATIONS (شوروم‌ها)
   · Showrooms
-  · Appointments            ← Phase 4
+  · Appointments            ← Package 3
 
 CONTENT (محتوا)
   · Journal articles
@@ -177,8 +179,8 @@ SETTINGS (تنظیمات)
   · Integrations            (SMS provider, payment provider, object storage)
 ```
 
-Items above marked **Phase 3+** appear in the left rail starting in
-Phase 3 when the corresponding collections exist. Showroom managers,
+Items above marked **Package 2+** appear in the left rail starting in
+Package 2 when the corresponding collections exist. Showroom managers,
 sales staff, accountants, and factory roles see only the groups
 their role is allowed to read.
 
@@ -203,7 +205,7 @@ The home screen the editor sees on login. Three stacked cards:
    - Search Console clicks/impressions last 7d.
    - Top 5 landing pages.
    - Core Web Vitals status (green/amber/red).
-4. **Commerce snapshot (Phase 3+)**
+4. **Commerce snapshot (Package 2+)**
    - Orders placed last 7d vs prior 7d (toman, Persian digits).
    - Pending orders awaiting payment / production / dispatch.
    - Today's factor count and total issued (toman).
@@ -298,7 +300,7 @@ block the save entirely.
 
 The artist follows this preset every time. We will publish it as both
 a written checklist and a downloadable Blender operator preset
-(`zhic-web-glb.py`) once Phase 2 starts.
+(`zhic-web-glb.py`) once Package 1 nears completion.
 
 Export settings (Blender → File → Export → glTF 2.0):
 
@@ -400,7 +402,7 @@ and surfaces:
 Filterable: by user, by collection, by action, by date. Diff view shows
 before/after JSON. Cannot be edited or deleted, even by admins.
 
-### 5.8 Order desk (Phase 3+)
+### 5.8 Order desk (Package 2+)
 
 The operator screen for managing real orders. Sales, showroom managers,
 showroom staff, and admins use it daily.
@@ -424,7 +426,7 @@ showroom staff, and admins use it daily.
 - Refund flow gated to `accountant` and `admin`; `showroom_manager`
   may request a refund which an accountant must approve.
 
-### 5.9 Factor desk (Phase 3+)
+### 5.9 Factor desk (Package 2+)
 
 The accountant's workspace.
 
@@ -440,7 +442,7 @@ The accountant's workspace.
 - "Void" creates a void record but leaves the original on file.
 - "Re-print" regenerates the cached PDF.
 - "Export to accounting software" exports to whatever format the
-  business's accountant uses (decided in Discovery / Phase 5).
+  business's accountant uses (decided in Discovery / Package 3+).
 
 ### 5.10 Numbering & sequences (accountant + admin only)
 
@@ -453,7 +455,7 @@ sequences.
   if the format includes the year).
 - Every change writes to `auditLog` and is gated by 2FA.
 
-### 5.11 Stock manager (Phase 3+)
+### 5.11 Stock manager (Package 2+)
 
 - Per-location stock-level grid: variant rows × location columns,
   showing on-hand, reserved, available, reorder point.
@@ -463,7 +465,71 @@ sequences.
   variants and quantities, dispatches at source.
 - Receiving screen at the destination confirms qty received,
   records discrepancies, requires accountant review on mismatch.
-- Cycle-count workflow ships in Phase 5.
+- Cycle-count workflow ships in Package 3+.
+
+### 5.12 Promotion editor (Package 2 — Shape C)
+
+Custom view for the rules-based promotion engine (`packages/promotions`,
+`data-schemas.md` §27).
+
+- List view: name, type, status (active / scheduled / expired / draft),
+  date range (Jalali), usage count, discount summary.
+- Create / edit view:
+  - Name, code (optional — auto-generated if blank).
+  - Discount type: `percentage`, `fixed_amount`, `buy_x_get_y`.
+  - Apply to: cart-level or specific collections / categories / products.
+  - Constraints: min cart total (toman), max uses, max per-customer,
+    `customerScoped` (requires login), `timeWindowed` (start/end Jalali).
+  - Stackability: whether this promo combines with others.
+- Preview panel: "test this promo on a sample cart" — pick products, see
+  the discount applied, verify the rules engine output.
+- Scope fence note in the UI: "No dynamic pricing, no behaviour-triggered
+  discounts, no A/B-tested promotions, no per-segment targeting
+  (Package 3+)."
+
+### 5.13 Gift card manager (Package 2 — Shape C)
+
+Custom view for gift card issuance and balance tracking
+(`packages/gift-cards`, `data-schemas.md` §27b–27c).
+
+- List view: code (masked), status (active / redeemed / void / expired),
+  initial balance (toman), current balance (toman), issued at (Jalali),
+  purchaser, recipient.
+- Create / bulk-create: generate N cards with a set initial balance.
+  Physical card codes can be pre-assigned.
+- Detail view: full transaction ledger (issuance, redemptions, voids)
+  with timestamps and order links.
+- "Void" action requires accountant or admin role.
+- Accountant note: tax treatment of gift cards (deferred revenue vs
+  immediate) must be confirmed in Discovery accountant schema-walk
+  before this screen goes live.
+
+### 5.14 SMS automation editor (Package 2 — Shape C)
+
+Custom view for managing delivery-step SMS templates sent via
+`packages/sms`.
+
+- List of automation triggers: `order_confirmed`, `order_shipped`,
+  `order_out_for_delivery`, `order_delivered`, `order_cancelled`,
+  `refund_initiated`.
+- Per-trigger: template text (Persian, with `{orderNumber}`,
+  `{customerName}`, `{trackingUrl}` placeholders), enabled/disabled
+  toggle, preview.
+- Send-log tab: recent sends with delivery status from Kavenegar.
+- Scope fence: no conditional logic, no user-behaviour triggers, no
+  A/B testing on message content. Package 3+ territory.
+
+### 5.15 Stock reservation debug (Package 2 — Shape C)
+
+Operational view for monitoring cart-hold reservations
+(`data-schemas.md` §27d).
+
+- List view: variant, location, qty, status (held / released / expired /
+  converted), cart/order link, created at (Jalali), expires at.
+- Filters: status, location, "expiring in < 5 min", variant.
+- Bulk release: admin can force-release stuck reservations.
+- Stats card: total held qty across all variants, average hold duration,
+  expiry sweep last-run time, conversion rate (held → order).
 
 ---
 
@@ -578,7 +644,7 @@ Total time: under 15 seconds.
    `LocalBusiness` (`FurnitureStore`) JSON-LD is emitted on the
    slug page; the index page emits an `ItemList` of all showrooms.
 
-### 7.6 Showroom staff places a walk-in order and issues a factor (Phase 3+)
+### 7.6 Showroom staff places a walk-in order and issues a factor (Package 2+)
 
 1. Showroom staff logs in (phone+OTP) on a showroom tablet.
 2. Commerce → Orders → "ثبت سفارش جدید."
@@ -599,7 +665,7 @@ Total time: under 15 seconds.
 9. Customer receives an SMS confirmation with the order number via
    `packages/sms`.
 
-### 7.7 Accountant issues an adjustment factor (Phase 3+)
+### 7.7 Accountant issues an adjustment factor (Package 2+)
 
 1. Factors → Issued factors → search by factor number.
 2. Open the factor → "Issue adjustment."
@@ -682,7 +748,7 @@ rationale.
   pluggable adapters. The wrapper is provider-agnostic; call sites
   never know which provider is configured.
 - **`packages/payments`** — ZarinPal / IDPay / Zibal. Final
-  provider chosen in Phase 3. Same wrapper pattern.
+  provider chosen in Package 2. Same wrapper pattern.
 - **Plausible (self-hosted on Hetzner)** — embedded dashboard for
   the storefront analytics tile. **No GA4.**
 - **Search Console** — embedded dashboard via API for SEO control

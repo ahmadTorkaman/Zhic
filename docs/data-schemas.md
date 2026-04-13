@@ -1,13 +1,22 @@
 # Data Schemas
 
+> **Draft status.** This document is a **working draft, to be replaced
+> by the Package 1 schema sketch grounded in real legacy data** (R6
+> deliverable #2). It should not be treated as authoritative until the
+> accountant schema-walk has happened and the Commerce Pricing
+> Checkpoint has passed. Sections marked **⏳ pending Discovery lock**
+> are especially likely to change — they contain reasonable defaults
+> that Discovery and the accountant schema-walk will validate or
+> replace.
+
 The complete data model for the Zhic platform. These schemas describe
 **every collection in every Postgres schema** that the platform writes
-to, across `services/api` (Payload) and, from Phase 6, `services/factory-api`
+to, across `services/api` (Payload) and, from Package 4, `services/factory-api`
 (Drizzle).
 
 This document is **CMS-agnostic in spirit** but written in a Payload-
 flavored shape because Payload is the planned implementation for
-Phases 1–4 (see `roadmap.md`). Field types map cleanly to most
+Packages 1–2 (see `roadmap.md`). Field types map cleanly to most
 headless CMSes.
 
 If a field is not in this document, it does not exist anywhere else in
@@ -44,15 +53,18 @@ The platform runs **one Postgres instance, multiple schemas**. See
 | --- | --- | --- |
 | `public` | `services/api` | `users`, `auditLog`, `siteSettings`, `redirects`, `media` |
 | `commerce` | `services/api` | `customers`, `addresses`, `products`, `productVariants`, `collections`, `categories`, `tags`, `materials`, `carts`, `orders`, `orderLineItems`, `payments`, `invoices`, `stockLocations`, `stockLevels`, `stockTransfers`, `stockTransferLines`, `deliveries`, `returns`, `priceHistory`, `reviews`, `promotions`, `showrooms` |
-| `crm` | `services/api` (Phase 4) | `leads`, `appointments`, `followUps`, `notes`, `pipelineStages` |
-| `erp` | `services/api` (Phase 5, possibly carved out) | `suppliers`, `purchaseOrders`, `purchaseOrderLines`, `goodsReceiptNotes`, `chartOfAccounts`, `journalEntries`, `journalEntryLines`, `staff`, `payrollExports` |
-| `mes` | `services/factory-api` (Phase 6) | `workOrders`, `boms`, `bomLines`, `routings`, `productionSchedule`, `qcGates`, `productionEvents` |
+| `crm` | `services/api` (Package 3) | `leads`, `appointments`, `followUps`, `notes`, `pipelineStages` |
+| `erp` | `services/api` (Package 3+, possibly carved out) | `suppliers`, `purchaseOrders`, `purchaseOrderLines`, `goodsReceiptNotes`, `chartOfAccounts`, `journalEntries`, `journalEntryLines`, `staff`, `payrollExports` |
+| `mes` | `services/factory-api` (Package 4) | `workOrders`, `boms`, `bomLines`, `routings`, `productionSchedule`, `qcGates`, `productionEvents` |
 | `content` | `services/api` | `pages`, `articles`, `journalCategories`, `authors`, `events`, `pressItems`, `testimonials`, `forms`, `formSubmissions`, `tradeApplications` |
 
 Cross-schema foreign keys are allowed and used heavily. Example:
 `crm.leads.customerId` references `commerce.customers.id`.
 
-### 0.2 Money
+### 0.2 Money ⏳ pending Discovery lock
+
+> Validated at the accountant schema-walk (R6 deliverable #3). Do not
+> freeze in the commerce codebase until the schema-walk confirms.
 
 - **All money is stored as integer rials.** Field type is `bigint`,
   unit is the rial minor unit (which for Iran is just the rial — there
@@ -129,8 +141,8 @@ sales              HQ sales staff
 showroom_manager   per-showroom manager
 showroom_staff     showroom floor staff
 accountant         finance
-factory_supervisor MES — Phase 6
-factory_worker     MES — Phase 6
+factory_supervisor MES — Package 4
+factory_worker     MES — Package 4
 customer           public storefront customer
 ```
 
@@ -193,7 +205,7 @@ Global config editable by admins.
 | `factorVatRate` | number | Default VAT rate (percent), e.g. `9` |
 | `defaultCurrency` | enum | Always `IRR` in v1; reserved for future |
 | `defaultLocale` | enum | Always `fa-IR` in v1 |
-| `paymentProvider` | enum | `zarinpal` / `idpay` / `zibal` — chosen Phase 3 |
+| `paymentProvider` | enum | `zarinpal` / `idpay` / `zibal` — chosen Package 2 |
 | `smsProvider` | enum | `kavenegar` / `mellipayamak` / `ghasedak` — first is `kavenegar` |
 | `objectStorageBucket` | text | Hetzner / domestic Iranian S3 bucket name |
 | `featureFlags` | jsonb | Reserved for staged rollouts |
@@ -385,7 +397,7 @@ Drives the WebXR / 3D viewer on the product detail page.
 `Product` schema with `name`, `image`, `description`, `sku`, `brand:
 "Zhic"`, `material`, and `offers` group.
 
-**From Phase 3 onward**, the `offers` group is a real `Offer` with
+**From Package 2 onward**, the `offers` group is a real `Offer` with
 `priceCurrency: "IRR"`, `price: <basePriceRials>`, and an
 `availability` field mapped from the `availability` enum:
 `in_stock` → `https://schema.org/InStock`,
@@ -393,7 +405,7 @@ Drives the WebXR / 3D viewer on the product detail page.
 `backorder` → `https://schema.org/BackOrder`,
 `discontinued` → `https://schema.org/Discontinued`.
 
-In Phases 1–2 (before checkout exists) the `offers` group emits
+In Package 1 (before checkout exists) the `offers` group emits
 guidance pricing only and the `url` points to the inquiry CTA.
 
 ## §13 `productVariants`
@@ -527,7 +539,13 @@ issues an adjustment invoice (§19), never an order edit.
 | `internalNotes` | richText | no | Staff-only |
 | `customerNotes` | textarea | no | Customer-supplied delivery notes |
 
-### §16.1 Order lifecycle
+### §16.1 Order lifecycle ⏳ pending Discovery lock
+
+> These states are **invented defaults** (decision #9). Discovery must
+> overwrite them. Whatever the existing showroom managers app calls
+> these states is what we should match, because that's the staff
+> vocabulary. Do not implement in the commerce codebase until the
+> Discovery workflow map confirms the actual lifecycle.
 
 ```
 draft → placed → confirmed → in_production → ready → out_for_delivery → delivered
@@ -540,8 +558,8 @@ draft → placed → confirmed → in_production → ready → out_for_delivery 
 - `placed` — created by storefront checkout. Awaits payment
   confirmation.
 - `confirmed` — payment captured, stock reserved.
-- `in_production` — set by `apps/mes` (Phase 6) for made-to-order.
-  In Phases 3–5 it's set manually by sales when relevant.
+- `in_production` — set by `apps/mes` (Package 4) for made-to-order.
+  In Packages 2–3 it's set manually by sales when relevant.
 - `ready` — finished goods available at the dispatching location.
 - `out_for_delivery` — handed to courier / driver.
 - `delivered` — confirmed received by customer.
@@ -601,7 +619,13 @@ Records of payment attempts and captures via `packages/payments`.
 
 Indexes: `orderId`, `providerReference` unique.
 
-## §19 `invoices` (factors)
+## §19 `invoices` (factors) ⏳ pending Discovery lock
+
+> Factor numbering format, legal template, tax fields, and the
+> immutability + adjustment-factor pattern (decision #10) are all
+> **pending the accountant schema-walk** (R6 deliverable #3). Do not
+> freeze in the commerce codebase until validated. Also pending
+> Package 2 signing per R11.
 
 Legal Persian invoice document. **Immutable once issued.** A
 correction issues a new invoice with `parentInvoiceId` set; the
@@ -622,7 +646,7 @@ original stays on file.
 | `lineItems` | jsonb | yes | Frozen copy of order lines |
 | `subtotalRials` | bigint | yes | |
 | `discountRials` | bigint | yes | |
-| `vatRails` | bigint | yes | |
+| `vatRials` | bigint | yes | |
 | `totalRials` | bigint | yes | |
 | `totalInWordsFa` | text | yes | Persian "amount in words" for legal copies |
 | `pdfMediaId` | relation → `media` | no | Cached rendered PDF |
@@ -672,7 +696,12 @@ Per-(location, variant) on-hand and reserved counts.
 
 Unique on `(stockLocationId, productVariantId)`.
 
-## §22 `stockTransfers` & `stockTransferLines`
+## §22 `stockTransfers` & `stockTransferLines` ⏳ pending Discovery lock
+
+> The two-phase confirm (dispatched → received) is a reasonable
+> default (decision #12), but the existing app might use single-step
+> transfers. Discovery decides. Do not freeze in the commerce
+> codebase until the legacy app's actual behavior is mapped.
 
 Movement of stock between locations. Transfers go through a
 two-phase confirm: dispatched at source, received at destination.
@@ -780,9 +809,13 @@ No update, no delete. Indexes on `(subjectKind, subjectId, changedAt)`.
 | `publishedAt` | datetime | no | |
 
 Approved reviews feed `AggregateRating` JSON-LD on the parent
-product (Phase 4+).
+product (Package 3+).
 
-## §27 `promotions`
+## §27 `promotions` (Package 2 — Shape C rules-based engine)
+
+> ⏳ pending Package 2 signing. Shape C scope per R13. Scope fence:
+> no dynamic pricing, no user-behavior-triggered discounts, no
+> A/B-tested promotions, no per-segment targeting (Package 3).
 
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |
@@ -792,14 +825,90 @@ product (Phase 4+).
 | `bannerCta` | group { label, href } | no | |
 | `startsAt` | datetime | yes | |
 | `endsAt` | datetime | yes | |
-| `appliesTo` | enum | yes | `all`, `collection`, `category`, `product` |
+| `appliesTo` | enum | yes | `all`, `collection`, `category`, `product`, `customer` |
 | `targetIds` | text[] | no | Depending on appliesTo |
-| `discountType` | enum | yes | `percent`, `fixed_rials` |
+| `discountType` | enum | yes | `percent`, `fixed_rials`, `buy_x_get_y` |
 | `discountValue` | number | yes | percent integer or rial integer |
+| `buyQty` | number | no | For `buy_x_get_y`: purchase quantity |
+| `getQty` | number | no | For `buy_x_get_y`: free/discounted quantity |
 | `minimumOrderRials` | bigint | no | |
 | `maxUses` | number | no | |
 | `usesCount` | number | auto | |
 | `active` | boolean | auto | `now ∈ [starts, ends] && usesCount < maxUses` |
+| `customerScoped` | boolean | no | If true, `targetIds` references customer IDs |
+| `timeWindowed` | boolean | no | Display countdown if true |
+
+## §27b `giftCards` (Package 2 — Shape C)
+
+> ⏳ pending Package 2 signing and accountant schema-walk confirmation
+> of gift-card tax treatment under Iranian VAT (R13). Gift card
+> issuance *workflows* (who issues, under what approval) are Package 3
+> scope — Package 2 provides the tool only.
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `code` | text | yes (unique) | Redeemable code |
+| `initialBalanceRials` | bigint | yes | |
+| `currentBalanceRials` | bigint | yes | Decremented on redemption |
+| `issuedByUserId` | relation → `users` | yes | |
+| `issuedAt` | datetime | yes | |
+| `issuedToCustomerId` | relation → `customers` | no | Named recipient if any |
+| `expiresAt` | datetime | no | |
+| `status` | enum | yes | `active`, `exhausted`, `expired`, `voided` |
+
+Indexes: `code` unique, `(issuedToCustomerId)`.
+
+Hooks:
+
+- On redemption at checkout: decrement `currentBalanceRials`, write to
+  `auditLog`. If balance reaches zero, status → `exhausted`.
+- On expiry: nightly job sets status → `expired` where
+  `expiresAt < now()` and `status = 'active'`.
+- Gift card redemptions appear as a line in the factor (invoice).
+  Tax treatment is per the accountant's schema-walk decision.
+
+## §27c `giftCardTransactions` (Package 2 — Shape C)
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `giftCardId` | relation → `giftCards` | yes | |
+| `orderId` | relation → `orders` | no | Null for issuance, set for redemption |
+| `type` | enum | yes | `issuance`, `redemption`, `void` |
+| `amountRials` | bigint | yes | Positive for issuance, negative for redemption |
+| `balanceAfterRials` | bigint | yes | Running balance snapshot |
+| `at` | datetime | yes | |
+
+Append-only. No update, no delete.
+
+## §27d `stockReservations` (Package 2 — Shape C)
+
+> ⏳ pending Discovery lock. The legacy app may already have a
+> reservation concept; if so, the window should match staff
+> expectations. Default 15 minutes, configurable in site settings.
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `productVariantId` | relation → `productVariants` | yes | |
+| `stockLocationId` | relation → `stockLocations` | yes | |
+| `sessionToken` | text | no | For anonymous carts |
+| `customerId` | relation → `customers` | no | For logged-in carts |
+| `qty` | number | yes | |
+| `reservedAt` | datetime | yes | |
+| `expiresAt` | datetime | yes | Default: `reservedAt + 15 minutes` |
+| `status` | enum | yes | `active`, `converted`, `expired` |
+| `orderId` | relation → `orders` | no | Set when reservation converts to a confirmed order |
+
+Indexes: `(productVariantId, stockLocationId, status)`,
+`(expiresAt, status)` for the expiry sweep.
+
+Hooks:
+
+- On reservation: decrement `available` in `stockLevels` (available =
+  onHand − reserved − active reservations).
+- On expiry (sweep job every 60 seconds): set status → `expired`,
+  release the reserved qty back to available pool.
+- On order confirmation: set status → `converted`, link `orderId`.
+  The reserved qty moves from reservation to order-level stock hold.
 
 ## §28 `showrooms`
 
@@ -835,7 +944,7 @@ and `openingHoursSpecification`. See `seo.md` §5.
 
 ---
 
-# Schema: `crm` (Phase 4)
+# Schema: `crm` (Package 3)
 
 Stub-level schemas. Final shape comes from Discovery (`discovery.md`).
 Listed here so the cross-schema FK contracts are visible.
@@ -867,7 +976,7 @@ configurability are decided once interviews are done.
 
 ---
 
-# Schema: `erp` (Phase 5)
+# Schema: `erp` (Package 3+)
 
 Stub. Final shape determined with the business's accountant before
 any code. Includes:
@@ -883,7 +992,7 @@ any code. Includes:
 
 ---
 
-# Schema: `mes` (Phase 6)
+# Schema: `mes` (Package 4)
 
 Stub. Owned by `services/factory-api` via Drizzle (not Payload).
 Includes:
@@ -1208,13 +1317,13 @@ content:
 
   events ─── commerce.products, commerce.showrooms, media
 
-crm (Phase 4):
+crm (Package 3):
   leads ─┬─ commerce.customers
          ├─ commerce.products
          ├─ commerce.showrooms
          └─ public.users (assigned)
 
-mes (Phase 6, factory-api / Drizzle):
+mes (Package 4, factory-api / Drizzle):
   workOrders, boms, routings, productionEvents
   ↑ event contract ↓
   commerce.stockLevels (via services/api consumer)

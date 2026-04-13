@@ -11,8 +11,8 @@ are the upstream decisions.
 
 Nothing here describes code that exists yet. Today the repo is a single
 Next.js 16 app at the root (`src/app/page.tsx` and friends). The target
-state below is what Phase 1 stands up and every later phase extends. The
-existing mockup becomes `apps/web` during the Phase 1 monorepo split; no
+state below is what Package 1 stands up and every later package extends. The
+existing mockup becomes `apps/web` during the Package 1 monorepo split; no
 code is thrown away.
 
 ---
@@ -23,14 +23,14 @@ code is thrown away.
 zhic/
 ├── apps/
 │   ├── web/            # Public storefront — Persian-first, RTL, SEO-tuned
-│   ├── crm/            # Sales + showroom operations (Phase 4)
-│   ├── erp/            # Inventory, finance, procurement, HR-lite (Phase 5)
-│   ├── mes/            # Factory floor, work orders, production (Phase 6)
-│   └── factor/         # Standalone invoice (فاکتور) viewer / printer (Phase 3+)
+│   ├── crm/            # Sales + showroom operations (Package 3)
+│   ├── erp/            # Inventory, finance, procurement, HR-lite (Package 3+)
+│   ├── mes/            # Factory floor, work orders, production (Package 4)
+│   └── factor/         # Standalone invoice (فاکتور) viewer / printer (Package 2+)
 │
 ├── services/
-│   ├── api/            # Payload 3 + REST + built-in admin UI (Phase 1–4)
-│   └── factory-api/    # Hono/Fastify + Drizzle for MES (Phase 6)
+│   ├── api/            # Payload 3 + REST + built-in admin UI (Packages 1–3)
+│   └── factory-api/    # Hono/Fastify + Drizzle for MES (Package 4)
 │
 ├── packages/
 │   ├── design-system/  # Tokens, theme, Tailwind preset, RTL-aware
@@ -43,6 +43,8 @@ zhic/
 │   ├── sms/            # Provider-agnostic wrapper (Kavenegar first)
 │   ├── payments/       # Provider-agnostic wrapper (ZarinPal / IDPay / Zibal)
 │   ├── invoices/       # Factor number generation, PDF/HTML templates
+│   ├── promotions/     # Rules-based promotion engine (Package 2 — Shape C)
+│   ├── gift-cards/     # Gift card issuance, balance, redemption (Package 2 — Shape C)
 │   ├── types/          # Shared domain types (re-exported by api-client)
 │   └── config/         # Shared tsconfig, eslint, prettier, tailwind presets
 │
@@ -115,7 +117,7 @@ The root `package.json` holds:
   `pnpm typecheck`) that fan out to every workspace package.
 - No application code. No src/ at the root.
 
-When the monorepo split happens in Phase 1, the existing `src/` and
+When the monorepo split happens in Package 1, the existing `src/` and
 `public/` at the repo root move wholesale into `apps/web/` and the root
 is slimmed to the layout above.
 
@@ -148,7 +150,7 @@ app communication goes through `services/api` via `packages/api-client`.
 - **Current state:** the existing root `src/` is the placeholder
   for this app.
 
-### `apps/crm` — Sales + showroom operations (Phase 4)
+### `apps/crm` — Sales + showroom operations (Package 3)
 
 - **Audience:** showroom managers, showroom sales staff, HQ sales.
 - **What it shows:** customer 360°, leads pipeline, follow-ups,
@@ -157,12 +159,12 @@ app communication goes through `services/api` via `packages/api-client`.
 - **Design language:** functional, high-density, tablet-friendly. Not
   atelier-luxury. Uses `packages/ui` components tuned for operator work.
 - **Scope comes from Discovery.** Nothing in this app is built until
-  `discovery.md` is filled in. See `roadmap.md` Phase 0.5.
+  `discovery.md` is filled in. See `roadmap.md` Discovery workstream.
 - **Whether a separate `apps/showroom` app is spun out from `apps/crm`**
   is a decision held open until Discovery tells us whether HQ sales and
   showroom managers need different apps or just different roles in one.
 
-### `apps/erp` — Inventory, finance, procurement, HR-lite (Phase 5)
+### `apps/erp` — Inventory, finance, procurement, HR-lite (Package 3+)
 
 - **Audience:** accountants, purchasing, HR admin, HQ ops.
 - **What it shows:** inventory ledger with valuation and transfers,
@@ -173,7 +175,7 @@ app communication goes through `services/api` via `packages/api-client`.
   any collections are defined. Iran-specific fiscal rules and the
   existing accounting software exports drive the chart of accounts.
 
-### `apps/mes` — Factory floor (Phase 6)
+### `apps/mes` — Factory floor (Package 4)
 
 - **Audience:** production planners, floor supervisors, line workers.
 - **What it shows:** work orders, BOMs, routings, production
@@ -191,15 +193,15 @@ app communication goes through `services/api` via `packages/api-client`.
   platform.
 - **What it shows:** one thing — a factor. Fast, printable, phone-safe,
   minimal chrome. Deep-linkable via signed URL.
-- **Phasing:** Phase 3 ships the minimum (a print-ready route reachable
-  from `apps/web` and the admin). Phase 6 matures it into its own
+- **Phasing:** Package 2 ships the minimum (a print-ready route reachable
+  from `apps/web` and the admin). Package 4 matures it into its own
   subdomain with signed access tokens for external recipients.
 
 ### The "admin app" question
 
 There is no `apps/admin` in the initial layout. The reason:
 
-- Payload 3 ships with a capable built-in admin UI. For Phase 1–4 that
+- Payload 3 ships with a capable built-in admin UI. For Packages 1–3 that
   UI is the admin, served from `services/api` and exposed publicly at
   `admin.zhic.ir` via a reverse-proxy rewrite (Caddy maps the subdomain
   to the `/admin` path on `services/api`'s internal port).
@@ -225,14 +227,16 @@ it is split. Packages never import apps; apps import packages.
 | --- | --- | --- |
 | `design-system` | Design tokens, Tailwind preset, typography stack, color system, spacing scale, motion language, RTL rules. | Consumed by every app's Tailwind config. Tokens are the source of truth; components build on top. |
 | `ui` | Reusable React components that wrap design tokens into real elements: buttons, inputs, tables, modals, toasts, dialogs, navs. | Never hard-codes a color or spacing — everything goes through `design-system` tokens. |
-| `db` | The Postgres schema (collections + migrations), a shared Postgres client, seed scripts. | In Phase 1–4 the schema is *declared* via Payload collections in `services/api`; `db` holds generated types and low-level helpers. In Phase 5+ when `services/factory-api` ships, `db` also declares the `mes` schema via Drizzle. |
+| `db` | The Postgres schema (collections + migrations), a shared Postgres client, seed scripts. | In Packages 1–3 the schema is *declared* via Payload collections in `services/api`; `db` holds generated types and low-level helpers. In Package 4 when `services/factory-api` ships, `db` also declares the `mes` schema via Drizzle. |
 | `auth` | Sessions, cookies, phone+OTP helpers, role checks, domain-scoped cookie helpers so login works across subdomains. | Session cookie is scoped to `.zhic.ir` (parent domain) so `web`, `crm`, `erp`, `mes` all share it. |
 | `api-client` | A typed client that every app imports to read/write through `services/api`. | Generated from Payload collection types. No app talks to Payload over raw `fetch`. |
 | `locale` | Jalali ↔ Gregorian conversion, Persian digit rendering, Persian-aware number formatting, pluralization, RTL helpers, date-fns-jalali wrappers. | The only place the platform knows about Jalali. Every display date goes through it. |
 | `money` | Rial ↔ toman conversion, formatters, rounding rules, Persian-digit rendering for prices. | Every price in every app goes through it. No raw multiplications by 10 anywhere else. |
-| `sms` | Provider-agnostic SMS sender. Kavenegar is the first adapter; MelliPayamak / Ghasedak / others can be added without touching call sites. | Enforces rate limits, templated messages, delivery logging. |
-| `payments` | Provider-agnostic payment gateway wrapper. ZarinPal / IDPay / Zibal are the candidate adapters. One is chosen in Phase 3. | Exposes the same interface regardless of provider: `createPayment`, `verifyPayment`, `refund`. |
+| `sms` | Provider-agnostic SMS sender. Kavenegar is the first adapter; MelliPayamak / Ghasedak / others can be added without touching call sites. | Enforces rate limits, templated messages, delivery logging. Also owns delivery-step SMS automation templates (Package 2 — Shape C): order confirmation, shipped, out-for-delivery, delivered. |
+| `payments` | Provider-agnostic payment gateway wrapper. ZarinPal / IDPay / Zibal are the candidate adapters. One is chosen in Package 2. | Exposes the same interface regardless of provider: `createPayment`, `verifyPayment`, `refund`. |
 | `invoices` | Factor number generation (using the client-provided format), HTML and PDF templates, tax-field handling, national ID capture, signed shareable URLs for `apps/factor`. | The `siteSettings.invoiceNumberFormat` field is the single source of truth for numbering. |
+| `promotions` | Rules-based promotion engine: percentage / fixed / buy-X-get-Y discounts, cart-level and line-level application, stackability rules. | Package 2 — Shape C. Scope fence: no dynamic pricing, no behaviour-triggered discounts, no A/B-tested promotions, no per-segment targeting (Package 3+). |
+| `gift-cards` | Gift card issuance, balance tracking, redemption, void. | Package 2 — Shape C. Append-only transaction ledger (`giftCardTransactions`). Accountant sign-off on tax treatment required before go-live. |
 | `types` | Shared TypeScript types across the repo. | Mostly re-exports from `api-client` and `db` so there is one import path. |
 | `config` | Shared tsconfig, eslint, prettier, tailwind preset. | Not domain code. Pure tooling. |
 
@@ -242,9 +246,11 @@ it is split. Packages never import apps; apps import packages.
   or `/ 10` anywhere else, that is a bug.
 - **No SMS outside `packages/sms`.** Ever.
 - **No payment logic outside `packages/payments`.** Ever.
+- **No promotion/discount logic outside `packages/promotions`.** Ever.
+- **No gift-card logic outside `packages/gift-cards`.** Ever.
 - **No Jalali / Persian-digit logic outside `packages/locale`.** Ever.
 - **No direct Postgres access from apps.** Apps talk to `services/api`
-  via `packages/api-client`, or (Phase 6+) to `services/factory-api` via
+  via `packages/api-client`, or (Package 4+) to `services/factory-api` via
   a similar typed client. The only code that imports the raw Postgres
   client is `services/api`, `services/factory-api`, and `packages/db`'s
   migration runner.
@@ -265,7 +271,7 @@ corrupting audit trails.
 - **Admin UI:** Payload's built-in admin at `api.zhic.ir/admin`, also
   reachable at `admin.zhic.ir` via a reverse-proxy rewrite.
 - **Database:** Postgres, adapter `@payloadcms/db-postgres`. Owns the
-  `public`, `commerce`, and `crm` schemas in Phase 1–4. Shares read
+  `public`, `commerce`, and `crm` schemas in Packages 1–3. Shares read
   access with `erp` and `mes` once those schemas exist.
 - **Collections:** content (pages, journal, media), catalog (products,
   categories, variants), commerce (customers, carts, orders, line items,
@@ -280,7 +286,7 @@ corrupting audit trails.
   cron jobs, custom endpoints) uses Payload's Local API, not HTTP. This
   is faster and doesn't need auth plumbing.
 
-### `services/factory-api` — Hono/Fastify + Drizzle (Phase 6)
+### `services/factory-api` — Hono/Fastify + Drizzle (Package 4)
 
 - **Why a second service?** Payload's collection model is excellent for
   content and catalog, but real MES needs production scheduling, BOM
@@ -293,7 +299,7 @@ corrupting audit trails.
   ORM. When a work order completes in `services/factory-api`, it emits
   an event that `services/api` consumes to update `commerce` stock.
   The two services never share an in-process import.
-- **Not built before it is needed.** Phase 6. Until then the `mes`
+- **Not built before it is needed.** Package 4. Until then the `mes`
   schema does not exist and this service does not exist.
 
 ---
@@ -320,9 +326,9 @@ corrupting audit trails.
   `commerce.customers.id`. This is how we get "separate databases for
   organizational sanity" without actually running multiple databases.
 - **Who writes each schema:**
-  - `services/api` writes `public`, `commerce`, `crm` (and in Phase 5
+  - `services/api` writes `public`, `commerce`, `crm` (and in Package 3+
     assists with `erp` unless ERP is carved out).
-  - `services/factory-api` writes `mes` (Phase 6).
+  - `services/factory-api` writes `mes` (Package 4).
   - No other process writes to any schema directly. Apps read via
     `api-client`, not by touching tables.
 
@@ -388,7 +394,7 @@ mirror of what's in the database.
   operator apps. A staff user is also a `public.users` row; there is
   no parallel user table.
 
-### Cross-service auth (Phase 6+)
+### Cross-service auth (Package 4+)
 
 When `services/factory-api` comes online, it validates sessions by
 calling `services/api`'s auth endpoint (or by reading the shared
@@ -407,13 +413,13 @@ session store — `services/api`.
  apps/erp ──────┼── api-client ─▶│    Postgres.commerce
  apps/mes ──────┤      (HTTP)    │    Postgres.crm
  apps/factor ───┘                │    Postgres.erp
-                                  └─── Postgres.mes (Phase 6+)
+                                  └─── Postgres.mes (Package 4+)
                       ▲
                       │
                 services/api (Payload)
                       │
                       ▼
-                services/factory-api  ──── Postgres.mes (Phase 6+)
+                services/factory-api  ──── Postgres.mes (Package 4+)
 ```
 
 ### Rules
@@ -424,7 +430,7 @@ session store — `services/api`.
    Payload types. A schema change triggers a regen in CI.
 3. `services/api` is the only service that imports `packages/db` for
    Payload's Postgres adapter configuration.
-4. In Phase 6+, `services/factory-api` imports `packages/db` for its
+4. In Package 4+, `services/factory-api` imports `packages/db` for its
    own Drizzle connection. It does not import anything from Payload.
 5. Cross-service communication (Payload ↔ factory-api) uses a documented
    event contract, not shared database transactions.
@@ -468,15 +474,15 @@ session store — `services/api`.
 
 ### Subdomains
 
-| Subdomain | App / service | Phase |
+| Subdomain | App / service | Package |
 | --- | --- | --- |
 | `zhic.ir` | `apps/web` | 1 |
 | `api.zhic.ir` | `services/api` | 1 |
 | `admin.zhic.ir` | `services/api` (rewritten to `/admin`) | 1 |
-| `crm.zhic.ir` | `apps/crm` | 4 |
-| `erp.zhic.ir` | `apps/erp` | 5 |
-| `mes.zhic.ir` | `apps/mes` | 6 |
-| `factor.zhic.ir` | `apps/factor` | 6 polish |
+| `crm.zhic.ir` | `apps/crm` | 3 |
+| `erp.zhic.ir` | `apps/erp` | 3+ |
+| `mes.zhic.ir` | `apps/mes` | 4 |
+| `factor.zhic.ir` | `apps/factor` | 4 polish |
 | `plausible.zhic.ir` | Plausible (internal) | 1 |
 | `errors.zhic.ir` | Glitchtip (internal) | 1 |
 
@@ -584,8 +590,8 @@ without manual rebuilds.
 - **PR checks:** install → lint → typecheck → test → build for
   affected workspaces only, via Turborepo filters.
 - **Main branch:** same checks plus structured-data validation for
-  `apps/web` (Phase 2+), Lighthouse CI budget enforcement for
-  `apps/web` (Phase 1+), and a smoke test against staging.
+  `apps/web` (Package 1+), Lighthouse CI budget enforcement for
+  `apps/web` (Package 1+), and a smoke test against staging.
 - **Deploy:** triggered on tag push (`v*` for production,
   `staging-*` for staging). No deploy-on-merge-to-main unless we
   explicitly opt a unit in.
@@ -597,8 +603,7 @@ without manual rebuilds.
 ## 12. Open architectural questions
 
 These are held open on purpose. They will move into the relevant
-section above once decided, usually after Discovery or Phase 0
-verification.
+section above once decided, usually after Discovery.
 
 - **`apps/admin` vs. Payload-as-admin.** Start with Payload's built-in
   admin at `admin.zhic.ir`. Revisit after Discovery: if showroom
@@ -606,7 +611,7 @@ verification.
   separate `apps/showroom`) is spun up instead of a custom admin.
 - **`apps/showroom` as a standalone app.** Or is it just a role inside
   `apps/crm`? Discovery decides. Until then, assume it's a role.
-- **Hetzner account creation from Iran.** Verified in Phase 0 before
+- **Hetzner account creation from Iran.** Verified in Discovery before
   architecture is frozen. If it's blocked, we either set up via a
   collaborator and transfer, or switch to a domestic Iranian VPS and
   re-benchmark.
@@ -617,14 +622,14 @@ verification.
   A domestic Iranian S3-compatible store is evaluated in parallel; if
   inside-Iran latency benchmarks show a clear win, media moves
   domestic and Hetzner becomes the offsite backup.
-- **Session store.** In-memory (Payload default) for Phase 1. Redis on
-  the same VPS once `services/factory-api` ships in Phase 6, because at
+- **Session store.** In-memory (Payload default) for Package 1. Redis on
+  the same VPS once `services/factory-api` ships in Package 4, because at
   that point two services need to share sessions.
 - **Per-package versioning & release tags.** Not needed while every
   package is internal. Revisit only if we ever publish one externally.
 - **Whether `services/api` stays a Next.js app or moves to a leaner
   Payload runtime** once Payload supports it. Not urgent; Payload's
-  Next.js coupling is fine for Phases 1–4.
+  Next.js coupling is fine for Packages 1–3.
 
 ---
 

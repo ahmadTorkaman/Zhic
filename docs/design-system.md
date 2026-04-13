@@ -116,7 +116,7 @@ Rules:
 - No pure black, no pure white anywhere.
 - All text passes WCAG AA against its background. Charcoal on ivory:
   13.4:1. Stone on ivory: 4.6:1 (body-only, never headlines).
-- **Dark mode is not in scope for v1.** Reconsidered after Phase 4.
+- **Dark mode is not in scope for v1.** Reconsidered after Package 3.
   Operator apps may want it first because staff use them all day.
 
 ### 2.2 Typography
@@ -525,7 +525,7 @@ Every component must define: variants, sizes, states (default,
 hover, focus-visible, active, disabled, loading, error, empty for
 lists), motion, accessibility notes, and **RTL behavior** (does it
 mirror, partially mirror, or stay fixed). The exhaustive spec lives
-in Figma and is mirrored as Storybook stories from Phase 1 onward.
+in Figma and is mirrored as Storybook stories from Package 1 onward.
 
 ### Atoms
 
@@ -559,7 +559,7 @@ in Figma and is mirrored as Storybook stories from Phase 1 onward.
 - Tabs
 - ImageWithCaption
 - VideoPlayer (poster, controls, reduced-motion fallback)
-- ProductCard (existing, will be tokenized in Phase 1)
+- ProductCard (existing, will be tokenized in Package 1)
 - ArticleCard
 - ShowroomCard
 - TestimonialCard
@@ -585,16 +585,52 @@ in Figma and is mirrored as Storybook stories from Phase 1 onward.
 - VariantPicker (size, finish, fabric)
 - RelatedProducts
 - TableOfContents
-- BookingForm (Phase 4)
-- CartLineItems (Phase 3)
-- CheckoutForm (Phase 3, multi-step)
-- OtpFlow (Phase 3, the login → verify pair)
-- FactorDocument (Phase 3, used by `packages/invoices`)
+- BookingForm (Package 3)
+- CartLineItems (Package 2)
+- CheckoutForm (Package 2, multi-step)
+- OtpFlow (Package 2, the login → verify pair)
+- FactorDocument (Package 2, used by `packages/invoices`)
+- PromotionBanner (Package 2 — Shape C, sitewide promo strip)
+- GiftCardBalance (Package 2 — Shape C, mini balance-check widget)
 
 ### Templates
 
 See `sitemap.md` for the full storefront list. Operator-app
 templates are documented in `admin-panels.md`.
+
+#### Generous-only template archetypes (Package 1)
+
+These templates ship in Package 1 at Generous scope (R12). They
+reuse the existing design-system primitives — no new tokens. Content
+comes from the SEO specialist and client (see `seo.md` §4.5 and
+`roadmap.md` content-ownership table).
+
+- **Pillar page** — long-form editorial template for the highest-
+  value Persian search terms. Layout: hero image + H1 + dek, auto-
+  generated TOC (sticky on desktop), MDX body with product embeds,
+  pull quotes, and image grids. Structurally identical to `Article`
+  but surfaced as a distinct content type in the CMS so pillar
+  content can be managed separately from the journal.
+
+- **Category editorial page** (`/categories/[slug]`) — a real
+  editorial landing for product categories, not just a filtered
+  catalog list. Layout: hero section with category name + editorial
+  intro (Persian), curated product grid below, optional editorial
+  blocks (material stories, care tips). The editorial framing is
+  what makes it Generous — without it the page is just a filter.
+
+- **Events page** (`/events`) — static content page listing
+  workshops, open-house events, showroom visit windows. Layout:
+  `<Section>` stacking event cards (date in Jalali, title, brief
+  description, showroom link, optional image). No `Event` JSON-LD
+  with bookable slots in Package 1 — static content only.
+
+- **Showroom-visit intake form** — embedded within `/showrooms/[slug]`
+  and reachable from `/contact`. Layout: `<FormField>` composition
+  with: name, phone (PhoneInput), preferred showroom (Select),
+  preferred date window (free-text textarea), message. Submissions
+  land as leads. No calendar, no availability check, no staff
+  assignment — Package 3 territory.
 
 ### States checklist
 
@@ -663,13 +699,13 @@ the rest in `/lab`.
 ## 11. Tooling
 
 - **Figma** is the source of visual truth until Storybook is set up
-  in Phase 1. The Figma file uses RTL layouts as the canonical
+  in Package 1. The Figma file uses RTL layouts as the canonical
   artboards; LTR mirror artboards are reference-only.
 - **Storybook** holds every component with all states **and an RTL
   toggle**, used by both design and engineering.
 - **Tokens** are exported from Figma via Tokens Studio → JSON →
   consumed by Tailwind v4 `@theme`.
-- **Visual regression:** Chromatic on every PR after Phase 1, with
+- **Visual regression:** Chromatic on every PR after Package 1, with
   RTL captures as a separate baseline.
 - **Lab:** `/lab/type`, `/lab/motion`, `/lab/color` are where new
   Persian type pairings, motion patterns, and color treatments are
@@ -679,7 +715,7 @@ the rest in `/lab`.
 
 ## 12. Open design questions
 
-These need answers before Phase 1 design closes:
+These need answers before Package 1 design closes:
 
 1. **Persian type lock.** Estedad vs Vazirmatn vs a paid Persian
    face (e.g. IRANSans, Sahel). Tested in `/lab/type` against the
@@ -703,4 +739,4 @@ These need answers before Phase 1 design closes:
    pending.
 8. **Operator-app theme.** Do operator apps stay on ivory + charcoal,
    or do they get a slightly cooler / higher-contrast variant for
-   long working sessions? Decision after Phase 4 user testing.
+   long working sessions? Decision after Package 3 user testing.

@@ -20,14 +20,14 @@ behind authentication, fully `noindex`, and not part of SEO planning.
 ## 1. SEO posture
 
 Zhic is a high-consideration Iranian furniture brand. The site is
-**a real e-commerce storefront from Phase 3 onward** — customers can
+**a real e-commerce storefront from Package 2 onward** — customers can
 buy through it — but a meaningful share of conversions still happen in
 showrooms via leads, walk-ins, and phone calls. SEO is graded by:
 
 - **Qualified traffic to product pages** (impressions on Persian
   product queries, CTR, time on page).
 - **Showroom appointments and inquiries** sourced from organic.
-- **Online orders** sourced from organic (Phase 3+).
+- **Online orders** sourced from organic (Package 2+).
 
 We compete in Persian, on Google.ir, primarily for Iranian customers.
 We do **not** compete on English queries, do not chase international
@@ -53,7 +53,7 @@ unbranded volume, or affiliate-style listicles.
 
 ## 2. Technical SEO baseline
 
-These items must be present from Phase 1 onward. They are
+These items must be present from Package 1 onward. They are
 non-negotiable and enforced in CI.
 
 ### 2.1 Language & direction
@@ -117,11 +117,11 @@ Emitted server-side as `<script type="application/ld+json">` blocks.
 
 | Page type | Schema |
 | --- | --- |
-| Site-wide root | `Organization`, `WebSite` (with `SearchAction` if `/search` ships in Phase 7) |
+| Site-wide root | `Organization`, `WebSite` (with `SearchAction` if `/search` ships post-Package-2) |
 | Home | `Organization` (no `LocalBusiness` here — the homepage is brand-level) |
 | Showroom index | `ItemList` of all `LocalBusiness` entries |
 | Showroom detail | `LocalBusiness` (`FurnitureStore` subtype), `BreadcrumbList` |
-| Product detail | `Product` with real `Offer` (Phase 3+, see §2.5.1) or guidance pricing (Phases 1–2), `BreadcrumbList`, optional `3DModel` |
+| Product detail | `Product` with real `Offer` (Package 2+, see §2.5.1) or guidance pricing (Package 1), `BreadcrumbList`, optional `3DModel` |
 | Product index | `CollectionPage`, `BreadcrumbList` |
 | Article | `Article` (`inLanguage: "fa-IR"`), `BreadcrumbList` |
 | Journal index / archives | `Blog`, `CollectionPage` |
@@ -135,16 +135,16 @@ Every JSON-LD payload is validated in CI against schema.org via
 `structured-data-testing-tool` or equivalent. PRs fail on invalid
 schema.
 
-#### 2.5.1 `Product` JSON-LD across phases
+#### 2.5.1 `Product` JSON-LD across packages
 
-The `Product` payload is the most-changed schema between phases:
+The `Product` payload is the most-changed schema between packages:
 
-- **Phases 1–2 (lead-gen mode):** `offers` is a single `Offer` with
+- **Package 1 (inquiry mode):** `offers` is a single `Offer` with
   `priceCurrency: "IRR"`, `price: <basePriceRials>`,
   `priceValidUntil: null`, `availability` mapped from the
   `availability` enum, `url` pointing at the inquiry CTA. Marked
   `priceSpecification` only.
-- **Phase 3+ (real commerce):** `offers` is a real `Offer` (or
+- **Package 2+ (real commerce):** `offers` is a real `Offer` (or
   `AggregateOffer` if variants vary in price) with `url` pointing
   at the canonical product page that has "افزودن به سبد", `seller`
   set to the `Organization`, `availability` mapped from the live
@@ -202,7 +202,7 @@ Tactics:
   `noindex, follow` and canonical to the unfiltered page.
 - Pagination uses `rel="next"`/`rel="prev"` link tags and unique
   meta.
-- `/search` pages are `noindex, follow` (Phase 7).
+- `/search` pages are `noindex, follow` (post-Package-2).
 - `/cart`, `/checkout/*`, `/account/*`, `/order/*`, `/login*` are
   `noindex, nofollow`.
 - Legal pages are indexed but with `priority: 0.1` in the sitemap.
@@ -248,7 +248,7 @@ Every template ships with this checklist green before merge.
 - [ ] Meta description = short Persian description, ≤ 160 chars.
 - [ ] OG image = cover at 1200×630 (Next/OG composes Persian frame).
 - [ ] `Product` JSON-LD with all required fields, real `Offer` from
-      Phase 3 onward (`priceCurrency: "IRR"`, `price:
+      Package 2 onward (`priceCurrency: "IRR"`, `price:
       <basePriceRials>`, `seller: Organization`, `availability`).
 - [ ] `BreadcrumbList` JSON-LD.
 - [ ] Persian alt text on every gallery image, GIF, and 3D model.
@@ -342,15 +342,15 @@ textbook hub-and-spoke, in Persian.
 
 ### 4.3 Editorial cadence
 
-- Phase 2 launch: 6 articles (2 cornerstones + 4 supporting), all
-  Persian.
-- Phase 3 onward: 2 articles/month minimum, 1 cornerstone/quarter.
+- Package 1 launch: 6 articles (2 cornerstones + 4 supporting), all
+  Persian. Content authored by the SEO specialist (see §4.5).
+- Package 2 onward: 2 articles/month minimum, 1 cornerstone/quarter.
 - Calendar lives in admin (see `admin-panels.md` §4).
 
 ### 4.4 Persian keyword research
 
 Lightweight: marketing maintains a Google Sheet (or a doc in the
-admin once Phase 4 lands) linked from the SEO dashboard. Sources:
+admin once Package 3 lands) linked from the SEO dashboard. Sources:
 
 - Google Search Console (Persian queries with impressions).
 - Google Trends (Iran region).
@@ -364,6 +364,30 @@ keyword. Search Console performance is reviewed monthly.
 ZWNJ matters for Persian keyword matching. "میخواهم" and "می‌خواهم"
 are different tokens to many search engines — the editorial
 guideline (see `design-system.md` §1.2) is to use ZWNJ consistently.
+
+### 4.5 SEO ownership split (two-track model)
+
+SEO work on Zhic divides into two tracks with separate owners
+(per R5 team structure and R12 content-ownership clause):
+
+| Track | Owner | Scope |
+| --- | --- | --- |
+| **Technical SEO** | **Operator (dev)** | Sitemap generation, JSON-LD, canonical tags, performance budgets, CI checks, structured data, Core Web Vitals, indexability rules, robots/sitemap config, OG image generation, `generateMetadata` wiring, RTL/bidi correctness. |
+| **Content / strategy SEO** | **SEO specialist (client-side resource)** | Persian keyword research, content briefs, pillar-page content, journal article topics + drafts, category-page editorial framing, meta title/description copywriting, editorial calendar, quarterly keyword refresh. |
+
+The operator builds templates and places content; the SEO specialist
+provides the content and the strategy. This split **must be explicit
+in the Package 1 addendum as a contract clause** — if the SEO
+specialist does not deliver content on time, the templates ship empty
+and the Generous scope's SEO value is unrealised. The operator is not
+responsible for writing Persian editorial content.
+
+Additional content owners (per `roadmap.md` content-ownership table):
+
+- **Events page content** → client directly (showroom managers know
+  what events are happening).
+- **Product copy, showroom details, brand-story editorial** → client
+  directly.
 
 ---
 
@@ -392,7 +416,7 @@ local entity in Google's eyes and must be treated as such.
   transit notes, appointment CTA, inquiry CTA, gallery, optional
   featured products.
 - Encourage Google + Neshan reviews via post-appointment SMS (via
-  `packages/sms`, Phase 4), per location.
+  `packages/sms`, Package 3), per location.
 - Internal linking: the homepage's footer "شوروم‌ها" column lists
   all showrooms; the contact page links to the showrooms index;
   the journal bio block links to the nearest showroom when an
@@ -448,12 +472,12 @@ The stack is therefore **self-hosted exclusively**.
   more reliable than Google inside Iran.
 - **Glitchtip (self-hosted, Sentry-compatible)** for client-side
   errors that might indicate broken pages.
-- All wired in Phase 1 behind a consent banner. The consent banner
+- All wired in Package 1 behind a consent banner. The consent banner
   is required for EU visitors (Plausible is privacy-friendly but
   the consent UX is still expected) and is good practice for
   Iranian users too.
 
-KPI dashboard surfaces (Phase 2+):
+KPI dashboard surfaces (Package 1+):
 
 - Organic sessions, week-over-week and year-over-year.
 - Branded vs non-branded query share (Persian queries).
@@ -461,7 +485,7 @@ KPI dashboard surfaces (Phase 2+):
 - Top 10 Persian queries.
 - CWV pass rate.
 - Indexation coverage (indexed vs submitted).
-- **From Phase 3:** organic-attributed orders, organic-attributed
+- **From Package 2:** organic-attributed orders, organic-attributed
   showroom appointments.
 
 ---

@@ -48,28 +48,101 @@ section here.
 - The current customer database, wherever it lives.
 - The current product catalog, wherever it lives.
 
-### 1.3 Out of scope
+### 1.3 Out of scope (eight named items per R9)
 
-- Factory production workflows below "finished goods come out of the
-  line." MES territory is discovered later in Phase 5 with a dedicated
-  pass, not here.
-- Marketing content tooling (Instagram, Telegram, ad accounts).
-  Covered separately when the marketing surface is specced.
-- Payroll, HR, and legal systems. Covered in the ERP phase.
-- Anything the business is not currently using. This document is
-  archaeology, not architecture.
+These are named in the Package 1 addendum. If they come up during
+Discovery, they are parked in the "Out of scope (parked for Package 2+
+scoping)" appendix (section 15) rather than absorbed into Package 1.
 
-### 1.4 Exit criteria
+1. **Supplier / vendor integrations.** Discovery maps Zhic's internal
+   systems only. No supplier portals, raw-material tracking, vendor
+   APIs. Package 4 / ERP territory.
+2. **Social media operational flows.** Instagram DMs, Telegram orders,
+   WhatsApp customer service are acknowledged as acquisition channels
+   but not mapped as operational workflows and not committed to as
+   integration targets.
+3. **Factory QC, production scheduling, deep MES details.** Discovery
+   does one factory walk for context, not a deep audit. QC checklists,
+   batch tracking, machine integration, production scheduling are
+   Package 4 / MES territory. (See `_mes-notebook.md` for the
+   operator's personal R&D notes.)
+4. **HR / payroll / staff management.** Out of scope, full stop. Not
+   Zhic platform territory even if the legacy app has staff records.
+5. **Marketing analytics beyond Plausible.** No Google Analytics, Meta
+   Pixel, ad attribution, marketing measurement stack. The SEO
+   specialist owns that conversation separately.
+6. **Existing website / content audit & migration.** Clean-break
+   assumption. Old-content migration, if requested, is a separate
+   Package 2 scope item to be priced.
+7. **Competitor analysis.** Tempting but bottomless. Discovery is about
+   Zhic. Competitor work belongs to the SEO specialist and marketing
+   lead.
+8. **Product photography / 3D asset creation.** Discovery does not
+   produce, audit, or commission photos or 3D models. The 3D artist
+   owns that workflow separately.
 
-Discovery is done when:
+**Pricing strategy: deferred to Package 2.** Discovery captures the
+current price list as data but does not investigate how prices are set,
+discount structures, dealer pricing, or special-customer deals.
 
-1. Every section below has real content, not `_pending_`.
-2. The findings have been reviewed with at least one showroom manager
-   and one HQ stakeholder.
-3. A v1 / v1.5 / stretch breakdown for the showroom manager scope
+### 1.4 Exit criteria (R6 — three named artifacts + R8 — three signatures)
+
+Discovery is done when **all three** of the following artifacts exist
+**and** all three signatures are committed to `docs/m1-signoffs/`:
+
+**Artifacts:**
+
+1. **A fully populated `discovery.md`** — every section below has real
+   content, not `_pending_`. Covers: schema dump, legacy-app feature
+   inventory (section 3.3b), P0 workflow maps (order signing first),
+   accountant interview notes, factory walk notes, showroom-by-showroom
+   usage reality check.
+2. **A first-draft new-system schema sketch** — the multi-schema
+   Postgres split with actual table shapes (not just schema names),
+   round-tripped against a sample of legacy data. Every field in the
+   legacy DB has a home in the new sketch or is explicitly marked
+   "dropped — reason X." At least one sample export from the legacy
+   app loads cleanly into the sketch.
+3. **A one-day accountant schema-walk note** — the operator walks the
+   accountant through factor-related tables specifically. Decisions #7
+   (rials-stored / toman-displayed) and #10 (factor immutability +
+   adjustment-factor) are validated or revised. Output appended to
+   section 13 of this document.
+
+**Signatures (three separate sessions, not a combined readout):**
+
+1. **The owner** — signs the overall Discovery deliverable as "this
+   represents the business I run."
+2. **The accountant** — signs the schema-walk note (artifact #3) as
+   "this represents the factor and money flow I'm responsible for."
+3. **At least one showroom manager** — the most active in the legacy
+   app (determinable from the W1 schema dump). Signs the order-signing
+   workflow map as "this is how my showroom actually works."
+
+Sign-off is wet-ink on printed PDF, photographed, committed to
+`docs/m1-signoffs/`. Package 1 cannot close until all three signatures
+are committed.
+
+**Additional exit conditions:**
+
+4. A v1 / v1.5 / stretch breakdown for the showroom manager scope
    (section 9) is approved by the product owner.
-4. A migration plan (section 10) exists for every data source that
+5. A migration plan (section 10) exists for every data source that
    must carry forward, with a named owner per source.
+
+### 1.5 Critical access assumption (R2)
+
+The operator has been promised **both UI and database access** to the
+existing showroom managers app. This removes the single biggest
+Discovery risk (reverse-engineering from screenshots only).
+
+**Top-level Discovery task:** obtain read-only credentials + schema
+dump of the existing showroom managers app within the first 5 working
+days of Package 1. This is the Discovery critical path.
+
+A UI-walkthrough track runs in parallel for workflows that aren't
+visible in the schema (printing, exports, daily rituals) — schema
+tells you data, UI tells you process.
 
 ---
 
@@ -167,6 +240,32 @@ live alongside this doc under `docs/discovery/screenshots/`.
 | Screen | Purpose | Main data | Actions | Role(s) | Daily / weekly / rarely | Screenshot |
 | --- | --- | --- | --- | --- | --- | --- |
 | _pending_ | _pending_ | _pending_ | _pending_ | _pending_ | _pending_ | _pending_ |
+
+### 3.3b Legacy-app feature inventory (R4 — separate from schema)
+
+Schema tells us what data exists. This section tells us **what the app
+actually lets staff do day-to-day, and how often.** This inventory is
+a separate Discovery deliverable from the schema analysis and is the
+one that gates Package 2 scope, because Package 2 has to match or
+exceed the workflows the legacy app currently provides — otherwise
+staff will refuse to switch.
+
+For every workflow the existing app supports:
+
+| Workflow | Description | Frequency (daily/weekly/rarely) | Who does it | Observed example | Notes |
+| --- | --- | --- | --- | --- | --- |
+| _pending_ | _pending_ | _pending_ | _pending_ | _pending_ | _pending_ |
+
+**P0 workflow — order signing.** This is the one workflow known to be
+load-bearing today. Map it before anything else:
+
+- Who signs: _pending_
+- On what device: _pending_ (in-showroom shared tablet? manager's
+  personal phone? desktop in the back office?)
+- In what physical context: _pending_
+- What triggers the signing event: _pending_
+- What happens to the signed order afterwards: _pending_ (printed?
+  exported? handed to the factory?)
 
 ### 3.4 Data model (reverse-engineered)
 
@@ -570,7 +669,53 @@ move on" moment.
 
 ---
 
-## 13. Status
+## 13. Accountant schema-walk note
+
+This section is populated after the one-day schema-walk with the
+accountant (Discovery W4). It is the third R6 deliverable and must be
+signed by the accountant per R8.
+
+### 13.1 Attendees and date
+
+- Date: _pending_
+- Accountant name: _pending_
+- Operator: _pending_
+
+### 13.2 Factor-related tables reviewed
+
+_pending_
+
+### 13.3 Decision #7 — rials-stored / toman-displayed
+
+Validated / revised: _pending_
+
+Accountant's objections or confirmations: _pending_
+
+### 13.4 Decision #10 — factor immutability + adjustment-factor pattern
+
+Validated / revised: _pending_
+
+Accountant's objections or confirmations: _pending_
+
+### 13.5 Gift card tax treatment under Iranian VAT (R13 Shape C item)
+
+_pending_
+
+### 13.6 Factor numbering format confirmed
+
+Format: _pending_
+
+Per-showroom vs global sequence: _pending_
+
+Year-scoped reset: _pending_
+
+### 13.7 Other accountant feedback
+
+_pending_
+
+---
+
+## 14. Status
 
 A rolling log of where discovery is. Update at the end of each
 working session so a new reader knows what's fresh and what's stale.
@@ -578,3 +723,52 @@ working session so a new reader knows what's fresh and what's stale.
 | Date | Who | What happened | Next |
 | --- | --- | --- | --- |
 | _pending_ | _pending_ | _pending_ | _pending_ |
+
+---
+
+## 15. Out of scope (parked for Package 2+ scoping)
+
+Items raised by the client during Discovery that fall outside the
+eight named out-of-scope items (section 1.3) but are still not
+Discovery work. Each item gets a suggested home package.
+
+| Item | Raised by | Suggested package | Notes |
+| --- | --- | --- | --- |
+| _pending_ | _pending_ | _pending_ | _pending_ |
+
+---
+
+## 16. Discovery follow-ups
+
+Things surfaced at W4/W5 that the operator wants to investigate but
+that are frozen per R7's overrun rule #3. These feed into Package 2's
+budget, not Package 1's.
+
+| Follow-up | Surfaced when | Relevant to | Notes |
+| --- | --- | --- | --- |
+| _pending_ | _pending_ | _pending_ | _pending_ |
+
+---
+
+## 17. Commerce Pricing Checkpoint inputs
+
+Package 2 cannot be priced until all three of these artifacts are
+landed and the first two are signed per R8.
+
+| Artifact | Status | Signed by | Date |
+| --- | --- | --- | --- |
+| Accountant schema-walk note (section 13) | _pending_ | Accountant | _pending_ |
+| Order-signing workflow map (section 6.1 / 3.3b P0) | _pending_ | Most active showroom manager | _pending_ |
+| First-draft new-system schema sketch (R6 deliverable #2) | _pending_ | — | _pending_ |
+
+---
+
+## 18. Sign-off log
+
+Updated as each R8 signature is collected.
+
+| Signer | Role | Section signed | Date | Photo committed to `docs/m1-signoffs/` |
+| --- | --- | --- | --- | --- |
+| _pending_ | Owner | Overall Discovery deliverable | _pending_ | _pending_ |
+| _pending_ | Accountant | Schema-walk note (section 13) | _pending_ | _pending_ |
+| _pending_ | Showroom manager | Order-signing workflow map | _pending_ | _pending_ |

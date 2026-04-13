@@ -20,13 +20,13 @@ independent Node processes.
 
 | File | Purpose |
 | --- | --- |
-| [`roadmap.md`](./roadmap.md) | Phased delivery plan from today's mockup to the full platform. |
+| [`roadmap.md`](./roadmap.md) | Package-based delivery plan from today's mockup to the full platform. |
 | [`architecture.md`](./architecture.md) | Monorepo layout, apps, packages, services, deployment, auth, data flow. |
 | [`discovery.md`](./discovery.md) | Template for reverse-engineering the existing showroom managers app and the existing workflow. |
 | [`sitemap.md`](./sitemap.md) | Public URL structure, page templates, information architecture. Persian-first, ASCII slugs, real commerce surfaces. |
 | [`design-system.md`](./design-system.md) | Brand tokens, typography, color, grid, motion, components. Persian/RTL primary, with a separate operator-app vocabulary. |
 | [`data-schemas.md`](./data-schemas.md) | Every collection, field, relation, validation rule across `public` / `commerce` / `crm` / `erp` / `mes` / `content` schemas. Rial-integer money, phone-as-PK, factor numbering. |
-| [`admin-panels.md`](./admin-panels.md) | Admin UX, screens, roles, workflows for Phases 1–4 (Payload-as-admin). Deeper CRM/ERP surfaces are gated on Discovery and live in their respective phase docs. |
+| [`admin-panels.md`](./admin-panels.md) | Admin UX, screens, roles, workflows for Packages 1–2 (Payload-as-admin). Deeper CRM/ERP surfaces are gated on Discovery and live in their respective package docs. |
 | [`seo.md`](./seo.md) | SEO playbook: Persian metadata, structured data, performance budgets, Iran-aware analytics, local SEO for Iranian showrooms. |
 | [`lab.md`](./lab.md) | The `/lab` experimentation surface — purpose, rules, robots policy. |
 
@@ -82,7 +82,7 @@ there.
 - No CMS, no admin, no sitemap, no JSON-LD, no product detail pages, no
   blog, no checkout, no auth, no CRM/ERP/MES.
 
-When the monorepo split happens (Phase 1), the current single Next.js
+When the monorepo split happens (Package 1), the current single Next.js
 app becomes `apps/web` and everything else is added alongside it. There
 is no "big bang" rewrite — the existing code is rehomed, not thrown away.
 
@@ -123,7 +123,7 @@ These are confirmed and drive everything else in this folder.
 - **Kavenegar for SMS (tentative).** The `packages/sms` abstraction is
   provider-agnostic so Kavenegar can be swapped for MelliPayamak, Ghasedak,
   or anything else without touching call sites.
-- **Payment gateway:** ZarinPal / IDPay / Zibal evaluated in Phase 3.
+- **Payment gateway:** ZarinPal / IDPay / Zibal evaluated in Package 2.
   Abstracted behind `packages/payments`. Final choice TBD once the legal
   and fee analysis is done.
 - **Invoice (فاکتور) numbering format:** TBD by the business. The field
@@ -140,11 +140,11 @@ These are confirmed and drive everything else in this folder.
 - **One Postgres, multiple schemas.** `public`, `commerce`, `crm`,
   `erp`, `mes`. Cross-schema foreign keys allowed. One connection pool,
   one backup, one migration story.
-- **Payload 3 is the backend for Phases 1–4.** It owns content,
+- **Payload 3 is the backend for Packages 1–3.** It owns content,
   catalog, media, leads, customers, orders, showrooms, and stock. It
   runs as its own Next.js app (`services/api`) exposing REST / local
   APIs that the other apps consume via `packages/api-client`.
-- **Phase 5+ carves out `services/factory-api`** (Hono or Fastify +
+- **Package 4 carves out `services/factory-api`** (Hono or Fastify +
   Drizzle on the same Postgres) when MES outgrows Payload's collection
   model. Payload keeps owning content/catalog; the factory service
   owns BOMs, work orders, routings, and production scheduling.
@@ -183,21 +183,21 @@ Stack:
 
 - **Framework:** Next.js 16 App Router across all customer-facing and
   operator-facing apps. `services/api` also runs as a Next.js app for
-  Phases 1–4 because that is how Payload 3 ships. Phase 5+ may add a
+  Packages 1–3 because that is how Payload 3 ships. Package 4 may add a
   non-Next service (`services/factory-api`) in Hono or Fastify.
 - **Styling:** Tailwind v4 with a tokenized, RTL-aware theme layer
   exported from `packages/design-system`.
 - **Motion:** GSAP + Lenis on the storefront; Framer Motion for
   component micro-interactions. The operator apps (admin, crm, erp,
   mes) use a reduced motion vocabulary — function over flourish.
-- **CMS / backend for Phases 1–4:** Payload 3, running as its own app
+- **CMS / backend for Packages 1–3:** Payload 3, running as its own app
   at `services/api` behind `api.zhic.ir`.
 - **Database:** PostgreSQL, self-hosted on the same VPS as the apps.
   Managed Postgres providers (Neon, Supabase) are unreliable from Iran
   and are off the table.
 - **Media:** S3-compatible object storage. **Hetzner Object Storage**
   (EU) is the primary choice; a domestic Iranian object store is a
-  candidate for Phase 1 if latency inside Iran matters more than
+  candidate for Package 1 if latency inside Iran matters more than
   global reach. Cloudflare R2 and AWS S3 are explicitly off the table.
 - **3D / WebXR:** glTF/GLB primary, USDZ secondary for iOS Quick Look.
   Rendering via Google's `<model-viewer>` web component. Asset prep in
@@ -209,16 +209,16 @@ Stack:
   woff2 files are also faster for everyone. Latin and Persian faces
   both self-hosted; see `design-system.md`.
 - **Search (later):** Typesense or Meilisearch, self-hosted. Out of
-  scope until Phase 5.
+  scope until post-Package-2.
 - **Analytics:** **Plausible, self-hosted**. No GA4 — unreliable from
   Iran, adds GDPR overhead, provides no upside for a privacy-
   respecting Iranian brand. Search Console for indexation data only.
 - **Email / forms:** Transactional via a provider that accepts Iranian
   signups (Mailgun EU if Postmark refuses; final choice verified in
-  Phase 1). Newsletter delivery via self-hosted Listmonk.
+  Package 1). Newsletter delivery via self-hosted Listmonk.
 - **SMS:** Kavenegar via `packages/sms` (provider-agnostic wrapper).
 - **Payments:** ZarinPal / IDPay / Zibal behind `packages/payments`
-  (provider-agnostic wrapper). Final choice in Phase 3.
+  (provider-agnostic wrapper). Final choice in Package 2.
 - **Error monitoring:** **Glitchtip** (self-hosted, Sentry-compatible).
 - **Hosting:** **Hetzner Cloud (Germany)** as the default, with a
   domestic Iranian VPS as a candidate if inside-Iran latency becomes a
@@ -227,14 +227,14 @@ Stack:
   We split services to multiple VPSes once traffic justifies it.
 - **Reverse proxy:** Caddy (preferred, automatic TLS) or Nginx,
   routing subdomains to each app's Node process.
-- **CDN (optional, Phase 4):** Bunny CDN (EU-based, Iran-friendly) in
+- **CDN (optional, Package 3):** Bunny CDN (EU-based, Iran-friendly) in
   front of the Hetzner origin for static assets and image delivery.
 - **CI / CD:** GitHub Actions runs from outside Iran so npm installs
   and builds work. Deployment to the VPS via SSH from the Action runner.
 - **Domain & DNS:** registrar that accepts Iranian customers (e.g.
   Gandi, Hetzner DNS). `.ir` and `.com` both registered; primary TBD.
 
-Open verification items before Phase 1 starts:
+Open verification items before Package 1 starts:
 
 - Confirm Hetzner account creation works from Iran (or set up via a
   collaborator, then transfer).
@@ -258,7 +258,7 @@ us into the wrong shape.
 - The full e-commerce schema (orders, line items, stock locations,
   transfers, returns, deliveries, sales mode, fulfillment states,
   payment records). This is the next big documentation pass after the
-  architectural reframe lands. See `roadmap.md` Phase 1.
+  architectural reframe lands. See `roadmap.md` Package 1.
 - The showroom manager v1 / v1.5 / stretch breakdown. This depends on
   discovery findings from the existing app. See `discovery.md`.
 - The CRM pipeline stages, lead scoring, and customer-360 definition.
@@ -266,7 +266,7 @@ us into the wrong shape.
 - The ERP chart of accounts, inventory valuation method, and BOM
   structure. Researched with the business's accountant before any code.
 - The MES shape — factory floor workflows, work order states, QC gates.
-  Researched in Phase 5 with actual factory staff, not before.
+  Researched in Package 4 with actual factory staff, not before.
 - The invoice (فاکتور) numbering format and the legal template.
   Provided by the client.
 - The final payment gateway choice.
