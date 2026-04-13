@@ -6,9 +6,12 @@ open-ended technical phases.
 
 Two things define this roadmap's shape:
 
-1. **Parallel execution.** Discovery, the landing page, and the
-   commerce shell run concurrently from day one (R10). This is not a
-   sequential pipeline where research finishes before building starts.
+1. **Monthly phasing within packages.** Package 1 is delivered in three
+   monthly phases: Month 1 ships the design system and full storefront
+   (landing page + editorial templates), Month 2 runs Discovery, and
+   Month 3 builds the commerce shell and closes with the acceptance
+   session. The landing page ships first — visible proof-of-life before
+   the operator asks the client for legacy-system access.
 2. **Package-based pricing.** Each package is fixed-price at a defined
    pricing moment — contract signing for Package 1, the Commerce
    Pricing Checkpoint for Package 2 (R11). Packages 3 and 4 are
@@ -42,56 +45,33 @@ Commerce Pricing Checkpoint for Package 2.
 
 ---
 
-## Parallel workstream diagram
+## Package 1 timeline diagram
 
 ```
-Week  1   2   3   4   5   6   7   8   9  10  11  12
-      ├───────────────────────────────────────────────┤
-      │            PACKAGE 1 — Foundations             │
-      ├───────────────────────────────────────────────┤
-      │                                               │
-      │  ┌─ Discovery ──────────────┐                 │
-      │  │  W1 Access & inventory   │                 │
-      │  │  W2 Workflow mapping     │                 │
-      │  │  W3 Schema sketch        │                 │
-      │  │  W4 Accountant walk + ✎  │                 │
-      │  │  W5 (buffer)             │                 │
-      │  └──────────────────────────┘                 │
-      │           ▼                                   │
-      │     Commerce Pricing                          │
-      │     Checkpoint (≈ W4)                         │
-      │           │                                   │
-      │  ┌─ Landing page ────────────────────────┐    │
-      │  │  (zero Discovery dependency)          │    │
-      │  │  Storefront, catalog, showrooms,      │    │
-      │  │  journal, pillar pages, editorial,    │    │
-      │  │  inquiry CTA, contact, legal          │    │
-      │  └───────────────────────────────────────┘    │
-      │                                               │
-      │  ┌─ Commerce shell ──────────────────────┐    │
-      │  │  Cart, checkout, customer accounts,   │    │
-      │  │  payment gateway wiring               │    │
-      │  │  (factor/order/stock shapes WAIT on   │    │
-      │  │   Discovery — see "data-model lock    │    │
-      │  │   gates" below)                       │    │
-      │  └───────────────────────────────────────┘    │
-      │                                               │
-      ├───────────────────────────────────────────────┤
-      │  Package 1 acceptance (R15 Shape-R session)   │
-      └───────────────────────────────────────────────┘
-                        │
-                        ▼
-      ┌───────────────────────────────────────────────┐
-      │         PACKAGE 2 — Commerce lock & launch    │
-      │  (priced at the Commerce Pricing Checkpoint)  │
-      │                                               │
-      │  Factor / order / stock shapes locked against │
-      │  Discovery outputs. Full shop wired end to    │
-      │  end. Parallel-run migration. Staff training. │
-      │  Launch-readiness checklist.                  │
-      │                                               │
-      │  Package 2 acceptance (R15 Shape-R session)   │
-      └───────────────────────────────────────────────┘
+Month 1 (W1–W4)          Month 2 (W5–W8)         Month 3 (W9–W12)
+┌─────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+│ DESIGN + LANDING    │  │ DISCOVERY            │  │ COMMERCE SHELL +     │
+│ PAGE + EDITORIAL    │  │                      │  │ ACCEPTANCE           │
+│ TEMPLATES           │  │                      │  │                      │
+├─────────────────────┤  ├──────────────────────┤  ├──────────────────────┤
+│                     │  │                      │  │                      │
+│ W1–2: Design system │  │ W5: Access &         │  │ W9–10: Cart,         │
+│   + tech foundation │  │   inventory (Disc.   │  │   checkout, customer │
+│   + monorepo +      │  │   W1)                │  │   accounts, payment  │
+│   hosting + CMS     │  │ W6: Workflow mapping │  │   gateway wiring     │
+│                     │  │   (Disc. W2)         │  │                      │
+│ W3–4: All pages     │  │ W7: Schema sketch    │  │ W11–12: CWV polish,  │
+│   live on           │  │   (Disc. W3)         │  │   QA, infrastructure │
+│   zhicwood.com      │  │ W8: Accountant walk  │  │   verification,      │
+│   Core + editorial  │  │   + sign-off (Disc.  │  │   Shape-R acceptance │
+│   + inquiry flow    │  │   W4) + buffer (W5)  │  │   session            │
+│   + SMS routing     │  │                      │  │                      │
+│                     │  │ Three-signer sign-off│  │                      │
+│                     │  │ Commerce Pricing     │  │                      │
+│                     │  │ Checkpoint           │  │                      │
+└─────────────────────┘  └──────────────────────┘  └──────────────────────┘
+   Payment: 35%             Payment: 35%             Payment: 30%
+   (at signing)             (Discovery signed)       (Package 1 close)
 ```
 
 ---
@@ -126,167 +106,115 @@ status until the inputs land, typically early in Discovery W4.
 
 ## Package 1 — Foundations
 
-**Fixed-price, signed up front.** Covers Discovery in full, the entire
-landing-page workstream at Generous depth, the commerce shell, monorepo
-skeleton, hosting stand-up, and all infrastructure verification.
+**Fixed-price, signed up front.** Delivered in **three monthly phases**
+with phase-aligned payment triggers. Covers the design system, the
+entire landing-page workstream at Generous depth (core + editorial
+templates), Discovery in full, the commerce shell, monorepo skeleton,
+hosting stand-up, and all infrastructure verification.
 
-### Discovery workstream (4 + 1 weeks)
+---
 
-**Goal:** Understand the existing business before replacing any of it.
-Discovery is timeboxed at **4 working weeks of focused effort, with up
-to 1 additional buffer week named explicitly in the Package 1
-addendum.** The contract states "Package 1 Discovery: 4 weeks, with up
-to 1 week of slack reserved for accountant / staff scheduling." The
-buffer is named, not hidden — the client sees both numbers.
+### Month 1 — Design + Landing Page + Editorial Templates (W1–W4)
 
-Discovery happens **after the Package 1 addendum is signed, not
-before.** No pre-contract reconnaissance.
+**Goal:** Ship a production-grade Persian-first storefront with catalog
+browsing, all editorial surface templates, a working inquiry flow with
+city-based SMS routing, and a proven admin-to-storefront pipeline. Zero
+dependency on Discovery — safe to build in full from day one.
 
-**Critical confirmed fact.** The operator has been promised **both UI
-and database access** to the existing showroom managers app. This
-removes the single biggest Discovery risk. `discovery.md` assumes a
-DB-access-first approach: schema dump + analysis pass in W1, not
-screen-by-screen UI reconstruction.
+#### Week 1–2: Design system + technical foundation
 
-#### Internal week-by-week target shape
+**Design work:**
 
-| Week | Focus | End-of-week artifact |
+- Brand tokens finalized in code: color palette, typography scale
+  (Persian display `IRANYekan` / body), spacing, grid, breakpoints.
+- Core component library: buttons, inputs, form fields, cards,
+  navigation bar, footer, modal/drawer, image gallery, breadcrumbs.
+- RTL implementation: bidi rules, ZWNJ handling, Persian digit
+  rendering, Jalali date formatting.
+- Motion vocabulary: page transitions, scroll-triggered reveals, hover
+  states, `prefers-reduced-motion` fallback.
+- Hero scrub video with poster frame.
+
+**Technical foundation:**
+
+- Monorepo skeleton per `architecture.md`: `apps/web`, `services/api`,
+  initial packages (`db`, `auth`, `ui`, `design-system`, `locale`,
+  `types`, `config`).
+- `services/api` boots Payload 3 against a fresh Postgres, behind
+  `api.zhicwood.com`, with an empty catalog.
+- Initial CMS collections: `products`, `showrooms`, `pages`
+  (singletons), `media`.
+- `apps/web` replaces the current `src/` app: Persian-first, RTL,
+  Jalali calendar, Persian digits, tokenized Tailwind theme.
+- Hosting stood up: Hetzner (or domestic Iranian VPS), TLS, object
+  storage, domain DNS for `zhicwood.com`.
+- Self-hosted Plausible analytics.
+- Kavenegar account wired for SMS.
+
+#### Week 3–4: All pages live on zhicwood.com
+
+**Core pages:**
+
+| Path | Template | Notes |
 | --- | --- | --- |
-| **W1** | Access & inventory: DB credentials, schema dump, UI access, first read-through of legacy app, list every screen | Raw "what's in the legacy app" inventory |
-| **W2** | Workflow mapping: order signing first (P0), then other load-bearing flows; two showroom visits, one factory walk | Workflow maps for the top 3–5 flows |
-| **W3** | New schema sketch: multi-schema split drafted, sample legacy data round-tripped into it | Schema sketch + round-trip evidence |
-| **W4** | Accountant schema-walk (one focused day) + writeup, feedback incorporation, sign-off | Signed Discovery deliverable |
-| **W5 (buffer)** | Absorbs slipped weeks (most often W2 — staff are busy, interviews reschedule) | — |
+| `/` | `HomePage` | Hero video, featured catalog grid, journal teaser, showrooms strip |
+| `/products` | `ProductIndex` | Filterable grid: category, material, size, price band (toman) |
+| `/products/[slug]` | `ProductDetail` | Gallery + specs, **inquiry mode only** ("استعلام قیمت" / "رزرو بازدید از شوروم"), flips to purchase mode at Package 2 cutover |
+| `/collections/[slug]` | `CollectionPage` | Curated product groupings |
+| `/showrooms` | `ShowroomIndex` | All showrooms with Neshan/OSM map |
+| `/showrooms/[slug]` | `ShowroomDetail` | Hours, address, phone, gallery, inquiry CTA |
+| `/contact` | `ContactPage` | Form + phone + showrooms list |
+| `/privacy` | `Page` | Legal — privacy policy |
+| `/terms` | `Page` | Legal — terms of service |
+| `/returns` | `Page` | Legal — returns placeholder |
+| `/shipping-and-delivery` | `Page` | Logistics, lead times per region |
 
-#### Discovery deliverables (M1 acceptance requires all three)
+**Editorial templates:**
 
-1. **A fully populated `discovery.md`** — schema dump, legacy-app
-   feature inventory, P0 workflow maps (order signing first), accountant
-   interview notes, factory walk notes, showroom-by-showroom usage
-   reality check.
-2. **A first-draft new-system schema sketch** — the multi-schema
-   Postgres split with actual table shapes, round-tripped against a
-   sample of legacy data. Every legacy field has a home in the new
-   sketch or is explicitly marked "dropped — reason X."
-3. **A one-day accountant schema-walk note** — the operator walks the
-   accountant through factor-related tables. Decisions #7
-   (rials-stored / toman-displayed) and #10 (factor immutability +
-   adjustment-factor) are validated or revised. Output appended to
-   `discovery.md`.
+| Path | Template | Notes |
+| --- | --- | --- |
+| `/journal` | `JournalIndex` | Persian editorial archive |
+| `/journal/[slug]` | `Article` | Long-form content with TOC; also used for pillar pages |
+| `/journal/category/[slug]` | `JournalArchive` | Category filtered |
+| `/journal/tag/[slug]` | `JournalArchive` | Tag filtered |
+| `/categories/[slug]` | `CategoryPage` | Per-product-category editorial landing (e.g. "تخت‌خواب دو نفره چوبی") — editorial framing, not just filtered catalog |
+| `/faq` | `FaqPage` | Persian Q&A with `FAQPage` JSON-LD |
+| `/care` | `Page` | Care & materials guide |
+| `/about` | `AboutPage` | Brand story, atelier |
+| `/atelier` | `Page` | Craft, process, photographs |
+| `/events` | `EventsPage` | Static — workshops, open-house events, showroom visit windows. No `Event` JSON-LD, no RSVP, no ticketing |
 
-#### Three-signer sign-off (hard gate)
+**Unified inquiry / showroom-visit form:**
 
-Package 1 **cannot close** until three named signatures are committed
-to `docs/m1-signoffs/`:
+A single lead-capture form used on PDP pages, showroom detail pages,
+and the contact page. Fields:
 
-1. **The owner** — signs the overall Discovery deliverable as "this
-   represents the business I run." Covers business goals, showroom
-   list, product categories, brand constraints, overall schema shape.
-2. **The accountant** — signs the schema-walk note as "this represents
-   the factor and money flow I'm responsible for." Validates or
-   revises decisions #7 and #10.
-3. **At least one showroom manager** — the most active in the legacy
-   app (determinable from W1 schema dump). Signs the order-signing
-   workflow map as "this is how my showroom actually works."
+1. Name
+2. Phone
+3. City (dropdown — showroom cities + "سایر شهرها")
+4. Reason ("استعلام قیمت" / "رزرو بازدید از شوروم")
+5. Preferred date window (free-text, shown when reason = showroom visit)
+6. Message
 
-Three **separate sessions**, not a combined readout. The operator goes
-to each signer individually. The likely Case-B counterpart ("the nephew
-or similar") is a facilitator, not a signer. Sign-off is **wet-ink on
-printed PDF**, photographed, committed to `docs/m1-signoffs/`.
+**City-based SMS routing:** customer picks a city that has a Zhic
+showroom → SMS goes to that showroom's manager. Customer picks a city
+with no showroom (or "سایر شهرها") → SMS routes to the central
+showroom in Hamedan. Showroom-to-manager phone mapping lives in the
+CMS (`showrooms` collection), so adding/removing showrooms
+automatically updates the routing.
 
-#### Discovery overrun rules
+**SEO foundations:**
 
-1. **Operator-side slip — operator eats it.** Discovery not done at
-   end of W5 because the operator under-estimated → M1 is not
-   re-priced.
-2. **Client-side slip — clock pauses, contract extends.** Client
-   could not make accountant/staff/database available within
-   reasonable notice → working-day clock pauses, addendum extends by
-   the same number of working days. "Reasonable notice": 3 working
-   days for an interview request, 5 working days for DB credentials.
-3. **Scope is frozen during overrun.** New things surfaced at W4/W5
-   go on a "Discovery follow-ups" list and are scoped into Package 2,
-   not absorbed into Package 1.
+- `generateMetadata` on every route.
+- `sitemap.ts`, `robots.ts`, `manifest.ts`.
+- `Organization` + `LocalBusiness` JSON-LD per showroom.
+- OG image generation (Persian-safe).
 
-#### Discovery cooperation clauses (contract must include)
+**Admin-to-storefront pipeline:**
 
-- Named client counterpart if available (facilitator, not signer).
-- Interview-hour commitment from showroom managers.
-- Response-time SLA on Discovery questions (3 working days for
-  interviews, 5 working days for credentials).
-- Client introduces operator to the accountant with a date commitment.
-- Client makes all three signers available within the Package 1 window.
-
-#### Discovery out-of-scope (eight named items)
-
-The Package 1 addendum names these explicitly. If they come up during
-Discovery, they are parked as M2-or-later scope:
-
-1. **Supplier / vendor integrations.** M5 / ERP territory.
-2. **Social media operational flows.** Instagram DMs, Telegram orders,
-   WhatsApp customer service — acknowledged as acquisition channels,
-   not mapped as operational workflows.
-3. **Factory QC, production scheduling, deep MES details.** One
-   factory walk for context, not a deep audit. M5/M6 territory.
-4. **HR / payroll / staff management.** Out of scope, full stop.
-5. **Marketing analytics beyond Plausible.** No Google Analytics, Meta
-   Pixel, ad attribution. SEO specialist owns that separately.
-6. **Existing website / content audit & migration.** Clean-break
-   assumption. Old-content migration is a separate Package 2 scope
-   item if requested.
-7. **Competitor analysis.** SEO specialist and marketing lead's work.
-8. **Product photography / 3D asset creation.** 3D artist owns that
-   workflow separately.
-
-**Pricing strategy: deferred to Package 2.** Discovery captures the
-current price list as data; it does not investigate pricing logic,
-discount structures, dealer pricing, or special-customer deals. If
-Package 2 surfaces that pricing logic is more complex than the schema
-reveals, it becomes a Package 2 scope adjustment, not a Discovery
-overrun.
-
-### Landing-page workstream (Generous depth)
-
-**Goal:** Ship a production-grade Persian-first storefront with
-catalog browsing, editorial surfaces, and a real inquiry flow. No
-checkout yet. Zero dependency on Discovery — safe to build fully in
-parallel from day one.
-
-#### Core pages (would have been in Skinny)
-
-- Home
-- Catalog index (`/products`) with filtering
-- Product detail page template (`/products/[slug]`) — **inquiry mode
-  only in Package 1** ("استعلام قیمت" / "رزرو بازدید از شوروم"),
-  flips to purchase mode at Package 2 cutover
-- Showrooms index + per-showroom pages
-- Contact
-- Legal (privacy, terms, returns placeholder)
-
-#### Editorial surfaces (would have been in Standard)
-
-- Journal index + journal-article template
-- Journal category and tag archives
-- FAQ page
-- Care / materials guide
-- About / atelier story page
-
-#### Generous-only additions
-
-- **Pillar content pages** — long-form Persian content pages for the
-  biggest target search terms. Structure from the SEO specialist;
-  template work is operator.
-- **Per-product-category landing pages** with editorial framing — not
-  just filtered catalog lists. These win category Persian queries
-  ("تخت خواب دو نفره چوبی" etc.) and carry real content, not just
-  filter state.
-- **Events / showroom-visits page** — static content listing workshops,
-  open-house events, or showroom visit windows. Static only in
-  Package 1: no booking mechanics, no calendar integration, no RSVP.
-- **Showroom-visit intake form** — lead-capture form only: name, phone,
-  preferred showroom, preferred date window (free-text), message.
-  Submissions land as leads in the same inbox the general inquiry form
-  uses.
+A non-developer can add/edit a product in Payload admin and see it
+live on `zhicwood.com` within 10 minutes. This is confirmed working
+before Month 1 closes.
 
 #### Generous scope fence (what Package 1 does NOT include)
 
@@ -324,43 +252,143 @@ populated.** Template existence + graceful placeholder rendering is
 the operator's deliverable. Content is the client / SEO specialist's
 deliverable.
 
-#### Technical foundations (also in Package 1)
+#### Month 1 exit criteria
 
-- Monorepo skeleton per `architecture.md`: `apps/web`, `services/api`,
-  initial packages (`db`, `auth`, `ui`, `design-system`, `locale`,
-  `types`, `config`).
-- `services/api` boots Payload 3 against a fresh Postgres, behind
-  `api.zhic.ir`, with an empty catalog.
-- `apps/web` replaces the current `src/` app: Persian-first, RTL,
-  Jalali calendar, Persian digits, tokenized Tailwind theme.
-- `generateMetadata` on every route, `sitemap.ts`, `robots.ts`,
-  `manifest.ts`.
-- `Organization` + `LocalBusiness` JSON-LD per showroom.
-- OG image generation (Persian-safe).
-- Hero scrub video with poster frame and `prefers-reduced-motion`
-  fallback.
-- Self-hosted Plausible analytics.
-- Core Web Vitals budgets in CI (Lighthouse CI).
-- Hosting stood up: Hetzner (or domestic Iranian VPS), TLS, object
-  storage, Kavenegar account, payment gateway account confirmed.
+- `zhicwood.com` is live with all core pages and editorial templates.
+- Design system tokens and core components exist in
+  `packages/design-system` and `packages/ui`.
+- Inquiry form submits successfully; SMS notification reaches correct
+  showroom manager (city-based routing confirmed).
+- A non-developer can add/edit a product in Payload admin and see it
+  live on `zhicwood.com` within 10 minutes.
+- Hosting infrastructure confirmed and running (Hetzner/VPS, TLS,
+  object storage, Plausible, Kavenegar).
 
-### Commerce shell workstream (Discovery-independent parts)
+#### Month 1 payment trigger
 
-Built in parallel with Discovery and landing page. The parts that
-**do not** depend on Discovery:
+**35% at signing** — unlocks the work. Payable upon contract execution,
+before any development begins.
 
-- Cart + checkout flow (UI and logic).
-- Customer accounts: phone + OTP via `packages/auth` (Kavenegar).
-- Address management (Iranian address fields).
-- Payment gateway wiring (`packages/payments` — ZarinPal / IDPay /
-  Zibal adapter, whichever the business already has a merchant
-  account with).
+---
 
-The parts that **wait on Discovery** (factor / order / stock shapes)
-are built behind package boundaries but not frozen until the data-model
-lock gates above resolve.
+### Month 2 — Discovery (W5–W8)
 
-### Commerce Pricing Checkpoint
+**Goal:** Understand the existing business before replacing any of it.
+Discovery is timeboxed at **4 working weeks of focused effort, with up
+to 1 additional buffer week named explicitly in the Package 1
+addendum.** The contract states "Package 1 Discovery: 4 weeks, with up
+to 1 week of slack reserved for accountant / staff scheduling." The
+buffer is named, not hidden — the client sees both numbers.
+
+Discovery happens **after Month 1 delivers a live storefront, not
+before.** No pre-contract reconnaissance. The client sees visible
+proof-of-life before the operator asks for access to the legacy
+system.
+
+**Critical confirmed fact.** The operator has been promised **both UI
+and database access** to the existing showroom managers app. This
+removes the single biggest Discovery risk. `discovery.md` assumes a
+DB-access-first approach: schema dump + analysis pass in W5, not
+screen-by-screen UI reconstruction.
+
+#### Week-by-week target shape
+
+| Week | Focus | End-of-week artifact |
+| --- | --- | --- |
+| **W5 (Disc. W1)** | Access & inventory: DB credentials, schema dump, UI access, first read-through of legacy app, list every screen | Raw "what's in the legacy app" inventory |
+| **W6 (Disc. W2)** | Workflow mapping: order signing first (P0), then other load-bearing flows; two showroom visits, one factory walk | Workflow maps for the top 3–5 flows |
+| **W7 (Disc. W3)** | New schema sketch: multi-schema split drafted, sample legacy data round-tripped into it | Schema sketch + round-trip evidence |
+| **W8 (Disc. W4)** | Accountant schema-walk (one focused day) + writeup, feedback incorporation, sign-off | Signed Discovery deliverable |
+| **(buffer)** | Absorbs slipped weeks (most often W6 — staff are busy, interviews reschedule) | — |
+
+#### Discovery deliverables (all three required)
+
+1. **A fully populated `discovery.md`** — schema dump, legacy-app
+   feature inventory, P0 workflow maps (order signing first), accountant
+   interview notes, factory walk notes, showroom-by-showroom usage
+   reality check.
+2. **A first-draft new-system schema sketch** — the multi-schema
+   Postgres split with actual table shapes, round-tripped against a
+   sample of legacy data. Every legacy field has a home in the new
+   sketch or is explicitly marked "dropped — reason X."
+3. **A one-day accountant schema-walk note** — the operator walks the
+   accountant through factor-related tables. Decisions #7
+   (rials-stored / toman-displayed) and #10 (factor immutability +
+   adjustment-factor) are validated or revised. Output appended to
+   `discovery.md`.
+
+#### Three-signer sign-off (hard gate)
+
+Package 1 **cannot close** until three named signatures are committed
+to `docs/m1-signoffs/`:
+
+1. **The owner** — signs the overall Discovery deliverable as "this
+   represents the business I run." Covers business goals, showroom
+   list, product categories, brand constraints, overall schema shape.
+2. **The accountant** — signs the schema-walk note as "this represents
+   the factor and money flow I'm responsible for." Validates or
+   revises decisions #7 and #10.
+3. **At least one showroom manager** — the most active in the legacy
+   app (determinable from W5 schema dump). Signs the order-signing
+   workflow map as "this is how my showroom actually works."
+
+Three **separate sessions**, not a combined readout. The operator goes
+to each signer individually. The likely Case-B counterpart ("the nephew
+or similar") is a facilitator, not a signer. Sign-off is **wet-ink on
+printed PDF**, photographed, committed to `docs/m1-signoffs/`.
+
+#### Discovery overrun rules
+
+1. **Operator-side slip — operator eats it.** Discovery not done at
+   end of buffer because the operator under-estimated → Package 1 is
+   not re-priced.
+2. **Client-side slip — clock pauses, contract extends.** Client
+   could not make accountant/staff/database available within
+   reasonable notice → working-day clock pauses, addendum extends by
+   the same number of working days. "Reasonable notice": 3 working
+   days for an interview request, 5 working days for DB credentials.
+3. **Scope is frozen during overrun.** New things surfaced at W7/W8
+   go on a "Discovery follow-ups" list and are scoped into Package 2,
+   not absorbed into Package 1.
+
+#### Discovery cooperation clauses (contract must include)
+
+- Named client counterpart if available (facilitator, not signer).
+- Interview-hour commitment from showroom managers.
+- Response-time SLA on Discovery questions (3 working days for
+  interviews, 5 working days for credentials).
+- Client introduces operator to the accountant with a date commitment.
+- Client makes all three signers available within the Package 1 window.
+
+#### Discovery out-of-scope (eight named items)
+
+The Package 1 addendum names these explicitly. If they come up during
+Discovery, they are parked as Package-2-or-later scope:
+
+1. **Supplier / vendor integrations.** ERP territory.
+2. **Social media operational flows.** Instagram DMs, Telegram orders,
+   WhatsApp customer service — acknowledged as acquisition channels,
+   not mapped as operational workflows.
+3. **Factory QC, production scheduling, deep MES details.** One
+   factory walk for context, not a deep audit.
+4. **HR / payroll / staff management.** Out of scope, full stop.
+5. **Marketing analytics beyond Plausible.** No Google Analytics, Meta
+   Pixel, ad attribution. SEO specialist owns that separately.
+6. **Existing website / content audit & migration.** Clean-break
+   assumption. Old-content migration is a separate Package 2 scope
+   item if requested.
+7. **Competitor analysis.** SEO specialist and marketing lead's work.
+8. **Product photography / 3D asset creation.** 3D artist owns that
+   workflow separately.
+
+**Pricing strategy: deferred to Package 2.** Discovery captures the
+current price list as data; it does not investigate pricing logic,
+discount structures, dealer pricing, or special-customer deals. If
+Package 2 surfaces that pricing logic is more complex than the schema
+reveals, it becomes a Package 2 scope adjustment, not a Discovery
+overrun.
+
+#### Commerce Pricing Checkpoint (end of Month 2)
 
 A **named, scheduled event** inside Package 1 — not a renegotiation.
 Triggered by three specific artifacts landing:
@@ -371,15 +399,80 @@ Triggered by three specific artifacts landing:
 3. The first-draft new-system schema sketch, round-tripped against
    legacy data.
 
-**Timing:** expected at the end of Discovery Week 4.
+**Timing:** expected at the end of Discovery W4 (Week 8).
 
 At the checkpoint, the operator produces the **Package 2 addendum**
 with a firm price. The client countersigns before commerce data-model
-lock-in begins. The checkpoint does not pause the parallel build —
-Package 1 work continues during the Package 2 scoping conversation
-(should take no more than one week).
+lock-in begins.
 
-### Package 1 acceptance (Shape-R session)
+#### Month 2 exit criteria
+
+- All three Discovery signatures committed to `docs/m1-signoffs/`.
+- Schema sketch round-tripped against legacy data.
+- `discovery.md` fully populated.
+- Package 2 priced and addendum ready for countersign.
+
+#### Month 2 payment trigger
+
+**35% at Discovery signed off** — payable when all three signers have
+signed and the Commerce Pricing Checkpoint is complete.
+
+---
+
+### Month 3 — Commerce Shell + Acceptance (W9–W12)
+
+**Goal:** Build the commerce shell, optimize performance, verify all
+infrastructure, and close Package 1 through the Shape-R acceptance
+session.
+
+#### Week 9–10: Commerce shell build
+
+**Customer-facing:**
+
+- Cart page + add-to-cart flow.
+- Multi-step checkout: address → delivery → payment.
+- Customer accounts: phone + OTP registration/login via Kavenegar
+  (`packages/auth`).
+- Address management (Iranian address fields).
+- Payment gateway wiring (`packages/payments` — ZarinPal / IDPay /
+  Zibal adapter, whichever the business already has a merchant
+  account with).
+
+**Admin-facing:**
+
+- Order list / detail views in Payload admin (basic, pre-Package 2).
+- Factor/order/stock shapes built behind package boundaries — now
+  locked against Discovery outputs from Month 2.
+
+**Infrastructure:**
+
+- `packages/payments` — gateway adapter.
+- `packages/auth` — phone + OTP flow.
+- Cart persistence (session-based → account-linked on login).
+
+The parts that **wait on Discovery** (factor / order / stock shapes)
+are built behind package boundaries but not frozen until the data-model
+lock gates resolve. By Month 3, Discovery is complete, so these shapes
+can now be locked.
+
+#### Week 11–12: Polish + optimization + acceptance
+
+**Performance:**
+
+- Core Web Vitals optimization — Lighthouse 95+ on mobile, all four
+  CWV in the green.
+- Valid Persian sitemap submitted to Search Console.
+- Final cross-browser and cross-device QA (real Iranian ISPs, no VPN).
+
+**Integration verification:**
+
+- Admin-to-storefront pipeline re-confirmed.
+- SMS routing confirmed across all showrooms + Hamedan fallback.
+- Payment gateway test transactions.
+- All infrastructure verified: Hetzner/VPS, TLS, SMS, payment gateway
+  account, object storage.
+
+#### Package 1 acceptance (Shape-R session)
 
 Package 1 acceptance is established by the **owner personally
 performing scripted end-to-end user journeys** in a scheduled sign-off
@@ -399,17 +492,18 @@ journey.
 **Indicative Package 1 journeys** (revisable before the session):
 
 1. **Customer browses the catalog on a phone inside Iran.** Opens
-   zhic.ir without VPN, browses products, opens 3+ PDPs, scrolls
-   the journal, opens 2+ articles. Observable: fast loads, correct
-   Persian, clean RTL.
+   `zhicwood.com` without VPN, browses products, opens 3+ PDPs,
+   scrolls the journal, opens 2+ articles. Observable: fast loads,
+   correct Persian, clean RTL.
 2. **Customer submits a product inquiry.** Uses "استعلام قیمت" on a
-   PDP, fills the form, submits. Within 60 seconds the showroom
-   manager's phone receives an SMS notification. Observable: form
-   works, inquiry lands, notification loop functions.
-3. **Customer books a showroom visit via the intake form.** Opens a
-   showroom page, uses the intake form, submits. Operator shows the
+   PDP, fills the form (including city), submits. Within 60 seconds
+   the correct showroom manager's phone receives an SMS notification.
+   Observable: form works, city-based routing works, notification
+   loop functions.
+3. **Customer requests a showroom visit via the unified form.** Selects
+   "رزرو بازدید از شوروم", picks a city, submits. Operator shows the
    owner where the submission landed as a lead in admin. Observable:
-   intake-as-lead-capture works end-to-end.
+   intake-as-lead-capture works end-to-end with correct SMS routing.
 4. **Owner edits a product in admin and sees the change live.** Logs
    in, edits a product title, saves, refreshes the public page.
    Within 10 minutes the new title appears. Observable: content
@@ -436,14 +530,30 @@ The Shape-R session is **separate from the R8 three-signer sign-off.**
 The owner signs once for Discovery (R8) and again for the built
 product (R15). Both are required for Package 1 to close.
 
-### Package 1 payment triggers (25 / 25 / 25 / 25)
+#### Month 3 exit criteria
 
-| Installment | Trigger |
-| --- | --- |
-| **25% at signing** | Unlocks the work. |
-| **25% at landing-page internal** | Landing page reachable on `zhic.ir` with catalog, showrooms, contact, inquiry flow usable by client staff on staging. First visible proof-of-life. |
-| **25% at Commerce Pricing Checkpoint** | Discovery deliverables signed (R8) + schema sketch landed. Also triggers Package 2 pricing. |
-| **25% at Package 1 close** | Shape-R acceptance session passed. Landing page internally accepted, commerce shell built, hosting stood up, all infrastructure verification confirmed. |
+- Commerce shell built (cart, checkout, customer accounts, payment
+  wiring) — factor / order / stock shapes locked against Discovery.
+- Lighthouse 95+ on mobile, all four CWV in the green.
+- Valid Persian sitemap submitted to Search Console.
+- All infrastructure verification items confirmed (Hetzner/VPS, TLS,
+  SMS, payment gateway account, object storage).
+- Shape-R acceptance session passed.
+
+#### Month 3 payment trigger
+
+**30% at Package 1 close** — payable when the Shape-R acceptance
+session passes and all exit criteria are confirmed.
+
+---
+
+### Package 1 payment summary (35 / 35 / 30)
+
+| Step | Trigger | % |
+| --- | --- | --- |
+| **Step 1 — Signing** | Contract execution. Unlocks the work. | 35% |
+| **Step 2 — Discovery signed off** | All three signers confirmed (R8), Commerce Pricing Checkpoint complete, Package 2 priced. | 35% |
+| **Step 3 — Package 1 close** | Shape-R acceptance session passed, commerce shell built, all infrastructure verified. | 30% |
 
 Triggers are **event-driven, not date-driven.** If Package 1 slips on
 calendar, triggers slip too.
@@ -452,14 +562,15 @@ calendar, triggers slip too.
 
 - Three Discovery signatures committed to `docs/m1-signoffs/`.
 - Schema sketch round-tripped against legacy data.
-- Landing page live on `zhic.ir` (internally, not publicly announced
-  per R3).
+- Landing page + all editorial templates live on `zhicwood.com`
+  (internally, not publicly announced per R3).
 - Lighthouse 95+ on mobile, all four CWV in the green.
 - Valid Persian sitemap submitted to Search Console.
 - A non-developer can edit a product in admin and see it live within
   10 minutes.
+- Inquiry form with city-based SMS routing confirmed working.
 - Commerce shell built (cart, checkout, customer accounts, payment
-  wiring) — not yet wired to factor / order / stock shapes.
+  wiring) — factor / order / stock shapes locked against Discovery.
 - All infrastructure verification items confirmed (Hetzner/VPS, TLS,
   SMS, payment gateway account, object storage).
 - Shape-R acceptance session passed.
@@ -649,7 +760,7 @@ scope-reduced Package 2 at a lower price.
 
 **What problem it solves.** The storefront admin from Packages 1/2 is
 Payload-as-admin. Package 3 adds a **dedicated operator app**
-(`apps/crm` at `crm.zhic.ir`) for the day-to-day workflows of
+(`apps/crm` at `crm.zhicwood.com`) for the day-to-day workflows of
 showroom managers, sales staff, and inside-sales coordinators, sized
 against what Discovery finds the legacy app actually does.
 
