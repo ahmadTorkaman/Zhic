@@ -1,0 +1,28 @@
+{
+  "name": "@zhic/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint": "./eslint.config.mjs",
+    "./prettier": "./prettier.config.cjs",
+    "./tailwind-preset": "./tailwind-preset.js"
+  },
+  "files": [
+    "tsconfig.base.json",
+    "eslint.config.mjs",
+    "prettier.config.cjs",
+    "tailwind-preset.js"
+  ],
+  "dependencies": {
+    "@eslint/js": "^9.15.0",
+    "eslint-config-next": "16.2.2",
+    "typescript-eslint": "^8.15.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9",
+    "prettier": "^3",
+    "typescript": "^5"
+  }
+}

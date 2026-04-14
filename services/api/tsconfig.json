@@ -1,0 +1,17 @@
+{
+  "extends": "@zhic/config/tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/**/*",
+    ".next/types/**/*",
+    ".next/dev/types/**/*"
+  ],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@zhic/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@zhic/design-system": "workspace:*",
+    "@zhic/locale": "workspace:*",
+    "@zhic/types": "workspace:*",
+    "@zhic/ui": "workspace:*",
+    "gsap": "^3.14.2",
+    "lenis": "^1.3.21",
+    "next": "16.2.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@zhic/config": "workspace:*",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2",
+    "tailwindcss": "^4",
+    "typescript": "^5.6.3"
+  }
+}
