@@ -120,9 +120,9 @@ These are confirmed and drive everything else in this folder.
   unique identifier in Iran. National ID (کد ملی) is optional on the
   customer record but required on any document that produces a
   tax-compliant invoice.
-- **Kavenegar for SMS (tentative).** The `packages/sms` abstraction is
-  provider-agnostic so Kavenegar can be swapped for MelliPayamak, Ghasedak,
-  or anything else without touching call sites.
+- **SMS.ir for SMS.** The `packages/sms` abstraction is
+  provider-agnostic so SMS.ir can be swapped for Kavenegar, MelliPayamak,
+  Ghasedak, or anything else without touching call sites.
 - **Payment gateway:** ZarinPal / IDPay / Zibal evaluated in Package 2.
   Abstracted behind `packages/payments`. Final choice TBD once the legal
   and fee analysis is done.
@@ -136,7 +136,7 @@ These are confirmed and drive everything else in this folder.
   "Payload mounted at /admin in the same Next.js process" decision is
   dead. See `architecture.md` for the replacement.
 - **Turborepo + pnpm workspaces.** Turborepo is a build orchestrator,
-  not tied to Vercel. Works fine on our self-hosted Hetzner-class VPS.
+  not tied to Vercel. Works fine on our self-hosted Pars Pack VPS.
 - **One Postgres, multiple schemas.** `public`, `commerce`, `crm`,
   `erp`, `mes`. Cross-schema foreign keys allowed. One connection pool,
   one backup, one migration story.
@@ -149,8 +149,8 @@ These are confirmed and drive everything else in this folder.
   model. Payload keeps owning content/catalog; the factory service
   owns BOMs, work orders, routings, and production scheduling.
 - **Subdomain routing** is the preferred model:
-  `zhic.ir`, `admin.zhic.ir`, `crm.zhic.ir`, `erp.zhic.ir`,
-  `mes.zhic.ir`, `api.zhic.ir`. Path-based (`panel.zhic.ir/crm`, etc.)
+  `zhicwood.com`, `admin.zhicwood.com`, `crm.zhicwood.com`, `erp.zhicwood.com`,
+  `mes.zhicwood.com`, `api.zhicwood.com`. Path-based (`panel.zhicwood.com/crm`, etc.)
   is the fallback if TLS issuance for multiple subdomains turns out to
   be painful from Iran.
 
@@ -191,14 +191,13 @@ Stack:
   component micro-interactions. The operator apps (admin, crm, erp,
   mes) use a reduced motion vocabulary — function over flourish.
 - **CMS / backend for Packages 1–3:** Payload 3, running as its own app
-  at `services/api` behind `api.zhic.ir`.
+  at `services/api` behind `api.zhicwood.com`.
 - **Database:** PostgreSQL, self-hosted on the same VPS as the apps.
   Managed Postgres providers (Neon, Supabase) are unreliable from Iran
   and are off the table.
-- **Media:** S3-compatible object storage. **Hetzner Object Storage**
-  (EU) is the primary choice; a domestic Iranian object store is a
-  candidate for Package 1 if latency inside Iran matters more than
-  global reach. Cloudflare R2 and AWS S3 are explicitly off the table.
+- **Media:** S3-compatible object storage. **Abr Arvan Object Storage**
+  (Iranian domestic, S3-compatible) is the primary choice.
+  Cloudflare R2 and AWS S3 are explicitly off the table.
 - **3D / WebXR:** glTF/GLB primary, USDZ secondary for iOS Quick Look.
   Rendering via Google's `<model-viewer>` web component. Asset prep in
   **Blender** with a documented export preset; the admin only
@@ -216,33 +215,26 @@ Stack:
 - **Email / forms:** Transactional via a provider that accepts Iranian
   signups (Mailgun EU if Postmark refuses; final choice verified in
   Package 1). Newsletter delivery via self-hosted Listmonk.
-- **SMS:** Kavenegar via `packages/sms` (provider-agnostic wrapper).
+- **SMS:** SMS.ir via `packages/sms` (provider-agnostic wrapper).
 - **Payments:** ZarinPal / IDPay / Zibal behind `packages/payments`
   (provider-agnostic wrapper). Final choice in Package 2.
 - **Error monitoring:** **Glitchtip** (self-hosted, Sentry-compatible).
-- **Hosting:** **Hetzner Cloud (Germany)** as the default, with a
-  domestic Iranian VPS as a candidate if inside-Iran latency becomes a
-  problem. A single CPX31-class machine runs every app, Postgres,
-  Plausible, and Glitchtip side by side via Docker Compose or systemd.
-  We split services to multiple VPSes once traffic justifies it.
+- **Hosting:** **Pars Pack** (Iranian domestic VPS). A single VPS runs
+  every app, Postgres, Plausible, and Glitchtip side by side via Docker
+  Compose or systemd. We split services to multiple VPSes once traffic
+  justifies it.
 - **Reverse proxy:** Caddy (preferred, automatic TLS) or Nginx,
   routing subdomains to each app's Node process.
-- **CDN (optional, Package 3):** Bunny CDN (EU-based, Iran-friendly) in
-  front of the Hetzner origin for static assets and image delivery.
-- **CI / CD:** GitHub Actions runs from outside Iran so npm installs
-  and builds work. Deployment to the VPS via SSH from the Action runner.
-- **Domain & DNS:** registrar that accepts Iranian customers (e.g.
-  Gandi, Hetzner DNS). `.ir` and `.com` both registered; primary TBD.
+- **CDN / DNS:** Abr Arvan (Iranian CDN + DNS).
+- **CI / CD:** Gitea Actions (self-hosted at `git.zhicwood.com`).
+  develop branch → `staging.zhicwood.com`, main branch → `zhicwood.com`.
+- **Domain:** `zhicwood.com`.
 
 Open verification items before Package 1 starts:
 
-- Confirm Hetzner account creation works from Iran (or set up via a
-  collaborator, then transfer).
 - Confirm TLS certificate issuance for multiple subdomains (via Caddy
   + Let's Encrypt, or ZeroSSL if Let's Encrypt rate limits hit).
-- Pick a domestic object store candidate and benchmark it against
-  Hetzner Object Storage from inside Iran.
-- Confirm Kavenegar credentials and a test SMS flow.
+- Confirm SMS.ir credentials and a test SMS flow.
 - Confirm which payment gateway the business already has a merchant
   account with (if any) — that one wins by default.
 - Confirm the legal invoice format expected by Iranian tax authorities

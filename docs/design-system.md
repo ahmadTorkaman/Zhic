@@ -129,13 +129,12 @@ for everyone.
 
 #### Persian display + body
 
-- **Display — Estedad Display** (or Vazirmatn Display as fallback).
-  Used for H1, H2, hero, pull quotes, marquee. Weights 300–600.
-  Track tight at large sizes (`-0.005em`) to keep the optical color
-  even.
-- **Body — Estedad** (or Vazirmatn as fallback). Weights 300–500.
-  Used for everything else. Line height generous (1.7+) — Persian
-  ascenders and descenders need more room than Latin.
+- **Ayandeh** — self-hosted TTF, 4 weights: Light (300), Regular (400),
+  Bold (700), Black (900). Used for both display and body. Display sizes
+  use Black/Bold weights. Body uses Regular. Captions/secondary use Light.
+  Track tight at large sizes (`-0.005em`) to keep the optical color even.
+  Line height generous (1.7+) — Persian ascenders and descenders need
+  more room than Latin.
 
 Both faces are **subsetted at build time** to the actual Unicode
 ranges in use (U+0600–U+06FF, U+200C–U+200D, U+FB50–U+FDFF, plus
@@ -144,11 +143,11 @@ ASCII). Subsetting cuts file size by ~70%.
 #### Latin (used for SKUs, prices in numeric form, code, brand
 mark, occasional editorial accents)
 
-- **Inter** — weights 300–500. Loaded as a self-hosted secondary
-  family. The CSS rule `font-family: 'Estedad', 'Inter', system-ui,
-  sans-serif` puts Inter as the **second** family so that Latin
+- **TBD** — Latin face not yet locked. Loaded as a self-hosted secondary
+  family. The CSS rule `font-family: 'Ayandeh', '<Latin TBD>', system-ui,
+  sans-serif` puts the Latin face as the **second** family so that Latin
   characters in mixed runs fall through to it without forcing
-  Persian glyphs through Inter's substitution table.
+  Persian glyphs through the Latin substitution table.
 
 Brand wordmark "Zhic" / "ژیک":
 
@@ -163,15 +162,15 @@ accommodate the ascender/descender envelope.
 
 | Token | px | rem | Family | Weight | Line height (fa) | Use |
 | --- | --- | --- | --- | --- | --- | --- |
-| `text-display` | 96 | 6 | Estedad Display | 300 | 1.15 | Hero headline (desktop) |
-| `text-h1` | 64 | 4 | Estedad Display | 300 | 1.2 | Page H1 |
-| `text-h2` | 48 | 3 | Estedad Display | 400 | 1.25 | Section heading |
-| `text-h3` | 32 | 2 | Estedad Display | 400 | 1.3 | Subsection |
-| `text-h4` | 24 | 1.5 | Estedad Display | 500 | 1.35 | Card title |
-| `text-lead` | 20 | 1.25 | Estedad | 300 | 1.7 | Lead paragraph |
-| `text-body` | 16 | 1 | Estedad | 400 | 1.75 | Body |
-| `text-small` | 14 | 0.875 | Estedad | 400 | 1.7 | Captions, meta |
-| `text-eyebrow` | 12 | 0.75 | Estedad | 500 | 1.5 | Uppercase Latin only; for Persian, use small caps via opentype features if available, otherwise drop the eyebrow style entirely |
+| `text-display` | 96 | 6 | Ayandeh | Black (900) | 1.15 | Hero headline (desktop) |
+| `text-h1` | 64 | 4 | Ayandeh | Bold (700) | 1.2 | Page H1 |
+| `text-h2` | 48 | 3 | Ayandeh | Bold (700) | 1.25 | Section heading |
+| `text-h3` | 32 | 2 | Ayandeh | Bold (700) | 1.3 | Subsection |
+| `text-h4` | 24 | 1.5 | Ayandeh | Bold (700) | 1.35 | Card title |
+| `text-lead` | 20 | 1.25 | Ayandeh | Light (300) | 1.7 | Lead paragraph |
+| `text-body` | 16 | 1 | Ayandeh | Regular (400) | 1.75 | Body |
+| `text-small` | 14 | 0.875 | Ayandeh | Regular (400) | 1.7 | Captions, meta |
+| `text-eyebrow` | 12 | 0.75 | Ayandeh | Bold (700) | 1.5 | Uppercase Latin only; for Persian, use small caps via opentype features if available, otherwise drop the eyebrow style entirely |
 
 Mobile scale: `clamp()` everything. Display caps at 56px on mobile,
 H1 at 40px.
@@ -380,7 +379,7 @@ to format these on its own.
 - **Aspect ratios:** product cards 4:5, hero 16:9 or 21:9, journal
   cover 3:2, gallery free.
 - **All images are AVIF + WebP** via Next/Image. Originals stored in
-  Hetzner Object Storage (or domestic S3, see `README.md` stack
+  Abr Arvan Object Storage (S3-compatible, see `README.md` stack
   decisions).
 - **Alt text is required.** Admin will not allow image upload
   without it. Persian alt text by default; Latin alt text only on
@@ -717,12 +716,12 @@ the rest in `/lab`.
 
 These need answers before Package 1 design closes:
 
-1. **Persian type lock.** Estedad vs Vazirmatn vs a paid Persian
-   face (e.g. IRANSans, Sahel). Tested in `/lab/type` against the
-   real product copy from the existing showrooms before locking.
-2. **Persian display vs body face.** Is one family across both
-   roles enough, or do we need a distinct display face (e.g.
-   Estedad Display 200 weight) for the hero?
+1. ~~**Persian type lock.**~~ **LOCKED — Ayandeh** (4 weights: Light,
+   Regular, Bold, Black). Self-hosted TTF files in repo. One family
+   covers both display and body roles.
+2. ~~**Persian display vs body face.**~~ **RESOLVED — single family.**
+   Ayandeh Black/Bold for display, Regular for body, Light for
+   captions/secondary.
 3. **Logo lockup.** Persian-only "ژیک" wordmark, Latin-only "Zhic",
    or stacked. Stamps and printed factors need a clear answer.
 4. **Photography sourcing.** In-house photographer in Hamedan vs

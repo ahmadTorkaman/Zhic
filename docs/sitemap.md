@@ -80,7 +80,7 @@ its respective app shipping; the storefront is Package 1–2 territory.
 | `/checkout/payment` | `CheckoutPaymentPage` | `payments` provider redirect | 2 | none | Brief interstitial before gateway redirect. |
 | `/checkout/return` | `CheckoutReturnPage` | `payments` callback | 2 | none | Verifies payment, creates order, redirects to confirmation. |
 | `/order/[id]` | `OrderConfirmationPage` | `orders` doc | 2 | none | Post-checkout success page (signed token in URL). `noindex`. |
-| `/order/[id]/factor` | `FactorViewPage` | `invoices` doc via `packages/invoices` | 2 | none | Print-ready Persian factor. Package 4 promotes this to `factor.zhic.ir`. |
+| `/order/[id]/factor` | `FactorViewPage` | `invoices` doc via `packages/invoices` | 2 | none | Print-ready Persian factor. Package 4 promotes this to `factor.zhicwood.com`. |
 | **Customer account (Package 2)** | | | | | |
 | `/account` | `AccountHome` | `customers` | 2 | none | Login required. Phone+OTP via `packages/auth`. `noindex`. |
 | `/account/orders` | `AccountOrders` | `orders` filtered by customer | 2 | none | |
@@ -104,7 +104,7 @@ its respective app shipping; the storefront is Package 1–2 territory.
 
 ### Routes that are deliberately NOT in the storefront
 
-- **`/admin`** — lives on `admin.zhic.ir`, not on the storefront. The
+- **`/admin`** — lives on `admin.zhicwood.com`, not on the storefront. The
   storefront does not link to it from any public page.
 - **`/lab`** — see `lab.md`. Layout-level `noindex`, robots-disallowed,
   never linked from public navigation.
@@ -336,7 +336,7 @@ collection is fine where SMS is undesired.
 | 1 | `/`, `/products`, `/products/[slug]` (inquiry mode), `/collections/*`, `/categories/*` (editorial), `/journal/*`, `/showrooms`, `/showrooms/[slug]`, `/events` (static), `/about`, `/atelier`, `/contact`, `/faq`, `/care`, `/shipping-and-delivery`, `/returns`, legal, sitemap, robots, manifest. Generous scope: pillar content pages, per-category editorial, events page, showroom-visit intake form. |
 | 2 | `/cart`, `/checkout/*`, `/order/[id]`, `/order/[id]/factor`, `/account/*`, `/login*`. PDP CTA flips from "استعلام" to "افزودن به سبد" for in-stock items. Shape C adds promotions, gift cards, delivery-step SMS. |
 | 3 | `/showrooms/[slug]/book` (real booking engine via `apps/crm`), per-showroom stock signals on PDP |
-| 4 | `/order/[id]/factor` migrates to `factor.zhic.ir` for external recipients |
+| 4 | `/order/[id]/factor` migrates to `factor.zhicwood.com` for external recipients |
 
 Anything not in this table is either covered elsewhere (operator
 apps, admin) or is held open until Discovery and the relevant package

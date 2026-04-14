@@ -307,6 +307,10 @@ One form used on PDP, showroom detail, and contact pages.
 - Design system tokens: colors extracted from logo, typography
   (Ayandeh) configured, spacing scale, grid, breakpoints
 - Core components started: buttons, inputs, cards, navigation
+- Agent infrastructure: root `CLAUDE.md` with locked decisions and
+  conventions; per-package `CLAUDE.md` files added as each workspace
+  comes online (`apps/web`, `services/api`, `packages/design-system`,
+  `packages/ui`, `packages/locale`)
 
 ### Week 2: Design system complete + first pages
 

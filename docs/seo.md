@@ -78,8 +78,8 @@ non-negotiable and enforced in CI.
   `siteSettings.defaultMetaTitle`).
 - Default OG image: 1200×630, generated per page where useful via
   `opengraph-image.tsx` (Next/OG). The image renders Persian text
-  with the same self-hosted Persian face used on the site (Estedad /
-  Vazirmatn) — never falls back to a Latin face for Persian copy.
+  with the same self-hosted Persian face used on the site (Ayandeh)
+  — never falls back to a Latin face for Persian copy.
 - All meta titles and descriptions are written in Persian.
 - ASCII-only slugs (see `sitemap.md` §1) so titles in SERPs read
   cleanly without percent-encoding.
@@ -170,8 +170,8 @@ Operator apps have their own, more permissive budgets.
 | Total page weight (homepage) | ≤ 1.5 MB | > 2 MB |
 | JS on first load (homepage) | ≤ 180 kB | > 250 kB |
 
-CWV is tested **from a non-Iranian PoP** in CI (GitHub Actions
-runners are outside Iran). Real-user metrics from inside Iran are
+CWV is tested **from a non-Iranian PoP** in CI (Gitea Actions
+runners outside Iran). Real-user metrics from inside Iran are
 gathered via Plausible's optional event measurement and reviewed
 monthly — they will be slower than CI by a meaningful margin.
 
@@ -457,7 +457,7 @@ Out of scope for the build but documented for marketing:
 The team is in Iran, which makes US-based analytics SaaS unreliable.
 The stack is therefore **self-hosted exclusively**.
 
-- **Plausible (self-hosted on Hetzner)** is the only behavioral
+- **Plausible (self-hosted on Pars Pack VPS)** is the only behavioral
   analytics tool. **No GA4** — it is intermittently blocked from
   Iran, adds GDPR friction, and provides no upside for a privacy-
   respecting Iranian brand. Plausible's lightweight script also

@@ -206,8 +206,8 @@ Global config editable by admins.
 | `defaultCurrency` | enum | Always `IRR` in v1; reserved for future |
 | `defaultLocale` | enum | Always `fa-IR` in v1 |
 | `paymentProvider` | enum | `zarinpal` / `idpay` / `zibal` — chosen Package 2 |
-| `smsProvider` | enum | `kavenegar` / `mellipayamak` / `ghasedak` — first is `kavenegar` |
-| `objectStorageBucket` | text | Hetzner / domestic Iranian S3 bucket name |
+| `smsProvider` | enum | `smsir` / `kavenegar` / `mellipayamak` / `ghasedak` — first is `smsir` |
+| `objectStorageBucket` | text | Abr Arvan S3-compatible bucket name |
 | `featureFlags` | jsonb | Reserved for staged rollouts |
 
 ## §4 `redirects`
@@ -230,8 +230,8 @@ with `source: 'auto'`.
 
 Central asset library. Stills, GIFs, video, 3D, and PDFs all live
 here, discriminated by `kind`. Stored in S3-compatible object
-storage (Hetzner Object Storage default; domestic Iranian S3
-candidate — see `README.md` stack decisions).
+storage (Abr Arvan Object Storage, S3-compatible — see `README.md`
+stack decisions).
 
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |

@@ -40,7 +40,7 @@ zhic/
 │   ├── api-client/     # Typed client every app uses to talk to services/api
 │   ├── locale/         # Jalali dates, Persian digits, number/currency format
 │   ├── money/          # rial ↔ toman conversion, formatters, rounding rules
-│   ├── sms/            # Provider-agnostic wrapper (Kavenegar first)
+│   ├── sms/            # Provider-agnostic wrapper (SMS.ir first)
 │   ├── payments/       # Provider-agnostic wrapper (ZarinPal / IDPay / Zibal)
 │   ├── invoices/       # Factor number generation, PDF/HTML templates
 │   ├── promotions/     # Rules-based promotion engine (Package 2 — Shape C)
@@ -61,18 +61,18 @@ publishing step: packages are linked, not installed from a registry.
 
 ```
                                            ┌────────────────────────┐
-zhic.ir           ──────── web ─────────▶  │                        │
-admin.zhic.ir     ─ Payload admin UI ───▶  │                        │
-api.zhic.ir       ───── services/api ───▶  │    one Postgres        │
-crm.zhic.ir       ──────── crm ─────────▶  │    (public, commerce,  │
-erp.zhic.ir       ──────── erp ─────────▶  │     crm, erp, mes      │
-mes.zhic.ir       ──────── mes ─────────▶  │     schemas)           │
-factor.zhic.ir    ──── factor (later) ──▶  │                        │
+zhicwood.com           ──── web ──────────▶  │                        │
+admin.zhicwood.com     ─ Payload admin ──▶  │                        │
+api.zhicwood.com       ── services/api ──▶  │    one Postgres        │
+crm.zhicwood.com       ──── crm ─────────▶  │    (public, commerce,  │
+erp.zhicwood.com       ──── erp ─────────▶  │     crm, erp, mes      │
+mes.zhicwood.com       ──── mes ─────────▶  │     schemas)           │
+factor.zhicwood.com    ── factor (later) ▶  │                        │
                                            └────────────────────────┘
 ```
 
 All subdomains terminate at a single Caddy (preferred) or Nginx reverse
-proxy on a Hetzner VPS. Caddy routes each subdomain to the Node process
+proxy on a Pars Pack VPS. Caddy routes each subdomain to the Node process
 listening on its own localhost port. Postgres runs on the same host until
 traffic or isolation concerns justify moving it off.
 
@@ -89,7 +89,7 @@ traffic or isolation concerns justify moving it off.
   across the graph with caching. `turbo.json` declares each task's inputs
   and outputs so only what changed is rebuilt. Turborepo is a local build
   orchestrator; it is **not** tied to Vercel and works fine on the
-  self-hosted VPS and in GitHub Actions.
+  self-hosted VPS and in Gitea Actions.
 - **Node version** is pinned via `.nvmrc` and `engines.node`. CI and the
   VPS both use the same version. Upgrades are their own PR.
 
@@ -203,7 +203,7 @@ There is no `apps/admin` in the initial layout. The reason:
 
 - Payload 3 ships with a capable built-in admin UI. For Packages 1–3 that
   UI is the admin, served from `services/api` and exposed publicly at
-  `admin.zhic.ir` via a reverse-proxy rewrite (Caddy maps the subdomain
+  `admin.zhicwood.com` via a reverse-proxy rewrite (Caddy maps the subdomain
   to the `/admin` path on `services/api`'s internal port).
 - Spinning up a parallel `apps/admin` before we know what Payload's
   admin can't handle would be premature. The only custom admin screens
@@ -228,11 +228,11 @@ it is split. Packages never import apps; apps import packages.
 | `design-system` | Design tokens, Tailwind preset, typography stack, color system, spacing scale, motion language, RTL rules. | Consumed by every app's Tailwind config. Tokens are the source of truth; components build on top. |
 | `ui` | Reusable React components that wrap design tokens into real elements: buttons, inputs, tables, modals, toasts, dialogs, navs. | Never hard-codes a color or spacing — everything goes through `design-system` tokens. |
 | `db` | The Postgres schema (collections + migrations), a shared Postgres client, seed scripts. | In Packages 1–3 the schema is *declared* via Payload collections in `services/api`; `db` holds generated types and low-level helpers. In Package 4 when `services/factory-api` ships, `db` also declares the `mes` schema via Drizzle. |
-| `auth` | Sessions, cookies, phone+OTP helpers, role checks, domain-scoped cookie helpers so login works across subdomains. | Session cookie is scoped to `.zhic.ir` (parent domain) so `web`, `crm`, `erp`, `mes` all share it. |
+| `auth` | Sessions, cookies, phone+OTP helpers, role checks, domain-scoped cookie helpers so login works across subdomains. | Session cookie is scoped to `.zhicwood.com` (parent domain) so `web`, `crm`, `erp`, `mes` all share it. |
 | `api-client` | A typed client that every app imports to read/write through `services/api`. | Generated from Payload collection types. No app talks to Payload over raw `fetch`. |
 | `locale` | Jalali ↔ Gregorian conversion, Persian digit rendering, Persian-aware number formatting, pluralization, RTL helpers, date-fns-jalali wrappers. | The only place the platform knows about Jalali. Every display date goes through it. |
 | `money` | Rial ↔ toman conversion, formatters, rounding rules, Persian-digit rendering for prices. | Every price in every app goes through it. No raw multiplications by 10 anywhere else. |
-| `sms` | Provider-agnostic SMS sender. Kavenegar is the first adapter; MelliPayamak / Ghasedak / others can be added without touching call sites. | Enforces rate limits, templated messages, delivery logging. Also owns delivery-step SMS automation templates (Package 2 — Shape C): order confirmation, shipped, out-for-delivery, delivered. |
+| `sms` | Provider-agnostic SMS sender. SMS.ir is the first adapter; MelliPayamak / Ghasedak / others can be added without touching call sites. | Enforces rate limits, templated messages, delivery logging. Also owns delivery-step SMS automation templates (Package 2 — Shape C): order confirmation, shipped, out-for-delivery, delivered. |
 | `payments` | Provider-agnostic payment gateway wrapper. ZarinPal / IDPay / Zibal are the candidate adapters. One is chosen in Package 2. | Exposes the same interface regardless of provider: `createPayment`, `verifyPayment`, `refund`. |
 | `invoices` | Factor number generation (using the client-provided format), HTML and PDF templates, tax-field handling, national ID capture, signed shareable URLs for `apps/factor`. | The `siteSettings.invoiceNumberFormat` field is the single source of truth for numbering. |
 | `promotions` | Rules-based promotion engine: percentage / fixed / buy-X-get-Y discounts, cart-level and line-level application, stackability rules. | Package 2 — Shape C. Scope fence: no dynamic pricing, no behaviour-triggered discounts, no A/B-tested promotions, no per-segment targeting (Package 3+). |
@@ -267,9 +267,9 @@ corrupting audit trails.
 ### `services/api` — Payload 3
 
 - **Runtime:** Next.js 16 (because that's how Payload 3 ships). Owns
-  its own port on the VPS. Exposed publicly at `api.zhic.ir`.
-- **Admin UI:** Payload's built-in admin at `api.zhic.ir/admin`, also
-  reachable at `admin.zhic.ir` via a reverse-proxy rewrite.
+  its own port on the VPS. Exposed publicly at `api.zhicwood.com`.
+- **Admin UI:** Payload's built-in admin at `api.zhicwood.com/admin`, also
+  reachable at `admin.zhicwood.com` via a reverse-proxy rewrite.
 - **Database:** Postgres, adapter `@payloadcms/db-postgres`. Owns the
   `public`, `commerce`, and `crm` schemas in Packages 1–3. Shares read
   access with `erp` and `mes` once those schemas exist.
@@ -375,7 +375,7 @@ mirror of what's in the database.
   `packages/sms` and exchange it for a session. Passwords are not the
   primary flow; they exist for admin bootstrap only.
 - **Session cookies** are issued by `packages/auth` and scoped to the
-  parent domain (`Domain=.zhic.ir; Secure; HttpOnly; SameSite=Lax`).
+  parent domain (`Domain=.zhicwood.com; Secure; HttpOnly; SameSite=Lax`).
   This lets a single login work across `web`, `crm`, `erp`, `mes`,
   `admin`, and `factor` without re-auth per subdomain.
 - **Role gating** happens in two places:
@@ -450,12 +450,10 @@ session store — `services/api`.
 
 ### Target environment
 
-- **One Hetzner Cloud VPS** (CPX31-class to start: 4 vCPU, 8 GB RAM,
-  Germany). Upgraded or split across multiple machines when metrics
-  justify it, not before.
-- Optional fallback: a domestic Iranian VPS if inside-Iran latency
-  benchmarks make Hetzner unworkable. The deployment topology is
-  identical — the host just changes.
+- **One Pars Pack VPS** (Iranian domestic). Upgraded or split across
+  multiple machines when metrics justify it, not before. The deployment
+  topology is provider-agnostic — the host can change without affecting
+  the architecture.
 
 ### Process topology
 
@@ -476,17 +474,17 @@ session store — `services/api`.
 
 | Subdomain | App / service | Package |
 | --- | --- | --- |
-| `zhic.ir` | `apps/web` | 1 |
-| `api.zhic.ir` | `services/api` | 1 |
-| `admin.zhic.ir` | `services/api` (rewritten to `/admin`) | 1 |
-| `crm.zhic.ir` | `apps/crm` | 3 |
-| `erp.zhic.ir` | `apps/erp` | 3+ |
-| `mes.zhic.ir` | `apps/mes` | 4 |
-| `factor.zhic.ir` | `apps/factor` | 4 polish |
-| `plausible.zhic.ir` | Plausible (internal) | 1 |
-| `errors.zhic.ir` | Glitchtip (internal) | 1 |
+| `zhicwood.com` | `apps/web` | 1 |
+| `api.zhicwood.com` | `services/api` | 1 |
+| `admin.zhicwood.com` | `services/api` (rewritten to `/admin`) | 1 |
+| `crm.zhicwood.com` | `apps/crm` | 3 |
+| `erp.zhicwood.com` | `apps/erp` | 3+ |
+| `mes.zhicwood.com` | `apps/mes` | 4 |
+| `factor.zhicwood.com` | `apps/factor` | 4 polish |
+| `plausible.zhicwood.com` | Plausible (internal) | 1 |
+| `errors.zhicwood.com` | Glitchtip (internal) | 1 |
 
-Path-based routing (`panel.zhic.ir/crm`, etc.) is the fallback model
+Path-based routing (`panel.zhicwood.com/crm`, etc.) is the fallback model
 only if multi-subdomain TLS issuance turns out to be painful from Iran.
 
 ### Environments
@@ -495,14 +493,14 @@ only if multi-subdomain TLS issuance turns out to be painful from Iran.
   shared local Postgres. `.env.local` files are gitignored; a template
   `.env.example` ships.
 - **`staging`** — a second VPS (or a separate set of systemd units on
-  the same VPS, bound to `staging.*.zhic.ir`) that mirrors production
+  the same VPS, bound to `staging.*.zhicwood.com`) that mirrors production
   for any change that touches schemas, auth, payments, or SMS.
-- **`production`** — the main VPS. Only GitHub Actions deploys here,
+- **`production`** — the main VPS. Only Gitea Actions deploys here,
   never a developer directly.
 
 ### Deploys
 
-- **CI:** GitHub Actions, runners outside Iran (so `pnpm install` and
+- **CI:** Gitea Actions, runners outside Iran (so `pnpm install` and
   `next build` actually work against npm, Google Fonts fallbacks, etc.).
 - **Flow:** push → lint → typecheck → test → build → deploy over SSH
   to the VPS. The Action tars the built app directory, `rsync`s it to
@@ -520,18 +518,18 @@ only if multi-subdomain TLS issuance turns out to be painful from Iran.
 
 - **Source of truth:** `.env.production` files on the VPS, owned by the
   deploy user, 0600, never committed.
-- **In CI:** GitHub Actions secrets, injected into the build only for
+- **In CI:** Gitea Actions secrets, injected into the build only for
   values that must exist at build time (public keys, site URL).
   Everything secret at runtime is read from the VPS env, not baked in.
-- **Rotation:** documented per-secret. Kavenegar, payment gateway, and
+- **Rotation:** documented per-secret. SMS.ir, payment gateway, and
   Payload's secret key all have explicit rotation runbooks.
 
 ### Backups
 
-- **Postgres:** `pg_dump` nightly to Hetzner Object Storage (EU,
-  encrypted at rest), retained 30 days. Weekly full + daily incremental
+- **Postgres:** `pg_dump` nightly to Abr Arvan Object Storage
+  (encrypted at rest), retained 30 days. Weekly full + daily incremental
   WAL archive via `pgbackrest` once traffic justifies it.
-- **Media:** already on Hetzner Object Storage; versioned bucket with
+- **Media:** already on Abr Arvan Object Storage; versioned bucket with
   30-day recovery.
 - **Config:** systemd units, Caddyfile, and non-secret env are in a
   separate git repo (`zhic/ops`) and deployed the same way as the apps.
@@ -548,7 +546,7 @@ only if multi-subdomain TLS issuance turns out to be painful from Iran.
   log shipper (Vector) to a self-hosted Loki instance later.
 - **Uptime:** external uptime checks from a provider that pings from
   multiple regions including Iran, if any such provider can be found;
-  otherwise multiple Hetzner regions.
+  otherwise multiple cloud regions.
 
 ---
 
@@ -606,22 +604,18 @@ These are held open on purpose. They will move into the relevant
 section above once decided, usually after Discovery.
 
 - **`apps/admin` vs. Payload-as-admin.** Start with Payload's built-in
-  admin at `admin.zhic.ir`. Revisit after Discovery: if showroom
+  admin at `admin.zhicwood.com`. Revisit after Discovery: if showroom
   managers clearly need a non-Payload UX, their app (`apps/crm` or a
   separate `apps/showroom`) is spun up instead of a custom admin.
 - **`apps/showroom` as a standalone app.** Or is it just a role inside
   `apps/crm`? Discovery decides. Until then, assume it's a role.
-- **Hetzner account creation from Iran.** Verified in Discovery before
-  architecture is frozen. If it's blocked, we either set up via a
-  collaborator and transfer, or switch to a domestic Iranian VPS and
-  re-benchmark.
+- ~~**VPS provider.**~~ **RESOLVED — Pars Pack** (Iranian domestic VPS).
+  No Hetzner signup issues to worry about.
 - **TLS issuance for multiple subdomains from the VPS.** Caddy +
   Let's Encrypt is the default. If rate limits or network issues
   from the VPS make this unreliable, ZeroSSL is the fallback.
-- **Object storage host.** Hetzner Object Storage (EU) is the default.
-  A domestic Iranian S3-compatible store is evaluated in parallel; if
-  inside-Iran latency benchmarks show a clear win, media moves
-  domestic and Hetzner becomes the offsite backup.
+- ~~**Object storage host.**~~ **RESOLVED — Abr Arvan Object Storage**
+  (Iranian domestic, S3-compatible).
 - **Session store.** In-memory (Payload default) for Package 1. Redis on
   the same VPS once `services/factory-api` ships in Package 4, because at
   that point two services need to share sessions.

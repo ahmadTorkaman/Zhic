@@ -2,7 +2,7 @@
 
 The admin platform spec. Built on Payload 3, served by `services/api`
 (its own Next.js app — see `architecture.md` §5), and exposed publicly
-at `admin.zhic.ir` via a Caddy rewrite to the `/admin` path on
+at `admin.zhicwood.com` via a Caddy rewrite to the `/admin` path on
 `services/api`. Custom views are layered on top of Payload's default
 admin UI for the high-frequency flows: pricing, publishing, content
 calendar, the order desk, the factor desk, and the inbox.
@@ -515,7 +515,7 @@ Custom view for managing delivery-step SMS templates sent via
 - Per-trigger: template text (Persian, with `{orderNumber}`,
   `{customerName}`, `{trackingUrl}` placeholders), enabled/disabled
   toggle, preview.
-- Send-log tab: recent sends with delivery status from Kavenegar.
+- Send-log tab: recent sends with delivery status from SMS.ir.
 - Scope fence: no conditional logic, no user-behaviour triggers, no
   A/B testing on message content. Package 3+ territory.
 
@@ -721,7 +721,7 @@ These are the things the admin must NOT allow, ever.
 
 ## 9. Notifications
 
-- **SMS** (via `packages/sms`, Kavenegar first) on: new appointment
+- **SMS** (via `packages/sms`, SMS.ir first) on: new appointment
   request to the assigned showroom manager, order confirmation to
   the customer, OTP delivery, refund initiated.
 - **Email** on: new contact form submission, new trade application,
@@ -744,19 +744,18 @@ The integration list is constrained by what works reliably from
 inside Iran. See `README.md` "Stack decisions (Iran-aware)" for the
 rationale.
 
-- **`packages/sms`** — Kavenegar first; MelliPayamak / Ghasedak as
+- **`packages/sms`** — SMS.ir first; MelliPayamak / Ghasedak as
   pluggable adapters. The wrapper is provider-agnostic; call sites
   never know which provider is configured.
 - **`packages/payments`** — ZarinPal / IDPay / Zibal. Final
   provider chosen in Package 2. Same wrapper pattern.
-- **Plausible (self-hosted on Hetzner)** — embedded dashboard for
+- **Plausible (self-hosted on Pars Pack VPS)** — embedded dashboard for
   the storefront analytics tile. **No GA4.**
 - **Search Console** — embedded dashboard via API for SEO control
   center. Verification may need a non-Iranian phone for some flows.
 - **Glitchtip (self-hosted, Sentry-compatible)** — error
   monitoring for the admin and the storefront.
-- **Object storage** — Hetzner Object Storage default; a domestic
-  Iranian S3 candidate evaluated in parallel.
+- **Object storage** — Abr Arvan Object Storage (S3-compatible).
 - **Spam filtering** — a self-hosted or Iran-friendly equivalent
   for `formSubmissions`. No US-based SaaS dependency.
 
@@ -811,7 +810,7 @@ Resolved (carried into the spec above):
   Blender with a documented export preset; the admin only validates
   the upload. See §5.2b.
 - **Payload hosting?** Payload runs as `services/api`, its own
-  Next.js app, exposed at `admin.zhic.ir` via Caddy. **Not** mounted
+  Next.js app, exposed at `admin.zhicwood.com` via Caddy. **Not** mounted
   inside `apps/web`. See `architecture.md` §5.
 - **GA4?** No. Plausible only.
 - **Klaviyo / Resend / Stripe / Slack?** No. SMS-first via

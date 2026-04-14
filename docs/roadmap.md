@@ -126,7 +126,7 @@ dependency on Discovery — safe to build in full from day one.
 **Design work:**
 
 - Brand tokens finalized in code: color palette, typography scale
-  (Persian display `IRANYekan` / body), spacing, grid, breakpoints.
+  (Persian display + body: **Ayandeh**), spacing, grid, breakpoints.
 - Core component library: buttons, inputs, form fields, cards,
   navigation bar, footer, modal/drawer, image gallery, breadcrumbs.
 - RTL implementation: bidi rules, ZWNJ handling, Persian digit
@@ -146,10 +146,29 @@ dependency on Discovery — safe to build in full from day one.
   (singletons), `media`.
 - `apps/web` replaces the current `src/` app: Persian-first, RTL,
   Jalali calendar, Persian digits, tokenized Tailwind theme.
-- Hosting stood up: Hetzner (or domestic Iranian VPS), TLS, object
-  storage, domain DNS for `zhicwood.com`.
+- Hosting stood up: Pars Pack VPS, Caddy + TLS, Abr Arvan CDN/DNS +
+  Object Storage, domain DNS for `zhicwood.com`.
+- Gitea at `git.zhicwood.com` with Gitea Actions CI/CD.
 - Self-hosted Plausible analytics.
-- Kavenegar account wired for SMS.
+- SMS.ir account wired for SMS.
+
+**Agent-assisted development infrastructure:**
+
+- Root `CLAUDE.md` with locked stack decisions, coding conventions,
+  Persian/RTL rules, and document hierarchy.
+- Per-package `CLAUDE.md` files added as each workspace comes online:
+  `apps/web/CLAUDE.md` (page templates, component patterns, SEO
+  checklist), `services/api/CLAUDE.md` (Payload collections, SMS
+  routing, media conventions), `packages/design-system/CLAUDE.md`
+  (token values, component API contracts), `packages/ui/CLAUDE.md`
+  (component inventory, accessibility, RTL), `packages/locale/CLAUDE.md`
+  (Persian digits, Jalali, ZWNJ rules).
+- Automated hooks added as subsystems come online: RTL lint (flag
+  `left`/`right` in CSS), Persian text check (warn on hardcoded
+  English in UI files), SEO check (ensure `generateMetadata` per
+  route), import boundary enforcement.
+- Precise documentation maintained so any AI agent session starts
+  productive from the first message.
 
 #### Week 3–4: All pages live on zhicwood.com
 
@@ -261,8 +280,8 @@ deliverable.
   showroom manager (city-based routing confirmed).
 - A non-developer can add/edit a product in Payload admin and see it
   live on `zhicwood.com` within 10 minutes.
-- Hosting infrastructure confirmed and running (Hetzner/VPS, TLS,
-  object storage, Plausible, Kavenegar).
+- Hosting infrastructure confirmed and running (Pars Pack VPS, TLS,
+  Abr Arvan CDN + Object Storage, Plausible, SMS.ir).
 
 #### Month 1 payment trigger
 
@@ -431,7 +450,7 @@ session.
 
 - Cart page + add-to-cart flow.
 - Multi-step checkout: address → delivery → payment.
-- Customer accounts: phone + OTP registration/login via Kavenegar
+- Customer accounts: phone + OTP registration/login via SMS.ir
   (`packages/auth`).
 - Address management (Iranian address fields).
 - Payment gateway wiring (`packages/payments` — ZarinPal / IDPay /
@@ -469,7 +488,7 @@ can now be locked.
 - Admin-to-storefront pipeline re-confirmed.
 - SMS routing confirmed across all showrooms + Hamedan fallback.
 - Payment gateway test transactions.
-- All infrastructure verified: Hetzner/VPS, TLS, SMS, payment gateway
+- All infrastructure verified: Pars Pack VPS, TLS, SMS, payment gateway
   account, object storage.
 
 #### Package 1 acceptance (Shape-R session)
@@ -536,8 +555,8 @@ product (R15). Both are required for Package 1 to close.
   wiring) — factor / order / stock shapes locked against Discovery.
 - Lighthouse 95+ on mobile, all four CWV in the green.
 - Valid Persian sitemap submitted to Search Console.
-- All infrastructure verification items confirmed (Hetzner/VPS, TLS,
-  SMS, payment gateway account, object storage).
+- All infrastructure verification items confirmed (Pars Pack VPS, TLS,
+  SMS, payment gateway account, Abr Arvan Object Storage).
 - Shape-R acceptance session passed.
 
 #### Month 3 payment trigger
@@ -571,8 +590,8 @@ calendar, triggers slip too.
 - Inquiry form with city-based SMS routing confirmed working.
 - Commerce shell built (cart, checkout, customer accounts, payment
   wiring) — factor / order / stock shapes locked against Discovery.
-- All infrastructure verification items confirmed (Hetzner/VPS, TLS,
-  SMS, payment gateway account, object storage).
+- All infrastructure verification items confirmed (Pars Pack VPS, TLS,
+  SMS, payment gateway account, Abr Arvan Object Storage).
 - Shape-R acceptance session passed.
 
 ---
@@ -590,7 +609,7 @@ quiet launch at Package 2 close remains an explicitly allowed fallback.
 
 ### Shape A — baseline (the shop shell)
 
-- Customer accounts via phone + OTP (Kavenegar).
+- Customer accounts via phone + OTP (SMS.ir).
 - Cart + checkout flow, Persian throughout.
 - One working Iranian payment gateway (the one the client already has
   a merchant account with).
@@ -874,7 +893,7 @@ possibly significantly.
 
 | Risk | Mitigation |
 | --- | --- |
-| Hetzner / TLS / payments / SMS verification from inside Iran | Package 1 closes all of these before build depends on them. |
+| Pars Pack / TLS / payments / SMS verification from inside Iran | Package 1 closes all of these before build depends on them. |
 | Legacy-app export / migration may be manual | R4 parallel-run migration in Package 2. |
 | Factor format and tax fields may take longer than expected | R6 schema-walk, one focused day in Discovery W4. |
 | Core Web Vitals from inside Iran may be worse than CI shows | R15 Shape-R session on real ISPs inside Iran. |
@@ -912,7 +931,7 @@ resolve them.
 | # | Item | Default | Revisit when |
 | --- | --- | --- | --- |
 | 1 | ASCII vs Persian slugs | ASCII slugs (current unilateral) | Before Package 1 template work begins |
-| 2 | Persian font (free Vazirmatn/Estedad vs paid) | Free Vazirmatn + Estedad pair | Budget question — revisit if client wants a paid face as brand differentiator |
+| 2 | Persian font | **Ayandeh** (4 weights, self-hosted TTF) | **Locked.** Font files in repo. Latin typeface still TBD. |
 | 6 | Multi-schema Postgres split | Multi-schema stays | Reversible if early Discovery reveals operator pain |
 | 16 | Showroom-scoped visibility | Managers see only their showroom, owner sees cross-showroom | Cultural/management question — revisit with owner before Package 3 scoping |
 | 19 | Tipax as delivery carrier | Tipax as assumed carrier enum value | Populated from whatever Discovery finds the business uses |
@@ -958,13 +977,11 @@ convenience.
 | Item | Cost (Package 1 window, 3 months) | Notes |
 | --- | --- | --- |
 | Domain `zhicwood.com` (one-time) | ~93M toman ($620 USD × ~150k toman/USD) | Client-owned asset, registered in client's name. Re-verify price at purchase. |
-| VPS — Hetzner path | ~11M toman (3 × ~3.75M) | CPX31, post-April 2026 pricing. Hetzner signup from Iran is an open verification item. |
-| VPS — ParsVDS domestic path | ~8–12M toman | Priced in IRR directly. |
-| VPS — ArvanCloud path | ~40M toman | Materially more expensive. |
-| Object storage | ~1–1.5M toman | Hetzner Object Storage EU or domestic S3. |
-| Kavenegar SMS credits | ~1M toman one-time | Launch-volume pre-paid bundle. |
+| VPS — Pars Pack | ~8–12M toman | Priced in IRR directly. Domestic Iranian VPS. |
+| Abr Arvan CDN + Object Storage | ~2–3M toman | CDN/DNS + S3-compatible object storage. |
+| SMS.ir credits | ~1M toman one-time | Launch-volume pre-paid bundle. |
 | Payment gateway setup | Typically zero | Per-transaction cut from customer payments. |
-| **Total (Hetzner path)** | **~108–113M toman** | Dominated by the domain (~80–90% of total). |
+| **Total (Pars Pack path)** | **~104–109M toman** | Dominated by the domain (~80–90% of total). |
 
 Claude Code ($125 USD/month) is **baked into the fee**, never a
 pass-through line. It is operator-side tooling.
@@ -972,11 +989,10 @@ pass-through line. It is operator-side tooling.
 ### Operator action items before signing
 
 1. Re-verify `zhicwood.com` price; register under client's name.
-2. Confirm Hetzner signup from Iran or commit to domestic VPS path.
-3. Confirm Kavenegar account + test SMS flow.
+2. Confirm Pars Pack VPS provisioning.
+3. Confirm SMS.ir account + test SMS flow.
 4. Confirm which payment gateway the business already has.
-5. Choose VPS path and write it as a named row with monthly toman
-   figure in the client-facing pass-through schedule.
+5. Confirm Abr Arvan CDN/DNS + Object Storage setup.
 
 ---
 
