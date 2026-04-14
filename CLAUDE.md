@@ -24,6 +24,12 @@ The detailed plan lives in `docs/package1-month1.md` — that file is the
 **single source of truth** for Month 1 scope, stack, and schedule. When any
 other doc conflicts with it, `package1-month1.md` wins.
 
+**Read `docs/state.md` at session start.** It is the live status board:
+which sessions are shipped, which are unblocked next, what is deferred,
+and what open decisions are gating work. **The last step of every
+session is to update `docs/state.md`.** If the file is not updated, the
+session is not complete.
+
 ---
 
 ## Locked stack decisions
@@ -132,6 +138,7 @@ the monorepo split. It is not thrown away.
 
 | File | Purpose |
 | --- | --- |
+| `docs/state.md` | **Live status board** — read first, update last. Session status, commits, follow-ups, open decisions |
 | `docs/package1-month1.md` | **Month 1 source of truth** — week-by-week schedule, stack, pages, CMS collections, inquiry form, exit criteria |
 | `docs/roadmap.md` | Full 4-package delivery plan with payment triggers |
 | `docs/sessions.md` | Session-based execution plan for Month 1 |
