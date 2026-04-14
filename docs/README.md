@@ -18,22 +18,45 @@ independent Node processes.
 
 ## Documents
 
+### Top-level (high-traffic)
+
 | File | Purpose |
 | --- | --- |
 | [`roadmap.md`](./roadmap.md) | Package-based delivery plan from today's mockup to the full platform. |
-| [`architecture.md`](./architecture.md) | Monorepo layout, apps, packages, services, deployment, auth, data flow. |
-| [`discovery.md`](./discovery.md) | Template for reverse-engineering the existing showroom managers app and the existing workflow. |
-| [`sitemap.md`](./sitemap.md) | Public URL structure, page templates, information architecture. Persian-first, ASCII slugs, real commerce surfaces. |
-| [`design-system.md`](./design-system.md) | Brand tokens, typography, color, grid, motion, components. Persian/RTL primary, with a separate operator-app vocabulary. |
-| [`data-schemas.md`](./data-schemas.md) | Every collection, field, relation, validation rule across `public` / `commerce` / `crm` / `erp` / `mes` / `content` schemas. Rial-integer money, phone-as-PK, factor numbering. |
-| [`admin-panels.md`](./admin-panels.md) | Admin UX, screens, roles, workflows for Packages 1–2 (Payload-as-admin). Deeper CRM/ERP surfaces are gated on Discovery and live in their respective package docs. |
-| [`seo.md`](./seo.md) | SEO playbook: Persian metadata, structured data, performance budgets, Iran-aware analytics, local SEO for Iranian showrooms. |
-| [`lab.md`](./lab.md) | The `/lab` experimentation surface — purpose, rules, robots policy. |
+| [`package1-month1.md`](./package1-month1.md) | **Month 1 source of truth** — scope, schedule, exit criteria. |
+| [`sessions.md`](./sessions.md) | Session-based execution plan — context-window-sized work units. |
 
-All files now reflect the locked Persian-first commerce platform
-scope. The three at the top (`roadmap`, `architecture`, `discovery`)
-are the entry points; the rest implement the decisions captured
-there.
+### `spec/` — Technical specifications
+
+| File | Purpose |
+| --- | --- |
+| [`spec/architecture.md`](./spec/architecture.md) | Monorepo layout, apps, packages, services, deployment, auth, data flow. |
+| [`spec/design-system.md`](./spec/design-system.md) | Brand tokens, typography, color, grid, motion, components. |
+| [`spec/data-schemas.md`](./spec/data-schemas.md) | Every collection, field, relation, validation rule across all schemas. |
+| [`spec/sitemap.md`](./spec/sitemap.md) | Public URL structure, page templates, information architecture. |
+| [`spec/seo.md`](./spec/seo.md) | SEO playbook: Persian metadata, structured data, performance budgets. |
+| [`spec/admin-panels.md`](./spec/admin-panels.md) | Admin UX, screens, roles, workflows for Packages 1–2. |
+| [`spec/lab.md`](./spec/lab.md) | The `/lab` experimentation surface — purpose, rules, robots policy. |
+
+### `discovery/` — Research & reverse-engineering
+
+| File | Purpose |
+| --- | --- |
+| [`discovery/discovery.md`](./discovery/discovery.md) | Template for reverse-engineering the existing showroom managers app. |
+
+### `contracts/` — Business & legal
+
+| File | Purpose |
+| --- | --- |
+| [`contracts/pre-contract-package1.md`](./contracts/pre-contract-package1.md) | Package 1 pre-contract (پیش‌قرارداد). |
+| [`contracts/pre-contract-package1-v2.md`](./contracts/pre-contract-package1-v2.md) | Package 1 pre-contract v2. |
+
+### `archive/` — Discussion logs & parked notes
+
+| File | Purpose |
+| --- | --- |
+| [`archive/discussion-2026-04-08.md`](./archive/discussion-2026-04-08.md) | Full discussion log with decisions R1–R18. |
+| [`archive/mes-notebook.md`](./archive/mes-notebook.md) | MES placeholder — parked until Package 4. |
 
 ---
 

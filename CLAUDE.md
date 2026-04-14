@@ -134,13 +134,14 @@ the monorepo split. It is not thrown away.
 | --- | --- |
 | `docs/package1-month1.md` | **Month 1 source of truth** — week-by-week schedule, stack, pages, CMS collections, inquiry form, exit criteria |
 | `docs/roadmap.md` | Full 4-package delivery plan with payment triggers |
-| `docs/architecture.md` | Monorepo layout, apps, services, deployment |
-| `docs/design-system.md` | Brand tokens, typography, color, grid, motion, components |
-| `docs/data-schemas.md` | Every collection, field, relation across all schemas |
-| `docs/sitemap.md` | Public URL structure, page templates |
-| `docs/seo.md` | SEO playbook, structured data, performance budgets |
-| `docs/discovery.md` | Template for reverse-engineering the legacy system |
-| `docs/admin-panels.md` | Admin UX, screens, roles, workflows |
+| `docs/sessions.md` | Session-based execution plan for Month 1 |
+| `docs/spec/architecture.md` | Monorepo layout, apps, services, deployment |
+| `docs/spec/design-system.md` | Brand tokens, typography, color, grid, motion, components |
+| `docs/spec/data-schemas.md` | Every collection, field, relation across all schemas |
+| `docs/spec/sitemap.md` | Public URL structure, page templates |
+| `docs/spec/seo.md` | SEO playbook, structured data, performance budgets |
+| `docs/spec/admin-panels.md` | Admin UX, screens, roles, workflows |
+| `docs/discovery/discovery.md` | Template for reverse-engineering the legacy system |
 
 ---
 
