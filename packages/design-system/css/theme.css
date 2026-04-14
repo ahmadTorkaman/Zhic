@@ -1,0 +1,87 @@
+/**
+ * Tailwind v4 theme binding. Aliases design-system CSS variables into
+ * Tailwind's utility namespaces so `bg-ivory`, `text-charcoal`,
+ * `font-sans`, `text-body`, `p-5`, `rounded-md`, `shadow-modal`, etc.
+ * resolve to the tokens defined in tokens.css.
+ *
+ * Must be imported AFTER `@import "tailwindcss";` and AFTER tokens.css.
+ */
+
+@theme inline {
+  /* ── Color ─────────────────────────────────────────────────────── */
+  --color-ivory: var(--color-ivory);
+  --color-cream: var(--color-cream);
+  --color-sand: var(--color-sand);
+  --color-stone: var(--color-stone);
+  --color-charcoal: var(--color-charcoal);
+  --color-ink: var(--color-ink);
+  --color-accent: var(--color-accent);
+  --color-saffron: var(--color-saffron);
+  --color-rust: var(--color-rust);
+  --color-moss: var(--color-moss);
+
+  /* ── Font families ─────────────────────────────────────────────── */
+  --font-sans: var(--font-sans);
+
+  /* ── Font sizes (use as text-display, text-h1, …) ─────────────── */
+  --text-display: var(--text-display);
+  --text-display--line-height: var(--leading-display);
+  --text-h1: var(--text-h1);
+  --text-h1--line-height: var(--leading-h1);
+  --text-h2: var(--text-h2);
+  --text-h2--line-height: var(--leading-h2);
+  --text-h3: var(--text-h3);
+  --text-h3--line-height: var(--leading-h3);
+  --text-h4: var(--text-h4);
+  --text-h4--line-height: var(--leading-h4);
+  --text-lead: var(--text-lead);
+  --text-lead--line-height: var(--leading-lead);
+  --text-body: var(--text-body);
+  --text-body--line-height: var(--leading-body);
+  --text-small: var(--text-small);
+  --text-small--line-height: var(--leading-small);
+  --text-eyebrow: var(--text-eyebrow);
+  --text-eyebrow--line-height: var(--leading-eyebrow);
+
+  /* ── Font weights ──────────────────────────────────────────────── */
+  --font-weight-light: var(--font-weight-light);
+  --font-weight-regular: var(--font-weight-regular);
+  --font-weight-bold: var(--font-weight-bold);
+  --font-weight-black: var(--font-weight-black);
+
+  /* ── Letter spacing ────────────────────────────────────────────── */
+  --tracking-tight: var(--tracking-tight);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: var(--tracking-wide);
+
+  /* ── Spacing scale (p-1 … p-12, m-1 … m-12, gap-*, etc.) ──────── */
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-9: var(--space-9);
+  --spacing-10: var(--space-10);
+  --spacing-11: var(--space-11);
+  --spacing-12: var(--space-12);
+
+  /* ── Radii ─────────────────────────────────────────────────────── */
+  --radius-none: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  /* ── Shadows ───────────────────────────────────────────────────── */
+  --shadow-modal: var(--shadow-modal);
+
+  /* ── Breakpoints (§2.8) ────────────────────────────────────────── */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1440px;
+  --breakpoint-2xl: 1920px;
+}

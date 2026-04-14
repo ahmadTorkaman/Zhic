@@ -1,26 +1,39 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import './globals.css';
 
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-cormorant',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  variable: '--font-inter',
+const ayandeh = localFont({
+  src: [
+    {
+      path: '../assets/fonts/Ayandeh Light.ttf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/Ayandeh Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/Ayandeh Bold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/Ayandeh Black.ttf',
+      weight: '900',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-ayandeh',
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'Zhic — Luxury Bedroom Design',
+  title: 'ژیک — مبلمان خواب دست‌ساز',
   description:
-    'Handcrafted beds designed for those who appreciate the art of slowing down. Luxury bedroom furniture from our New York atelier.',
+    'تخت‌های دست‌ساز برای کسانی که هنر آهسته زیستن را می‌شناسند.',
 };
 
 export default function RootLayout({
@@ -30,8 +43,9 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${cormorant.variable} ${inter.variable} antialiased`}
+      lang="fa"
+      dir="rtl"
+      className={`${ayandeh.variable} antialiased`}
     >
       <body className="bg-ivory text-charcoal font-sans">
         <SmoothScrollProvider>{children}</SmoothScrollProvider>

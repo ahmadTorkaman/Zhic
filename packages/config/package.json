@@ -6,14 +6,12 @@
   "exports": {
     "./tsconfig.base.json": "./tsconfig.base.json",
     "./eslint": "./eslint.config.mjs",
-    "./prettier": "./prettier.config.cjs",
-    "./tailwind-preset": "./tailwind-preset.js"
+    "./prettier": "./prettier.config.cjs"
   },
   "files": [
     "tsconfig.base.json",
     "eslint.config.mjs",
-    "prettier.config.cjs",
-    "tailwind-preset.js"
+    "prettier.config.cjs"
   ],
   "dependencies": {
     "@eslint/js": "^9.15.0",
