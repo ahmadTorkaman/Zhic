@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import './globals.css';
 
 const ayandeh = localFont({
@@ -47,9 +46,7 @@ export default function RootLayout({
       dir="rtl"
       className={`${ayandeh.variable} antialiased`}
     >
-      <body className="bg-ivory text-charcoal font-sans">
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
-      </body>
+      <body className="bg-ivory text-charcoal font-sans">{children}</body>
     </html>
   );
 }

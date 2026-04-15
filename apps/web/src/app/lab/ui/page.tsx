@@ -3,13 +3,17 @@
 import { useState } from 'react';
 import {
   Badge,
+  Breadcrumbs,
   Button,
   Checkbox,
+  Drawer,
   FormField,
   Input,
+  Modal,
   Radio,
   RadioGroup,
   Select,
+  SkipLink,
   Tag,
   Textarea,
 } from '@zhic/ui';
@@ -132,6 +136,10 @@ export default function UiLabPage() {
     agree: false,
   });
   const [submitted, setSubmitted] = useState(false);
+  const [modalSize, setModalSize] = useState<'sm' | 'md' | 'lg' | null>(null);
+  const [drawerSide, setDrawerSide] = useState<
+    'start' | 'end' | 'top' | 'bottom' | 'full' | null
+  >(null);
 
   const phoneInvalid =
     submitted &&
@@ -553,6 +561,150 @@ export default function UiLabPage() {
             </div>
           </div>
         </form>
+      </Section>
+
+      <Section
+        title="SkipLink"
+        caption="نامرئی تا زمان فوکوس؛ روی Tab به بالا می‌پرد"
+      >
+        <Row label="demo">
+          <SkipLink href="#ui-skip-target">پرش به محتوای آزمایش</SkipLink>
+          <span className="text-small text-stone">
+            Tab را بزنید — گره اول این صفحه این لینک خواهد بود.
+          </span>
+        </Row>
+        <div id="ui-skip-target" tabIndex={-1} className="text-small text-stone">
+          این پاراگراف، هدف پرش است.
+        </div>
+      </Section>
+
+      <Section
+        title="Breadcrumbs"
+        caption="لیست مسیر + chevron که زیر RTL می‌چرخد"
+      >
+        <Row label="short">
+          <Breadcrumbs
+            items={[
+              { label: 'خانه', href: '/' },
+              { label: 'محصولات', href: '/products' },
+              { label: 'آرام' },
+            ]}
+          />
+        </Row>
+        <Row label="deep">
+          <Breadcrumbs
+            items={[
+              { label: 'خانه', href: '/' },
+              { label: 'محصولات', href: '/products' },
+              { label: 'تخت‌خواب', href: '/categories/beds' },
+              { label: 'آرام — گردو', href: '/products/aram-walnut' },
+              { label: 'اندازه کینگ' },
+            ]}
+          />
+        </Row>
+      </Section>
+
+      <Section
+        title="Modal"
+        caption="dialog native + focus trap + Escape + backdrop click"
+      >
+        <Row label="sizes">
+          <Button variant="secondary" onClick={() => setModalSize('sm')}>
+            کوچک
+          </Button>
+          <Button variant="secondary" onClick={() => setModalSize('md')}>
+            متوسط
+          </Button>
+          <Button variant="secondary" onClick={() => setModalSize('lg')}>
+            بزرگ
+          </Button>
+        </Row>
+        <Modal
+          open={modalSize !== null}
+          onClose={() => setModalSize(null)}
+          size={modalSize ?? 'md'}
+          title="تأیید سفارش"
+          description="برای ادامه، لطفاً اطلاعات زیر را بررسی کنید."
+          footer={
+            <div className="flex justify-end gap-3">
+              <Button variant="ghost" onClick={() => setModalSize(null)}>
+                انصراف
+              </Button>
+              <Button variant="primary" onClick={() => setModalSize(null)}>
+                تأیید و ادامه
+              </Button>
+            </div>
+          }
+        >
+          <div className="space-y-3 text-body">
+            <p>سفارش به آدرس زیر ارسال خواهد شد:</p>
+            <p className="text-small text-stone">
+              تهران، خیابان ولیعصر، کوچه شهید مطهری، پلاک ۱۲
+            </p>
+            <p>
+              پرداخت از طریق درگاه زرین‌پال انجام می‌شود. پس از پرداخت، پیامک
+              تأیید برایتان ارسال خواهد شد.
+            </p>
+          </div>
+        </Modal>
+      </Section>
+
+      <Section
+        title="Drawer"
+        caption="edge-anchored (start/end/top/bottom) + full-bleed overlay"
+      >
+        <Row label="sides">
+          <Button variant="secondary" onClick={() => setDrawerSide('start')}>
+            شروع (start)
+          </Button>
+          <Button variant="secondary" onClick={() => setDrawerSide('end')}>
+            پایان (end)
+          </Button>
+          <Button variant="secondary" onClick={() => setDrawerSide('top')}>
+            بالا
+          </Button>
+          <Button variant="secondary" onClick={() => setDrawerSide('bottom')}>
+            پایین
+          </Button>
+          <Button variant="secondary" onClick={() => setDrawerSide('full')}>
+            تمام‌پرده
+          </Button>
+        </Row>
+        <Drawer
+          open={drawerSide !== null && drawerSide !== 'full'}
+          onClose={() => setDrawerSide(null)}
+          side={drawerSide && drawerSide !== 'full' ? drawerSide : 'start'}
+          title="منو / فیلترها"
+          description="این یک نمایش پیش‌فرض است. محتوا بعداً می‌آید."
+        >
+          <p className="text-body">
+            این drawer از لبه‌ی {drawerSide} باز می‌شود. در جهت RTL، شروع از
+            راست و پایان از چپ باز می‌شود.
+          </p>
+        </Drawer>
+        <Drawer
+          open={drawerSide === 'full'}
+          onClose={() => setDrawerSide(null)}
+          side="full"
+        >
+          <div className="flex h-full flex-col items-center justify-center gap-6">
+            <span className="text-h3 font-black text-charcoal">ژیک</span>
+            <ul className="flex flex-col items-center gap-5 text-h4 font-bold">
+              <li>خانه</li>
+              <li>محصولات</li>
+              <li>ژورنال</li>
+              <li>درباره‌ی ما</li>
+              <li>تماس</li>
+            </ul>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDrawerSide(null)}
+            >
+              بستن
+            </Button>
+          </div>
+        </Drawer>
       </Section>
     </div>
   );

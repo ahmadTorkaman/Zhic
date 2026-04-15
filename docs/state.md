@@ -20,7 +20,7 @@ Related:
 | --- | --- |
 | Last updated | 2026-04-15 |
 | Current phase | Package 1, Month 1 |
-| Current session | 2.1 shipped; next is 2.2 (layout shell) |
+| Current session | 2.2 shipped; next is 2.3 (cards + gallery) |
 | Active branch | `claude/plan-session-2-1-bUd75` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
@@ -49,8 +49,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 
 | Session | Status | Commit | Notes |
 | --- | --- | --- | --- |
-| 2.1 Button, form fields, badges | ✅ | _this commit_ | `@zhic/ui` first shelf: Button, Input, Textarea, Select, Checkbox, Radio + RadioGroup, FormField, Badge, Tag + `cn()`. Tokens-only, RTL-native, `/lab/ui` verification page. Closes FU-1.2-c. Plan: `docs/sessions/session-2.1-plan.md` |
-| 2.2 Navigation, footer, layout shell | ⬜ | — | Blocked on 1.2 + 2.1 → now unblocked |
+| 2.1 Button, form fields, badges | ✅ | `52c354a` | `@zhic/ui` first shelf: Button, Input, Textarea, Select, Checkbox, Radio + RadioGroup, FormField, Badge, Tag + `cn()`. Tokens-only, RTL-native, `/lab/ui` verification page. Closes FU-1.2-c. Plan: `docs/sessions/session-2.1-plan.md` |
+| 2.2 Navigation, footer, layout shell | ✅ | _this commit_ | `@zhic/ui` organisms: SiteHeader, SiteFooter, Breadcrumbs, Modal, Drawer + layout primitives Container, Section + SkipLink + `useDialogEffect` / `useIsClient` helpers. `apps/web/src/app/(site)/` route group owns chrome + Lenis; root layout slimmed. Persian NAV_LINKS + four-column footer IA. Mockup Header/Footer deleted. Plan: `docs/sessions/session-2.2-plan.md` |
 | 2.3 Cards + image gallery | ⬜ | — | Blocked on 1.2 + 2.1 → now unblocked |
 
 ### Phase 3 — Core Pages
@@ -115,6 +115,18 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-2.1-e | 2.1 | Searchable `Combobox` built on the native `Select` API shape, when Package 2 checkout city/province picker needs it |
 | FU-2.1-f | 2.1 | Promote `cn.ts` to `packages/design-system` if a second workspace needs it (e.g. operator apps in Package 3) |
 | FU-2.1-g | 2.1 | `<MoneyDisplay>` / `<DateDisplay>` atoms — naturally land with Session 2.3 (cards) where prices first appear. Carries forward FU-1.4-a |
+| FU-2.2-a | 2.2 | Mega-menu on `محصولات` and `درباره‌ی ما` — needs categories data (3.2) + showroom list (3.3) |
+| FU-2.2-b | 2.2 | Search icon + widget — Package 2+ (`/search` is post-Package-2 per sitemap §2) |
+| FU-2.2-c | 2.2 | Account icon + dropdown → `/account` — Package 2 |
+| FU-2.2-d | 2.2 | Cart icon with item-count badge + cart drawer — Package 2 |
+| FU-2.2-e | 2.2 | Real logo lockup once `OD-logo-lockup` closes; `SiteHeader.brand` already accepts `ReactNode` |
+| FU-2.2-f | 2.2 | Newsletter submit wired to `packages/sms` — Session 5.1 |
+| FU-2.2-g | 2.2 | Scroll progress bar, back-to-top, sticky-header shadow refinements — Session 6.2 |
+| FU-2.2-h | 2.2 | Mobile full-bleed overlay choreography (stagger, mask reveal) — Session 6.2 |
+| FU-2.2-i | 2.2 | Remaining layout primitives `<Stack>` / `<Grid>` / `<Split>` / `<Bleed>` / `<Aspect>` — add when 3.1 needs them |
+| FU-2.2-j | 2.2 | Promote `NavLink` to `@zhic/ui` once active-state styling is needed in more than one place |
+| FU-2.2-k | 2.2 | Toast primitive for the newsletter "دریافت شد" acknowledgement — Package 2 (toasts land with cart state) |
+| FU-2.2-l | 2.2 | Migrate `sections/HeroSection.tsx` + `ContactSection.tsx` to import `Button` from `@zhic/ui` — lands with 3.1 |
 
 ---
 

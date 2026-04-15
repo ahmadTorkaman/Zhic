@@ -30,7 +30,9 @@ export const BREAKPOINTS = {
 } as const;
 
 export const NAV_LINKS = [
-  { label: 'Collection', href: '#products' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'خانه', href: '/' },
+  { label: 'محصولات', href: '/products' },
+  { label: 'ژورنال', href: '/journal' },
+  { label: 'درباره‌ی ما', href: '/about' },
+  { label: 'تماس', href: '/contact' },
 ] as const;
