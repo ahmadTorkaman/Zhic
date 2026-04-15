@@ -44,8 +44,8 @@ export interface Product {
   slug: string
   design: Design | string // populated or id
   piece_type: string
-  /** Stored as toman (number). Migrate to rials when packages/money lands. */
-  price: number
+  /** Integer rials. Use @zhic/money's formatMoney to display as toman. */
+  basePriceRials: number
   dimensions: { width: number; height: number; depth: number }
   materials: { material: string }[]
   specs: unknown // Lexical JSON

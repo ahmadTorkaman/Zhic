@@ -2,6 +2,16 @@ import Link from 'next/link';
 
 const experiments = [
   {
+    slug: 'tokens',
+    label: 'Tokens',
+    note: 'Design-system tokens: color, spacing, type, radius, motion, z-index.',
+  },
+  {
+    slug: 'locale',
+    label: 'Locale',
+    note: 'Persian digits, Jalali dates, phone formatting, toman display.',
+  },
+  {
     slug: 'motion',
     label: 'Motion',
     note: 'Easings, durations, reveal patterns, scroll choreography.',

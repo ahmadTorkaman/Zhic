@@ -5,6 +5,7 @@
     { "path": "packages/design-system" },
     { "path": "packages/ui" },
     { "path": "packages/locale" },
+    { "path": "packages/money" },
     { "path": "packages/types" },
     { "path": "packages/db" },
     { "path": "apps/web" },

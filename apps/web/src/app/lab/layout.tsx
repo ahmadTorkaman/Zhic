@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 
 const experiments = [
   { slug: 'tokens', label: 'Tokens' },
+  { slug: 'locale', label: 'Locale' },
   { slug: 'motion', label: 'Motion' },
   { slug: 'type', label: 'Typography' },
   { slug: 'color', label: 'Color' },

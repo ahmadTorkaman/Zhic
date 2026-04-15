@@ -6,7 +6,7 @@ export const Products: CollectionConfig = {
   labels: { singular: 'محصول', plural: 'محصولات' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'design', 'piece_type', 'price'],
+    defaultColumns: ['name', 'design', 'piece_type', 'basePriceRials'],
   },
   hooks: {
     beforeValidate: [
@@ -58,13 +58,25 @@ export const Products: CollectionConfig = {
       ],
     },
     {
-      // NOTE: Stored as toman (number). Migrate to bigint rials when
-      // packages/money lands (Session 1.4). See data-schemas.md §12.
-      name: 'price',
+      // Integer rials. Display conversion to toman lives in @zhic/money.
+      // Payload has no bigint field type; `number` is safe up to ~9.007e15,
+      // which covers all realistic furniture pricing. See data-schemas.md §12.
+      name: 'basePriceRials',
       type: 'number',
-      label: 'قیمت (تومان)',
+      label: 'قیمت پایه (ریال)',
+      min: 0,
       admin: {
-        description: 'قیمت به تومان وارد شود',
+        description:
+          'قیمت به ریال، عدد صحیح (بدون کاما). نمایش تومان توسط رابط کاربری انجام می‌شود.',
+        step: 1,
+      },
+      validate: (val: unknown) => {
+        if (val == null) return true;
+        if (typeof val !== 'number' || !Number.isInteger(val)) {
+          return 'قیمت باید عدد صحیح ریالی باشد';
+        }
+        if (val < 0) return 'قیمت نمی‌تواند منفی باشد';
+        return true;
       },
     },
     {

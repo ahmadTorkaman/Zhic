@@ -18,10 +18,10 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-04-14 |
+| Last updated | 2026-04-15 |
 | Current phase | Package 1, Month 1 |
-| Current session | 1.2 shipped; next is 1.3, 1.4 (parallel) or 2.1 |
-| Active branch | `claude/phase-1-session-2-planning-cZWDF` |
+| Current session | 1.4 shipped; next is 2.1 (components) |
+| Active branch | `claude/session-1.4-locale-money` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
 ---
@@ -42,8 +42,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | --- | --- | --- | --- |
 | 1.1 Monorepo scaffold | ✅ | `9817b78` | Turborepo + pnpm, apps/web, services/api, all package stubs |
 | 1.2 Design system + Tailwind preset | ✅ | `ad76d28` | Tokens (TS + CSS), Tailwind v4 `@theme`, Ayandeh via `next/font/local`, `/lab/tokens` verification page. Plan: `docs/sessions/session-1.2-plan.md` |
-| 1.3 Payload 3 CMS + collections | ⬜ | — | Unblocked by 1.1. Can run parallel with 1.4 |
-| 1.4 Locale + money utilities | ⬜ | — | Unblocked by 1.1. Can run parallel with 1.3 |
+| 1.3 Payload 3 CMS + collections | ✅ | `68d2683` | 8 collections + 11 globals, Postgres adapter, S3 storage, seed. Plan: `docs/sessions/session-1.3-plan.md` |
+| 1.4 Locale + money utilities | ✅ | _this commit_ | `@zhic/locale` (digits, ZWNJ, Jalali, phone) + `@zhic/money` (rial↔toman, format, parse), Vitest wired, 80 tests, `/lab/locale`, closes FU-1.3-c. Plan: `docs/sessions/session-1.4-plan.md` |
 
 ### Phase 2 — Core UI Components
 
@@ -98,6 +98,16 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-1.2-a | 1.2 | Generate `packages/design-system/css/tokens.css` from `src/tokens/*.ts` to prevent drift |
 | FU-1.2-b | 1.2 | Subset Ayandeh to Arabic + ZWNJ + ASCII at build time (`docs/spec/design-system.md` §2.2) |
 | FU-1.2-c | 1.2 | Lab layout uses deprecated `font-serif` utility (Cormorant was removed); clean up when `packages/ui` layout primitives land in 2.1 |
+| FU-1.3-a | 1.3 | Add `status: draft\|published` fields when Phase 3 pages need it |
+| FU-1.3-b | 1.3 | Add SEO group fields on collections (Session 6.1) |
+| ~~FU-1.3-c~~ | 1.3 | ~~Migrate product price from toman to rials~~ — **resolved in 1.4** (`basePriceRials`) |
+| FU-1.4-a | 1.4 | `<MoneyDisplay rials={...}/>` in `@zhic/ui` at first product card (2.x) |
+| FU-1.4-b | 1.4 | Real `formatMoneyCompact` with Persian scale words (هزار/میلیون/میلیارد) |
+| FU-1.4-c | 1.4 | `parseJalaliDate` for admin date inputs (Package 3) |
+| FU-1.4-d | 1.4 | Postal-code + landline validators for checkout (Package 2) |
+| FU-1.4-e | 1.4 | `@vitest/coverage-v8` + CI gates when Gitea Actions lands |
+| FU-1.4-f | 1.4 | Swap Payload `basePriceRials` to text-backed bigint if any value ever exceeds `Number.MAX_SAFE_INTEGER` |
+| FU-1.4-g | 1.4 | Move `slugify` into `@zhic/locale` when a second consumer appears |
 
 ---
 
@@ -121,4 +131,5 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
   - `pnpm --filter @zhic/web build`
   - `pnpm --filter @zhic/<pkg> typecheck`
   - `pnpm --filter @zhic/<pkg> lint`
-- Verification surfaces: `/lab/tokens`, `/lab/type`, `/lab/color`, `/lab/motion`, `/lab/three`
+- Verification surfaces: `/lab/tokens`, `/lab/locale`, `/lab/type`, `/lab/color`, `/lab/motion`, `/lab/three`
+- Unit tests: `pnpm --filter @zhic/locale test` (53), `pnpm --filter @zhic/money test` (27). Runner = Vitest 2.x, per package.

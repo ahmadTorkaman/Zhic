@@ -13,6 +13,7 @@
     "@gsap/react": "^2.1.2",
     "@zhic/design-system": "workspace:*",
     "@zhic/locale": "workspace:*",
+    "@zhic/money": "workspace:*",
     "@zhic/types": "workspace:*",
     "@zhic/ui": "workspace:*",
     "gsap": "^3.14.2",
