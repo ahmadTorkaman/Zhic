@@ -1,8 +1,6 @@
-import type { NextConfig } from 'next';
+import { withPayload } from '@payloadcms/next/withPayload'
+import type { NextConfig } from 'next'
 
-// Payload 3 wiring (withPayload wrapper, collections, Postgres adapter, S3)
-// lands in Session 1.3. Until then this is a bare Next.js 16 shell that
-// reserves the service boundary and port.
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {}
 
-export default nextConfig;
+export default withPayload(nextConfig)

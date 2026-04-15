@@ -19,6 +19,13 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
+    },
+    "generate:types": {
+      "cache": false,
+      "outputs": ["src/payload-types.ts"]
+    },
+    "seed": {
+      "cache": false
     }
   }
 }
