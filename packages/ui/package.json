@@ -13,7 +13,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@zhic/design-system": "workspace:*"
+    "@zhic/design-system": "workspace:*",
+    "@zhic/locale": "workspace:*",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5"
   },
   "peerDependencies": {
     "react": "^19",

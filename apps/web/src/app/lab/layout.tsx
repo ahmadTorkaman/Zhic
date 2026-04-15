@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 const experiments = [
   { slug: 'tokens', label: 'Tokens' },
   { slug: 'locale', label: 'Locale' },
+  { slug: 'ui', label: 'UI' },
   { slug: 'motion', label: 'Motion' },
   { slug: 'type', label: 'Typography' },
   { slug: 'color', label: 'Color' },
@@ -28,7 +29,7 @@ export default function LabLayout({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4">
           <Link
             href="/lab"
-            className="font-serif text-lg tracking-[0.2em] uppercase"
+            className="font-sans text-lg tracking-wide"
           >
             Zhic · Lab
           </Link>

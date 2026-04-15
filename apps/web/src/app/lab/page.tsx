@@ -12,6 +12,11 @@ const experiments = [
     note: 'Persian digits, Jalali dates, phone formatting, toman display.',
   },
   {
+    slug: 'ui',
+    label: 'UI',
+    note: 'Button, form fields, badges — the first shelf of @zhic/ui primitives.',
+  },
+  {
     slug: 'motion',
     label: 'Motion',
     note: 'Easings, durations, reveal patterns, scroll choreography.',

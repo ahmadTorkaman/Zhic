@@ -20,8 +20,8 @@ Related:
 | --- | --- |
 | Last updated | 2026-04-15 |
 | Current phase | Package 1, Month 1 |
-| Current session | 1.4 shipped; next is 2.1 (components) |
-| Active branch | `claude/session-1.4-locale-money` |
+| Current session | 2.1 shipped; next is 2.2 (layout shell) |
+| Active branch | `claude/plan-session-2-1-bUd75` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
 ---
@@ -49,9 +49,9 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 
 | Session | Status | Commit | Notes |
 | --- | --- | --- | --- |
-| 2.1 Button, form fields, badges | ⬜ | — | Blocked on 1.2 → now unblocked |
-| 2.2 Navigation, footer, layout shell | ⬜ | — | Blocked on 1.2 + 2.1 |
-| 2.3 Cards + image gallery | ⬜ | — | Blocked on 1.2 + 2.1 |
+| 2.1 Button, form fields, badges | ✅ | _this commit_ | `@zhic/ui` first shelf: Button, Input, Textarea, Select, Checkbox, Radio + RadioGroup, FormField, Badge, Tag + `cn()`. Tokens-only, RTL-native, `/lab/ui` verification page. Closes FU-1.2-c. Plan: `docs/sessions/session-2.1-plan.md` |
+| 2.2 Navigation, footer, layout shell | ⬜ | — | Blocked on 1.2 + 2.1 → now unblocked |
+| 2.3 Cards + image gallery | ⬜ | — | Blocked on 1.2 + 2.1 → now unblocked |
 
 ### Phase 3 — Core Pages
 
@@ -97,7 +97,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | --- | --- | --- |
 | FU-1.2-a | 1.2 | Generate `packages/design-system/css/tokens.css` from `src/tokens/*.ts` to prevent drift |
 | FU-1.2-b | 1.2 | Subset Ayandeh to Arabic + ZWNJ + ASCII at build time (`docs/spec/design-system.md` §2.2) |
-| FU-1.2-c | 1.2 | Lab layout uses deprecated `font-serif` utility (Cormorant was removed); clean up when `packages/ui` layout primitives land in 2.1 |
+| ~~FU-1.2-c~~ | 1.2 | ~~Lab layout uses deprecated `font-serif` utility (Cormorant was removed); clean up when `packages/ui` layout primitives land in 2.1~~ — **resolved in 2.1** (`font-sans text-lg tracking-wide`) |
 | FU-1.3-a | 1.3 | Add `status: draft\|published` fields when Phase 3 pages need it |
 | FU-1.3-b | 1.3 | Add SEO group fields on collections (Session 6.1) |
 | ~~FU-1.3-c~~ | 1.3 | ~~Migrate product price from toman to rials~~ — **resolved in 1.4** (`basePriceRials`) |
@@ -108,6 +108,13 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-1.4-e | 1.4 | `@vitest/coverage-v8` + CI gates when Gitea Actions lands |
 | FU-1.4-f | 1.4 | Swap Payload `basePriceRials` to text-backed bigint if any value ever exceeds `Number.MAX_SAFE_INTEGER` |
 | FU-1.4-g | 1.4 | Move `slugify` into `@zhic/locale` when a second consumer appears |
+| FU-2.1-a | 2.1 | Storybook + `@testing-library/react` + axe-core once `@zhic/ui` has ≥ 8 components (end of Phase 2) |
+| FU-2.1-b | 2.1 | `IconButton`, `Link` atom, `Tooltip`, `Toggle` — next time a consuming page asks for them (likely 2.2 Header) |
+| FU-2.1-c | 2.1 | `PhoneInput` (E.164 + IR mobile via `@zhic/locale`) — prerequisite for 5.1 inquiry form |
+| FU-2.1-d | 2.1 | `OtpInput` — prerequisite for Package 2 `/login/verify` |
+| FU-2.1-e | 2.1 | Searchable `Combobox` built on the native `Select` API shape, when Package 2 checkout city/province picker needs it |
+| FU-2.1-f | 2.1 | Promote `cn.ts` to `packages/design-system` if a second workspace needs it (e.g. operator apps in Package 3) |
+| FU-2.1-g | 2.1 | `<MoneyDisplay>` / `<DateDisplay>` atoms — naturally land with Session 2.3 (cards) where prices first appear. Carries forward FU-1.4-a |
 
 ---
 
@@ -131,5 +138,5 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
   - `pnpm --filter @zhic/web build`
   - `pnpm --filter @zhic/<pkg> typecheck`
   - `pnpm --filter @zhic/<pkg> lint`
-- Verification surfaces: `/lab/tokens`, `/lab/locale`, `/lab/type`, `/lab/color`, `/lab/motion`, `/lab/three`
+- Verification surfaces: `/lab/tokens`, `/lab/locale`, `/lab/ui`, `/lab/type`, `/lab/color`, `/lab/motion`, `/lab/three`
 - Unit tests: `pnpm --filter @zhic/locale test` (53), `pnpm --filter @zhic/money test` (27). Runner = Vitest 2.x, per package.
