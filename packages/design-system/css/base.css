@@ -245,6 +245,25 @@ dialog[data-state="closing"] .drawer-overlay {
   }
 }
 
+/* ── Page reveal ─────────────────────────────────────────────────── */
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-reveal > * {
+  animation: reveal-up var(--dur-appear) var(--ease-out-soft) both;
+  animation-delay: calc(var(--reveal-index, 0) * 150ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-reveal > * {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* ── Decorative ──────────────────────────────────────────────────── */
 
 .dot-pattern {
