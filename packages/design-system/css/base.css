@@ -113,6 +113,21 @@ html.lenis body {
   outline: none;
 }
 
+/* ── Focus ring ──────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.focus-ring-invert:focus-visible {
+  outline-color: rgba(250, 250, 247, 0.4);
+}
+
 /* ── Decorative ──────────────────────────────────────────────────── */
 
 .dot-pattern {
