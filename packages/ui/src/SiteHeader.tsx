@@ -31,12 +31,10 @@ export function SiteHeader({
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const [lastPathname, setLastPathname] = useState(pathname);
 
-  if (lastPathname !== pathname) {
-    setLastPathname(pathname);
-    if (menuOpen) setMenuOpen(false);
-  }
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -54,8 +52,8 @@ export function SiteHeader({
         className={cn(
           'sticky top-0 z-[200] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-out-soft)]',
           scrolled
-            ? 'border-b border-sand bg-ivory/85 backdrop-blur'
-            : 'border-b border-transparent bg-transparent',
+            ? 'border-b border-sand bg-ivory/85 backdrop-blur shadow-sm'
+            : 'border-b border-transparent bg-transparent shadow-none',
           className,
         )}
       >
