@@ -55,7 +55,7 @@ export function SiteFooter({
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="rounded-sm text-small text-ivory/70 transition-colors hover:text-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ivory focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
+                      className="rounded-sm text-small text-ivory/70 transition-colors hover:text-ivory focus-ring-invert focus-visible:outline-none"
                     >
                       {link.label}
                     </Link>
@@ -95,7 +95,7 @@ export function SiteFooter({
                   <a
                     href={social.href}
                     aria-label={social.label}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-md text-ivory/60 transition-colors hover:text-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ivory focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-md text-ivory/60 transition-colors hover:text-ivory focus-ring-invert focus-visible:outline-none"
                     target={social.href.startsWith('http') ? '_blank' : undefined}
                     rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                   >

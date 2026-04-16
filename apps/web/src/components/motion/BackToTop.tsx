@@ -27,7 +27,7 @@ export function BackToTop() {
       className={[
         'fixed bottom-6 z-[var(--z-header)] flex h-11 w-11 items-center justify-center rounded-full border border-sand bg-ivory shadow-md transition-all',
         'duration-[var(--dur-fast)] ease-[var(--ease-out-soft)]',
-        'hover:bg-sand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2',
+        'hover:bg-sand focus-visible:outline-none',
         'start-6',
         visible
           ? 'translate-y-0 opacity-100'

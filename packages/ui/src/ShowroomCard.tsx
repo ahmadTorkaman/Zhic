@@ -50,7 +50,7 @@ export function ShowroomCard({
             ) : (
               <a
                 href={`tel:${phone.e164}`}
-                className="text-charcoal underline underline-offset-4 decoration-1 hover:decoration-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory rounded-sm"
+                className="text-charcoal underline underline-offset-4 decoration-1 hover:decoration-2 focus-visible:outline-none rounded-sm"
               >
                 {phone.label}
               </a>

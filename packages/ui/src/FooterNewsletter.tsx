@@ -39,7 +39,7 @@ export function FooterNewsletter({
           onChange={(event) => setValue(event.target.value)}
           placeholder={placeholder}
           aria-label={placeholder}
-          className="border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/40 focus-visible:ring-ivory focus-visible:ring-offset-charcoal focus-visible:border-ivory"
+          className="border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/40 focus-ring-invert focus-visible:outline-none focus-visible:border-ivory"
         />
       </div>
       <Button type="submit" variant="primary">

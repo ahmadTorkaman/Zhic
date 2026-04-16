@@ -123,7 +123,7 @@ function CloseButton({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-stone hover:bg-sand/60 hover:text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-stone hover:bg-sand/60 hover:text-charcoal focus-visible:outline-none"
     >
       <svg
         viewBox="0 0 14 14"

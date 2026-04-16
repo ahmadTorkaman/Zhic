@@ -14,7 +14,7 @@ const BASE =
   'focus:inline-flex focus:items-center focus:rounded-md ' +
   'focus:bg-charcoal focus:text-ivory focus:text-small ' +
   'focus:px-4 focus:py-2 focus:shadow-modal ' +
-  'focus:outline-none focus-visible:ring-2 focus-visible:ring-ivory focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal';
+  'focus:outline-none focus-ring-invert focus-visible:outline-none';
 
 export function SkipLink({ className, children, ...rest }: SkipLinkProps) {
   return (
