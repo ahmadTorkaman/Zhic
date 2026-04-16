@@ -30,18 +30,17 @@ const BASE = [
   'inline-flex items-center justify-center gap-2',
   'font-sans select-none',
   'rounded-md',
-  'transition-colors',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory',
+  'transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)]',
+  'focus-visible:outline-none',
   'disabled:cursor-not-allowed disabled:opacity-50',
   'aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
 ].join(' ');
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: 'bg-charcoal text-ivory hover:bg-ink',
-  secondary:
-    'border border-charcoal bg-transparent text-charcoal hover:bg-charcoal hover:text-ivory',
-  ghost: 'bg-transparent text-charcoal hover:bg-sand',
-  link: 'bg-transparent text-charcoal underline underline-offset-4 decoration-1 hover:decoration-2 px-0 py-0 rounded-none',
+  primary: 'bg-charcoal text-ivory hover:bg-ink hover:-translate-y-px hover:shadow-subtle',
+  secondary: 'bg-forest text-ivory hover:-translate-y-px hover:shadow-elevated',
+  ghost: 'border border-sand bg-transparent text-charcoal hover:border-charcoal',
+  link: 'bg-transparent text-charcoal decoration-sand decoration-1 underline underline-offset-4 hover:decoration-charcoal px-0 py-0 rounded-none',
 };
 
 const SIZE_CLASSES: Record<Size, string> = {
@@ -93,7 +92,7 @@ export function Button(props: ButtonProps) {
   const classes = cn(
     BASE,
     VARIANT_CLASSES[variant],
-    SIZE_CLASSES[size],
+    variant === 'link' ? '' : SIZE_CLASSES[size],
     className,
   );
   const startContent = loading ? <Spinner /> : startSlot;
