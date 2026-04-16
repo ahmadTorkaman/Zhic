@@ -100,9 +100,9 @@ operator apps import the same token set.
 --color-charcoal    #2C2825   primary text, headlines
 --color-ink         #14110F   near-black, used sparingly for emphasis
 --color-accent      #B8A898   brand neutral accent (warm taupe)
---color-saffron     #C68A2E   reserved for rare moments (rare!)
+--color-gold        #C49A6C   brand warm accent — once per page max
 --color-rust        #8B4A2B   error / warning, muted
---color-moss        #5A6B4F   success, muted
+--color-forest      #5F7760   brand primary accent, success
 --color-overlay     rgba(20, 17, 15, 0.6)   image overlays
 ```
 
@@ -110,9 +110,9 @@ Rules:
 
 - The site lives in **ivory + charcoal**. Sand and cream are for
   separation and hairlines.
-- **Saffron** is a once-per-page maximum on the storefront. Never on
-  body text. Borrowed from saffron silk and Iranian miniatures, used
-  the way the old spec used "gold."
+- **Gold** is a once-per-page maximum on the storefront. Never on
+  body text. A warm caramel tone, used as a reward accent in dark
+  sections and rare interactive moments.
 - No pure black, no pure white anywhere.
 - All text passes WCAG AA against its background. Charcoal on ivory:
   13.4:1. Stone on ivory: 4.6:1 (body-only, never headlines).
