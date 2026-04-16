@@ -156,8 +156,8 @@ export default function TokensLabPage() {
             به صورت لاتین درون متن فارسی نمایش داده می‌شود.
           </p>
           <div className="flex items-center gap-2 text-small text-stone">
-            <span className="bg-saffron/20 ps-4">ps-4 (padding-inline-start)</span>
-            <span className="bg-moss/20 pe-4">pe-4 (padding-inline-end)</span>
+            <span className="bg-gold/20 ps-4">ps-4 (padding-inline-start)</span>
+            <span className="bg-forest/20 pe-4">pe-4 (padding-inline-end)</span>
           </div>
         </div>
       </Section>

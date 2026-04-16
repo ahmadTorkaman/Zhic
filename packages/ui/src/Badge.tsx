@@ -15,8 +15,8 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   neutral: 'bg-sand text-charcoal',
   accent: 'bg-accent text-ink',
-  success: 'bg-moss text-ivory',
-  warning: 'bg-saffron text-ink',
+  success: 'bg-forest text-ivory',
+  warning: 'bg-gold text-ink',
   error: 'bg-rust text-ivory',
 };
 
