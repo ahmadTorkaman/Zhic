@@ -16,9 +16,9 @@
   --color-charcoal: var(--color-charcoal);
   --color-ink: var(--color-ink);
   --color-accent: var(--color-accent);
-  --color-saffron: var(--color-saffron);
+  --color-gold: var(--color-gold);
   --color-rust: var(--color-rust);
-  --color-moss: var(--color-moss);
+  --color-forest: var(--color-forest);
 
   /* ── Font families ─────────────────────────────────────────────── */
   --font-sans: var(--font-sans);
