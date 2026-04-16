@@ -34,7 +34,9 @@ export function Checkbox({
           className={cn(
             'pointer-events-none inline-flex h-4 w-4 items-center justify-center rounded-sm border border-charcoal bg-ivory text-ivory',
             'peer-checked:bg-charcoal peer-checked:border-charcoal',
-            'peer-focus-visible:ring-2 peer-focus-visible:ring-charcoal peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-ivory',
+            'transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)]',
+            'peer-hover:border-stone',
+            'peer-focus-visible:border-forest peer-focus-visible:shadow-[0_0_0_var(--focus-ring-width)_var(--focus-ring-color)]',
             'peer-aria-invalid:border-rust',
           )}
         >

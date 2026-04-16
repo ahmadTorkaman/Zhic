@@ -121,13 +121,15 @@ export function Radio({
           aria-hidden
           className={cn(
             'pointer-events-none absolute inset-0 rounded-pill border border-charcoal bg-ivory',
-            'peer-focus-visible:ring-2 peer-focus-visible:ring-charcoal peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-ivory',
+            'transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)]',
+            'peer-hover:border-stone',
+            'peer-focus-visible:border-forest peer-focus-visible:shadow-[0_0_0_var(--focus-ring-width)_var(--focus-ring-color)]',
             'peer-aria-invalid:border-rust',
           )}
         />
         <span
           aria-hidden
-          className="pointer-events-none relative h-2 w-2 rounded-pill bg-charcoal opacity-0 peer-checked:opacity-100"
+          className="pointer-events-none relative h-2 w-2 rounded-pill bg-charcoal opacity-0 peer-checked:opacity-100 transition-opacity duration-[var(--dur-hover)] ease-[var(--ease-out-soft)]"
         />
       </span>
       {children ? <span className="text-body">{children}</span> : null}
