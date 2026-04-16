@@ -55,7 +55,7 @@ export function Breadcrumbs({
               ) : item.href ? (
                 <a
                   href={item.href}
-                  className="rounded-sm hover:text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+                  className="rounded-sm transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:text-charcoal focus-visible:outline-none"
                 >
                   {item.label}
                 </a>
