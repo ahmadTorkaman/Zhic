@@ -19,6 +19,7 @@
   --color-gold: var(--color-gold);
   --color-rust: var(--color-rust);
   --color-forest: var(--color-forest);
+  --color-overlay: var(--color-overlay);
 
   /* ── Font families ─────────────────────────────────────────────── */
   --font-sans: var(--font-sans);
@@ -77,6 +78,9 @@
 
   /* ── Shadows ───────────────────────────────────────────────────── */
   --shadow-modal: var(--shadow-modal);
+  --shadow-subtle: var(--shadow-subtle);
+  --shadow-card: var(--shadow-card);
+  --shadow-elevated: var(--shadow-elevated);
 
   /* ── Breakpoints (§2.8) ────────────────────────────────────────── */
   --breakpoint-sm: 640px;
@@ -84,4 +88,8 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1440px;
   --breakpoint-2xl: 1920px;
+
+  /* ── Container widths ──────────────────────────────────────────── */
+  --width-container-storefront: var(--container-storefront);
+  --width-container-operator: var(--container-operator);
 }
