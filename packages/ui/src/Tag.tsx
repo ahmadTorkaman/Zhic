@@ -14,7 +14,7 @@ export type TagProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
 
 const VARIANT_CLASSES: Record<TagVariant, string> = {
   neutral: 'bg-cream text-charcoal',
-  accent: 'bg-accent text-ink',
+  accent: 'bg-cream text-charcoal',
 };
 
 const SIZE_CLASSES: Record<TagSize, string> = {
@@ -53,7 +53,7 @@ export function Tag({
           type="button"
           onClick={onDismiss}
           aria-label={dismissLabel}
-          className="ms-1 inline-flex h-4 w-4 items-center justify-center rounded-pill text-current hover:bg-charcoal/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+          className="ms-1 inline-flex h-4 w-4 items-center justify-center rounded-pill text-current hover:bg-charcoal/10 transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] focus-visible:outline-none"
         >
           <svg
             viewBox="0 0 10 10"

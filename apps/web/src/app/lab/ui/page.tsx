@@ -2,18 +2,31 @@
 
 import { useState } from 'react';
 import {
+  ArticleCard,
+  Aspect,
+  type AspectRatio,
   Badge,
   Breadcrumbs,
   Button,
   Checkbox,
+  DateDisplay,
+  DesignCard,
   Drawer,
   FormField,
+  type GalleryItem,
+  Grid,
+  ImageGallery,
   Input,
   Modal,
+  MoneyDisplay,
+  ProductCard,
   Radio,
   RadioGroup,
   Select,
+  ShowroomCard,
   SkipLink,
+  Split,
+  Stack,
   Tag,
   Textarea,
 } from '@zhic/ui';
@@ -41,6 +54,43 @@ const BADGE_VARIANTS = [
 ] as const;
 const BADGE_SIZES = ['sm', 'md'] as const;
 const BADGE_SHAPES = ['square', 'rounded'] as const;
+const ASPECT_RATIOS: AspectRatio[] = ['1/1', '4/5', '3/2', '16/9', '21/9'];
+
+function placeholderSvg(label: string): string {
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">
+  <rect width="400" height="500" fill="#F5F0EB"/>
+  <rect x="0.5" y="0.5" width="399" height="499" fill="none" stroke="#E8E0D8"/>
+  <text x="200" y="260" text-anchor="middle" font-family="sans-serif" font-size="28" fill="#8C8279">${label}</text>
+</svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+function Placeholder({ label }: { label: string }) {
+  return (
+    <img
+      src={placeholderSvg(label)}
+      alt=""
+      className="h-full w-full object-cover"
+    />
+  );
+}
+
+const GALLERY_GRID_ITEMS: GalleryItem[] = [
+  { src: placeholderSvg('۱ — چوب گردو'), alt: 'کلوزآپ از چوب گردو', kind: 'image', caption: 'بافت چوب گردوی ایرانی' },
+  { src: '/55_bal4.gif', alt: 'لوپ کارگاه', kind: 'gif', caption: 'در کارگاه' },
+  { src: placeholderSvg('۳ — کتان بلژیکی'), alt: 'نمای کتان بلژیکی', kind: 'image' },
+  { src: placeholderSvg('۴ — اتاق خواب'), alt: 'اتاق خواب نمونه', kind: 'image', caption: 'اتاق خواب آرامش، شوروم همدان' },
+  { src: '/55_bal4.gif', alt: 'لوپ کوتاه دیگر', kind: 'gif' },
+  { src: placeholderSvg('۶ — جزئیات'), alt: 'جزئیات پایه تخت', kind: 'image' },
+];
+
+const GALLERY_STRIP_ITEMS: GalleryItem[] = [
+  { src: placeholderSvg('شوروم ۱'), alt: 'نمای ورودی شوروم', kind: 'image' },
+  { src: '/55_bal4.gif', alt: 'لوپ درون شوروم', kind: 'gif' },
+  { src: placeholderSvg('شوروم ۲'), alt: 'قفسه‌ی محصولات', kind: 'image' },
+  { src: placeholderSvg('شوروم ۳'), alt: 'میز مشاوره', kind: 'image' },
+];
 
 function Section({
   title,
@@ -405,9 +455,9 @@ export default function UiLabPage() {
         </Row>
         <Row label="static">
           <Tag>چوب گردو</Tag>
-          <Tag variant="accent">نئوکلاسیک</Tag>
+          <Tag>نئوکلاسیک</Tag>
           <Tag size="md">پرفروش</Tag>
-          <Tag variant="accent" size="md">
+          <Tag size="md">
             محدود
           </Tag>
         </Row>
@@ -705,6 +755,282 @@ export default function UiLabPage() {
             </Button>
           </div>
         </Drawer>
+      </Section>
+
+      <Section
+        title="Aspect"
+        caption="پنج نسبت مجاز: 1/1 · 4/5 · 3/2 · 16/9 · 21/9"
+      >
+        <div className="grid gap-4 md:grid-cols-5">
+          {ASPECT_RATIOS.map((ratio) => (
+            <Aspect
+              key={ratio}
+              ratio={ratio}
+              className="border border-sand bg-cream"
+            >
+              <div className="flex h-full w-full items-center justify-center text-small font-bold text-stone">
+                {ratio}
+              </div>
+            </Aspect>
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        title="MoneyDisplay + DateDisplay"
+        caption="تومان با ارقام فارسی · Jalali با tag‌ی <time>"
+      >
+        <Row label="money · toman">
+          <MoneyDisplay rials={45_000_000} />
+          <MoneyDisplay rials={8_400_000} />
+          <MoneyDisplay rials={28_000_000} />
+          <MoneyDisplay rials={1_250_000_000n} />
+        </Row>
+        <Row label="money · rial">
+          <MoneyDisplay rials={45_000_000} unit="rial" />
+          <MoneyDisplay rials={8_400_000} unit="rial" suffix="none" />
+        </Row>
+        <Row label="money · en digits">
+          <MoneyDisplay rials={45_000_000} digits="en" />
+        </Row>
+        <Row label="date · jalali long">
+          <DateDisplay value="2026-03-21T12:00:00.000Z" />
+          <DateDisplay value={new Date('2026-01-01T00:00:00.000Z')} />
+          <DateDisplay value="2025-11-15T00:00:00.000Z" withWeekday />
+        </Row>
+      </Section>
+
+      <Section
+        title="ProductCard"
+        caption="جلد ۴/۵ · عنوان · قیمت یا fallback · نشان موجودی · تگ متریال"
+      >
+        <div className="grid gap-6 md:grid-cols-3">
+          <ProductCard
+            href="/products/takht-aramesh"
+            name="تخت دو نفره آرامش"
+            tagline="چوب گردوی ایرانی، کتان بلژیکی"
+            priceRials={45_000_000}
+            availability="made_to_order"
+            leadTimeDays={56}
+            materials={['چوب گردو', 'کتان بلژیکی']}
+            image={<Placeholder label="تخت آرامش" />}
+          />
+          <ProductCard
+            href="/products/komod-bahar"
+            name="کمد بهار"
+            priceFallback="استعلام قیمت"
+            availability="in_stock"
+            materials={['چوب راش']}
+            image={<Placeholder label="کمد بهار" />}
+          />
+          <ProductCard
+            name="میز کنار تخت"
+            priceRials={8_400_000}
+            image={<Placeholder label="میز کنار تخت" />}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="DesignCard"
+        caption="جلد ۳/۲ · نشان گروه سنی · عنوان · توضیح کوتاه"
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          <DesignCard
+            href="/designs/aramesh"
+            name="طرح آرامش"
+            ageGroupLabel="بزرگسال"
+            description="مجموعه‌ای برای اتاق خواب بزرگسالان با خطوط آرام و متریال گرم."
+            image={<Placeholder label="طرح آرامش" />}
+          />
+          <DesignCard
+            href="/designs/bahar"
+            name="طرح بهار"
+            ageGroupLabel="کودک"
+            description="مجموعه‌ای شاد و امن برای اتاق کودک، با گوشه‌های گرد و رنگ‌های طبیعی."
+            image={<Placeholder label="طرح بهار" />}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="ArticleCard"
+        caption="جلد ۳/۲ · eyebrow · عنوان · excerpt · نویسنده · تاریخ · زمان مطالعه"
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          <ArticleCard
+            href="/journal/guide-wood-selection"
+            categoryLabel="مصالح"
+            title="راهنمای انتخاب چوب مناسب برای مبلمان"
+            excerpt="در این راهنما با چوب‌های مناسب برای ساخت مبلمان آشنا می‌شوید و یاد می‌گیرید چطور بر اساس کاربری، بودجه، و ظاهر مطلوب تصمیم بگیرید."
+            author="تیم ژیک"
+            publishedAt="2026-03-21T12:00:00.000Z"
+            readingTimeMinutes={8}
+            cover={<Placeholder label="راهنمای چوب" />}
+          />
+          <ArticleCard
+            href="/journal/atelier-tour"
+            categoryLabel="کارگاه"
+            title="یک روز در کارگاه همدان"
+            excerpt="از برش اولیه تا پرداخت نهایی: پشت صحنه‌ی ساخت تخت آرامش."
+            author="نرگس رضایی"
+            publishedAt="2025-12-02T00:00:00.000Z"
+            readingTimeMinutes={5}
+            cover={<Placeholder label="کارگاه همدان" />}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="ShowroomCard"
+        caption="جلد ۱۶/۹ · نام + شهر · آدرس · ساعت · تلفن"
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          <ShowroomCard
+            href="/showrooms/hamedan"
+            name="شوروم همدان"
+            city="همدان"
+            addressLine="بلوار ارم، خیابان گلستان"
+            hoursSummary="شنبه تا پنجشنبه، ۱۰ تا ۲۰"
+            phone={{ label: '۰۸۱ ۳۸۱۲ ۳۴۵۶', e164: '+988138123456' }}
+            cover={<Placeholder label="شوروم همدان" />}
+          />
+          <ShowroomCard
+            name="شوروم تهران (بدون لینک — phone به لینک tel تبدیل می‌شود)"
+            city="تهران"
+            addressLine="خیابان ولیعصر، کوچه شهید مطهری"
+            hoursSummary="شنبه تا پنجشنبه، ۱۰ تا ۲۲"
+            phone={{ label: '۰۲۱ ۸۸۱۲ ۳۴۵۶', e164: '+982188123456' }}
+            cover={<Placeholder label="شوروم تهران" />}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="ImageGallery — grid"
+        caption="چیدمان ۳ ستونی · نسبت سلول ۴/۵ · لایت‌باکس با پیمایش کیبورد (ArrowLeft/Right)"
+      >
+        <ImageGallery
+          items={GALLERY_GRID_ITEMS}
+          layout="grid"
+          columns={3}
+          cellRatio="4/5"
+        />
+      </Section>
+
+      <Section
+        title="ImageGallery — strip"
+        caption="اسکرول افقی با snap · برای چیدمان‌های باریک"
+      >
+        <ImageGallery
+          items={GALLERY_STRIP_ITEMS}
+          layout="strip"
+          cellRatio="16/9"
+        />
+      </Section>
+
+      <Section
+        title="Grid"
+        caption="۱/۲/۳/۴/۶/۱۲ ستونی ریسپانسیو با توکن gap"
+      >
+        <Row label="columns 2">
+          <Grid columns={2} gap="md" className="w-full">
+            {['الف', 'ب', 'ج', 'د'].map((l) => (
+              <div
+                key={l}
+                className="flex h-16 items-center justify-center border border-sand bg-cream text-stone"
+              >
+                {l}
+              </div>
+            ))}
+          </Grid>
+        </Row>
+        <Row label="columns 3">
+          <Grid columns={3} gap="lg" className="w-full">
+            {['یک', 'دو', 'سه', 'چهار', 'پنج', 'شش'].map((l) => (
+              <div
+                key={l}
+                className="flex h-16 items-center justify-center border border-sand bg-cream text-stone"
+              >
+                {l}
+              </div>
+            ))}
+          </Grid>
+        </Row>
+        <Row label="columns 4">
+          <Grid columns={4} gap="sm" className="w-full">
+            {Array.from({ length: 8 }, (_, i) => (
+              <div
+                key={i}
+                className="flex h-12 items-center justify-center border border-sand bg-cream text-small text-stone"
+              >
+                {i + 1}
+              </div>
+            ))}
+          </Grid>
+        </Row>
+      </Section>
+
+      <Section
+        title="Stack"
+        caption="flex عمودی/افقی · gap · align · justify · RTL-native"
+      >
+        <Row label="col · gap md">
+          <Stack gap="md">
+            <Badge>مورد اول</Badge>
+            <Badge>مورد دوم</Badge>
+            <Badge>مورد سوم</Badge>
+          </Stack>
+        </Row>
+        <Row label="row · gap sm · center">
+          <Stack direction="row" gap="sm" align="center">
+            <Badge variant="success">موجود</Badge>
+            <Badge variant="warning">محدود</Badge>
+            <Badge variant="error">ناموجود</Badge>
+          </Stack>
+        </Row>
+        <Row label="row · between">
+          <Stack direction="row" justify="between" className="w-full">
+            <span className="text-small text-stone">شروع</span>
+            <span className="text-small text-stone">پایان</span>
+          </Stack>
+        </Row>
+      </Section>
+
+      <Section
+        title="Split"
+        caption="دو ستونه ۵۰/۵۰ · ۶۰/۴۰ · ۴۰/۶۰ · reverse"
+      >
+        <Row label="50/50">
+          <Split ratio="50/50" gap="lg" className="w-full">
+            <div className="flex h-24 items-center justify-center border border-sand bg-cream text-stone">
+              ستون اول
+            </div>
+            <div className="flex h-24 items-center justify-center border border-sand bg-cream text-stone">
+              ستون دوم
+            </div>
+          </Split>
+        </Row>
+        <Row label="60/40">
+          <Split ratio="60/40" gap="md" className="w-full">
+            <div className="flex h-24 items-center justify-center border border-sand bg-cream text-stone">
+              ۶۰٪
+            </div>
+            <div className="flex h-24 items-center justify-center border border-sand bg-cream text-stone">
+              ۴۰٪
+            </div>
+          </Split>
+        </Row>
+        <Row label="40/60 · reverse">
+          <Split ratio="40/60" gap="md" reverse className="w-full">
+            <div className="flex h-24 items-center justify-center border border-sand bg-cream text-stone">
+              ستون A
+            </div>
+            <div className="flex h-24 items-center justify-center border border-sand bg-cream text-stone">
+              ستون B
+            </div>
+          </Split>
+        </Row>
       </Section>
     </div>
   );
