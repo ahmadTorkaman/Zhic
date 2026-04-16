@@ -17,6 +17,11 @@ export const duration = {
   opFast: '120ms',
   opBase: '180ms',
   opSlow: '280ms',
+
+  // Interaction
+  hover: '720ms',
+  appear: '720ms',
+  dialog: '600ms',
 } as const;
 
 export const easing = {

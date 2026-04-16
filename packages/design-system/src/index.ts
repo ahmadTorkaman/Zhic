@@ -36,5 +36,8 @@ export type { BreakpointToken } from './tokens/breakpoints';
 export { duration, easing } from './tokens/motion';
 export type { DurationToken, EasingToken } from './tokens/motion';
 
+export { glass } from './tokens/glass';
+export type { GlassToken } from './tokens/glass';
+
 export { zIndex } from './tokens/z-index';
 export type { ZIndexToken } from './tokens/z-index';
