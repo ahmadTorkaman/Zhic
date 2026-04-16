@@ -48,7 +48,7 @@ export function Modal({
   const titleId = useId();
   const descriptionId = useId();
 
-  useDialogEffect(dialogRef, open, onClose);
+  useDialogEffect(dialogRef, open, onClose, { animated: true });
 
   if (!isClient) return null;
 
@@ -68,14 +68,19 @@ export function Modal({
       onCancel={handleCancel}
       aria-labelledby={title ? titleId : undefined}
       aria-describedby={description ? descriptionId : undefined}
+      aria-modal="true"
       className={cn(
         'm-auto bg-transparent p-0 outline-none',
-        '[&::backdrop]:bg-ink/60 [&::backdrop]:backdrop-blur-sm',
+        '[&::backdrop]:bg-transparent',
       )}
     >
       <div
+        className="modal-overlay absolute inset-0 bg-ink/60 backdrop-blur-sm"
+        aria-hidden
+      />
+      <div
         className={cn(
-          'relative flex max-h-[90vh] flex-col overflow-hidden rounded-md bg-ivory text-charcoal shadow-modal',
+          'modal-content relative flex max-h-[90vh] flex-col overflow-hidden rounded-md bg-ivory text-charcoal shadow-modal',
           SIZE_CLASSES[size],
           className,
         )}

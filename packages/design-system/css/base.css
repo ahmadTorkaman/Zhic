@@ -128,6 +128,123 @@ html.lenis body {
   outline-color: rgba(250, 250, 247, 0.4);
 }
 
+/* ── Dialog animations ───────────────────────────────────────────── */
+
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes modal-content-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modal-content-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(12px); }
+}
+
+dialog[data-state="open"] .modal-overlay {
+  animation: modal-backdrop-in var(--dur-dialog) var(--ease-out-soft) both;
+}
+
+dialog[data-state="closing"] .modal-overlay {
+  animation: modal-backdrop-out 400ms var(--ease-in-soft) both;
+}
+
+dialog[data-state="open"] .modal-content {
+  animation: modal-content-in var(--dur-dialog) var(--ease-out-soft) both;
+  animation-delay: 60ms;
+}
+
+dialog[data-state="closing"] .modal-content {
+  animation: modal-content-out 480ms var(--ease-in-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[data-state="open"] .modal-overlay,
+  dialog[data-state="open"] .modal-content,
+  dialog[data-state="closing"] .modal-overlay,
+  dialog[data-state="closing"] .modal-content {
+    animation: none;
+  }
+}
+
+/* ── Drawer animations ───────────────────────────────────────────── */
+
+@keyframes drawer-slide-in-start {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes drawer-slide-out-start {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes drawer-slide-in-end {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes drawer-slide-out-end {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes drawer-slide-in-top {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes drawer-slide-out-top {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+
+@keyframes drawer-slide-in-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes drawer-slide-out-bottom {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes drawer-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes drawer-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+dialog[data-state="open"] .drawer-overlay {
+  animation: drawer-fade-in var(--dur-dialog) var(--ease-out-soft) both;
+}
+
+dialog[data-state="closing"] .drawer-overlay {
+  animation: drawer-fade-out 400ms var(--ease-in-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[data-state="open"] .drawer-panel,
+  dialog[data-state="closing"] .drawer-panel,
+  dialog[data-state="open"] .drawer-overlay,
+  dialog[data-state="closing"] .drawer-overlay {
+    animation: none;
+  }
+}
+
 /* ── Decorative ──────────────────────────────────────────────────── */
 
 .dot-pattern {
