@@ -61,7 +61,7 @@ export function SiteHeader({
           <div className="flex items-center justify-between gap-6 py-4">
             <Link
               href={brandHref}
-              className="rounded-sm text-h4 font-black tracking-tight text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+              className="rounded-sm text-h4 font-black tracking-tight text-charcoal transition-opacity duration-[var(--dur-hover)] hover:opacity-80 focus-visible:outline-none"
             >
               {brandLabel}
             </Link>
@@ -77,9 +77,9 @@ export function SiteHeader({
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'rounded-sm text-small transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory',
+                      'rounded-sm text-small transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] focus-visible:outline-none',
                       active
-                        ? 'text-charcoal'
+                        ? 'text-charcoal border-b-[1.5px] border-forest pb-0.5'
                         : 'text-stone hover:text-charcoal',
                     )}
                   >
@@ -96,7 +96,7 @@ export function SiteHeader({
                 aria-label="باز کردن منو"
                 aria-expanded={menuOpen}
                 aria-controls="site-nav-drawer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-md text-charcoal hover:bg-sand/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory md:hidden"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-md text-charcoal hover:bg-sand/60 transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] focus-visible:outline-none md:hidden"
               >
                 <svg
                   viewBox="0 0 16 16"
@@ -133,7 +133,7 @@ export function SiteHeader({
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'rounded-sm text-h4 font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory',
+                      'rounded-sm text-h4 font-bold transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] focus-visible:outline-none',
                       active
                         ? 'text-charcoal'
                         : 'text-stone hover:text-charcoal',
