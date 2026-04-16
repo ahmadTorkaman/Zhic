@@ -6,10 +6,11 @@ export const CONTROL_BASE =
   'block w-full bg-ivory text-charcoal font-sans ' +
   'border border-sand rounded-md ' +
   'placeholder:text-stone ' +
-  'transition-colors ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal focus-visible:ring-offset-2 focus-visible:ring-offset-ivory focus-visible:border-charcoal ' +
+  'transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ' +
+  'hover:border-stone ' +
+  'focus-visible:outline-none focus-visible:border-forest focus-visible:shadow-[0_0_0_var(--focus-ring-width)_var(--focus-ring-color)] ' +
   'disabled:opacity-50 disabled:cursor-not-allowed ' +
-  'aria-invalid:border-rust aria-invalid:focus-visible:ring-rust aria-invalid:focus-visible:border-rust';
+  'aria-invalid:border-rust aria-invalid:focus-visible:shadow-[0_0_0_2px_rgba(139,74,43,0.15)] aria-invalid:focus-visible:border-rust';
 
 export const CONTROL_SIZE: Record<ControlSize, string> = {
   sm: 'text-small ps-3 pe-3 py-2',
