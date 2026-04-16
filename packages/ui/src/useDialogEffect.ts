@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 
 let bodyLockCount = 0;
 let originalBodyOverflow: string | null = null;
@@ -25,10 +25,12 @@ export function useDialogEffect(
   dialogRef: RefObject<HTMLDialogElement | null>,
   open: boolean,
   onClose: () => void,
+  options?: { animated?: boolean },
 ) {
   const lockedRef = useRef(false);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -43,15 +45,45 @@ export function useDialogEffect(
         previouslyFocusedRef.current =
           (document.activeElement as HTMLElement | null) ?? null;
         dialog.showModal();
+        if (options?.animated) {
+          dialog.dataset.state = 'open';
+        }
         if (!lockedRef.current) {
           lockBody();
           lockedRef.current = true;
         }
       }
     } else if (dialog.open) {
-      dialog.close();
+      if (options?.animated) {
+        setClosing(true);
+        dialog.dataset.state = 'closing';
+
+        let settled = false;
+
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          setClosing(false);
+          dialog.close();
+        };
+
+        const handleAnimationEnd = () => {
+          dialog.removeEventListener('animationend', handleAnimationEnd);
+          clearTimeout(safetyTimer);
+          finish();
+        };
+
+        const safetyTimer = setTimeout(() => {
+          dialog.removeEventListener('animationend', handleAnimationEnd);
+          finish();
+        }, 700);
+
+        dialog.addEventListener('animationend', handleAnimationEnd);
+      } else {
+        dialog.close();
+      }
     }
-  }, [dialogRef, open]);
+  }, [dialogRef, open, options?.animated]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -84,4 +116,6 @@ export function useDialogEffect(
       }
     };
   }, []);
+
+  return { closing };
 }
