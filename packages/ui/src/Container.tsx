@@ -26,7 +26,7 @@ export function Container({
     <Component
       {...rest}
       className={cn(
-        'mx-auto w-full px-5 lg:px-7',
+        'mx-auto w-full px-4 lg:px-6',
         SIZE_CLASSES[size],
         className,
       )}
