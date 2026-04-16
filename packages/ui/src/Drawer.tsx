@@ -3,6 +3,7 @@
 import {
   useId,
   useRef,
+  type CSSProperties,
   type MouseEvent,
   type ReactNode,
   type SyntheticEvent,
@@ -26,6 +27,22 @@ export type DrawerProps = {
   footer?: ReactNode;
   closeLabel?: string;
   className?: string;
+};
+
+const SLIDE_IN: Record<Side, string> = {
+  start: 'drawer-slide-in-start',
+  end: 'drawer-slide-in-end',
+  top: 'drawer-slide-in-top',
+  bottom: 'drawer-slide-in-bottom',
+  full: 'drawer-fade-in',
+};
+
+const SLIDE_OUT: Record<Side, string> = {
+  start: 'drawer-slide-out-start',
+  end: 'drawer-slide-out-end',
+  top: 'drawer-slide-out-top',
+  bottom: 'drawer-slide-out-bottom',
+  full: 'drawer-fade-out',
 };
 
 const PANEL_POSITION: Record<Side, string> = {
@@ -81,7 +98,7 @@ export function Drawer({
   const titleId = useId();
   const descriptionId = useId();
 
-  useDialogEffect(dialogRef, open, onClose);
+  const { closing } = useDialogEffect(dialogRef, open, onClose, { animated: true });
 
   if (!isClient) return null;
 
@@ -94,6 +111,12 @@ export function Drawer({
     onClose();
   };
 
+  const panelAnimation: CSSProperties = {
+    animation: closing
+      ? `${SLIDE_OUT[side]} 480ms var(--ease-in-soft) both`
+      : `${SLIDE_IN[side]} var(--dur-dialog) var(--ease-out-soft) both`,
+  };
+
   return createPortal(
     <dialog
       ref={dialogRef}
@@ -101,18 +124,21 @@ export function Drawer({
       onCancel={handleCancel}
       aria-labelledby={title ? titleId : undefined}
       aria-describedby={description ? descriptionId : undefined}
+      aria-modal="true"
       className={cn(
         'fixed inset-0 m-0 h-screen max-h-none w-screen max-w-none bg-transparent p-0 outline-none',
-        '[&::backdrop]:bg-ink/60',
+        '[&::backdrop]:bg-transparent',
       )}
     >
+      <div className="drawer-overlay absolute inset-0 bg-ink/60" aria-hidden />
       <div
         className={cn(
-          'flex flex-col bg-ivory text-charcoal shadow-modal',
+          'drawer-panel flex flex-col bg-ivory text-charcoal shadow-modal',
           PANEL_POSITION[side],
           PANEL_SIZE[side][size],
           className,
         )}
+        style={panelAnimation}
       >
         {title || description ? (
           <header className="flex items-start justify-between gap-4 border-b border-sand p-5">
