@@ -2,7 +2,7 @@
  * Color tokens. Source of truth: docs/spec/design-system.md §2.1.
  *
  * The storefront lives in ivory + charcoal. Sand and cream are for
- * separation and hairlines. Saffron is a once-per-page maximum.
+ * separation and hairlines. Gold is a once-per-page maximum.
  * No pure black, no pure white anywhere.
  */
 export const color = {
@@ -13,9 +13,9 @@ export const color = {
   charcoal: '#2C2825',
   ink: '#14110F',
   accent: '#B8A898',
-  saffron: '#C68A2E',
+  gold: '#C49A6C',
   rust: '#8B4A2B',
-  moss: '#5A6B4F',
+  forest: '#5F7760',
   overlay: 'rgba(20, 17, 15, 0.6)',
 } as const;
 
