@@ -631,6 +631,50 @@ comes from the SEO specialist and client (see `seo.md` §4.5 and
   land as leads. No calendar, no availability check, no staff
   assignment — Package 3 territory.
 
+#### Homepage — Asymmetric Luxury (Option C)
+
+Canonical mockup: `.superpowers/homepage-c-full.html`
+
+The homepage uses the "Asymmetric Luxury" layout — off-center
+compositions, overlapping layers, dramatic scale shifts. Inspired by
+Poliform/Minotti but in Zhic's warm Persian palette.
+
+**Section order and backgrounds:**
+
+| # | Section | Background | Layout |
+|---|---------|-----------|--------|
+| 1 | Hero | ivory / cream→sand gradient | Split-screen: text RTL-start, image half RTL-end. Full viewport height. |
+| 2 | Brand story | ink (dark) | 2/3 grid: gold-bordered stats RTL-start, editorial text RTL-end. Radial gold glow. |
+| 3 | Featured designs | ivory | Asymmetric grid: one large card (3/4 aspect, spans 2 rows) + two standard cards. |
+| 4 | Showrooms | cream | 3-col glass cards with `--glass-bg`, `--glass-border`, `--glass-blur` tokens. City in forest eyebrow. |
+| 5 | Journal | ivory | Asymmetric editorial: featured article (3/4) + two small thumbnail articles. |
+| 6 | Contact CTA | ink (dark) | Two-column: gold-line accent + text RTL-start, frosted glass form RTL-end. Forest submit button. |
+
+**Mobile behavior (≤768px):**
+- Hero stacks: image half on top (40vh), text below. Buttons go full-width.
+- Header: nav links hidden. Logo centered. Hamburger button on left (RTL end). Opens full-screen overlay menu.
+- Brand stats become horizontal scroll row, then vertical on ≤480px.
+- Product grid: featured card full-width (16:9), two cards side-by-side. Single column on ≤480px.
+- Showroom glass cards stack vertically.
+- Journal: featured article full-width, small articles stack with 100px thumbnails.
+- CTA: text centers, form goes full-width below. Secondary button hidden.
+- Footer: 2 columns, then 1 on ≤480px.
+
+**Color usage on homepage:**
+- Forest (`#5F7760`): eyebrow labels (hero, brand, journal), active nav underline, form submit button, focus rings. ~5 appearances total.
+- Gold (`#C49A6C`): stat borders in brand section, gold accent line in CTA, dark-button hover reward. ~4 appearances total.
+- Everything else: ivory, cream, sand, stone, charcoal, ink.
+
+**Interaction tokens used:**
+- `--dur-hover: 720ms` + `--ease-out-soft` on all transitions
+- `--hover-lift-card: -3px` on product/journal cards
+- `--hover-lift: -2px` on glass cards
+- `--shadow-card` on card hover, `--shadow-subtle` on header scroll and button hover
+- `--shadow-elevated` on accent button hover
+- Glass tokens (`--glass-bg`, `--glass-border`, `--glass-blur`) on showroom cards and product badges
+- `--focus-ring-width` + `--focus-ring-color` on all focusable elements
+- Image zoom at 1200ms (slower than card lift) for two-layer choreography
+
 ### States checklist
 
 For every interactive component, design and implement:
@@ -638,7 +682,7 @@ For every interactive component, design and implement:
 - Default
 - Hover (desktop only)
 - Focus-visible (keyboard) — always a 2px offset ring in
-  `--color-charcoal`
+  `--focus-ring-color` (forest green at 30% opacity)
 - Active / pressed
 - Disabled
 - Loading
