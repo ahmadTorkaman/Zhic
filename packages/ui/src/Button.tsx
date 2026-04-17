@@ -1,5 +1,6 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from './cn';
+import { Spinner } from './Spinner';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'link';
 type Size = 'sm' | 'md' | 'lg';
@@ -49,32 +50,6 @@ const SIZE_CLASSES: Record<Size, string> = {
   lg: 'text-lead px-6 py-4',
 };
 
-function Spinner() {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      className="h-4 w-4 animate-spin"
-      role="status"
-      aria-label="در حال بارگذاری"
-    >
-      <circle
-        cx="8"
-        cy="8"
-        r="6"
-        stroke="currentColor"
-        strokeOpacity="0.25"
-        strokeWidth="2"
-      />
-      <path
-        d="M14 8a6 6 0 0 0-6-6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 export function Button(props: ButtonProps) {
   const {
@@ -95,7 +70,7 @@ export function Button(props: ButtonProps) {
     variant === 'link' ? '' : SIZE_CLASSES[size],
     className,
   );
-  const startContent = loading ? <Spinner /> : startSlot;
+  const startContent = loading ? <Spinner size="sm" /> : startSlot;
   const content = (
     <>
       {startContent ? (

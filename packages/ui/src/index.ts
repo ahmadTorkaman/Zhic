@@ -99,3 +99,6 @@ export type { PhoneLinkProps } from './PhoneLink';
 
 export { IconButton } from './IconButton';
 export type { IconButtonProps } from './IconButton';
+
+export { Spinner } from './Spinner';
+export type { SpinnerProps } from './Spinner';
