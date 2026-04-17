@@ -30,7 +30,7 @@ export function PhoneLink({ raw, inline = false, className }: PhoneLinkProps) {
   if (!c) {
     // Fallback: render whatever the value is in Persian digits, no link.
     return (
-      <span className={cn('text-body', className)} dir="ltr">
+      <span className={cn('text-body', className)}>
         {toPersianDigits(raw)}
       </span>
     );

@@ -44,7 +44,11 @@ export function SiteFooter({
         پاورقی سایت
       </h2>
       <Container>
-        <div className="grid gap-10 py-10 md:grid-cols-4">
+        <div className={cn('grid gap-10 py-10', {
+          'md:grid-cols-2': columns.length === 2,
+          'md:grid-cols-3': columns.length === 3,
+          'md:grid-cols-4': columns.length >= 4,
+        })}>
           {columns.map((col) => (
             <nav key={col.title} aria-label={col.title}>
               <h3 className="text-eyebrow uppercase tracking-wide text-accent">

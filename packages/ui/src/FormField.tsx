@@ -15,6 +15,7 @@ export type FormFieldProps = {
   required?: boolean;
   children: ReactNode;
   className?: string;
+  asFieldset?: boolean;
 };
 
 type ChildProps = {
@@ -33,6 +34,7 @@ export function FormField({
   required,
   children,
   className,
+  asFieldset = false,
 }: FormFieldProps) {
   const generatedId = useId();
   const id = htmlFor ?? generatedId;
@@ -56,16 +58,19 @@ export function FormField({
     });
   }
 
-  return (
-    <div className={cn('flex flex-col gap-2', className)}>
-      <label htmlFor={id} className="text-small text-charcoal">
-        {label}
-        {required ? (
-          <span className="ms-1 text-rust" aria-hidden>
-            *
-          </span>
-        ) : null}
-      </label>
+  const labelNode = (
+    <>
+      {label}
+      {required ? (
+        <span className="ms-1 text-rust" aria-hidden>
+          *
+        </span>
+      ) : null}
+    </>
+  );
+
+  const bodyContent = (
+    <>
       {controlNode}
       {error ? (
         <p id={errorId} role="alert" className="text-small text-rust">
@@ -76,6 +81,24 @@ export function FormField({
           {help}
         </p>
       ) : null}
+    </>
+  );
+
+  if (asFieldset) {
+    return (
+      <fieldset className={cn('flex flex-col gap-2', className)}>
+        <legend className="text-small text-charcoal">{labelNode}</legend>
+        {bodyContent}
+      </fieldset>
+    );
+  }
+
+  return (
+    <div className={cn('flex flex-col gap-2', className)}>
+      <label htmlFor={id} className="text-small text-charcoal">
+        {labelNode}
+      </label>
+      {bodyContent}
     </div>
   );
 }

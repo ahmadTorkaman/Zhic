@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { toPersianDigits } from '@zhic/locale';
 import { Aspect } from './Aspect';
 import { cn } from './cn';
 import { CARD_BASE, CARD_INTERACTIVE, CARD_IMAGE_ZOOM } from './cardClasses';
@@ -41,7 +42,11 @@ export function ShowroomCard({
           </div>
         )}
         {hoursSummary ? (
-          <p className="text-small text-stone">{hoursSummary}</p>
+          <p className="text-small text-stone">
+            {typeof hoursSummary === 'string'
+              ? toPersianDigits(hoursSummary)
+              : hoursSummary}
+          </p>
         ) : null}
         {phone ? (
           <div className="text-small">
