@@ -264,6 +264,33 @@ dialog[data-state="closing"] .drawer-overlay {
   }
 }
 
+/* ── Fade-in ─────────────────────────────────────────────────────── */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Skeleton shimmer ────────────────────────────────────────────── */
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--color-cream) 25%, var(--color-sand) 50%, var(--color-cream) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+    background: var(--color-cream);
+  }
+}
+
 /* ── Decorative ──────────────────────────────────────────────────── */
 
 .dot-pattern {
