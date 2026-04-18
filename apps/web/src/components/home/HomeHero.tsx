@@ -1,4 +1,3 @@
-import { Button, Container, Section, Stack } from '@zhic/ui';
 import type { PayloadMedia } from '@/lib/payload';
 import { mediaUrl } from '@/lib/payload';
 import { BlockReveal } from '@/components/motion/BlockReveal';
@@ -12,56 +11,74 @@ export type HomeHeroProps = {
 
 const DEFAULT_HEADING = 'ساخته‌شده برای ماندن';
 const DEFAULT_SUB =
-  'مبلمان دست‌ساز برای خانه‌هایی که آرامش را می‌فهمند';
+  'مبلمان دست‌ساز از چوب گردوی ایرانی، برای خانه‌هایی که آرامش را می‌فهمند.';
+const SEASON_EYEBROW = 'کلکسیون بهار ۱۴۰۵';
 
 export function HomeHero({ heading, subheading, media }: HomeHeroProps) {
   const src = mediaUrl(media);
   const alt = media?.alt ?? '';
   return (
-    <Section fullBleed bg="ivory" padY="sm">
-      <div className="relative flex min-h-[70vh] w-full items-center overflow-hidden">
-        {src ? (
-          <>
-            <img
-              src={src}
-              alt={alt}
-              className="absolute inset-0 -z-10 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 -z-10 bg-ivory/60" />
-          </>
-        ) : (
-          <div className="absolute inset-0 -z-10 flex items-center justify-center bg-gradient-to-b from-ivory via-cream to-sand/30">
-            <span
-              className="select-none text-[28vw] font-black text-sand/50 md:text-[18vw]"
-              aria-hidden
+    <section className="grid min-h-screen grid-cols-1 overflow-hidden md:grid-cols-2">
+      {/* Text half — sits on the RTL-start (right) side at md+. Mockup has
+          padding-right=4rem (outer/screen edge) and padding-left=2rem (inner/
+          divider edge) — under RTL that maps to ps-8 (start = right) and pe-6
+          (end = left). */}
+      <div className="flex flex-col justify-center bg-ivory px-4 py-9 md:py-11 md:ps-8 md:pe-6">
+        <BlockReveal>
+          <p className="mb-5 text-eyebrow font-bold uppercase tracking-[0.12em] text-forest">
+            {SEASON_EYEBROW}
+          </p>
+        </BlockReveal>
+        <WordReveal
+          as="h1"
+          className="mb-5 text-balance text-h1 font-black leading-[1.1] text-ink"
+        >
+          {heading ?? DEFAULT_HEADING}
+        </WordReveal>
+        <BlockReveal delay={0.3}>
+          <p className="mb-7 max-w-[420px] text-lead font-light leading-[var(--leading-lead)] text-stone">
+            {subheading ?? DEFAULT_SUB}
+          </p>
+        </BlockReveal>
+        <BlockReveal delay={0.5}>
+          <div className="flex flex-col gap-4 md:flex-row md:flex-wrap">
+            <a
+              href="/products"
+              className="inline-flex items-center justify-center rounded-md bg-charcoal px-9 py-4 text-small font-bold text-ivory transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:-translate-y-px hover:bg-ink hover:shadow-subtle"
             >
-              ژیک
-            </span>
+              مشاهده‌ی محصولات
+            </a>
+            <a
+              href="/contact?reason=quote"
+              className="inline-flex items-center justify-center rounded-md bg-forest px-9 py-4 text-small font-bold text-ivory transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:-translate-y-px hover:shadow-elevated"
+            >
+              ثبت استعلام
+            </a>
           </div>
-        )}
-        <Container>
-          <Stack gap="lg" className="max-w-2xl">
-            <WordReveal className="text-balance text-[clamp(2.5rem,8vw,6rem)] font-black leading-[1.1] text-charcoal">
-              {heading ?? DEFAULT_HEADING}
-            </WordReveal>
-            <BlockReveal delay={0.3}>
-              <p className="text-pretty text-lead font-light text-stone">
-                {subheading ?? DEFAULT_SUB}
-              </p>
-            </BlockReveal>
-            <BlockReveal delay={0.5}>
-              <Stack direction="row" gap="sm" className="flex-wrap">
-                <Button as="a" href="/products" variant="primary" size="lg">
-                  مشاهده محصولات
-                </Button>
-                <Button as="a" href="/showrooms" variant="secondary" size="lg">
-                  یافتن نزدیک‌ترین شوروم
-                </Button>
-              </Stack>
-            </BlockReveal>
-          </Stack>
-        </Container>
+        </BlockReveal>
+        <div className="mt-auto hidden items-center gap-3 pt-8 text-eyebrow font-light text-stone md:flex">
+          <span aria-hidden className="block h-px w-10 bg-sand" />
+          اسکرول کنید
+        </div>
       </div>
-    </Section>
+
+      {/* Image half — RTL-end (left), watermark or media override */}
+      <div className="relative order-first min-h-[40vh] overflow-hidden bg-gradient-to-br from-cream to-sand md:order-none md:min-h-0">
+        {src ? (
+          <img
+            src={src}
+            alt={alt}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none text-[50vw] font-black leading-none text-sand opacity-35 md:text-[24vw]"
+          >
+            ژ
+          </span>
+        )}
+      </div>
+    </section>
   );
 }
