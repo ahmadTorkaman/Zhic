@@ -11,6 +11,7 @@ export function HomeInquiryForm() {
   return (
     <form
       action={action}
+      aria-busy={isPending}
       className="rounded-lg border border-ivory/[0.06] bg-ivory/[0.03] p-5 md:p-7"
       style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
     >
@@ -35,10 +36,14 @@ export function HomeInquiryForm() {
         name="name"
         required
         placeholder="مثال: احمد نیوتن"
+        aria-invalid={Boolean(state.errors?.name)}
+        aria-describedby={state.errors?.name ? 'home-inq-name-error' : undefined}
         className="mb-1 w-full rounded-md border border-ivory/10 bg-transparent px-4 py-[14px] text-body text-ivory placeholder:text-ivory/20 focus:border-forest focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring-color)]"
       />
       {state.errors?.name ? (
-        <p className="mb-3 text-small text-rust">{state.errors.name}</p>
+        <p id="home-inq-name-error" className="mb-3 text-small text-rust">
+          {state.errors.name}
+        </p>
       ) : (
         <div className="mb-3" />
       )}
@@ -53,10 +58,14 @@ export function HomeInquiryForm() {
         dir="ltr"
         required
         placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹"
+        aria-invalid={Boolean(state.errors?.phone)}
+        aria-describedby={state.errors?.phone ? 'home-inq-phone-error' : undefined}
         className="mb-1 w-full rounded-md border border-ivory/10 bg-transparent px-4 py-[14px] text-body text-ivory placeholder:text-ivory/20 focus:border-forest focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring-color)]"
       />
       {state.errors?.phone ? (
-        <p className="mb-3 text-small text-rust">{state.errors.phone}</p>
+        <p id="home-inq-phone-error" className="mb-3 text-small text-rust">
+          {state.errors.phone}
+        </p>
       ) : (
         <div className="mb-3" />
       )}
