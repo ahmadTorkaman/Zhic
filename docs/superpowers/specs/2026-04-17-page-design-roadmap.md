@@ -121,8 +121,13 @@ For each approved page design, add to `docs/spec/design-system.md` §8 Templates
 
 | Phase | Status |
 |-------|--------|
-| Homepage (Option C) | ✅ Approved — canonical mockup at `.superpowers/homepage-c-full.html` |
-| Phase A (6 high-impact pages) | ⬜ Not started |
+| Homepage (Option C) | ✅ Approved — `.superpowers/homepage-c-full.html` |
+| A1 Product Index | ✅ Option C — asymmetric hero + 4-col grid — `.superpowers/a1-product-index.html` |
+| A2 PDP | ✅ Option C — cinematic 21:9 hero + cream sidebar — `.superpowers/a2-pdp.html` |
+| A3 Journal Index | ✅ Option B — magazine editorial with featured article — `.superpowers/a3-journal-index.html` |
+| A4 Article Page | ✅ Option B — full-bleed hero, centered prose, no TOC — `.superpowers/a4-article.html` |
+| A5 Showroom Detail | ✅ Option B — glass card overlay on hero, 3 info cards — `.superpowers/a5-showroom.html` |
+| A6 Contact | ✅ Option B — dark hero + frosted glass form — `.superpowers/a6-contact.html` |
 | Phase B (8 template pages) | ⬜ Not started |
 | Phase C (utility pages) | ⬜ Not started |
 | Phase D (implementation) | ⬜ Not started |

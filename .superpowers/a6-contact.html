@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A6 — تماس</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Light.ttf') format('truetype'); font-weight: 300; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Bold.ttf') format('truetype'); font-weight: 700; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Black.ttf') format('truetype'); font-weight: 900; }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --color-ivory: #FAFAF7; --color-cream: #F5F0EB; --color-sand: #E8E0D8;
+    --color-stone: #8C8279; --color-charcoal: #2C2825; --color-ink: #14110F;
+    --color-forest: #5F7760; --color-gold: #C49A6C;
+    --text-h1: clamp(2.5rem, 4vw + 1rem, 4rem); --text-h2: clamp(2rem, 3vw + 0.75rem, 3rem);
+    --text-h3: clamp(1.5rem, 2vw + 0.5rem, 2rem); --text-h4: 1.5rem;
+    --text-lead: 1.25rem; --text-body: 1rem; --text-small: 0.875rem; --text-eyebrow: 0.75rem;
+    --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.5rem; --space-6: 2rem;
+    --space-7: 3rem; --space-8: 4rem; --space-9: 6rem; --space-10: 8rem;
+    --shadow-subtle: 0 2px 8px rgba(20,17,15,0.03); --shadow-card: 0 8px 32px rgba(20,17,15,0.04);
+    --glass-bg: rgba(250,250,247,0.6); --glass-border: rgba(232,224,216,0.5); --glass-blur: 24px;
+    --radius-md: 4px; --radius-lg: 8px; --radius-pill: 999px;
+    --dur-hover: 720ms; --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --hover-lift: -2px; --focus-ring-width: 2px; --focus-ring-color: rgba(95,119,96,0.3);
+  }
+
+  body { font-family: 'Ayandeh', 'Tahoma', sans-serif; background: var(--color-ivory); color: var(--color-charcoal); line-height: 1.75; font-size: var(--text-body); }
+  :focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: 2px; }
+  .container { max-width: 1440px; margin: 0 auto; padding: 0 var(--space-6); }
+
+  .opt-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: var(--color-ink); padding: 12px 24px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .opt-nav span { color: var(--color-sand); font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; margin-left: 16px; }
+  .opt-btn { padding: 8px 20px; font-family: inherit; font-size: var(--text-eyebrow); font-weight: 700; border: 1px solid rgba(250,250,247,0.15); border-radius: var(--radius-md); background: transparent; color: var(--color-sand); cursor: pointer; }
+  .opt-btn.active { background: var(--color-ivory); color: var(--color-ink); border-color: var(--color-ivory); }
+  .option { display: none; padding-top: 52px; }
+  .option.visible { display: block; }
+  .opt-label { text-align: center; padding: var(--space-5) var(--space-4); background: var(--color-cream); margin-bottom: 0; }
+  .opt-label h2 { font-size: var(--text-small); font-weight: 700; letter-spacing: 0.08em; color: var(--color-stone); margin-bottom: 4px; }
+  .opt-label p { font-size: var(--text-small); color: var(--color-stone); font-weight: 300; max-width: 600px; margin: 0 auto; }
+
+  /* Shared form elements */
+  .form-group { margin-bottom: var(--space-5); }
+  .form-group label { display: block; font-size: var(--text-small); font-weight: 400; color: var(--color-stone); margin-bottom: var(--space-2, 8px); }
+  .form-input {
+    width: 100%; padding: 14px var(--space-4);
+    font-family: inherit; font-size: var(--text-body);
+    border: 1px solid var(--color-sand); border-radius: var(--radius-md);
+    background: var(--color-ivory); color: var(--color-charcoal); outline: none;
+    transition: border-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .form-input:hover { border-color: var(--color-stone); }
+  .form-input:focus { border-color: var(--color-forest); box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color); }
+  .form-input::placeholder { color: var(--color-stone); opacity: 0.6; }
+  textarea.form-input { resize: none; height: 120px; }
+  select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%238C8279' stroke-width='1.5'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 16px center; padding-left: 40px; }
+
+  .form-dark .form-input {
+    background: transparent; border-color: rgba(250,250,247,0.1); color: var(--color-ivory);
+  }
+  .form-dark .form-input:hover { border-color: rgba(250,250,247,0.2); }
+  .form-dark .form-input:focus { border-color: var(--color-forest); }
+  .form-dark .form-input::placeholder { color: rgba(250,250,247,0.25); }
+  .form-dark label { color: var(--color-sand); }
+  .form-dark select.form-input { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23E8E0D8' stroke-width='1.5'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5'/%3E%3C/svg%3E"); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 16px 36px; font-family: inherit; font-size: var(--text-small); font-weight: 700; border: none; border-radius: var(--radius-md); cursor: pointer; text-decoration: none; transition: all var(--dur-hover) var(--ease-out-soft); }
+  .btn-primary { background: var(--color-charcoal); color: var(--color-ivory); }
+  .btn-primary:hover { background: var(--color-ink); transform: translateY(-1px); box-shadow: var(--shadow-subtle); }
+  .btn-accent { background: var(--color-forest); color: var(--color-ivory); }
+  .btn-accent:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(95,119,96,0.2); }
+  .btn-ghost { background: transparent; border: 1px solid var(--color-sand); color: var(--color-charcoal); }
+  .btn-ghost:hover { border-color: var(--color-charcoal); }
+
+  .glass-card {
+    background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border); border-radius: var(--radius-lg);
+    padding: var(--space-7); box-shadow: var(--shadow-subtle);
+    transition: all var(--dur-hover) var(--ease-out-soft);
+  }
+  .glass-card:hover { transform: translateY(var(--hover-lift)); box-shadow: var(--shadow-card); }
+
+  .info-block { margin-bottom: var(--space-5); }
+  .info-block:last-child { margin-bottom: 0; }
+  .info-block h3 { font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.06em; color: var(--color-stone); margin-bottom: var(--space-3); }
+  .info-block .value { font-size: var(--text-body); color: var(--color-charcoal); }
+  .info-block .sub { font-size: var(--text-small); color: var(--color-stone); font-weight: 300; margin-top: 4px; }
+
+  /* ═══ A — Form + Showroom Cards ═══ */
+  .a-header { padding: var(--space-9) 0 var(--space-7); }
+  .a-header h1 { font-size: var(--text-h1); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-3); }
+  .a-header .lead { font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); max-width: 520px; }
+
+  .a-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); padding-bottom: var(--space-9); }
+  .a-form-card { border: 1px solid var(--color-sand); border-radius: var(--radius-lg); padding: var(--space-7); }
+
+  .a-showrooms { padding: var(--space-9) 0; background: var(--color-cream); margin: 0 calc(-50vw + 50%); padding-left: calc(50vw - 50%); padding-right: calc(50vw - 50%); }
+  .a-showrooms h2 { font-size: var(--text-h3); font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-6); }
+  .a-showroom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+
+  @media (max-width: 768px) {
+    .a-split { grid-template-columns: 1fr; }
+    .a-showroom-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ═══ B — Dark Hero with Inline Form ═══ */
+  .b-hero { background: var(--color-ink); padding: var(--space-10) 0; position: relative; overflow: hidden; }
+  .b-hero::before { content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(95,119,96,0.06) 0%, transparent 70%); pointer-events: none; }
+  .b-hero .grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-10); align-items: start; }
+  .b-hero .text-col h1 { font-size: var(--text-h2); font-weight: 900; color: var(--color-ivory); margin-bottom: var(--space-4); }
+  .b-hero .text-col .lead { font-size: var(--text-body); color: var(--color-sand); font-weight: 300; line-height: 1.85; margin-bottom: var(--space-6); }
+  .b-hero .gold-line { width: 48px; height: 2px; background: var(--color-gold); margin-bottom: var(--space-6); }
+  .b-hero .phone-block { margin-bottom: var(--space-5); }
+  .b-hero .phone-block h3 { font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.06em; color: var(--color-gold); margin-bottom: var(--space-3); }
+  .b-hero .phone-block .number { font-size: var(--text-h3); font-weight: 700; color: var(--color-ivory); direction: ltr; text-align: right; }
+  .b-hero .phone-block .email { font-size: var(--text-small); color: var(--color-sand); font-weight: 300; direction: ltr; text-align: right; margin-top: 4px; }
+  .b-form-card { background: rgba(250,250,247,0.03); border: 1px solid rgba(250,250,247,0.06); border-radius: var(--radius-lg); padding: var(--space-7); backdrop-filter: blur(16px); }
+  .b-form-card h2 { font-size: var(--text-h4); font-weight: 700; color: var(--color-ivory); margin-bottom: var(--space-5); }
+
+  .b-showrooms { padding: var(--space-9) 0; }
+  .b-showrooms h2 { font-size: var(--text-h3); font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-6); }
+  .b-showroom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+
+  @media (max-width: 768px) {
+    .b-hero .grid { grid-template-columns: 1fr; gap: var(--space-7); }
+    .b-showroom-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ═══ C — Split Hero + Glass Form ═══ */
+  .c-hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 50vh; }
+  .c-hero .img-half { background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-sand) 100%); display: flex; align-items: center; justify-content: center; color: var(--color-stone); position: relative; overflow: hidden; }
+  .c-hero .img-half .watermark { position: absolute; font-size: 20vw; font-weight: 900; color: var(--color-sand); opacity: 0.3; }
+  .c-hero .text-half { display: flex; flex-direction: column; justify-content: center; padding: var(--space-9) var(--space-8); }
+  .c-hero .eyebrow { font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.12em; color: var(--color-forest); margin-bottom: var(--space-5); }
+  .c-hero h1 { font-size: var(--text-h2); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-4); }
+  .c-hero .lead { font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-6); }
+  .c-hero .phone { font-size: var(--text-h4); font-weight: 700; color: var(--color-charcoal); direction: ltr; text-align: right; }
+  .c-hero .email { font-size: var(--text-small); color: var(--color-stone); direction: ltr; text-align: right; margin-top: 4px; }
+
+  .c-form-section { padding: var(--space-9) 0; background: var(--color-cream); }
+  .c-form-layout { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: start; }
+  .c-form-layout .side h2 { font-size: var(--text-h3); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-4); }
+  .c-form-layout .side p { font-size: var(--text-body); color: var(--color-stone); font-weight: 300; line-height: 1.85; margin-bottom: var(--space-6); }
+  .c-form-layout .side .gold-line { width: 48px; height: 2px; background: var(--color-gold); margin-bottom: var(--space-6); }
+  .c-form-card { background: var(--color-ivory); border: 1px solid var(--color-sand); border-radius: var(--radius-lg); padding: var(--space-7); }
+
+  .c-showrooms { padding: var(--space-9) 0; }
+  .c-showrooms h2 { font-size: var(--text-h3); font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-6); }
+  .c-showroom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+
+  @media (max-width: 768px) {
+    .c-hero { grid-template-columns: 1fr; }
+    .c-hero .img-half { min-height: 30vh; }
+    .c-hero .text-half { padding: var(--space-7) var(--space-4); }
+    .c-form-layout { grid-template-columns: 1fr; }
+    .c-showroom-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="opt-nav">
+  <span>A6 — تماس</span>
+  <button class="opt-btn active" onclick="show('a')">A — فرم + شوروم‌ها</button>
+  <button class="opt-btn" onclick="show('b')">B — هیروی تاریک</button>
+  <button class="opt-btn" onclick="show('c')">C — تقسیم + شیشه‌ای</button>
+</nav>
+
+<!-- ═══ OPTION A — Form + Showroom Cards ═══ -->
+<div class="option visible" id="opt-a">
+  <div class="opt-label"><h2>گزینه‌ی A — فرم و شوروم‌ها</h2><p>عنوان بزرگ، فرم سمت راست، اطلاعات تماس سمت چپ. شوروم‌ها در بخش کرِم پایین. ساده و مستقیم.</p></div>
+  <div class="container">
+    <div class="a-header">
+      <h1>با ما در تماس باشید</h1>
+      <p class="lead">برای استعلام قیمت، رزرو بازدید از شوروم، یا هر سؤال دیگری — ما اینجاییم.</p>
+    </div>
+    <div class="a-split">
+      <div class="a-form-card">
+        <div class="form-group"><label>نام و نام خانوادگی</label><input class="form-input" placeholder="مثال: احمد نیوتن" /></div>
+        <div class="form-group"><label>شماره‌ی تماس</label><input class="form-input" type="tel" dir="ltr" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" /></div>
+        <div class="form-group"><label>شهر</label><select class="form-input"><option>انتخاب شهر</option><option>تهران</option><option>اصفهان</option><option>همدان</option></select></div>
+        <div class="form-group"><label>موضوع</label><select class="form-input"><option>انتخاب موضوع</option><option>استعلام قیمت</option><option>رزرو بازدید</option><option>مشاوره‌ی خرید</option><option>سایر</option></select></div>
+        <div class="form-group"><label>پیام</label><textarea class="form-input" placeholder="درباره‌ی چه محصولی سؤال دارید؟"></textarea></div>
+        <button class="btn btn-primary" style="width: 100%;">ارسال پیام</button>
+      </div>
+      <div>
+        <div class="info-block" style="margin-bottom: var(--space-7);">
+          <h3>تماس مستقیم</h3>
+          <div class="value" style="font-size: var(--text-h3); font-weight: 700;" dir="ltr">۰۸۱-۳۴۲۵ ۶۷۸۹</div>
+          <div class="sub">دفتر مرکزی — همدان</div>
+        </div>
+        <div class="info-block" style="margin-bottom: var(--space-7);">
+          <h3>ایمیل</h3>
+          <div class="value" dir="ltr">info@zhicwood.com</div>
+        </div>
+        <div class="info-block">
+          <h3>ساعات پاسخ‌گویی</h3>
+          <div class="value">شنبه تا پنجشنبه</div>
+          <div class="sub" dir="ltr">۰۹:۰۰ – ۱۷:۰۰</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="a-showrooms">
+    <div class="container">
+      <h2>شوروم‌ها</h2>
+      <div class="a-showroom-grid">
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">تهران</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم ونک</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">خیابان ونک، خیابان شهید خدامی</div>
+        </a>
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">اصفهان</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم چهارباغ</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">خیابان چهارباغ بالا</div>
+        </a>
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">همدان</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">کارگاه و شوروم مرکزی</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">بلوار استاد شهریار</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION B — Dark Hero with Inline Form ═══ -->
+<div class="option" id="opt-b">
+  <div class="opt-label"><h2>گزینه‌ی B — هیروی تاریک با فرم درون‌خطی</h2><p>مثل بخش CTA صفحه‌ی اصلی اما تمام‌صفحه. فرم شیشه‌ای روی پس‌زمینه‌ی تاریک. شوروم‌ها در بخش روشن پایین.</p></div>
+  <div class="b-hero">
+    <div class="container">
+      <div class="grid">
+        <div class="text-col">
+          <div class="gold-line"></div>
+          <h1>با ما در تماس باشید</h1>
+          <p class="lead">برای استعلام قیمت، رزرو بازدید از شوروم، یا مشاوره‌ی پیش از خرید. تیم ما آماده‌ی پاسخ‌گویی است.</p>
+          <div class="phone-block">
+            <h3>دفتر مرکزی</h3>
+            <div class="number">۰۸۱-۳۴۲۵ ۶۷۸۹</div>
+            <div class="email">info@zhicwood.com</div>
+          </div>
+          <div class="phone-block">
+            <h3>ساعات پاسخ‌گویی</h3>
+            <div style="font-size: var(--text-small); color: var(--color-sand); font-weight: 300;">شنبه تا پنجشنبه · ۰۹:۰۰ – ۱۷:۰۰</div>
+          </div>
+        </div>
+        <div class="b-form-card form-dark">
+          <h2>ارسال پیام</h2>
+          <div class="form-group"><label>نام و نام خانوادگی</label><input class="form-input" placeholder="مثال: احمد نیوتن" /></div>
+          <div class="form-group"><label>شماره‌ی تماس</label><input class="form-input" type="tel" dir="ltr" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" /></div>
+          <div class="form-group"><label>شهر</label><select class="form-input"><option>انتخاب شهر</option><option>تهران</option><option>اصفهان</option><option>همدان</option></select></div>
+          <div class="form-group"><label>موضوع</label><select class="form-input"><option>استعلام قیمت</option><option>رزرو بازدید</option><option>مشاوره</option></select></div>
+          <div class="form-group"><label>پیام</label><textarea class="form-input" placeholder="درباره‌ی چه محصولی سؤال دارید؟"></textarea></div>
+          <button class="btn btn-accent" style="width: 100%;">ارسال پیام</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="b-showrooms">
+    <div class="container">
+      <h2>شوروم‌ها</h2>
+      <div class="b-showroom-grid">
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">تهران</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم ونک</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">خیابان ونک، خیابان شهید خدامی</div>
+        </a>
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">اصفهان</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم چهارباغ</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">خیابان چهارباغ بالا</div>
+        </a>
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">همدان</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">کارگاه و شوروم مرکزی</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">بلوار استاد شهریار</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION C — Split Hero + Glass Form ═══ -->
+<div class="option" id="opt-c">
+  <div class="opt-label"><h2>گزینه‌ی C — هیروی تقسیم‌شده + فرم شیشه‌ای</h2><p>تقسیم مثل صفحه‌ی اصلی: واترمارک 'ژ' سمت چپ، اطلاعات تماس سمت راست. فرم در بخش کرِم پایین‌تر. یکپارچه‌ترین با هویت بصری.</p></div>
+
+  <div class="c-hero">
+    <div class="text-half">
+      <div class="eyebrow">تماس با ژیک</div>
+      <h1>با ما صحبت کنید</h1>
+      <p class="lead">برای استعلام قیمت، رزرو بازدید، یا هر سؤالی درباره‌ی مبلمان ما.</p>
+      <div class="phone" dir="ltr">۰۸۱-۳۴۲۵ ۶۷۸۹</div>
+      <div class="email" dir="ltr">info@zhicwood.com</div>
+    </div>
+    <div class="img-half">
+      <span class="watermark">ژ</span>
+    </div>
+  </div>
+
+  <div class="c-form-section">
+    <div class="container">
+      <div class="c-form-layout">
+        <div class="side">
+          <div class="gold-line"></div>
+          <h2>ارسال پیام</h2>
+          <p>فرم زیر را تکمیل کنید. تیم ما در ساعات کاری (شنبه تا پنجشنبه، ۰۹:۰۰ – ۱۷:۰۰) پاسخ خواهد داد.</p>
+        </div>
+        <div class="c-form-card">
+          <div class="form-group"><label>نام و نام خانوادگی</label><input class="form-input" placeholder="مثال: احمد نیوتن" /></div>
+          <div class="form-group"><label>شماره‌ی تماس</label><input class="form-input" type="tel" dir="ltr" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" /></div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+            <div class="form-group"><label>شهر</label><select class="form-input"><option>انتخاب شهر</option><option>تهران</option><option>اصفهان</option><option>همدان</option></select></div>
+            <div class="form-group"><label>موضوع</label><select class="form-input"><option>استعلام قیمت</option><option>رزرو بازدید</option><option>مشاوره</option></select></div>
+          </div>
+          <div class="form-group"><label>پیام</label><textarea class="form-input" placeholder="درباره‌ی چه محصولی سؤال دارید؟"></textarea></div>
+          <button class="btn btn-accent" style="width: 100%;">ارسال پیام</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="c-showrooms">
+    <div class="container">
+      <h2>یا از نزدیک ببینید</h2>
+      <div class="c-showroom-grid">
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">تهران</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم ونک</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">خیابان ونک، خیابان شهید خدامی</div>
+        </a>
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">اصفهان</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم چهارباغ</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">خیابان چهارباغ بالا</div>
+        </a>
+        <a href="#" class="glass-card" style="text-decoration: none; color: inherit; display: block;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">همدان</div>
+          <div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">کارگاه و شوروم مرکزی</div>
+          <div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">بلوار استاد شهریار</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('visible'));
+  document.getElementById('opt-' + id).classList.add('visible');
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

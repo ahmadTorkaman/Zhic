@@ -675,6 +675,71 @@ Poliform/Minotti but in Zhic's warm Persian palette.
 - `--focus-ring-width` + `--focus-ring-color` on all focusable elements
 - Image zoom at 1200ms (slower than card lift) for two-layer choreography
 
+#### Product Index — Asymmetric Hero (Option C)
+
+Mockup: `.superpowers/a1-product-index.html` (Option C tab)
+
+A featured product displayed large (3:4) with 3 mini-cards stacked
+beside it — gallery curator's pick. Below: pill filter bar (category +
+material groups separated by dividers) + 4-column product grid. Mobile:
+featured card full-width, mini-cards horizontal scroll, grid collapses
+to 2-col then 1-col.
+
+#### PDP — Immersive Gallery + Side Panel (Option C)
+
+Mockup: `.superpowers/a2-pdp.html` (Option C tab)
+
+Cinematic 21:9 hero image full-width with gradient fade at bottom.
+Below: thumbnail strip + title/tagline/description on the left, compact
+cream sidebar (price, badges, CTAs, lead time, SKU) sticky on the
+right. Specs accordion inline below description. Mobile: hero becomes
+4:5, sidebar drops below full-width, thumbnails horizontally scrollable.
+
+#### Journal Index — Magazine Editorial (Option B)
+
+Mockup: `.superpowers/a3-journal-index.html` (Option B tab)
+
+Featured article takes half the viewport — large 4:5 image on one side,
+title + excerpt + author meta on the other. Divider. Remaining articles
+in standard 3-column grid. Category pills above. Mobile: featured
+article stacks (image 16:9 above text), grid becomes 2-col then 1-col.
+
+#### Article Page — Full-Bleed Hero (Option B)
+
+Mockup: `.superpowers/a4-article.html` (Option B tab)
+
+Full-width cover image with gradient fade to ivory at bottom. Title and
+author meta overlay the bottom edge. Below: single centered prose
+column (max-width 680px) with no TOC sidebar. Pull quotes with gold
+right-border. Author card and related articles below. Fashion magazine
+feel — immersive reading without navigation distractions. Mobile: cover
+becomes 3:2.
+
+#### Showroom Detail — Glass Card Overlay (Option B)
+
+Mockup: `.superpowers/a5-showroom.html` (Option B tab)
+
+Photo hero with centered frosted glass card (city eyebrow in forest,
+name, headline, single CTA). Below: 3 glass info cards in a row —
+address + inline map, hours table, phone + CTAs. Gallery strip below.
+The glass system from the homepage showroom section expanded to full
+page. Mobile: glass cards stack vertically.
+
+#### Contact — Dark Hero + Frosted Form (Option B)
+
+Mockup: `.superpowers/a6-contact.html` (Option B tab)
+
+Dark ink hero mirroring the homepage CTA section but as a full page.
+Gold accent line + contact info (phone, email, hours) on the right.
+Frosted glass form card on the left. Below: showroom glass cards on
+ivory. The CTA section evolved into its own destination. Mobile: stacks
+vertically, form below text.
+
+#### Design pattern summary
+
+- **Option C (asymmetric)** for catalog/product pages: Product Index, PDP
+- **Option B (immersive/dramatic)** for editorial/location/conversion pages: Journal, Article, Showroom, Contact
+
 ### States checklist
 
 For every interactive component, design and implement:

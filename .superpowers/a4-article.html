@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A4 — صفحه‌ی مقاله</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Light.ttf') format('truetype'); font-weight: 300; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Bold.ttf') format('truetype'); font-weight: 700; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Black.ttf') format('truetype'); font-weight: 900; }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --color-ivory: #FAFAF7; --color-cream: #F5F0EB; --color-sand: #E8E0D8;
+    --color-stone: #8C8279; --color-charcoal: #2C2825; --color-ink: #14110F;
+    --color-forest: #5F7760; --color-gold: #C49A6C;
+    --text-h1: clamp(2.5rem, 4vw + 1rem, 4rem); --text-h2: clamp(2rem, 3vw + 0.75rem, 3rem);
+    --text-h3: clamp(1.5rem, 2vw + 0.5rem, 2rem); --text-h4: 1.5rem;
+    --text-lead: 1.25rem; --text-body: 1rem; --text-small: 0.875rem; --text-eyebrow: 0.75rem;
+    --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.5rem; --space-6: 2rem;
+    --space-7: 3rem; --space-8: 4rem; --space-9: 6rem;
+    --shadow-card: 0 8px 32px rgba(20,17,15,0.04);
+    --radius-md: 4px; --radius-lg: 8px;
+    --dur-hover: 720ms; --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --hover-lift-card: -3px;
+  }
+
+  body { font-family: 'Ayandeh', 'Tahoma', sans-serif; background: var(--color-ivory); color: var(--color-charcoal); line-height: 1.75; font-size: var(--text-body); }
+  .container { max-width: 1440px; margin: 0 auto; padding: 0 var(--space-6); }
+  .prose { max-width: 680px; }
+
+  .opt-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: var(--color-ink); padding: 12px 24px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .opt-nav span { color: var(--color-sand); font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; margin-left: 16px; }
+  .opt-btn { padding: 8px 20px; font-family: inherit; font-size: var(--text-eyebrow); font-weight: 700; border: 1px solid rgba(250,250,247,0.15); border-radius: var(--radius-md); background: transparent; color: var(--color-sand); cursor: pointer; }
+  .opt-btn.active { background: var(--color-ivory); color: var(--color-ink); border-color: var(--color-ivory); }
+  .option { display: none; padding-top: 52px; }
+  .option.visible { display: block; }
+  .opt-label { text-align: center; padding: var(--space-5) var(--space-4); background: var(--color-cream); margin-bottom: var(--space-7); }
+  .opt-label h2 { font-size: var(--text-small); font-weight: 700; letter-spacing: 0.08em; color: var(--color-stone); margin-bottom: 4px; }
+  .opt-label p { font-size: var(--text-small); color: var(--color-stone); font-weight: 300; max-width: 600px; margin: 0 auto; }
+
+  .breadcrumb { padding: var(--space-5) 0; font-size: var(--text-small); color: var(--color-stone); }
+  .breadcrumb a { color: inherit; text-decoration: none; }
+  .breadcrumb .sep { margin: 0 var(--space-3); }
+
+  /* Shared article elements */
+  .cover-wide { aspect-ratio: 21/9; background: var(--color-cream); margin-bottom: var(--space-7); display: flex; align-items: center; justify-content: center; color: var(--color-stone); overflow: hidden; border-radius: var(--radius-lg); }
+  .cover-full { aspect-ratio: 21/9; background: var(--color-cream); display: flex; align-items: center; justify-content: center; color: var(--color-stone); overflow: hidden; }
+
+  .article-meta { display: flex; align-items: center; gap: var(--space-4); font-size: var(--text-small); color: var(--color-stone); flex-wrap: wrap; }
+  .article-meta .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--color-sand); display: flex; align-items: center; justify-content: center; font-size: var(--text-eyebrow); font-weight: 700; color: var(--color-charcoal); }
+  .article-meta .dot { color: var(--color-sand); }
+
+  .body-text h2 { font-size: var(--text-h3); font-weight: 700; color: var(--color-ink); margin: var(--space-7) 0 var(--space-4); }
+  .body-text h3 { font-size: var(--text-h4); font-weight: 700; color: var(--color-charcoal); margin: var(--space-6) 0 var(--space-3); }
+  .body-text p { margin-bottom: var(--space-5); line-height: 1.85; }
+  .body-text blockquote { border-right: 3px solid var(--color-gold); padding-right: var(--space-5); margin: var(--space-6) 0; font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); font-style: normal; }
+
+  .toc { position: sticky; top: 96px; align-self: start; }
+  .toc h3 { font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.06em; color: var(--color-charcoal); margin-bottom: var(--space-4); }
+  .toc ul { list-style: none; border-right: 1px solid var(--color-sand); }
+  .toc li a { display: block; padding: 6px var(--space-4); font-size: var(--text-small); color: var(--color-stone); text-decoration: none; border-right: 2px solid transparent; margin-right: -1px; transition: all var(--dur-hover) var(--ease-out-soft); }
+  .toc li a:hover { color: var(--color-charcoal); }
+  .toc li a.active { color: var(--color-charcoal); font-weight: 700; border-right-color: var(--color-forest); }
+
+  .author-card { display: flex; gap: var(--space-5); padding: var(--space-6); border: 1px solid var(--color-sand); border-radius: var(--radius-lg); }
+  .author-card .avatar-lg { width: 64px; height: 64px; border-radius: 50%; background: var(--color-sand); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: var(--text-h4); font-weight: 700; color: var(--color-charcoal); }
+  .author-card .name { font-size: var(--text-h4); font-weight: 700; color: var(--color-charcoal); }
+  .author-card .role { font-size: var(--text-small); color: var(--color-stone); }
+  .author-card .bio { font-size: var(--text-small); color: var(--color-stone); font-weight: 300; margin-top: 4px; line-height: 1.7; }
+
+  .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .related-card { text-decoration: none; color: inherit; cursor: pointer; transition: all var(--dur-hover) var(--ease-out-soft); }
+  .related-card:hover { transform: translateY(var(--hover-lift-card)); }
+  .related-card .img { aspect-ratio: 3/2; background: var(--color-cream); margin-bottom: var(--space-3); transition: box-shadow var(--dur-hover) var(--ease-out-soft); border-radius: var(--radius-md); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--color-stone); font-size: var(--text-small); }
+  .related-card:hover .img { box-shadow: var(--shadow-card); }
+  .related-card .eyebrow { font-size: var(--text-eyebrow); font-weight: 700; color: var(--color-forest); margin-bottom: 4px; }
+  .related-card .title { font-size: var(--text-small); font-weight: 700; }
+  .related-card .meta { font-size: var(--text-eyebrow); color: var(--color-stone); margin-top: 4px; }
+
+  @media (max-width: 768px) {
+    .cover-wide, .cover-full { aspect-ratio: 3/2; border-radius: 0; }
+    .related-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) { .related-grid { grid-template-columns: 1fr; } }
+
+  /* ═══ A — Classic two-column ═══ */
+  .a-layout { display: grid; grid-template-columns: 1fr 220px; gap: var(--space-8); }
+  @media (max-width: 1024px) { .a-layout { grid-template-columns: 1fr; } .a-layout .toc { display: none; } }
+
+  /* ═══ B — Full-bleed hero, centered prose ═══ */
+  .b-hero { position: relative; margin-bottom: var(--space-8); }
+  .b-hero .overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--color-ivory) 0%, transparent 50%); }
+  .b-hero .hero-text { position: absolute; bottom: var(--space-8); left: 0; right: 0; }
+  .b-center { max-width: 680px; margin: 0 auto; }
+
+  /* ═══ C — Side-by-side hero ═══ */
+  .c-hero-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 60vh; margin-bottom: var(--space-8); }
+  .c-hero-img { background: var(--color-cream); display: flex; align-items: center; justify-content: center; color: var(--color-stone); }
+  .c-hero-text { display: flex; flex-direction: column; justify-content: center; padding: var(--space-9) var(--space-7); background: var(--color-ivory); }
+  .c-body-layout { display: grid; grid-template-columns: 200px 1fr; gap: var(--space-7); }
+  .c-side-toc { position: sticky; top: 96px; align-self: start; }
+  @media (max-width: 768px) {
+    .c-hero-split { grid-template-columns: 1fr; min-height: auto; }
+    .c-hero-img { aspect-ratio: 16/9; }
+    .c-hero-text { padding: var(--space-7) var(--space-4); }
+    .c-body-layout { grid-template-columns: 1fr; }
+    .c-side-toc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="opt-nav">
+  <span>A4 — صفحه‌ی مقاله</span>
+  <button class="opt-btn active" onclick="show('a')">A — دو ستونی کلاسیک</button>
+  <button class="opt-btn" onclick="show('b')">B — هیروی تمام‌عرض</button>
+  <button class="opt-btn" onclick="show('c')">C — هیروی تقسیم‌شده</button>
+</nav>
+
+<!-- ═══ OPTION A — Classic Two-Column ═══ -->
+<div class="option visible" id="opt-a">
+  <div class="opt-label">
+    <h2>گزینه‌ی A — دو ستونی کلاسیک</h2>
+    <p>تصویر عریض در بالا، متن در ستون اصلی، فهرست مطالب چسبان سمت چپ. ساختار آشنای مقالات بلند.</p>
+  </div>
+  <div class="container">
+    <div class="breadcrumb"><a href="#">خانه</a><span class="sep">‹</span><a href="#">ژورنال</a><span class="sep">‹</span><a href="#">مواد و متریال</a><span class="sep">‹</span><span>چرا گردوی ایرانی؟</span></div>
+    <div class="cover-wide">تصویر عریض — ۲۱:۹</div>
+    <div class="prose" style="margin-bottom: var(--space-5);">
+      <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.06em; color: var(--color-forest); margin-bottom: var(--space-4);">مواد و متریال</div>
+      <h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink); line-height: 1.2; margin-bottom: var(--space-4);">چرا گردوی ایرانی؟</h1>
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-5);">سفر یک تخته از جنگل‌های شمال تا کارگاه ژیک در همدان.</p>
+      <div class="article-meta">
+        <div class="avatar">ا</div>
+        <span style="font-weight: 500; color: var(--color-charcoal);">احمد تهرانی</span>
+        <span class="dot">·</span>
+        <span>۱۵ فروردین ۱۴۰۵</span>
+        <span class="dot">·</span>
+        <span>۷ دقیقه مطالعه</span>
+      </div>
+    </div>
+    <div style="height: 1px; background: var(--color-sand); margin: var(--space-6) 0;"></div>
+    <div class="a-layout">
+      <article class="body-text prose">
+        <h2>جنگل‌های هیرکانی</h2>
+        <p>شمال ایران، از گیلان تا گلستان، میزبان جنگل‌هایی است که قدمتشان به ۵۰ میلیون سال پیش بازمی‌گردد. این جنگل‌ها، که به نام هیرکانی شناخته می‌شوند، زیستگاه یکی از باارزش‌ترین گونه‌های گردو در جهان هستند.</p>
+        <p>چوب گردوی ایرانی به خاطر رنگ گرم قهوه‌ای، بافت ریز و یکنواخت، و دوام استثنایی‌اش شهرت جهانی دارد. ما این چوب را از منابع پایدار تهیه می‌کنیم.</p>
+        <blockquote>هر تخته‌ی گردو داستانی دارد — حلقه‌های رشدش، گره‌هایش، رنگ‌بندی یکتایش. ما این داستان را حفظ می‌کنیم، نه محو.</blockquote>
+        <h2>فرآیند خشک‌کردن</h2>
+        <p>چوب تازه‌بُرش رطوبت زیادی دارد. ما از روش خشک‌کردن طبیعی استفاده می‌کنیم — حداقل ۶ ماه در هوای آزاد، سپس ۳ هفته در کوره با دمای کنترل‌شده. این فرآیند کندتر از روش‌های صنعتی است اما ثبات بیش‌تری به چوب می‌دهد.</p>
+        <h3>چرا خشک‌کردن طبیعی؟</h3>
+        <p>خشک‌کردن سریع صنعتی می‌تواند تنش‌های داخلی در چوب ایجاد کند. این تنش‌ها ممکن است ماه‌ها بعد از ساخت مبل، به صورت ترک یا تاب‌خوردگی ظاهر شوند. روش ما این ریسک را به حداقل می‌رساند.</p>
+        <h2>از کارگاه تا خانه‌ی شما</h2>
+        <p>هر قطعه‌ی مبلمان ژیک با اتصالات فاق و زبانه ساخته می‌شود — بدون پیچ، بدون میخ. این روش سنتی نه‌تنها زیباتر است، بلکه دوام بیش‌تری هم دارد. پرداخت نهایی با روغن طبیعی دانمارکی انجام می‌شود که زیبایی طبیعی چوب را حفظ می‌کند.</p>
+      </article>
+      <aside class="toc">
+        <h3>فهرست مطالب</h3>
+        <ul>
+          <li><a href="#" class="active">جنگل‌های هیرکانی</a></li>
+          <li><a href="#">فرآیند خشک‌کردن</a></li>
+          <li><a href="#" style="padding-right: var(--space-6);">چرا خشک‌کردن طبیعی؟</a></li>
+          <li><a href="#">از کارگاه تا خانه‌ی شما</a></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+  <div style="padding: var(--space-9) 0; margin-top: var(--space-7);">
+    <div class="container">
+      <div class="prose" style="margin-bottom: var(--space-6);">
+        <h2 style="font-size: var(--text-h3); font-weight: 700; margin-bottom: var(--space-5);">نویسنده</h2>
+        <div class="author-card"><div class="avatar-lg">ا</div><div><div class="name">احمد تهرانی</div><div class="role">بنیان‌گذار و طراح ارشد</div><div class="bio">از سال ۱۳۸۰ در صنایع چوب فعالیت دارد. ژیک را با هدف ساخت مبلمان ماندگار با روح ایرانی تأسیس کرد.</div></div></div>
+      </div>
+      <h2 style="font-size: var(--text-h3); font-weight: 700; margin-bottom: var(--space-6);">ادامه مطالعه</h2>
+      <div class="related-grid">
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">طراحی</div><div class="title">مینیمالیسم ایرانی</div><div class="meta">۵ دقیقه</div></a>
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">مراقبت</div><div class="title">نگهداری مبلمان چوبی</div><div class="meta">۴ دقیقه</div></a>
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">سبک زندگی</div><div class="title">هنر آهسته زیستن</div><div class="meta">۶ دقیقه</div></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION B — Full-bleed Hero, Centered Prose ═══ -->
+<div class="option" id="opt-b">
+  <div class="opt-label">
+    <h2>گزینه‌ی B — هیروی تمام‌عرض + متن مرکزی</h2>
+    <p>تصویر تمام‌عرض با گرادیان محو. عنوان روی تصویر. متن مقاله تک‌ستونی مرکزی بدون فهرست مطالب. حس مجله‌ی مد.</p>
+  </div>
+  <div class="b-hero">
+    <div class="cover-full" style="min-height: 50vh;">تصویر تمام‌عرض</div>
+    <div class="overlay"></div>
+    <div class="hero-text">
+      <div class="container">
+        <div style="max-width: 680px;">
+          <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.06em; color: var(--color-forest); margin-bottom: var(--space-3);">مواد و متریال</div>
+          <h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink); line-height: 1.2; margin-bottom: var(--space-3);">چرا گردوی ایرانی؟</h1>
+          <div class="article-meta">
+            <div class="avatar">ا</div>
+            <span style="font-weight: 500; color: var(--color-charcoal);">احمد تهرانی</span>
+            <span class="dot">·</span><span>۱۵ فروردین ۱۴۰۵</span>
+            <span class="dot">·</span><span>۷ دقیقه</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="b-center">
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-7);">سفر یک تخته از جنگل‌های شمال تا کارگاه ژیک در همدان.</p>
+      <article class="body-text">
+        <h2>جنگل‌های هیرکانی</h2>
+        <p>شمال ایران، از گیلان تا گلستان، میزبان جنگل‌هایی است که قدمتشان به ۵۰ میلیون سال پیش بازمی‌گردد. این جنگل‌ها زیستگاه یکی از باارزش‌ترین گونه‌های گردو در جهان هستند.</p>
+        <blockquote>هر تخته‌ی گردو داستانی دارد — حلقه‌های رشدش، گره‌هایش، رنگ‌بندی یکتایش.</blockquote>
+        <h2>فرآیند خشک‌کردن</h2>
+        <p>چوب تازه‌بُرش رطوبت زیادی دارد. ما از روش خشک‌کردن طبیعی استفاده می‌کنیم — حداقل ۶ ماه در هوای آزاد، سپس ۳ هفته در کوره.</p>
+        <h2>از کارگاه تا خانه‌ی شما</h2>
+        <p>هر قطعه با اتصالات فاق و زبانه ساخته می‌شود — بدون پیچ، بدون میخ. پرداخت نهایی با روغن طبیعی دانمارکی.</p>
+      </article>
+      <div style="margin-top: var(--space-8);">
+        <h2 style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-5);">نویسنده</h2>
+        <div class="author-card"><div class="avatar-lg">ا</div><div><div class="name">احمد تهرانی</div><div class="role">بنیان‌گذار و طراح ارشد</div><div class="bio">از سال ۱۳۸۰ در صنایع چوب فعالیت دارد.</div></div></div>
+      </div>
+    </div>
+    <div style="padding: var(--space-9) 0;">
+      <h2 style="font-size: var(--text-h3); font-weight: 700; margin-bottom: var(--space-6);">ادامه مطالعه</h2>
+      <div class="related-grid">
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">طراحی</div><div class="title">مینیمالیسم ایرانی</div><div class="meta">۵ دقیقه</div></a>
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">مراقبت</div><div class="title">نگهداری مبلمان چوبی</div><div class="meta">۴ دقیقه</div></a>
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">سبک زندگی</div><div class="title">هنر آهسته زیستن</div><div class="meta">۶ دقیقه</div></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION C — Side-by-Side Hero ═══ -->
+<div class="option" id="opt-c">
+  <div class="opt-label">
+    <h2>گزینه‌ی C — هیروی تقسیم‌شده + فهرست کناری</h2>
+    <p>تصویر نیمه‌ی راست، عنوان و متا نیمه‌ی چپ (مثل هیروی صفحه‌ی اصلی). سپس بدنه‌ی مقاله با فهرست مطالب در ستون باریک. حس یکپارچه با صفحه‌ی اصلی.</p>
+  </div>
+  <div class="c-hero-split">
+    <div class="c-hero-text">
+      <div class="breadcrumb"><a href="#">خانه</a><span class="sep">‹</span><a href="#">ژورنال</a><span class="sep">‹</span><span>مواد و متریال</span></div>
+      <div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.06em; color: var(--color-forest); margin-bottom: var(--space-4);">مواد و متریال</div>
+      <h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink); line-height: 1.2; margin-bottom: var(--space-4);">چرا گردوی ایرانی؟</h1>
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-6);">سفر یک تخته از جنگل‌های شمال تا کارگاه ژیک در همدان.</p>
+      <div class="article-meta">
+        <div class="avatar">ا</div>
+        <span style="font-weight: 500; color: var(--color-charcoal);">احمد تهرانی</span>
+        <span class="dot">·</span><span>۱۵ فروردین ۱۴۰۵</span>
+        <span class="dot">·</span><span>۷ دقیقه مطالعه</span>
+      </div>
+    </div>
+    <div class="c-hero-img">تصویر مقاله</div>
+  </div>
+  <div class="container">
+    <div class="c-body-layout">
+      <aside class="c-side-toc">
+        <div class="toc" style="position: static;">
+          <h3>فهرست</h3>
+          <ul>
+            <li><a href="#" class="active">جنگل‌های هیرکانی</a></li>
+            <li><a href="#">فرآیند خشک‌کردن</a></li>
+            <li><a href="#" style="padding-right: var(--space-6);">خشک‌کردن طبیعی</a></li>
+            <li><a href="#">از کارگاه تا خانه</a></li>
+          </ul>
+        </div>
+      </aside>
+      <article class="body-text" style="max-width: 640px;">
+        <h2>جنگل‌های هیرکانی</h2>
+        <p>شمال ایران، از گیلان تا گلستان، میزبان جنگل‌هایی است که قدمتشان به ۵۰ میلیون سال پیش بازمی‌گردد. این جنگل‌ها زیستگاه یکی از باارزش‌ترین گونه‌های گردو در جهان هستند.</p>
+        <p>چوب گردوی ایرانی به خاطر رنگ گرم قهوه‌ای، بافت ریز و یکنواخت، و دوام استثنایی‌اش شهرت جهانی دارد.</p>
+        <blockquote>هر تخته‌ی گردو داستانی دارد — حلقه‌های رشدش، گره‌هایش، رنگ‌بندی یکتایش.</blockquote>
+        <h2>فرآیند خشک‌کردن</h2>
+        <p>چوب تازه‌بُرش رطوبت زیادی دارد. ما از روش خشک‌کردن طبیعی استفاده می‌کنیم — حداقل ۶ ماه در هوای آزاد، سپس ۳ هفته در کوره با دمای کنترل‌شده.</p>
+        <h3>چرا خشک‌کردن طبیعی؟</h3>
+        <p>خشک‌کردن سریع صنعتی می‌تواند تنش‌های داخلی در چوب ایجاد کند. روش ما این ریسک را به حداقل می‌رساند.</p>
+        <h2>از کارگاه تا خانه‌ی شما</h2>
+        <p>هر قطعه با اتصالات فاق و زبانه ساخته می‌شود — بدون پیچ. پرداخت نهایی با روغن طبیعی دانمارکی.</p>
+      </article>
+    </div>
+    <div style="height: 1px; background: var(--color-sand); margin: var(--space-8) 0;"></div>
+    <div style="max-width: 640px; margin-left: auto; margin-bottom: var(--space-7);">
+      <h2 style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-5);">نویسنده</h2>
+      <div class="author-card"><div class="avatar-lg">ا</div><div><div class="name">احمد تهرانی</div><div class="role">بنیان‌گذار و طراح ارشد</div><div class="bio">از سال ۱۳۸۰ در صنایع چوب فعالیت دارد. ژیک را با هدف ساخت مبلمان ماندگار تأسیس کرد.</div></div></div>
+    </div>
+    <div style="padding-bottom: var(--space-9);">
+      <h2 style="font-size: var(--text-h3); font-weight: 700; margin-bottom: var(--space-6);">ادامه مطالعه</h2>
+      <div class="related-grid">
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">طراحی</div><div class="title">مینیمالیسم ایرانی</div><div class="meta">۵ دقیقه</div></a>
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">مراقبت</div><div class="title">نگهداری مبلمان چوبی</div><div class="meta">۴ دقیقه</div></a>
+        <a href="#" class="related-card"><div class="img">تصویر</div><div class="eyebrow">سبک زندگی</div><div class="title">هنر آهسته زیستن</div><div class="meta">۶ دقیقه</div></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('visible'));
+  document.getElementById('opt-' + id).classList.add('visible');
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

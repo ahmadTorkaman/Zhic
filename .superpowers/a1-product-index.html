@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A1 — صفحه‌ی محصولات</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Light.ttf') format('truetype'); font-weight: 300; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Bold.ttf') format('truetype'); font-weight: 700; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Black.ttf') format('truetype'); font-weight: 900; }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --color-ivory: #FAFAF7; --color-cream: #F5F0EB; --color-sand: #E8E0D8;
+    --color-stone: #8C8279; --color-charcoal: #2C2825; --color-ink: #14110F;
+    --color-forest: #5F7760; --color-gold: #C49A6C;
+    --text-h2: clamp(2rem, 3vw + 0.75rem, 3rem); --text-h3: clamp(1.5rem, 2vw + 0.5rem, 2rem);
+    --text-h4: 1.5rem; --text-lead: 1.25rem; --text-body: 1rem;
+    --text-small: 0.875rem; --text-eyebrow: 0.75rem;
+    --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.5rem; --space-6: 2rem;
+    --space-7: 3rem; --space-8: 4rem; --space-9: 6rem;
+    --shadow-subtle: 0 2px 8px rgba(20,17,15,0.03); --shadow-card: 0 8px 32px rgba(20,17,15,0.04);
+    --glass-bg: rgba(250,250,247,0.6); --glass-border: rgba(232,224,216,0.5); --glass-blur: 24px;
+    --radius-md: 4px; --radius-pill: 999px;
+    --dur-hover: 720ms; --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --hover-lift-card: -3px; --focus-ring-width: 2px; --focus-ring-color: rgba(95,119,96,0.3);
+  }
+
+  body { font-family: 'Ayandeh', 'Tahoma', sans-serif; background: var(--color-ivory); color: var(--color-charcoal); line-height: 1.75; font-size: var(--text-body); }
+  :focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: 2px; }
+  .container { max-width: 1440px; margin: 0 auto; padding: 0 var(--space-6); }
+
+  /* Option nav */
+  .opt-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: var(--color-ink); padding: 12px 24px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .opt-nav span { color: var(--color-sand); font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; margin-left: 16px; }
+  .opt-btn { padding: 8px 20px; font-family: inherit; font-size: var(--text-eyebrow); font-weight: 700; border: 1px solid rgba(250,250,247,0.15); border-radius: var(--radius-md); background: transparent; color: var(--color-sand); cursor: pointer; transition: all 300ms; }
+  .opt-btn:hover { border-color: var(--color-ivory); color: var(--color-ivory); }
+  .opt-btn.active { background: var(--color-ivory); color: var(--color-ink); border-color: var(--color-ivory); }
+  .option { display: none; padding-top: 52px; }
+  .option.visible { display: block; }
+
+  /* Shared: breadcrumb */
+  .breadcrumb { padding: var(--space-5) 0; font-size: var(--text-small); color: var(--color-stone); }
+  .breadcrumb a { color: inherit; text-decoration: none; transition: color var(--dur-hover) var(--ease-out-soft); }
+  .breadcrumb a:hover { color: var(--color-charcoal); }
+  .breadcrumb .sep { margin: 0 var(--space-3); }
+
+  /* Shared: page header */
+  .page-header { margin-bottom: var(--space-7); }
+  .page-header h1 { font-size: var(--text-h2); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-2, 8px); }
+  .page-header .subtitle { font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); }
+
+  /* Shared: toolbar */
+  .toolbar { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--color-sand); border-bottom: 1px solid var(--color-sand); padding: var(--space-4) 0; margin-bottom: var(--space-7); font-size: var(--text-small); color: var(--color-stone); }
+  .toolbar select { font-family: inherit; font-size: var(--text-small); border: 1px solid var(--color-sand); border-radius: var(--radius-md); padding: 8px 12px; background: transparent; color: var(--color-charcoal); cursor: pointer; transition: border-color var(--dur-hover) var(--ease-out-soft); }
+  .toolbar select:focus { border-color: var(--color-forest); outline: none; box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color); }
+
+  /* Shared: product card */
+  .card { cursor: pointer; transition: all var(--dur-hover) var(--ease-out-soft); text-decoration: none; display: block; color: inherit; }
+  .card:hover { transform: translateY(var(--hover-lift-card)); }
+  .card-img { aspect-ratio: 4/5; background: var(--color-cream); border: 1px solid transparent; overflow: hidden; margin-bottom: var(--space-4); transition: all var(--dur-hover) var(--ease-out-soft); position: relative; }
+  .card:hover .card-img { background: var(--color-ivory); border-color: var(--color-sand); box-shadow: var(--shadow-card); }
+  .card-img .ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: var(--text-small); color: var(--color-stone); transition: transform 1200ms var(--ease-out-soft); }
+  .card:hover .card-img .ph { transform: scale(1.02); }
+  .card-img .badge { position: absolute; top: var(--space-4); right: var(--space-4); font-size: 0.6875rem; font-weight: 700; padding: 4px 12px; background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); color: var(--color-charcoal); border-radius: var(--radius-md); }
+  .card-title { font-size: var(--text-body); font-weight: 700; color: var(--color-charcoal); margin-bottom: 4px; }
+  .card-meta { font-size: var(--text-small); color: var(--color-stone); font-weight: 300; }
+  .card-price { font-size: var(--text-small); color: var(--color-stone); font-weight: 300; margin-top: 4px; direction: ltr; text-align: right; }
+
+  /* Shared: filter pills */
+  .filter-pill { display: inline-flex; align-items: center; padding: 6px 16px; font-family: inherit; font-size: var(--text-eyebrow); font-weight: 700; border-radius: var(--radius-pill); cursor: pointer; transition: all var(--dur-hover) var(--ease-out-soft); border: none; text-decoration: none; }
+  .filter-pill.active { background: var(--color-charcoal); color: var(--color-ivory); }
+  .filter-pill.inactive { background: var(--color-cream); color: var(--color-charcoal); }
+  .filter-pill.inactive:hover { background: var(--color-sand); }
+
+  /* Shared: sidebar filter */
+  .sidebar-filter { padding: var(--space-5); border: 1px solid var(--color-sand); border-radius: var(--radius-md); }
+  .sidebar-filter h3 { font-size: var(--text-small); font-weight: 700; color: var(--color-charcoal); margin-bottom: var(--space-4); }
+  .filter-group { margin-bottom: var(--space-5); }
+  .filter-group:last-child { margin-bottom: 0; }
+  .filter-group legend { font-size: var(--text-eyebrow); font-weight: 700; color: var(--color-stone); letter-spacing: 0.06em; margin-bottom: var(--space-3); }
+  .filter-option { display: flex; align-items: center; gap: var(--space-3); padding: 6px 0; font-size: var(--text-small); color: var(--color-charcoal); cursor: pointer; }
+  .filter-option input { accent-color: var(--color-charcoal); }
+
+  /* Shared: pagination */
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 4px; padding: var(--space-8) 0 var(--space-9); }
+  .page-num { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; border-radius: var(--radius-md); font-size: var(--text-small); text-decoration: none; transition: all var(--dur-hover) var(--ease-out-soft); }
+  .page-num.current { background: var(--color-charcoal); color: var(--color-ivory); font-weight: 700; }
+  .page-num:not(.current) { color: var(--color-stone); }
+  .page-num:not(.current):hover { background: var(--color-cream); color: var(--color-charcoal); }
+
+  /* ═══ OPTION A — Classic Sidebar ═══ */
+  .a-layout { display: grid; grid-template-columns: 240px 1fr; gap: var(--space-7); }
+  .a-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  @media (max-width: 768px) {
+    .a-layout { grid-template-columns: 1fr; }
+    .a-sidebar { display: none; }
+    .a-grid { grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  }
+  @media (max-width: 480px) { .a-grid { grid-template-columns: 1fr; } }
+
+  /* ═══ OPTION B — Top Filter Bar ═══ */
+  .b-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--space-7); padding-bottom: var(--space-5); border-bottom: 1px solid var(--color-sand); }
+  .b-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  @media (max-width: 768px) {
+    .b-filters { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: var(--space-4); }
+    .b-grid { grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  }
+  @media (max-width: 480px) { .b-grid { grid-template-columns: 1fr; } }
+
+  /* ═══ OPTION C — Asymmetric Hero + Grid ═══ */
+  .c-hero { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-bottom: var(--space-8); }
+  .c-hero .featured-card .card-img { aspect-ratio: 3/4; }
+  .c-hero .featured-card .card-title { font-size: var(--text-h4); }
+  .c-hero .side-stack { display: flex; flex-direction: column; gap: var(--space-5); }
+  .c-hero .mini-card { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-4); align-items: center; text-decoration: none; color: inherit; transition: all var(--dur-hover) var(--ease-out-soft); padding: var(--space-4); border-radius: var(--radius-md); }
+  .c-hero .mini-card:hover { background: var(--color-cream); }
+  .c-hero .mini-card .card-img { aspect-ratio: 1/1; margin-bottom: 0; }
+  .c-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--space-5); }
+  .c-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5); }
+  @media (max-width: 1024px) { .c-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) {
+    .c-hero { grid-template-columns: 1fr; }
+    .c-hero .side-stack { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+    .c-hero .mini-card { min-width: 280px; flex-shrink: 0; }
+    .c-filters { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .c-grid { grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  }
+  @media (max-width: 480px) { .c-grid { grid-template-columns: 1fr; } }
+
+  .opt-label { text-align: center; padding: var(--space-5) var(--space-4); background: var(--color-cream); margin-bottom: var(--space-7); }
+  .opt-label h2 { font-size: var(--text-small); font-weight: 700; letter-spacing: 0.08em; color: var(--color-stone); margin-bottom: 4px; }
+  .opt-label p { font-size: var(--text-small); color: var(--color-stone); font-weight: 300; }
+</style>
+</head>
+<body>
+
+<nav class="opt-nav">
+  <span>A1 — صفحه‌ی محصولات</span>
+  <button class="opt-btn active" onclick="show('a')">A — ستون کناری</button>
+  <button class="opt-btn" onclick="show('b')">B — نوار فیلتر بالا</button>
+  <button class="opt-btn" onclick="show('c')">C — هیروی نامتقارن</button>
+</nav>
+
+<!-- ═══ OPTION A — Classic Sidebar ═══ -->
+<div class="option visible" id="opt-a">
+  <div class="opt-label">
+    <h2>گزینه‌ی A — ستون کناری کلاسیک</h2>
+    <p>فیلترها در ستون کنار، گرید ۳ ستونی. ساختار آشنا و کاربردی. مشابه وضعیت فعلی اما با زبان بصری جدید.</p>
+  </div>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="#">خانه</a><span class="sep">‹</span><span>محصولات</span>
+    </div>
+    <div class="page-header">
+      <h1>محصولات</h1>
+      <p class="subtitle">مبلمان دست‌ساز از چوب طبیعی ایرانی</p>
+    </div>
+    <div class="toolbar">
+      <span>۸ محصول</span>
+      <select><option>جدیدترین</option><option>نام</option><option>ارزان‌ترین</option><option>گران‌ترین</option></select>
+    </div>
+    <div class="a-layout">
+      <aside class="a-sidebar">
+        <div class="sidebar-filter">
+          <div class="filter-group">
+            <legend>دسته‌بندی</legend>
+            <label class="filter-option"><input type="radio" name="cat" checked> همه</label>
+            <label class="filter-option"><input type="radio" name="cat"> تخت خواب</label>
+            <label class="filter-option"><input type="radio" name="cat"> میز</label>
+            <label class="filter-option"><input type="radio" name="cat"> صندلی</label>
+          </div>
+          <div class="filter-group">
+            <legend>متریال</legend>
+            <label class="filter-option"><input type="checkbox"> چوب گردو</label>
+            <label class="filter-option"><input type="checkbox"> چوب بلوط</label>
+            <label class="filter-option"><input type="checkbox"> کتان بلژیکی</label>
+          </div>
+          <div class="filter-group">
+            <legend>بازه‌ی قیمت</legend>
+            <label class="filter-option"><input type="radio" name="price" checked> همه</label>
+            <label class="filter-option"><input type="radio" name="price"> زیر ۵ میلیون</label>
+            <label class="filter-option"><input type="radio" name="price"> ۵ تا ۱۵ میلیون</label>
+            <label class="filter-option"><input type="radio" name="price"> ۱۵ تا ۳۰ میلیون</label>
+            <label class="filter-option"><input type="radio" name="price"> بالای ۳۰ میلیون</label>
+          </div>
+        </div>
+      </aside>
+      <div>
+        <div class="a-grid">
+          <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div><span class="badge">جدید</span></div><div class="card-title">میز ناهارخوری آرتا</div><div class="card-meta">چوب گردو · دست‌ساز</div><div class="card-price">۴۵٬۰۰۰٬۰۰۰ تومان</div></a>
+          <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">صندلی راحتی پارسا</div><div class="card-meta">چوب بلوط · مدرن</div><div class="card-price">۱۲٬۵۰۰٬۰۰۰ تومان</div></a>
+          <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">تخت خواب دیبا</div><div class="card-meta">چوب گردو · کلاسیک</div><div class="card-price">۶۸٬۰۰۰٬۰۰۰ تومان</div></a>
+          <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">کمد لباس سارا</div><div class="card-meta">چوب گردو · مینیمال</div><div class="card-price">۳۵٬۰۰۰٬۰۰۰ تومان</div></a>
+          <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">پاتختی نیکا</div><div class="card-meta">چوب بلوط · ساده</div><div class="card-price">۸٬۵۰۰٬۰۰۰ تومان</div></a>
+          <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">میز عسلی آوا</div><div class="card-meta">چوب گردو · گِرد</div><div class="card-price">۱۱٬۰۰۰٬۰۰۰ تومان</div></a>
+        </div>
+        <div class="pagination">
+          <a href="#" class="page-num current">۱</a>
+          <a href="#" class="page-num">۲</a>
+          <a href="#" class="page-num">۳</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION B — Top Filter Bar ═══ -->
+<div class="option" id="opt-b">
+  <div class="opt-label">
+    <h2>گزینه‌ی B — نوار فیلتر بالا</h2>
+    <p>فیلترها به صورت پیل‌های افقی بالای گرید. فضای بیش‌تر برای محصولات. حس تمیز و مینیمال.</p>
+  </div>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="#">خانه</a><span class="sep">‹</span><span>محصولات</span>
+    </div>
+    <div class="page-header">
+      <h1>محصولات</h1>
+      <p class="subtitle">مبلمان دست‌ساز از چوب طبیعی ایرانی</p>
+    </div>
+    <div class="b-filters">
+      <button class="filter-pill active">همه</button>
+      <button class="filter-pill inactive">تخت خواب</button>
+      <button class="filter-pill inactive">میز</button>
+      <button class="filter-pill inactive">صندلی</button>
+      <button class="filter-pill inactive">کمد</button>
+      <span style="width: 1px; background: var(--color-sand); margin: 0 8px;"></span>
+      <button class="filter-pill inactive">چوب گردو</button>
+      <button class="filter-pill inactive">چوب بلوط</button>
+      <span style="width: 1px; background: var(--color-sand); margin: 0 8px;"></span>
+      <button class="filter-pill inactive">زیر ۵ میلیون</button>
+      <button class="filter-pill inactive">۵ تا ۱۵</button>
+      <button class="filter-pill inactive">۱۵ تا ۳۰</button>
+      <button class="filter-pill inactive">بالای ۳۰</button>
+    </div>
+    <div class="toolbar">
+      <span>۸ محصول</span>
+      <select><option>جدیدترین</option><option>نام</option><option>ارزان‌ترین</option><option>گران‌ترین</option></select>
+    </div>
+    <div class="b-grid">
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div><span class="badge">جدید</span></div><div class="card-title">میز ناهارخوری آرتا</div><div class="card-meta">چوب گردو · دست‌ساز</div><div class="card-price">۴۵٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">صندلی راحتی پارسا</div><div class="card-meta">چوب بلوط · مدرن</div><div class="card-price">۱۲٬۵۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">تخت خواب دیبا</div><div class="card-meta">چوب گردو · کلاسیک</div><div class="card-price">۶۸٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">کمد لباس سارا</div><div class="card-meta">چوب گردو · مینیمال</div><div class="card-price">۳۵٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">پاتختی نیکا</div><div class="card-meta">چوب بلوط · ساده</div><div class="card-price">۸٬۵۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">میز عسلی آوا</div><div class="card-meta">چوب گردو · گِرد</div><div class="card-price">۱۱٬۰۰۰٬۰۰۰ تومان</div></a>
+    </div>
+    <div class="pagination">
+      <a href="#" class="page-num current">۱</a>
+      <a href="#" class="page-num">۲</a>
+      <a href="#" class="page-num">۳</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OPTION C — Asymmetric Hero + Grid ═══ -->
+<div class="option" id="opt-c">
+  <div class="opt-label">
+    <h2>گزینه‌ی C — هیروی نامتقارن + گرید</h2>
+    <p>یک محصول ویژه بزرگ در بالا با محصولات پیشنهادی کنارش، سپس فیلترهای پیلی و گرید ۴ ستونی. حس گالری هنری.</p>
+  </div>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="#">خانه</a><span class="sep">‹</span><span>محصولات</span>
+    </div>
+    <div class="page-header">
+      <h1>محصولات</h1>
+    </div>
+
+    <div class="c-hero">
+      <a href="#" class="card featured-card">
+        <div class="card-img" style="aspect-ratio: 3/4;"><div class="ph">تصویر</div><span class="badge">جدید</span></div>
+        <div class="card-title" style="font-size: var(--text-h4);">میز ناهارخوری آرتا</div>
+        <div class="card-meta">چوب گردو · دست‌ساز</div>
+        <div class="card-price" style="font-size: var(--text-body);">۴۵٬۰۰۰٬۰۰۰ تومان</div>
+      </a>
+      <div class="side-stack">
+        <a href="#" class="c-hero mini-card">
+          <div class="card-img"><div class="ph" style="font-size: var(--text-eyebrow);">تصویر</div></div>
+          <div><div class="card-title">صندلی راحتی پارسا</div><div class="card-meta">چوب بلوط · مدرن</div><div class="card-price">۱۲٬۵۰۰٬۰۰۰ تومان</div></div>
+        </a>
+        <a href="#" class="c-hero mini-card">
+          <div class="card-img"><div class="ph" style="font-size: var(--text-eyebrow);">تصویر</div></div>
+          <div><div class="card-title">تخت خواب دیبا</div><div class="card-meta">چوب گردو · کلاسیک</div><div class="card-price">۶۸٬۰۰۰٬۰۰۰ تومان</div></div>
+        </a>
+        <a href="#" class="c-hero mini-card">
+          <div class="card-img"><div class="ph" style="font-size: var(--text-eyebrow);">تصویر</div></div>
+          <div><div class="card-title">کمد لباس سارا</div><div class="card-meta">چوب گردو · مینیمال</div><div class="card-price">۳۵٬۰۰۰٬۰۰۰ تومان</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="c-filters">
+      <button class="filter-pill active">همه</button>
+      <button class="filter-pill inactive">تخت خواب</button>
+      <button class="filter-pill inactive">میز</button>
+      <button class="filter-pill inactive">صندلی</button>
+      <button class="filter-pill inactive">کمد</button>
+      <span style="width: 1px; background: var(--color-sand); margin: 0 4px;"></span>
+      <button class="filter-pill inactive">چوب گردو</button>
+      <button class="filter-pill inactive">چوب بلوط</button>
+    </div>
+    <div class="toolbar">
+      <span>۸ محصول</span>
+      <select><option>جدیدترین</option><option>نام</option><option>ارزان‌ترین</option><option>گران‌ترین</option></select>
+    </div>
+    <div class="c-grid">
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">پاتختی نیکا</div><div class="card-meta">چوب بلوط</div><div class="card-price">۸٬۵۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">میز عسلی آوا</div><div class="card-meta">چوب گردو</div><div class="card-price">۱۱٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">میز تحریر دانا</div><div class="card-meta">چوب بلوط</div><div class="card-price">۲۲٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img"><div class="ph">تصویر</div></div><div class="card-title">تخت خواب مهسا</div><div class="card-meta">چوب گردو</div><div class="card-price">۵۵٬۰۰۰٬۰۰۰ تومان</div></a>
+    </div>
+    <div class="pagination">
+      <a href="#" class="page-num current">۱</a>
+      <a href="#" class="page-num">۲</a>
+      <a href="#" class="page-num">۳</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('visible'));
+  document.getElementById('opt-' + id).classList.add('visible');
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
