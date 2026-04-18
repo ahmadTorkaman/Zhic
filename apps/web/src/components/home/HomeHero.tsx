@@ -68,6 +68,8 @@ export function HomeHero({ heading, subheading, media }: HomeHeroProps) {
           <img
             src={src}
             alt={alt}
+            loading="eager"
+            fetchPriority="high"
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
