@@ -3,7 +3,7 @@ import { fetchPage } from '@/lib/payload';
 import { plainTextFromRichText } from '@/lib/richtext';
 import { SITE_URL } from '@/lib/env';
 import { aboutPageJsonLd, breadcrumbJsonLd, organizationJsonLd } from '@/lib/jsonld';
-import { LegalPageTemplate } from '@/components/legal/LegalPageTemplate';
+import { EditorialPageTemplate } from '@/components/legal/EditorialPageTemplate';
 
 const FALLBACK_TITLE = 'درباره ژیک';
 
@@ -35,8 +35,9 @@ export default async function AboutPage() {
   );
 
   return (
-    <LegalPageTemplate
+    <EditorialPageTemplate
       title={title}
+      eyebrow="درباره‌ی ژیک"
       body={page?.body ?? null}
       breadcrumbLabel={title}
       breadcrumbHref="/about"

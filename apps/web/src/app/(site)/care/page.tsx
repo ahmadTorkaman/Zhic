@@ -3,7 +3,7 @@ import { fetchPage } from '@/lib/payload';
 import { plainTextFromRichText } from '@/lib/richtext';
 import { SITE_URL } from '@/lib/env';
 import { articlePageJsonLd, breadcrumbJsonLd } from '@/lib/jsonld';
-import { LegalPageTemplate } from '@/components/legal/LegalPageTemplate';
+import { EditorialPageTemplate } from '@/components/legal/EditorialPageTemplate';
 
 const FALLBACK_TITLE = 'راهنمای نگهداری';
 
@@ -35,8 +35,9 @@ export default async function CarePage() {
   );
 
   return (
-    <LegalPageTemplate
+    <EditorialPageTemplate
       title={title}
+      eyebrow="راهنما"
       body={page?.body ?? null}
       breadcrumbLabel={title}
       breadcrumbHref="/care"
