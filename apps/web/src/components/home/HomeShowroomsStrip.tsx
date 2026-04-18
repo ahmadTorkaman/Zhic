@@ -75,7 +75,7 @@ export function HomeShowroomsStrip({ showrooms }: HomeShowroomsStripProps) {
                       {showroom.name}
                     </h3>
                     {lines.length > 0 ? (
-                      <div className="mb-4 text-small font-light leading-[1.7] text-stone">
+                      <div className="mb-4 text-small font-light text-stone">
                         {lines.map((line, i) => (
                           <div key={i}>{line}</div>
                         ))}
