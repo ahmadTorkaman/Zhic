@@ -13,13 +13,11 @@ import { SITE_URL } from '@/lib/env';
 import { articlePageJsonLd, breadcrumbJsonLd } from '@/lib/jsonld';
 import {
   ArticleRichText,
-  extractHeadings,
   extractEmbeddedIds,
   type EmbedContext,
 } from '@/lib/richtext';
 import { BlockReveal } from '@/components/motion/BlockReveal';
 import { ArticleHero } from '@/components/journal/ArticleHero';
-import { TableOfContents } from '@/components/journal/TableOfContents';
 import { AuthorCard } from '@/components/journal/AuthorCard';
 import { RelatedProducts } from '@/components/journal/RelatedProducts';
 import { RelatedArticles } from '@/components/journal/RelatedArticles';
@@ -54,10 +52,7 @@ async function fetchEmbeds(
       const p = await fetchProduct(String(id));
       if (p) products.set(id, p);
     }),
-    // Materials are fetched individually; batch endpoint not yet available
     ...materialIds.map(async (id) => {
-      // For now, material data is already included via depth=3 in article fetch
-      // This is a placeholder for explicit fetch if needed
       void id;
     }),
   ]);
@@ -70,7 +65,6 @@ export default async function ArticlePage({ params }: Props) {
   const article = await fetchArticle(slug);
   if (!article) notFound();
 
-  const headings = extractHeadings(article.body);
   const { productIds, materialIds } = extractEmbeddedIds(article.body);
   const embeds = await fetchEmbeds(productIds, materialIds);
 
@@ -125,13 +119,17 @@ export default async function ArticlePage({ params }: Props) {
 
       <ArticleHero article={article} />
 
-      <Section padY="lg">
+      <Section padY="lg" fullBleed>
         <Container>
-          <div className="grid gap-12 lg:grid-cols-[1fr_240px]">
-            <article className="min-w-0">
+          <div className="mx-auto max-w-[680px]">
+            {article.excerpt ? (
+              <p className="mb-7 text-lead font-light leading-[var(--leading-lead)] text-stone">
+                {article.excerpt}
+              </p>
+            ) : null}
+            <article>
               <ArticleRichText value={article.body} embeds={embeds} />
             </article>
-            <TableOfContents headings={headings} />
           </div>
         </Container>
       </Section>
@@ -145,11 +143,11 @@ export default async function ArticlePage({ params }: Props) {
       {article.author ? (
         <Section padY="md">
           <Container>
-            <div className="mx-auto max-w-prose">
-            <Stack gap="md">
-              <h2 className="text-h3 font-bold text-charcoal">نویسنده</h2>
-              <AuthorCard author={article.author} />
-            </Stack>
+            <div className="mx-auto max-w-[680px]">
+              <Stack gap="md">
+                <h2 className="text-h3 font-bold text-charcoal">نویسنده</h2>
+                <AuthorCard author={article.author} />
+              </Stack>
             </div>
           </Container>
         </Section>
