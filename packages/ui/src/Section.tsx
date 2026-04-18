@@ -9,6 +9,28 @@ export type SectionProps = HTMLAttributes<HTMLElement> & {
   bg?: Bg;
   padY?: PadY;
   as?: ElementType;
+  /**
+   * Opt out of the automatic `<Container>` wrap around children.
+   *
+   * Default (`fullBleed={false}`): `Section` wraps children in a
+   * `<Container>`, which applies the storefront max-width and the
+   * standard 4/6 gutter. This is the right default for content.
+   *
+   * Set `fullBleed` when:
+   * - The section has **decorative absolutely-positioned siblings**
+   *   (e.g. a radial glow span) that must sit outside the content
+   *   max-width but inside the section's bg color.
+   * - The section is **itself full-bleed** (e.g. a 21:9 hero image
+   *   that spans edge to edge) with no Container needed.
+   * - You need to **provide your own `<Container>`** so multiple
+   *   Containers inside the section don't double-wrap with different
+   *   max-widths.
+   *
+   * Discovered pattern from Phase D: wrap the content in an explicit
+   * `<Container>` inside a `fullBleed` Section whenever decorative
+   * siblings need the full section width but content should respect
+   * the max-width.
+   */
   fullBleed?: boolean;
   children?: ReactNode;
 };

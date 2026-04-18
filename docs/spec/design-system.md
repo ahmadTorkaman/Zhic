@@ -740,6 +740,25 @@ vertically, form below text.
 - **Option C (asymmetric)** for catalog/product pages: Product Index, PDP
 - **Option B (immersive/dramatic)** for editorial/location/conversion pages: Journal, Article, Showroom, Contact
 
+#### Implementation status
+
+Phase D (2026-04-18) shipped all template layouts above. Per-phase
+implementation plans carry the verbatim spec, the exact component
+code, and mockup references:
+
+- **D1 Homepage** — `docs/superpowers/plans/2026-04-18-d1-homepage.md`
+- **D2 Products** (Product Index + PDP) — `docs/superpowers/plans/2026-04-18-d2-products.md`
+- **D3 Journal** (Journal Index + Article) — `docs/superpowers/plans/2026-04-18-d3-journal.md`
+- **D4 Showroom + Contact** — `docs/superpowers/plans/2026-04-18-d4-showrooms-contact.md`
+- **D5 Template pages B1–B8** — `docs/superpowers/plans/2026-04-18-d5-templates.md`
+- **D6 Legal template** — refined `LegalPageTemplate` to Phase C mockup (single commit).
+
+See `docs/state.md` "UI Elevation" table for commit ranges and
+per-phase notes. Six follow-ups from the D1 final review remain
+open (Button `ghost-invert` variant, `HoverImageWrapper` extraction,
+a11y sweep for whole-card links, eyebrow tracking tokens,
+`Section.fullBleed` JSDoc [landed], consolidated docs [this row]).
+
 ### States checklist
 
 For every interactive component, design and implement:
