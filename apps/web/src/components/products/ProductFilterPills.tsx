@@ -49,7 +49,11 @@ export function ProductFilterPills({
         {opts.value !== null ? (
           <input type="hidden" name={opts.name} value={opts.value} />
         ) : null}
-        <button type="submit" className={pillClass(opts.active)}>
+        <button
+          type="submit"
+          aria-current={opts.active ? 'true' : undefined}
+          className={pillClass(opts.active)}
+        >
           {opts.label}
         </button>
       </form>
