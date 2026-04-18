@@ -60,8 +60,10 @@ export function TabList({ label, children, className }: TabListProps) {
     }
 
     e.preventDefault();
-    tabs[next].focus();
-    tabs[next].click();
+    const target = tabs[next];
+    if (!target) return;
+    target.focus();
+    target.click();
   };
 
   return (

@@ -7,6 +7,7 @@ import {
   useState,
   type ReactElement,
   type ReactNode,
+  type Ref,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from './cn';
@@ -32,7 +33,7 @@ export function Tooltip({
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
   const isClient = useIsClient();
 
@@ -48,18 +49,31 @@ export function Tooltip({
   };
 
   const hide = () => {
-    clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setOpen(false);
   };
 
-  const trigger = cloneElement(children, {
-    ref: triggerRef,
-    'aria-describedby': open ? tooltipId : undefined,
-    onMouseEnter: show,
-    onMouseLeave: hide,
-    onFocus: show,
-    onBlur: hide,
-  });
+  // cloneElement with a ref requires us to widen children's type to include
+  // the ref prop the trigger will carry. Cast narrows to the common
+  // HTMLElement trigger shape used by consumers (button/a/etc.).
+  const trigger = cloneElement(
+    children as ReactElement<{
+      ref?: Ref<HTMLElement>;
+      'aria-describedby'?: string;
+      onMouseEnter?: () => void;
+      onMouseLeave?: () => void;
+      onFocus?: () => void;
+      onBlur?: () => void;
+    }>,
+    {
+      ref: triggerRef,
+      'aria-describedby': open ? tooltipId : undefined,
+      onMouseEnter: show,
+      onMouseLeave: hide,
+      onFocus: show,
+      onBlur: hide,
+    },
+  );
 
   if (!isClient) return trigger;
 
