@@ -72,15 +72,17 @@ export default async function CategoryPage({ params }: Props) {
         </Container>
       </Section>
 
-      <Section padY="lg">
+      <Section padY="lg" fullBleed>
         <Container>
           <Stack gap="lg">
             <div>
-              <h1 className="text-display font-bold text-charcoal text-balance">
+              <h1 className="text-h1 font-black text-ink text-balance">
                 {category.name}
               </h1>
               {category.description ? (
-                <p className="mt-3 text-lead text-stone">{category.description}</p>
+                <p className="mt-3 max-w-[520px] text-lead font-light text-stone">
+                  {category.description}
+                </p>
               ) : null}
             </div>
 
@@ -88,13 +90,13 @@ export default async function CategoryPage({ params }: Props) {
               <BlockReveal>
                 <Stack gap="lg">
                   <ProductGrid products={result.docs} />
-                  <div className="flex justify-center">
+                  <div className="flex justify-center pt-4">
                     <Button
                       as="a"
                       href={`/products?category=${category.slug}`}
-                      variant="secondary"
+                      variant="ghost"
                     >
-                      مشاهده‌ی همه محصولات {category.name}
+                      مشاهده‌ی همه‌ی {category.name} در فروشگاه
                     </Button>
                   </div>
                 </Stack>

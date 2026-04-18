@@ -73,10 +73,10 @@ export default async function CollectionDetail({
 
       <CollectionHeader collection={collection} />
 
-      <Section padY="lg">
+      <Section padY="lg" fullBleed>
         <Container>
           <Stack gap="lg">
-            <h2 className="text-h2 font-bold text-charcoal">
+            <h2 className="text-h3 font-bold text-charcoal">
               قطعه‌های این مجموعه
             </h2>
             {products.length === 0 ? (
