@@ -25,7 +25,7 @@ export function HomeBrandStatement({ body }: HomeBrandStatementProps) {
         className="pointer-events-none absolute -bottom-[120px] -end-[120px] h-[500px] w-[500px] rounded-full"
         style={{
           background:
-            'radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%)',
+            'radial-gradient(circle, color-mix(in srgb, var(--color-gold) 6%, transparent) 0%, transparent 70%)',
         }}
       />
       <Container>
