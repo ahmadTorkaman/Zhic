@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Breadcrumbs, Container, Section, Stack } from '@zhic/ui';
+import { Breadcrumbs, Container, Section } from '@zhic/ui';
 import { fetchEvents } from '@/lib/payload';
 import { SITE_URL } from '@/lib/env';
 import { breadcrumbJsonLd } from '@/lib/jsonld';
@@ -48,14 +48,17 @@ export default async function EventsPage() {
         </Container>
       </Section>
 
-      <Section padY="lg">
+      <Section padY="lg" fullBleed>
         <Container>
-          <Stack gap="lg">
-            <h1 className="text-display font-bold text-charcoal text-balance">
+          <div className="mx-auto max-w-[680px]">
+            <h1 className="mb-3 text-h2 font-black text-ink text-balance">
               {title}
             </h1>
+            <p className="mb-7 text-lead font-light text-stone">
+              کارگاه‌ها، نمایشگاه‌ها، و فرصت‌های بازدید ویژه.
+            </p>
             {items.length > 0 ? (
-              <div className="flex max-w-prose flex-col gap-4">
+              <div>
                 {items.map((event, idx) => (
                   <EventCard key={idx} event={event} />
                 ))}
@@ -65,7 +68,7 @@ export default async function EventsPage() {
                 در حال حاضر رویدادی برنامه‌ریزی نشده است.
               </p>
             )}
-          </Stack>
+          </div>
         </Container>
       </Section>
     </>

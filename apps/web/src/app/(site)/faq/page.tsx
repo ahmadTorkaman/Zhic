@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Breadcrumbs, Container, Section, Stack } from '@zhic/ui';
+import { Breadcrumbs, Container, Section } from '@zhic/ui';
 import { fetchFaq } from '@/lib/payload';
 import { plainTextFromRichText } from '@/lib/richtext';
 import { SITE_URL } from '@/lib/env';
@@ -60,16 +60,14 @@ export default async function FaqPage() {
         </Container>
       </Section>
 
-      <Section padY="lg">
+      <Section padY="lg" fullBleed>
         <Container>
-          <Stack gap="lg">
-            <h1 className="text-display font-bold text-charcoal text-balance">
+          <div className="mx-auto max-w-[680px]">
+            <h1 className="mb-7 text-h2 font-black text-ink text-balance">
               {title}
             </h1>
-            <div className="max-w-prose">
-              <FaqAccordion items={items} />
-            </div>
-          </Stack>
+            <FaqAccordion items={items} />
+          </div>
         </Container>
       </Section>
     </>
