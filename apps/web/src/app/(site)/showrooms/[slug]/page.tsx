@@ -4,26 +4,19 @@ import {
   Breadcrumbs,
   Container,
   ImageGallery,
-  PhoneLink,
   Section,
-  Split,
   Stack,
 } from '@zhic/ui';
 import type { GalleryItem } from '@zhic/ui';
-import { fetchAllShowrooms, fetchShowroom, mediaUrl } from '@/lib/payload';
+import { fetchShowroom, mediaUrl } from '@/lib/payload';
 import type { PayloadShowroom } from '@/lib/payload';
 import { SITE_URL } from '@/lib/env';
 import { plainTextFromRichText, RichText } from '@/lib/richtext';
 import { breadcrumbJsonLd, localBusinessJsonLd } from '@/lib/jsonld';
 import { BlockReveal } from '@/components/motion/BlockReveal';
-import { InquiryForm } from '@/components/inquiry/InquiryForm';
-import { ShowroomAddressBlock } from '@/components/showrooms/ShowroomAddressBlock';
-import { ShowroomCtas } from '@/components/showrooms/ShowroomCtas';
 import { ShowroomFeaturedProductsRow } from '@/components/showrooms/ShowroomFeaturedProductsRow';
 import { ShowroomHero } from '@/components/showrooms/ShowroomHero';
-import { ShowroomHolidayHours } from '@/components/showrooms/ShowroomHolidayHours';
-import { ShowroomHoursTable } from '@/components/showrooms/ShowroomHoursTable';
-import { ShowroomMapEmbed } from '@/components/showrooms/ShowroomMapEmbed';
+import { ShowroomInfoCards } from '@/components/showrooms/ShowroomInfoCards';
 
 function galleryItems(showroom: PayloadShowroom): GalleryItem[] {
   const items: GalleryItem[] = [];
@@ -51,11 +44,7 @@ export async function generateMetadata({
     title: showroom.name,
     description,
     alternates: { canonical: `/showrooms/${slug}` },
-    openGraph: {
-      type: 'website',
-      title: showroom.name,
-      description,
-    },
+    openGraph: { type: 'website', title: showroom.name, description },
   };
 }
 
@@ -65,21 +54,11 @@ export default async function ShowroomDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [showroom, allShowrooms] = await Promise.all([
-    fetchShowroom(slug),
-    fetchAllShowrooms(),
-  ]);
+  const showroom = await fetchShowroom(slug);
   if (!showroom) notFound();
 
   const items = galleryItems(showroom);
   const featured = showroom.featuredProductIds ?? [];
-  const cities = [
-    ...new Set(
-      allShowrooms
-        .map((s) => s.address?.city)
-        .filter((c): c is string => Boolean(c)),
-    ),
-  ];
 
   const ldLocal = localBusinessJsonLd(showroom, SITE_URL);
   const ldBreadcrumb = breadcrumbJsonLd(
@@ -109,66 +88,16 @@ export default async function ShowroomDetail({
 
       <ShowroomHero showroom={showroom} />
 
-      <Section padY="lg">
+      <Section padY="lg" fullBleed>
         <Container>
-          <Split ratio="60/40" gap="xl">
-            <Stack gap="lg">
-              {showroom.description ? (
-                <div className="max-w-prose">
-                  <RichText value={showroom.description} />
-                </div>
-              ) : null}
-              <ShowroomMapEmbed showroom={showroom} />
-            </Stack>
-            <Stack gap="lg">
-              <Stack gap="md">
-                <h2 className="text-h3 font-bold text-charcoal">آدرس</h2>
-                <ShowroomAddressBlock showroom={showroom} />
-              </Stack>
-              {showroom.phone ? (
-                <Stack gap="xs">
-                  <h2 className="text-h3 font-bold text-charcoal">تماس</h2>
-                  <PhoneLink raw={showroom.phone} className="text-h4" />
-                  {showroom.email ? (
-                    <a
-                      href={`mailto:${showroom.email}`}
-                      className="text-body text-charcoal underline underline-offset-4 hover:decoration-2"
-                      dir="ltr"
-                    >
-                      {showroom.email}
-                    </a>
-                  ) : null}
-                </Stack>
-              ) : null}
-              <Stack gap="md">
-                <h2 className="text-h3 font-bold text-charcoal">ساعات کاری</h2>
-                <ShowroomHoursTable hours={showroom.hours} />
-                {showroom.appointmentOnly ? (
-                  <p className="text-small text-stone">
-                    * این شوروم فقط با وقت قبلی پذیرای مهمانان است.
-                  </p>
-                ) : null}
-              </Stack>
-              <ShowroomHolidayHours holidayHours={showroom.holidayHours} />
-              {showroom.parkingNotes || showroom.transitNotes ? (
-                <Stack gap="xs">
-                  {showroom.parkingNotes ? (
-                    <p className="text-small text-stone">
-                      <strong className="text-charcoal">پارکینگ:</strong>{' '}
-                      {showroom.parkingNotes}
-                    </p>
-                  ) : null}
-                  {showroom.transitNotes ? (
-                    <p className="text-small text-stone">
-                      <strong className="text-charcoal">دسترسی:</strong>{' '}
-                      {showroom.transitNotes}
-                    </p>
-                  ) : null}
-                </Stack>
-              ) : null}
-              <ShowroomCtas showroom={showroom} />
-            </Stack>
-          </Split>
+          <Stack gap="lg">
+            {showroom.description ? (
+              <div className="mx-auto max-w-[680px] text-body leading-[1.85] text-charcoal">
+                <RichText value={showroom.description} />
+              </div>
+            ) : null}
+            <ShowroomInfoCards showroom={showroom} />
+          </Stack>
         </Container>
       </Section>
 
@@ -177,7 +106,7 @@ export default async function ShowroomDetail({
           <Container>
             <BlockReveal>
               <Stack gap="lg">
-                <h2 className="text-h2 font-bold text-charcoal">گالری شوروم</h2>
+                <h2 className="text-h3 font-bold text-charcoal">گالری شوروم</h2>
                 <ImageGallery items={items} layout="grid" columns={3} cellRatio="4/5" />
               </Stack>
             </BlockReveal>
@@ -188,17 +117,6 @@ export default async function ShowroomDetail({
       <BlockReveal>
         <ShowroomFeaturedProductsRow products={featured} showroomName={showroom.name} />
       </BlockReveal>
-
-      <Section padY="lg">
-        <Container>
-          <InquiryForm
-            cities={cities}
-            defaultCity={showroom.address?.city ?? undefined}
-            defaultReason="showroom_visit"
-            defaultShowroom={showroom.slug}
-          />
-        </Container>
-      </Section>
 
       <script
         type="application/ld+json"
