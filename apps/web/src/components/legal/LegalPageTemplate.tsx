@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Breadcrumbs, Container, Section, Stack } from '@zhic/ui';
+import { Breadcrumbs, Container, Section } from '@zhic/ui';
 import type { LexicalRoot } from '@/lib/payload';
 import { RichText } from '@/lib/richtext';
 
@@ -8,6 +8,8 @@ type Props = {
   body?: LexicalRoot | null;
   breadcrumbLabel: string;
   breadcrumbHref: string;
+  /** Optional "آخرین به‌روزرسانی: …" date string (already formatted in Persian). */
+  updated?: string;
   jsonLd?: ReactNode;
 };
 
@@ -16,6 +18,7 @@ export function LegalPageTemplate({
   body,
   breadcrumbLabel,
   breadcrumbHref,
+  updated,
   jsonLd,
 }: Props) {
   return (
@@ -30,22 +33,27 @@ export function LegalPageTemplate({
           />
         </Container>
       </Section>
-      <Section padY="lg">
+      <Section padY="lg" fullBleed>
         <Container>
-          <Stack gap="lg">
-            <h1 className="text-display font-bold text-charcoal text-balance">
-              {title}
-            </h1>
+          <div className="mx-auto max-w-[680px]">
+            <header className="mb-7">
+              <h1 className="mb-3 text-h1 font-black text-ink text-balance">
+                {title}
+              </h1>
+              {updated ? (
+                <p className="text-small font-light text-stone">
+                  آخرین به‌روزرسانی: {updated}
+                </p>
+              ) : null}
+            </header>
             {body ? (
-              <div className="max-w-prose">
-                <RichText value={body} />
-              </div>
+              <RichText value={body} />
             ) : (
               <p className="text-body text-stone">
                 محتوای این صفحه به‌زودی منتشر می‌شود.
               </p>
             )}
-          </Stack>
+          </div>
         </Container>
       </Section>
       {jsonLd}
