@@ -11,8 +11,12 @@ import { Designs } from './collections/Designs'
 import { Products } from './collections/Products'
 import { Showrooms } from './collections/Showrooms'
 import { Articles } from './collections/Articles'
+import { Authors } from './collections/Authors'
+import { JournalCategories } from './collections/JournalCategories'
 import { Categories } from './collections/Categories'
 import { Tags } from './collections/Tags'
+import { Materials } from './collections/Materials'
+import { Collections } from './collections/Collections'
 import { Media } from './collections/Media'
 import { Inquiries } from './collections/Inquiries'
 
@@ -47,8 +51,12 @@ export default buildConfig({
     Products,
     Showrooms,
     Articles,
+    Authors,
+    JournalCategories,
     Categories,
     Tags,
+    Materials,
+    Collections,
     Media,
     Inquiries,
   ],

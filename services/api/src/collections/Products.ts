@@ -1,12 +1,14 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 
+const SKU_PATTERN = /^[A-Z]{2,4}-\d{3,5}$/
+
 export const Products: CollectionConfig = {
   slug: 'products',
   labels: { singular: 'محصول', plural: 'محصولات' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'design', 'piece_type', 'basePriceRials'],
+    defaultColumns: ['name', 'piece_type', 'sku', 'basePriceRials', 'availability'],
   },
   hooks: {
     beforeValidate: [
@@ -36,6 +38,28 @@ export const Products: CollectionConfig = {
       },
     },
     {
+      name: 'tagline',
+      type: 'text',
+      label: 'تک‌خطی شاعرانه',
+      admin: {
+        description: 'یک جمله کوتاه که حس محصول را می‌رساند',
+      },
+    },
+    {
+      name: 'shortDescription',
+      type: 'textarea',
+      label: 'توضیح کوتاه',
+      maxLength: 200,
+      admin: {
+        description: 'حداکثر ۲۰۰ کاراکتر — برای کارت‌ها و متاتگ',
+      },
+    },
+    {
+      name: 'longDescription',
+      type: 'richText',
+      label: 'توضیح بلند',
+    },
+    {
       name: 'design',
       type: 'relationship',
       relationTo: 'designs',
@@ -58,26 +82,104 @@ export const Products: CollectionConfig = {
       ],
     },
     {
+      name: 'categoryIds',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      label: 'دسته‌بندی‌ها',
+    },
+    {
+      name: 'tagIds',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
+      label: 'تگ‌ها',
+    },
+    {
+      name: 'materialIds',
+      type: 'relationship',
+      relationTo: 'materials',
+      hasMany: true,
+      required: true,
+      label: 'متریال‌ها',
+    },
+    {
+      name: 'sku',
+      type: 'text',
+      required: true,
+      unique: true,
+      label: 'SKU',
+      admin: {
+        description: 'الگو: AAA-NNN (مثال: BED-001)',
+      },
+      validate: (val: unknown) => {
+        if (typeof val !== 'string' || !val.length) return 'SKU الزامی است'
+        if (!SKU_PATTERN.test(val)) {
+          return 'SKU باید با الگوی AAA-NNN باشد (مثال: BED-001)'
+        }
+        return true
+      },
+    },
+    {
       // Integer rials. Display conversion to toman lives in @zhic/money.
-      // Payload has no bigint field type; `number` is safe up to ~9.007e15,
-      // which covers all realistic furniture pricing. See data-schemas.md §12.
       name: 'basePriceRials',
       type: 'number',
+      required: true,
       label: 'قیمت پایه (ریال)',
       min: 0,
       admin: {
         description:
-          'قیمت به ریال، عدد صحیح (بدون کاما). نمایش تومان توسط رابط کاربری انجام می‌شود.',
+          'قیمت به ریال، عدد صحیح. نمایش تومان توسط رابط کاربری انجام می‌شود.',
         step: 1,
       },
       validate: (val: unknown) => {
-        if (val == null) return true;
+        if (val == null) return 'قیمت پایه الزامی است'
         if (typeof val !== 'number' || !Number.isInteger(val)) {
-          return 'قیمت باید عدد صحیح ریالی باشد';
+          return 'قیمت باید عدد صحیح ریالی باشد'
         }
-        if (val < 0) return 'قیمت نمی‌تواند منفی باشد';
-        return true;
+        if (val < 0) return 'قیمت نمی‌تواند منفی باشد'
+        return true
       },
+    },
+    {
+      name: 'salePriceRials',
+      type: 'number',
+      label: 'قیمت تخفیف‌خورده (ریال)',
+      min: 0,
+      admin: {
+        description:
+          'اختیاری — جایگزین قیمت پایه. نمایش در پکیج ۲ فعال می‌شود.',
+        step: 1,
+      },
+      validate: (val: unknown) => {
+        if (val == null) return true
+        if (typeof val !== 'number' || !Number.isInteger(val)) {
+          return 'قیمت باید عدد صحیح ریالی باشد'
+        }
+        if (val < 0) return 'قیمت نمی‌تواند منفی باشد'
+        return true
+      },
+    },
+    {
+      name: 'availability',
+      type: 'select',
+      required: true,
+      defaultValue: 'made_to_order',
+      label: 'وضعیت موجودی',
+      options: [
+        { label: 'موجود', value: 'in_stock' },
+        { label: 'ساخت به‌سفارش', value: 'made_to_order' },
+        { label: 'در انتظار', value: 'backorder' },
+        { label: 'ناموجود', value: 'discontinued' },
+      ],
+    },
+    {
+      name: 'leadTimeDays',
+      type: 'number',
+      required: true,
+      defaultValue: 56,
+      label: 'زمان تحویل (روز)',
+      min: 0,
     },
     {
       name: 'dimensions',
@@ -90,19 +192,6 @@ export const Products: CollectionConfig = {
       ],
     },
     {
-      name: 'materials',
-      type: 'array',
-      label: 'متریال',
-      fields: [
-        { name: 'material', type: 'text', required: true, label: 'نام متریال' },
-      ],
-    },
-    {
-      name: 'specs',
-      type: 'richText',
-      label: 'مشخصات فنی',
-    },
-    {
       name: 'gallery',
       type: 'upload',
       relationTo: 'media',
@@ -110,12 +199,51 @@ export const Products: CollectionConfig = {
       label: 'گالری',
     },
     {
+      name: 'specs',
+      type: 'richText',
+      label: 'مشخصات فنی',
+    },
+    {
+      name: 'relatedProductIds',
+      type: 'relationship',
+      relationTo: 'products',
+      hasMany: true,
+      label: 'محصولات مرتبط',
+      admin: {
+        description: 'برای ردیف «محصولات مرتبط» در صفحه‌ی محصول',
+      },
+    },
+    {
+      name: 'pairsWithProductIds',
+      type: 'relationship',
+      relationTo: 'products',
+      hasMany: true,
+      label: 'در کنار آن خوب است',
+      admin: {
+        description: 'برای ردیف «در کنار آن خوب است» در صفحه‌ی محصول',
+      },
+    },
+    {
       name: 'inquiry_enabled',
       type: 'checkbox',
       defaultValue: true,
       label: 'فعال بودن فرم استعلام',
+      admin: { position: 'sidebar' },
+    },
+    {
+      name: 'featured',
+      type: 'checkbox',
+      defaultValue: false,
+      label: 'نمایش ویژه',
+      admin: { position: 'sidebar' },
+    },
+    {
+      name: 'featuredOrder',
+      type: 'number',
+      label: 'ترتیب نمایش ویژه',
       admin: {
         position: 'sidebar',
+        description: 'هرچه کمتر، بالاتر',
       },
     },
   ],

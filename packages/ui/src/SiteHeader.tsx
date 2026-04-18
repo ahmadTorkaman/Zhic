@@ -58,10 +58,10 @@ export function SiteHeader({
         )}
       >
         <Container>
-          <div className="flex items-center justify-between gap-6 py-3">
+          <div className="flex items-center justify-between gap-6 py-4">
             <Link
               href={brandHref}
-              className="text-h4 font-black tracking-tight text-charcoal transition-opacity duration-[var(--dur-hover)] hover:opacity-80 focus-visible:outline-none"
+              className="rounded-sm text-h4 font-black tracking-tight text-charcoal transition-opacity duration-[var(--dur-hover)] hover:opacity-80 focus-visible:outline-none"
             >
               {brandLabel}
             </Link>

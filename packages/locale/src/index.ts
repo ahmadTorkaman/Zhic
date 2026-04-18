@@ -30,4 +30,9 @@ export {
   normalizePhone,
   formatPhone,
   isIranianMobile,
+  normalizeLandline,
+  formatLandline,
+  isIranianLandline,
+  classifyPhone,
 } from './phone';
+export type { PhoneClassification } from './phone';

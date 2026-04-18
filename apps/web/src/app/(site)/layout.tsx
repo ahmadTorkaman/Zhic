@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { SiteFooter, SiteHeader, SkipLink } from '@zhic/ui';
 import { toPersianDigits } from '@zhic/locale';
+import { BackToTop } from '@/components/motion/BackToTop';
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import { NAV_LINKS } from '@/lib/constants';
 
@@ -144,6 +145,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         socials={SOCIALS}
         copyright={<>© {year} شرکت ژیک — تمام حقوق محفوظ است.</>}
       />
+      <BackToTop />
     </SmoothScrollProvider>
   );
 }

@@ -6,6 +6,7 @@ export const Categories: CollectionConfig = {
   labels: { singular: 'دسته‌بندی', plural: 'دسته‌بندی‌ها' },
   admin: {
     useAsTitle: 'name',
+    defaultColumns: ['name', 'parent', 'slug'],
   },
   hooks: {
     beforeValidate: [
@@ -32,6 +33,21 @@ export const Categories: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Auto-generated from name if left empty',
+      },
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: 'توضیحات',
+    },
+    {
+      name: 'parent',
+      type: 'relationship',
+      relationTo: 'categories',
+      label: 'دسته‌بندی والد',
+      admin: {
+        position: 'sidebar',
+        description: 'برای ساخت ساختار درختی (اختیاری)',
       },
     },
   ],

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { SITE_URL } from '@/lib/env';
 import './globals.css';
 
 const ayandeh = localFont({
@@ -30,9 +31,19 @@ const ayandeh = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'ژیک — مبلمان خواب دست‌ساز',
-  description:
-    'تخت‌های دست‌ساز برای کسانی که هنر آهسته زیستن را می‌شناسند.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    template: '%s — ژیک',
+    default: 'ژیک — مبلمان خواب دست‌ساز',
+  },
+  description: 'تخت‌های دست‌ساز برای کسانی که هنر آهسته زیستن را می‌شناسند.',
+  openGraph: {
+    locale: 'fa_IR',
+    siteName: 'ژیک',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
 };
 
 export default function RootLayout({
@@ -42,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="fa"
+      lang="fa-IR"
       dir="rtl"
       className={`${ayandeh.variable} antialiased`}
     >
