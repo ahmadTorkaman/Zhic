@@ -25,7 +25,7 @@ function FeaturedTile({ article }: { article: PayloadArticle }) {
           {article.category.name}
         </div>
       ) : null}
-      <h3 className="text-h3 font-bold leading-[1.3] text-charcoal text-balance">
+      <h3 className="text-h3 font-bold text-charcoal text-balance">
         {article.title}
       </h3>
       {article.excerpt ? (
