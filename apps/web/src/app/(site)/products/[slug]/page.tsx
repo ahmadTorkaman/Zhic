@@ -1,41 +1,14 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import {
-  Breadcrumbs,
-  Container,
-  Section,
-  Split,
-  Stack,
-} from '@zhic/ui';
-import type { GalleryItem } from '@zhic/ui';
-import { fetchProduct, mediaUrl } from '@/lib/payload';
-import type { PayloadMedia } from '@/lib/payload';
+import { Breadcrumbs, Container, Section } from '@zhic/ui';
+import { fetchProduct } from '@/lib/payload';
 import { SITE_URL } from '@/lib/env';
 import { plainTextFromRichText, RichText } from '@/lib/richtext';
 import { breadcrumbJsonLd, productJsonLd } from '@/lib/jsonld';
-import { ProductMediaStage } from '@/components/products/ProductMediaStage';
+import { ProductHeroImage, ProductThumbnails } from '@/components/products/ProductMediaStage';
 import { ProductPurchasePanel } from '@/components/products/ProductPurchasePanel';
 import { ProductRelatedRow } from '@/components/products/ProductRelatedRow';
 import { ProductSpecsAccordion } from '@/components/products/ProductSpecsAccordion';
-
-const MOTION_MIME = /^(image\/gif|video\/)/i;
-
-function partitionGallery(gallery: PayloadMedia[] | null | undefined) {
-  const stills: GalleryItem[] = [];
-  const motion: GalleryItem[] = [];
-  for (const m of gallery ?? []) {
-    const src = mediaUrl(m);
-    if (!src) continue;
-    const item: GalleryItem = {
-      src,
-      alt: m.alt ?? '',
-      kind: m.mimeType && MOTION_MIME.test(m.mimeType) ? 'gif' : 'image',
-    };
-    if (item.kind === 'gif') motion.push(item);
-    else stills.push(item);
-  }
-  return { stills, motion };
-}
 
 export async function generateMetadata({
   params,
@@ -53,11 +26,7 @@ export async function generateMetadata({
     title: product.name,
     description,
     alternates: { canonical: `/products/${slug}` },
-    openGraph: {
-      type: 'website',
-      title: product.name,
-      description,
-    },
+    openGraph: { type: 'website', title: product.name, description },
   };
 }
 
@@ -69,8 +38,6 @@ export default async function ProductDetail({
   const { slug } = await params;
   const product = await fetchProduct(slug);
   if (!product) notFound();
-
-  const { stills, motion } = partitionGallery(product.gallery);
 
   const ldProduct = productJsonLd(product, SITE_URL);
   const ldBreadcrumb = breadcrumbJsonLd(
@@ -84,6 +51,7 @@ export default async function ProductDetail({
 
   return (
     <>
+      {/* Sticky breadcrumb */}
       <div className="sticky top-0 z-10 border-b border-sand/40 bg-ivory/90 backdrop-blur">
         <Container>
           <div className="py-3">
@@ -98,41 +66,44 @@ export default async function ProductDetail({
         </Container>
       </div>
 
-      <Section padY="lg">
-        <Container>
-          <Split ratio="60/40" gap="xl">
-            <ProductMediaStage stills={stills} motion={motion} />
-            <ProductPurchasePanel product={product} />
-          </Split>
-        </Container>
-      </Section>
+      {/* Full-bleed cinematic 21:9 hero */}
+      <ProductHeroImage gallery={product.gallery} />
 
-      <Section padY="md" bg="cream">
+      {/* Content + sidebar split */}
+      <Section padY="lg" fullBleed>
         <Container>
-          <Stack gap="lg">
-            <h2 className="text-h2 font-bold text-charcoal">
-              مشخصات
-            </h2>
-            <ProductSpecsAccordion product={product} />
-          </Stack>
-        </Container>
-      </Section>
-
-      {product.longDescription ? (
-        <Section padY="lg">
-          <Container>
-            <Stack gap="md">
-              <h2 className="text-h2 font-bold text-charcoal">
-                درباره‌ی این قطعه
-              </h2>
-              <div className="max-w-prose">
-                <RichText value={product.longDescription} />
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_380px]">
+            {/* Content column */}
+            <div>
+              <ProductThumbnails gallery={product.gallery} />
+              <h1 className="mb-4 text-h2 font-black text-ink">
+                {product.name}
+              </h1>
+              {product.tagline ? (
+                <p className="mb-6 text-lead font-light text-stone">
+                  {product.tagline}
+                </p>
+              ) : null}
+              {product.longDescription ? (
+                <div className="mb-7 max-w-[560px] text-body leading-[1.85] text-charcoal">
+                  <RichText value={product.longDescription} />
+                </div>
+              ) : null}
+              <div className="border-t border-sand pt-6">
+                <h2 className="mb-5 text-h4 font-bold text-charcoal">
+                  مشخصات
+                </h2>
+                <ProductSpecsAccordion product={product} />
               </div>
-            </Stack>
-          </Container>
-        </Section>
-      ) : null}
+            </div>
 
+            {/* Sticky purchase sidebar (Task 5 will restyle the panel itself) */}
+            <ProductPurchasePanel product={product} />
+          </div>
+        </Container>
+      </Section>
+
+      {/* Related products row (Task 5 will restyle) */}
       <ProductRelatedRow
         products={product.relatedProductIds ?? []}
         heading="محصولات مرتبط"

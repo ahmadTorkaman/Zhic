@@ -1,98 +1,73 @@
-'use client';
-
-import { useState } from 'react';
-import { Aspect, ImageGallery } from '@zhic/ui';
-import type { GalleryItem } from '@zhic/ui';
+import { mediaUrl } from '@/lib/payload';
+import type { PayloadMedia } from '@/lib/payload';
 
 type Props = {
-  stills: GalleryItem[];
-  motion: GalleryItem[];
+  gallery: PayloadMedia[] | null | undefined;
 };
 
-type Tab = 'stills' | 'motion';
+function isStill(m: PayloadMedia): boolean {
+  return !m.mimeType || !/^(image\/gif|video\/)/i.test(m.mimeType);
+}
 
-export function ProductMediaStage({ stills, motion }: Props) {
-  const hasStills = stills.length > 0;
-  const hasMotion = motion.length > 0;
-  const both = hasStills && hasMotion;
-  const initial: Tab = hasStills ? 'stills' : 'motion';
-  const [tab, setTab] = useState<Tab>(initial);
+export function ProductHeroImage({ gallery }: Props) {
+  const stills = (gallery ?? []).filter(isStill);
+  const first = stills[0];
+  const src = mediaUrl(first ?? null);
+  const alt = first?.alt ?? '';
 
-  if (!hasStills && !hasMotion) {
-    return (
-      <Aspect ratio="4/5" className="bg-cream">
+  return (
+    <div className="relative mb-7 aspect-[21/9] overflow-hidden bg-cream">
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="eager"
+          fetchPriority="high"
+          className="h-full w-full object-cover"
+        />
+      ) : (
         <div className="flex h-full w-full items-center justify-center text-body text-stone">
           تصاویر این محصول به‌زودی منتشر می‌شود
         </div>
-      </Aspect>
-    );
-  }
-
-  const items = tab === 'stills' ? stills : motion;
-
-  return (
-    <div className="flex flex-col gap-4">
-      {both ? (
-        <div role="tablist" aria-label="نمایش محصول" className="flex gap-2">
-          <TabButton
-            active={tab === 'stills'}
-            onClick={() => setTab('stills')}
-            controls="media-stills"
-          >
-            تصاویر
-          </TabButton>
-          <TabButton
-            active={tab === 'motion'}
-            onClick={() => setTab('motion')}
-            controls="media-motion"
-          >
-            حرکت
-          </TabButton>
-        </div>
-      ) : null}
-      <div
-        role="tabpanel"
-        id={tab === 'stills' ? 'media-stills' : 'media-motion'}
-      >
-        <ImageGallery
-          items={items}
-          layout="grid"
-          columns={2}
-          cellRatio="4/5"
-          lightbox
-        />
-      </div>
+      )}
+      {/* Bottom gradient fade to ivory */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5"
+        style={{
+          background:
+            'linear-gradient(to top, var(--color-ivory) 0%, transparent 100%)',
+        }}
+      />
     </div>
   );
 }
 
-function TabButton({
-  active,
-  onClick,
-  controls,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  controls: string;
-  children: React.ReactNode;
-}) {
+export function ProductThumbnails({ gallery }: Props) {
+  const stills = (gallery ?? []).filter(isStill);
+  if (stills.length <= 1) return null;
   return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      aria-controls={controls}
-      onClick={onClick}
-      className={[
-        'rounded-md px-4 py-2 text-small transition-colors',
-        'focus-visible:outline-none',
-        active
-          ? 'bg-charcoal text-ivory'
-          : 'bg-transparent text-charcoal hover:bg-sand/60',
-      ].join(' ')}
-    >
-      {children}
-    </button>
+    <div className="mb-7 flex gap-3 overflow-x-auto md:overflow-visible">
+      {stills.slice(0, 5).map((m, idx) => {
+        const src = mediaUrl(m);
+        if (!src) return null;
+        return (
+          <div
+            key={m.id}
+            className={`flex-shrink-0 cursor-default border-2 bg-cream transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${
+              idx === 0 ? 'border-charcoal' : 'border-transparent hover:border-sand'
+            }`}
+            style={{ width: 80, height: 80 }}
+          >
+            <img
+              src={src}
+              alt={m.alt ?? ''}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        );
+      })}
+    </div>
   );
 }
