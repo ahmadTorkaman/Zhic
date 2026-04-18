@@ -15,8 +15,10 @@ import {
 import { breadcrumbJsonLd, collectionPageJsonLd } from '@/lib/jsonld';
 import { Pagination } from '@/components/products/Pagination';
 import { ProductFilters } from '@/components/products/ProductFilters';
+import { ProductFilterPills } from '@/components/products/ProductFilterPills';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { ProductIndexEmpty } from '@/components/products/ProductIndexEmpty';
+import { ProductIndexHero } from '@/components/products/ProductIndexHero';
 import { ProductIndexToolbar } from '@/components/products/ProductIndexToolbar';
 
 const PAGE_TITLE = 'محصولات';
@@ -27,11 +29,7 @@ export const metadata: Metadata = {
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,
   alternates: { canonical: '/products' },
-  openGraph: {
-    type: 'website',
-    title: PAGE_TITLE,
-    description: PAGE_DESCRIPTION,
-  },
+  openGraph: { type: 'website', title: PAGE_TITLE, description: PAGE_DESCRIPTION },
 };
 
 export default async function ProductsIndex({
@@ -51,14 +49,12 @@ export default async function ProductsIndex({
   const visible = applyClientSizeBand(page.docs, query.size);
   const sizeFilterReducedCount =
     query.size && visible.length !== page.docs.length;
-  const totalDocs = sizeFilterReducedCount
-    ? visible.length
-    : page.totalDocs;
+  const totalDocs = sizeFilterReducedCount ? visible.length : page.totalDocs;
   const totalPages = sizeFilterReducedCount
     ? Math.max(1, Math.ceil(visible.length / PRODUCTS_PER_PAGE))
     : page.totalPages;
 
-  const filters = (
+  const drawerFilters = (
     <ProductFilters
       categories={categories}
       materials={materials}
@@ -66,6 +62,15 @@ export default async function ProductsIndex({
       action="/products"
     />
   );
+
+  // Hero only on page 1 with no filters applied
+  const showHero =
+    (query.page ?? 1) === 1 &&
+    !query.category &&
+    (!query.materials || query.materials.length === 0) &&
+    !query.size &&
+    !query.price;
+  const heroProducts = showHero ? visible.slice(0, 4) : [];
 
   const collectionLd = collectionPageJsonLd({
     name: PAGE_TITLE,
@@ -85,47 +90,45 @@ export default async function ProductsIndex({
       <Section padY="md">
         <Container>
           <Breadcrumbs
-            items={[
-              { label: 'خانه', href: '/' },
-              { label: PAGE_TITLE },
-            ]}
+            items={[{ label: 'خانه', href: '/' }, { label: PAGE_TITLE }]}
           />
         </Container>
       </Section>
       <Section padY="sm">
         <Container>
           <Stack gap="lg">
-            <Stack gap="xs">
-              <h1 className="text-display font-bold text-charcoal">
-                {PAGE_TITLE}
-              </h1>
-              <p className="text-lead text-stone">{PAGE_DESCRIPTION}</p>
-            </Stack>
+            <h1 className="text-h2 font-black text-ink">{PAGE_TITLE}</h1>
+
+            {showHero && heroProducts.length > 0 ? (
+              <ProductIndexHero products={heroProducts} />
+            ) : null}
+
+            <ProductFilterPills
+              categories={categories}
+              materials={materials}
+              query={query}
+              action="/products"
+            />
+
             <ProductIndexToolbar
               totalDocs={totalDocs}
               query={query}
-              drawerContent={filters}
+              drawerContent={drawerFilters}
             />
-            <div className="grid gap-8 md:grid-cols-[18rem_1fr]">
-              <aside className="hidden md:block">
-                <div className="md:sticky md:top-8">{filters}</div>
-              </aside>
-              <div>
-                {visible.length === 0 ? (
-                  <ProductIndexEmpty resetHref="/products" />
-                ) : (
-                  <>
-                    <ProductGrid products={visible} />
-                    <Pagination
-                      currentPage={query.page ?? 1}
-                      totalPages={totalPages}
-                      basePath="/products"
-                      searchParams={sp}
-                    />
-                  </>
-                )}
-              </div>
-            </div>
+
+            {visible.length === 0 ? (
+              <ProductIndexEmpty resetHref="/products" />
+            ) : (
+              <>
+                <ProductGrid products={visible} />
+                <Pagination
+                  currentPage={query.page ?? 1}
+                  totalPages={totalPages}
+                  basePath="/products"
+                  searchParams={sp}
+                />
+              </>
+            )}
           </Stack>
         </Container>
       </Section>
