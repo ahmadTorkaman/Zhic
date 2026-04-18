@@ -1,5 +1,5 @@
 import { toPersianDigits } from '@zhic/locale';
-import { Badge, Button, MoneyDisplay, Stack } from '@zhic/ui';
+import { Badge, Button, MoneyDisplay } from '@zhic/ui';
 import type { PayloadProduct } from '@/lib/payload';
 import { inquiryHref } from '@/lib/payload';
 import { AVAILABILITY_LABEL } from '@/lib/products';
@@ -24,49 +24,37 @@ export function ProductPurchasePanel({ product }: Props) {
     typeof product.leadTimeDays === 'number' && product.leadTimeDays > 0;
 
   return (
-    <aside className="lg:sticky lg:top-8 lg:self-start">
-      <Stack gap="md">
-        <h1 className="text-h2 font-bold text-charcoal text-balance">
-          {product.name}
-        </h1>
-        {product.tagline ? (
-          <p className="text-lead text-stone">{product.tagline}</p>
-        ) : null}
-        {typeof product.basePriceRials === 'number' ? (
-          <div className="text-h3 font-bold text-charcoal">
-            <MoneyDisplay rials={product.basePriceRials} />
-          </div>
-        ) : null}
-        <div className="flex flex-wrap items-center gap-3">
-          {availability ? (
-            <Badge variant={AVAILABILITY_VARIANT[availability]} size="md">
-              {AVAILABILITY_LABEL[availability]}
-            </Badge>
-          ) : null}
-          {showLeadTime ? (
-            <span className="text-small text-stone">
-              تحویل {toPersianDigits(product.leadTimeDays as number)} روز کاری
-            </span>
-          ) : null}
+    <aside className="self-start rounded-lg bg-cream p-7 md:sticky md:top-8">
+      {typeof product.basePriceRials === 'number' ? (
+        <div className="mb-4 text-h3 font-bold text-charcoal" dir="ltr">
+          <MoneyDisplay rials={product.basePriceRials} />
         </div>
-        <Stack gap="sm">
-          <Button as="a" href={inquiryHref(product)} variant="primary" size="lg">
-            استعلام قیمت
-          </Button>
-          <Button as="a" href="/showrooms" variant="secondary" size="md">
-            رزرو بازدید از شوروم
-          </Button>
-        </Stack>
-        {product.sku ? (
-          <p
-            className="text-small text-stone"
-            // SKUs are ASCII; isolate from RTL run for clean display
-            dir="ltr"
-          >
-            SKU: {product.sku}
-          </p>
-        ) : null}
-      </Stack>
+      ) : null}
+      {availability ? (
+        <div className="mb-5 flex flex-wrap gap-2">
+          <Badge variant={AVAILABILITY_VARIANT[availability]} size="md">
+            {AVAILABILITY_LABEL[availability]}
+          </Badge>
+        </div>
+      ) : null}
+      <div className="mb-5 flex flex-col gap-3">
+        <Button as="a" href={inquiryHref(product)} variant="secondary" size="md" className="w-full">
+          استعلام قیمت
+        </Button>
+        <Button as="a" href="/showrooms" variant="ghost" size="md" className="w-full">
+          رزرو بازدید
+        </Button>
+      </div>
+      {showLeadTime ? (
+        <div className="border-t border-sand pt-4 text-small text-stone">
+          تحویل {toPersianDigits(product.leadTimeDays as number)} روز کاری
+        </div>
+      ) : null}
+      {product.sku ? (
+        <p className="mt-3 text-eyebrow text-stone" dir="ltr">
+          SKU: {product.sku}
+        </p>
+      ) : null}
     </aside>
   );
 }
