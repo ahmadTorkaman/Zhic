@@ -36,7 +36,7 @@ function DesignTile({
   return (
     <a
       href={`/designs/${design.slug}`}
-      className="group block transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:-translate-y-[3px]"
+      className="group block transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:translate-y-[var(--hover-lift-card)]"
     >
       <div
         className={`relative mb-4 overflow-hidden border border-transparent bg-cream transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] group-hover:border-sand group-hover:bg-ivory group-hover:shadow-card ${aspect}`}
