@@ -13,16 +13,20 @@ export function JournalCategoryNav({
 
   const linkClass = (isActive: boolean) =>
     [
-      'inline-block rounded-full px-4 py-2 text-small font-medium transition-colors whitespace-nowrap',
+      'inline-flex items-center rounded-pill px-4 py-1.5 text-eyebrow font-bold transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] whitespace-nowrap',
       isActive
         ? 'bg-charcoal text-ivory'
-        : 'bg-sand/40 text-charcoal hover:bg-sand',
+        : 'bg-cream text-charcoal hover:bg-sand',
     ].join(' ');
 
   return (
     <nav aria-label="دسته‌بندی‌ها" className="overflow-x-auto">
       <div className="flex gap-2">
-        <Link href="/journal" className={linkClass(!activeSlug)}>
+        <Link
+          href="/journal"
+          className={linkClass(!activeSlug)}
+          aria-current={!activeSlug ? 'true' : undefined}
+        >
           همه
         </Link>
         {categories.map((cat) => (
@@ -30,6 +34,7 @@ export function JournalCategoryNav({
             key={cat.id}
             href={journalCategoryPath(cat.slug)}
             className={linkClass(activeSlug === cat.slug)}
+            aria-current={activeSlug === cat.slug ? 'true' : undefined}
           >
             {cat.name}
           </Link>

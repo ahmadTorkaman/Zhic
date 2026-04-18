@@ -3,6 +3,7 @@ import { Breadcrumbs, Container, Section, Stack } from '@zhic/ui';
 import { fetchArticles, fetchJournalCategories } from '@/lib/payload';
 import { SITE_URL } from '@/lib/env';
 import { breadcrumbJsonLd, blogJsonLd } from '@/lib/jsonld';
+import { JournalFeaturedArticle } from '@/components/journal/JournalFeaturedArticle';
 import { JournalGrid } from '@/components/journal/JournalGrid';
 import { JournalCategoryNav } from '@/components/journal/JournalCategoryNav';
 import { Pagination } from '@/components/products/Pagination';
@@ -40,6 +41,10 @@ export default async function JournalIndex({
     { name: PAGE_TITLE, url: '/journal' },
   ];
 
+  const showFeatured = pageNum === 1 && result.docs.length > 0;
+  const featuredArticle = showFeatured ? result.docs[0] : null;
+  const restArticles = showFeatured ? result.docs.slice(1) : result.docs;
+
   return (
     <>
       <script
@@ -59,23 +64,33 @@ export default async function JournalIndex({
         }}
       />
 
-      <Section padY="lg">
+      <Section padY="md">
+        <Container>
+          <Breadcrumbs items={[
+            { label: 'خانه', href: '/' },
+            { label: PAGE_TITLE },
+          ]} />
+        </Container>
+      </Section>
+
+      <Section padY="sm" fullBleed>
         <Container>
           <Stack gap="lg">
             <div>
-              <Breadcrumbs items={[
-                { label: 'خانه', href: '/' },
-                { label: PAGE_TITLE },
-              ]} />
-              <h1 className="mt-4 text-h1 font-bold text-charcoal">
-                {PAGE_TITLE}
-              </h1>
-              <p className="mt-2 text-lead text-stone">{PAGE_DESCRIPTION}</p>
+              <h1 className="text-h2 font-black text-ink">{PAGE_TITLE}</h1>
+              <p className="mt-2 text-lead font-light text-stone">{PAGE_DESCRIPTION}</p>
             </div>
 
             <JournalCategoryNav categories={categories} />
 
-            <JournalGrid articles={result.docs} />
+            {featuredArticle ? (
+              <>
+                <JournalFeaturedArticle article={featuredArticle} />
+                <div className="mb-7 h-px bg-sand" aria-hidden />
+              </>
+            ) : null}
+
+            <JournalGrid articles={restArticles} />
 
             <Pagination
               currentPage={result.page}
