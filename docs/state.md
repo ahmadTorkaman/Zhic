@@ -18,7 +18,7 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-04-16 |
+| Last updated | 2026-04-18 |
 | Current phase | Package 1, Month 1 |
 | Current session | 6.3 shipped (Phase 6 complete); next: 7.1 (infra — manual VPS/CI work) |
 | Active branch | `claude/plan-session-2-1-bUd75` |
@@ -90,7 +90,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | Pass 1: Foundation | ✅ | 17 commits (`5e580dc`..`47a78e9`) | Palette renamed (saffron→gold `#C49A6C`, moss→forest `#5F7760`). New tokens: glass, shadow scale (subtle/card/elevated), interaction (dur-hover 720ms, hover-lift, focus-ring). Glass system rewritten to use tokens. Gutter aligned to spec. 5 bug fixes (BackToTop, TOC, bidi×2, SiteHeader). Lab pages rewritten (Persian, token-driven). OD-palette resolved. |
 | Pass 2: Interaction | ✅ | 15 commits (`13d0744`..`dfafe51`) | Global focus ring (forest). All components: 720ms transitions, hover states (light shift + elevation), forest focus rings. Modal/Drawer open/close animation (CSS keyframes + data-state lifecycle). Focus ring stripped from 15 files. BlockReveal 900ms, WordReveal 80ms stagger, new PageReveal component. |
 | Pass 3: Expansion | ✅ | 16 commits (`3ae218a`..`9902734`) | 12 new components: IconButton, Spinner, Link, Divider, Skeleton, Toggle, Tooltip, Accordion, Tabs, FilterNav, Pagination, PayloadImage. CloseButton extracted. 6 cover image duplications refactored. Minor fixes (ProductPurchasePanel text token, PhoneLink bidi, SiteFooter dynamic cols, ShowroomCard digits, FormField fieldset mode). Barrel: 82 exports. |
-| Homepage redesign | 🟡 | — | Canonical mockup: `.superpowers/homepage-c-full.html`. "Asymmetric Luxury" (Option C) — split-screen hero, dark brand section with stats, asymmetric product grid, glass showroom cards, editorial journal grid, dark CTA with inline form. Mobile-responsive. Pending implementation. |
+| Homepage redesign | ✅ | `1b964d3..6dc6b11` | D1 implementation. Six home components rewritten per Option C "Asymmetric Luxury" mockup: split-screen hero with watermark (HomeHero), dark brand stats with gold borders (HomeBrandStatement), asymmetric featured-designs grid (HomeFeaturedDesigns), glass-card showrooms strip with forest city eyebrow (HomeShowroomsStrip), asymmetric editorial journal teaser (HomeJournalTeaser), dark split CTA with frosted glass inquiry form (HomeInquiryCta + new HomeInquiryForm). Plan: `docs/superpowers/plans/2026-04-18-d1-homepage.md`. |
 
 ### Phase 7 — Infrastructure & Deployment
 
