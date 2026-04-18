@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase B — صفحات قالبی</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Light.ttf') format('truetype'); font-weight: 300; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Bold.ttf') format('truetype'); font-weight: 700; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Black.ttf') format('truetype'); font-weight: 900; }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --color-ivory: #FAFAF7; --color-cream: #F5F0EB; --color-sand: #E8E0D8;
+    --color-stone: #8C8279; --color-charcoal: #2C2825; --color-ink: #14110F;
+    --color-forest: #5F7760; --color-gold: #C49A6C;
+    --text-h1: clamp(2.5rem, 4vw + 1rem, 4rem); --text-h2: clamp(2rem, 3vw + 0.75rem, 3rem);
+    --text-h3: clamp(1.5rem, 2vw + 0.5rem, 2rem); --text-h4: 1.5rem;
+    --text-lead: 1.25rem; --text-body: 1rem; --text-small: 0.875rem; --text-eyebrow: 0.75rem;
+    --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.5rem; --space-6: 2rem;
+    --space-7: 3rem; --space-8: 4rem; --space-9: 6rem;
+    --shadow-subtle: 0 2px 8px rgba(20,17,15,0.03); --shadow-card: 0 8px 32px rgba(20,17,15,0.04);
+    --glass-bg: rgba(250,250,247,0.6); --glass-border: rgba(232,224,216,0.5); --glass-blur: 24px;
+    --radius-md: 4px; --radius-lg: 8px; --radius-pill: 999px;
+    --dur-hover: 720ms; --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --hover-lift: -2px; --hover-lift-card: -3px;
+  }
+
+  body { font-family: 'Ayandeh', 'Tahoma', sans-serif; background: var(--color-ivory); color: var(--color-charcoal); line-height: 1.75; font-size: var(--text-body); }
+  .container { max-width: 1440px; margin: 0 auto; padding: 0 var(--space-6); }
+
+  /* Nav */
+  .page-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: var(--color-ink); padding: 10px 16px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+  .page-nav span { color: var(--color-sand); font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.06em; margin-left: 12px; }
+  .pg-btn { padding: 6px 14px; font-family: inherit; font-size: 0.6875rem; font-weight: 700; border: 1px solid rgba(250,250,247,0.12); border-radius: var(--radius-md); background: transparent; color: var(--color-sand); cursor: pointer; white-space: nowrap; }
+  .pg-btn.active { background: var(--color-ivory); color: var(--color-ink); border-color: var(--color-ivory); }
+
+  .page { display: none; padding-top: 56px; }
+  .page.visible { display: block; }
+
+  .page-label { text-align: center; padding: var(--space-4); background: var(--color-cream); margin-bottom: var(--space-7); }
+  .page-label h2 { font-size: var(--text-small); font-weight: 700; letter-spacing: 0.06em; color: var(--color-stone); margin-bottom: 2px; }
+  .page-label p { font-size: var(--text-eyebrow); color: var(--color-stone); font-weight: 300; }
+
+  /* Shared */
+  .breadcrumb { padding: var(--space-4) 0; font-size: var(--text-small); color: var(--color-stone); }
+  .breadcrumb a { color: inherit; text-decoration: none; }
+  .breadcrumb .sep { margin: 0 var(--space-3); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 32px; font-family: inherit; font-size: var(--text-small); font-weight: 700; border: none; border-radius: var(--radius-md); cursor: pointer; text-decoration: none; transition: all var(--dur-hover) var(--ease-out-soft); }
+  .btn-primary { background: var(--color-charcoal); color: var(--color-ivory); }
+  .btn-ghost { background: transparent; border: 1px solid var(--color-sand); color: var(--color-charcoal); }
+
+  .glass-card { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-subtle); transition: all var(--dur-hover) var(--ease-out-soft); text-decoration: none; color: inherit; display: block; cursor: pointer; }
+  .glass-card:hover { transform: translateY(var(--hover-lift)); box-shadow: var(--shadow-card); }
+
+  .card { cursor: pointer; transition: all var(--dur-hover) var(--ease-out-soft); text-decoration: none; color: inherit; display: block; }
+  .card:hover { transform: translateY(var(--hover-lift-card)); }
+  .card-img { aspect-ratio: 4/5; background: var(--color-cream); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: center; color: var(--color-stone); font-size: var(--text-small); transition: box-shadow var(--dur-hover) var(--ease-out-soft); }
+  .card:hover .card-img { box-shadow: var(--shadow-card); }
+
+  .prose { max-width: 680px; }
+  .prose h2 { font-size: var(--text-h3); font-weight: 700; color: var(--color-ink); margin: var(--space-7) 0 var(--space-4); }
+  .prose h3 { font-size: var(--text-h4); font-weight: 700; color: var(--color-charcoal); margin: var(--space-6) 0 var(--space-3); }
+  .prose p { margin-bottom: var(--space-5); line-height: 1.85; color: var(--color-charcoal); }
+
+  .accordion-item { border-bottom: 1px solid var(--color-sand); }
+  .accordion-item summary { display: flex; justify-content: space-between; align-items: center; padding: var(--space-5) 0; cursor: pointer; list-style: none; font-size: var(--text-body); font-weight: 700; transition: color var(--dur-hover) var(--ease-out-soft); }
+  .accordion-item summary:hover { color: var(--color-ink); }
+  .accordion-item summary::-webkit-details-marker { display: none; }
+  .accordion-item .content { padding: 0 0 var(--space-5); font-size: var(--text-small); color: var(--color-stone); line-height: 1.8; }
+
+  .event-card { border-bottom: 1px solid var(--color-sand); padding: var(--space-5) 0; display: grid; grid-template-columns: 80px 1fr; gap: var(--space-5); align-items: start; }
+  .event-card .date-block { text-align: center; background: var(--color-cream); border-radius: var(--radius-md); padding: var(--space-3); }
+  .event-card .date-block .day { font-size: var(--text-h3); font-weight: 900; color: var(--color-charcoal); line-height: 1; }
+  .event-card .date-block .month { font-size: var(--text-eyebrow); color: var(--color-stone); font-weight: 700; }
+
+  /* Hero patterns — reused from Phase A */
+  .hero-full { min-height: 40vh; background: var(--color-cream); position: relative; display: flex; align-items: flex-end; overflow: hidden; }
+  .hero-full .scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,17,15,0.35) 0%, transparent 50%); }
+  .hero-full .content { position: relative; z-index: 1; padding: var(--space-7) 0; }
+  .hero-full .city { font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.12em; color: rgba(250,250,247,0.8); margin-bottom: var(--space-3); }
+  .hero-full h1 { font-size: var(--text-h1); font-weight: 900; color: var(--color-ivory); margin-bottom: var(--space-3); }
+  .hero-full .lead { font-size: var(--text-lead); font-weight: 300; color: rgba(250,250,247,0.85); }
+
+  .hero-bleed { position: relative; margin-bottom: var(--space-8); }
+  .hero-bleed .cover { min-height: 40vh; background: var(--color-cream); display: flex; align-items: center; justify-content: center; color: var(--color-stone); }
+  .hero-bleed .overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--color-ivory) 0%, transparent 40%); }
+  .hero-bleed .text { position: absolute; bottom: var(--space-7); left: 0; right: 0; }
+
+  /* Product grid */
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  @media (max-width: 768px) { .product-grid { grid-template-columns: 1fr 1fr; } .event-card { grid-template-columns: 64px 1fr; } }
+  @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr; } }
+
+  .showroom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  @media (max-width: 768px) { .showroom-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <span>Phase B</span>
+  <button class="pg-btn active" onclick="show('b1')">B1 شوروم‌ها</button>
+  <button class="pg-btn" onclick="show('b2')">B2 مجموعه</button>
+  <button class="pg-btn" onclick="show('b3')">B3 دسته‌بندی</button>
+  <button class="pg-btn" onclick="show('b4')">B4 درباره</button>
+  <button class="pg-btn" onclick="show('b5')">B5 کارگاه</button>
+  <button class="pg-btn" onclick="show('b6')">B6 سؤالات</button>
+  <button class="pg-btn" onclick="show('b7')">B7 رویدادها</button>
+  <button class="pg-btn" onclick="show('b8')">B8 مراقبت</button>
+</nav>
+
+<!-- ═══ B1 — Showroom Index ═══ -->
+<div class="page visible" id="pg-b1">
+  <div class="page-label"><h2>B1 — فهرست شوروم‌ها</h2><p>از A5 (شوروم) ارث‌بری — کارت‌های شیشه‌ای با شهر، نام، آدرس</p></div>
+  <div class="container">
+    <div class="breadcrumb"><a href="#">خانه</a><span class="sep">‹</span><span>شوروم‌ها</span></div>
+    <div style="margin-bottom: var(--space-7);">
+      <h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-3);">شوروم‌ها</h1>
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); max-width: 520px;">از نزدیک ببینید، لمس کنید، و با تیم ما صحبت کنید. در هر شوروم تجربه‌ای متفاوت منتظر شماست.</p>
+    </div>
+    <div class="showroom-grid" style="padding-bottom: var(--space-9);">
+      <a href="#" class="glass-card"><div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">تهران</div><div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم ونک</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; line-height: 1.6;">خیابان ونک، خیابان شهید خدامی<br>پلاک ۴۲، طبقه‌ی همکف</div><div style="font-size: var(--text-eyebrow); color: var(--color-stone); border-top: 1px solid var(--color-sand); padding-top: var(--space-3); margin-top: var(--space-4);">شنبه تا پنجشنبه · ۱۰:۰۰ – ۲۰:۰۰</div></a>
+      <a href="#" class="glass-card"><div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">اصفهان</div><div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">شوروم چهارباغ</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; line-height: 1.6;">خیابان چهارباغ بالا<br>نبش کوچه‌ی گلزار، پلاک ۱۸</div><div style="font-size: var(--text-eyebrow); color: var(--color-stone); border-top: 1px solid var(--color-sand); padding-top: var(--space-3); margin-top: var(--space-4);">فقط با وقت قبلی</div></a>
+      <a href="#" class="glass-card"><div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.08em; color: var(--color-forest); margin-bottom: var(--space-3);">همدان</div><div style="font-size: var(--text-h4); font-weight: 700; margin-bottom: var(--space-3);">کارگاه و شوروم مرکزی</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; line-height: 1.6;">بلوار استاد شهریار<br>جنب پارک مردم، پلاک ۷</div><div style="font-size: var(--text-eyebrow); color: var(--color-stone); border-top: 1px solid var(--color-sand); padding-top: var(--space-3); margin-top: var(--space-4);">هر روز · ۰۸:۰۰ – ۱۷:۰۰</div></a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B2 — Collection Landing ═══ -->
+<div class="page" id="pg-b2">
+  <div class="page-label"><h2>B2 — صفحه‌ی مجموعه</h2><p>از A1 (محصولات) ارث‌بری — متن ادیتوریال بالا، سپس گرید محصولات</p></div>
+  <div class="hero-bleed">
+    <div class="cover" style="min-height: 35vh;">تصویر مجموعه</div>
+    <div class="overlay"></div>
+    <div class="text"><div class="container"><h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink);">مجموعه‌ی آرامش</h1></div></div>
+  </div>
+  <div class="container">
+    <div class="breadcrumb"><a href="#">خانه</a><span class="sep">‹</span><a href="#">مجموعه‌ها</a><span class="sep">‹</span><span>آرامش</span></div>
+    <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); max-width: 560px; margin-bottom: var(--space-8);">این مجموعه برای کسانی طراحی شده که خانه را پناهگاه آرامش می‌دانند. هر قطعه با چوب گردو و کتان طبیعی ساخته شده.</p>
+    <h2 style="font-size: var(--text-h3); font-weight: 700; margin-bottom: var(--space-6);">قطعه‌های این مجموعه</h2>
+    <div class="product-grid" style="padding-bottom: var(--space-9);">
+      <a href="#" class="card"><div class="card-img">تصویر</div><div style="font-weight: 700; margin-bottom: 4px;">تخت خواب دیبا</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">۶۸٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img">تصویر</div><div style="font-weight: 700; margin-bottom: 4px;">پاتختی نیکا</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">۸٬۵۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img">تصویر</div><div style="font-weight: 700; margin-bottom: 4px;">کمد لباس سارا</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300;">۳۵٬۰۰۰٬۰۰۰ تومان</div></a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B3 — Category Landing ═══ -->
+<div class="page" id="pg-b3">
+  <div class="page-label"><h2>B3 — صفحه‌ی دسته‌بندی</h2><p>از A1 (محصولات) ارث‌بری — عنوان + توضیح دسته‌بندی، سپس گرید + دکمه‌ی «همه»</p></div>
+  <div class="container">
+    <div class="breadcrumb"><a href="#">خانه</a><span class="sep">‹</span><span>تخت خواب</span></div>
+    <div style="margin-bottom: var(--space-7);">
+      <h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-3);">تخت خواب</h1>
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); max-width: 520px;">تخت‌های ژیک برای کسانی ساخته شده‌اند که خواب را جدی می‌گیرند. هر مدل با چوب طبیعی و بدون پیچ ساخته می‌شود.</p>
+    </div>
+    <div class="product-grid">
+      <a href="#" class="card"><div class="card-img">تصویر</div><div style="font-weight: 700; margin-bottom: 4px;">تخت خواب دیبا</div><div style="font-size: var(--text-small); color: var(--color-stone);">چوب گردو · کلاسیک</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; direction: ltr; text-align: right;">۶۸٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img">تصویر</div><div style="font-weight: 700; margin-bottom: 4px;">تخت خواب مهسا</div><div style="font-size: var(--text-small); color: var(--color-stone);">چوب گردو · مدرن</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; direction: ltr; text-align: right;">۵۵٬۰۰۰٬۰۰۰ تومان</div></a>
+      <a href="#" class="card"><div class="card-img">تصویر</div><div style="font-weight: 700; margin-bottom: 4px;">تخت خواب آرتا</div><div style="font-size: var(--text-small); color: var(--color-stone);">چوب بلوط · ساده</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; direction: ltr; text-align: right;">۴۲٬۰۰۰٬۰۰۰ تومان</div></a>
+    </div>
+    <div style="text-align: center; padding: var(--space-8) 0 var(--space-9);"><a href="#" class="btn btn-ghost">مشاهده‌ی همه‌ی تخت‌ها در فروشگاه</a></div>
+  </div>
+</div>
+
+<!-- ═══ B4 — About ═══ -->
+<div class="page" id="pg-b4">
+  <div class="page-label"><h2>B4 — درباره‌ی ما</h2><p>از A4 (مقاله) Option B ارث‌بری — هیروی تمام‌عرض + متن مرکزی تک‌ستونی</p></div>
+  <div class="hero-bleed">
+    <div class="cover" style="min-height: 45vh;">تصویر تیم ژیک در کارگاه</div>
+    <div class="overlay"></div>
+    <div class="text"><div class="container"><div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.1em; color: var(--color-forest); margin-bottom: var(--space-3);">درباره‌ی ژیک</div><h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink);">از همدان، برای ایران</h1></div></div>
+  </div>
+  <div class="container">
+    <div class="prose" style="margin: 0 auto; padding-bottom: var(--space-9);">
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-7);">ژیک در سال ۱۳۸۰ در کارگاهی کوچک در همدان متولد شد — شهری که سنت کار با چوب در آن ریشه در قرن‌ها دارد.</p>
+      <h2>داستان ما</h2>
+      <p>محمد تهرانی، بنیان‌گذار ژیک، از نوجوانی در کارگاه پدربزرگش با چوب کار می‌کرد. ایده‌ی ژیک از یک سؤال ساده شکل گرفت: چرا مبلمان ایرانی نمی‌تواند هم زیبا باشد و هم بماند؟</p>
+      <h2>فلسفه‌ی ما</h2>
+      <p>ما به عجله اعتقاد نداریم. هر قطعه‌ی مبلمان ژیک با دقت و بدون شتاب ساخته می‌شود. از انتخاب چوب در جنگل‌های شمال تا پرداخت نهایی با روغن طبیعی — هیچ مرحله‌ای عجولانه نیست.</p>
+      <h2>تیم ما</h2>
+      <p>ژیک امروز یک تیم ۱۵ نفره از نجاران، طراحان، و متخصصان مواد است. همه در همدان مستقر هستند و هر روز کنار هم کار می‌کنند.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B5 — Atelier ═══ -->
+<div class="page" id="pg-b5">
+  <div class="page-label"><h2>B5 — کارگاه</h2><p>از A4 (مقاله) Option B ارث‌بری — تصویرمحور، هیروی تمام‌عرض + داستان کارگاه</p></div>
+  <div class="hero-bleed">
+    <div class="cover" style="min-height: 50vh;">تصویر داخل کارگاه — ماشین‌آلات و چوب</div>
+    <div class="overlay"></div>
+    <div class="text"><div class="container"><div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.1em; color: var(--color-forest); margin-bottom: var(--space-3);">کارگاه ژیک</div><h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink);">جایی که چوب نفس می‌کشد</h1></div></div>
+  </div>
+  <div class="container">
+    <div class="prose" style="margin: 0 auto; padding-bottom: var(--space-7);">
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-7);">کارگاه ما در قلب همدان، فضایی ۸۰۰ متری است که در آن هنر سنتی نجاری با ابزار مدرن ترکیب شده.</p>
+      <h2>فرآیند ساخت</h2>
+      <p>هر قطعه‌ی مبلمان ژیک از ابتدا تا انتها در همین کارگاه ساخته می‌شود. از برش اولیه تا پرداخت نهایی — هیچ مرحله‌ای برون‌سپاری نمی‌شود.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-7);">
+      <div style="aspect-ratio: 4/3; background: var(--color-cream); display: flex; align-items: center; justify-content: center; color: var(--color-stone); font-size: var(--text-small); border-radius: var(--radius-md);">عکس کارگاه ۱</div>
+      <div style="aspect-ratio: 4/3; background: var(--color-cream); display: flex; align-items: center; justify-content: center; color: var(--color-stone); font-size: var(--text-small); border-radius: var(--radius-md);">عکس کارگاه ۲</div>
+    </div>
+    <div class="prose" style="margin: 0 auto; padding-bottom: var(--space-9);">
+      <h2>ابزار و تجهیزات</h2>
+      <p>ما از ترکیبی از ابزار دستی سنتی و ماشین‌آلات CNC مدرن استفاده می‌کنیم. اتصالات فاق و زبانه همچنان با دست زده می‌شوند.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B6 — FAQ ═══ -->
+<div class="page" id="pg-b6">
+  <div class="page-label"><h2>B6 — پرسش‌های متداول</h2><p>مستقل — آکاردئون با آیکون مثبت، فضای خوانایی max-w-prose</p></div>
+  <div class="container">
+    <div class="breadcrumb"><a href="#">خانه</a><span class="sep">‹</span><span>پرسش‌های متداول</span></div>
+    <div style="max-width: 680px; margin: 0 auto; padding: var(--space-7) 0 var(--space-9);">
+      <h1 style="font-size: var(--text-h2); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-7);">پرسش‌های متداول</h1>
+      <details class="accordion-item" open><summary>آیا امکان سفارش اندازه‌ی سفارشی وجود دارد؟<span style="color: var(--color-stone); font-weight: 300;">+</span></summary><div class="content">بله، بسیاری از محصولات ما قابلیت سفارشی‌سازی ابعاد را دارند. لطفاً از طریق فرم تماس اندازه‌ی مورد نظرتان را بنویسید تا تیم ما راهنمایی کند.</div></details>
+      <details class="accordion-item"><summary>زمان تحویل سفارش چقدر است؟<span style="color: var(--color-stone); font-weight: 300;">+</span></summary><div class="content">بسته به محصول، بین ۱۴ تا ۴۵ روز کاری. محصولات موجود سریع‌تر و سفارشی‌ها زمان بیش‌تری نیاز دارند.</div></details>
+      <details class="accordion-item"><summary>هزینه‌ی ارسال چقدر است؟<span style="color: var(--color-stone); font-weight: 300;">+</span></summary><div class="content">ارسال به سراسر ایران رایگان است. بسته‌بندی ویژه و بیمه‌ی حمل در قیمت لحاظ شده.</div></details>
+      <details class="accordion-item"><summary>گارانتی محصولات شامل چه مواردی می‌شود؟<span style="color: var(--color-stone); font-weight: 300;">+</span></summary><div class="content">تمام محصولات ژیک ۵ سال گارانتی سازه و ۲ سال گارانتی پوشش (رنگ و روغن) دارند. آسیب‌های ناشی از استفاده‌ی نادرست شامل نمی‌شود.</div></details>
+      <details class="accordion-item"><summary>آیا امکان بازدید از کارگاه وجود دارد؟<span style="color: var(--color-stone); font-weight: 300;">+</span></summary><div class="content">بله، با هماهنگی قبلی می‌توانید از کارگاه ما در همدان بازدید کنید. لطفاً از طریق فرم تماس درخواست بدهید.</div></details>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B7 — Events ═══ -->
+<div class="page" id="pg-b7">
+  <div class="page-label"><h2>B7 — رویدادها</h2><p>مستقل — کارت‌های رویداد با بلوک تاریخ جلالی، عنوان، توضیح، لینک شوروم</p></div>
+  <div class="container">
+    <div class="breadcrumb"><a href="#">خانه</a><span class="sep">‹</span><span>رویدادها</span></div>
+    <div style="max-width: 680px; margin: 0 auto; padding: var(--space-7) 0 var(--space-9);">
+      <h1 style="font-size: var(--text-h2); font-weight: 900; color: var(--color-ink); margin-bottom: var(--space-3);">رویدادها</h1>
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-7);">کارگاه‌ها، نمایشگاه‌ها، و فرصت‌های بازدید ویژه.</p>
+      <div class="event-card">
+        <div class="date-block"><div class="day">۲۵</div><div class="month">اردیبهشت</div></div>
+        <div><div style="font-weight: 700; margin-bottom: 4px;">کارگاه آشنایی با چوب گردو</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; margin-bottom: 8px;">یک روز کامل در کارگاه همدان با تیم فنی ژیک. از انتخاب چوب تا ساخت یک قطعه‌ی کوچک.</div><div style="font-size: var(--text-eyebrow); color: var(--color-forest);">شوروم همدان</div></div>
+      </div>
+      <div class="event-card">
+        <div class="date-block"><div class="day">۱۰</div><div class="month">خرداد</div></div>
+        <div><div style="font-weight: 700; margin-bottom: 4px;">نمایشگاه مبلمان تهران</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; margin-bottom: 8px;">حضور ژیک در بیست‌وپنجمین نمایشگاه بین‌المللی مبلمان و دکوراسیون تهران. غرفه‌ی شماره‌ی ۴۲.</div><div style="font-size: var(--text-eyebrow); color: var(--color-forest);">نمایشگاه بین‌المللی تهران</div></div>
+      </div>
+      <div class="event-card" style="border-bottom: none;">
+        <div class="date-block"><div class="day">۱</div><div class="month">تیر</div></div>
+        <div><div style="font-weight: 700; margin-bottom: 4px;">روز درهای باز — شوروم ونک</div><div style="font-size: var(--text-small); color: var(--color-stone); font-weight: 300; margin-bottom: 8px;">بازدید آزاد از شوروم ونک با مشاوره‌ی رایگان طراحی داخلی و پذیرایی ویژه.</div><div style="font-size: var(--text-eyebrow); color: var(--color-forest);">شوروم تهران</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B8 — Care ═══ -->
+<div class="page" id="pg-b8">
+  <div class="page-label"><h2>B8 — مراقبت و گارانتی</h2><p>از A4 (مقاله) Option B ارث‌بری — راهنمای ادیتوریال تک‌ستونی</p></div>
+  <div class="hero-bleed">
+    <div class="cover" style="min-height: 35vh;">تصویر نزدیک از بافت چوب گردو</div>
+    <div class="overlay"></div>
+    <div class="text"><div class="container"><div style="font-size: var(--text-eyebrow); font-weight: 700; letter-spacing: 0.1em; color: var(--color-forest); margin-bottom: var(--space-3);">راهنما</div><h1 style="font-size: var(--text-h1); font-weight: 900; color: var(--color-ink);">مراقبت و گارانتی</h1></div></div>
+  </div>
+  <div class="container">
+    <div class="prose" style="margin: 0 auto; padding-bottom: var(--space-9);">
+      <p style="font-size: var(--text-lead); font-weight: 300; color: var(--color-stone); margin-bottom: var(--space-7);">مبلمان چوبی با مراقبت درست، نسل‌ها دوام می‌آورد. این راهنما کمکتان می‌کند.</p>
+      <h2>تمیز کردن روزانه</h2>
+      <p>با پارچه‌ی نرم و خشک گرد و غبار را پاک کنید. از دستمال مرطوب فقط در صورت لزوم و با رطوبت حداقلی استفاده کنید. هرگز از مواد شیمیایی، الکل، یا اسپری‌های خانگی روی سطح چوب استفاده نکنید.</p>
+      <h2>محافظت از نور و حرارت</h2>
+      <p>از قرار دادن مبلمان در معرض مستقیم نور آفتاب اجتناب کنید. حرارت مستقیم (بخاری، شومینه) می‌تواند باعث ترک چوب شود. فاصله‌ی حداقل ۵۰ سانتی‌متری را رعایت کنید.</p>
+      <h2>روغن‌کاری دوره‌ای</h2>
+      <p>هر ۶ تا ۱۲ ماه سطح چوب را با روغن مخصوص مبلمان تجدید کنید. ما روغن طبیعی دانمارکی توصیه می‌کنیم. دستورالعمل دقیق همراه محصول ارسال می‌شود.</p>
+      <h2>شرایط گارانتی</h2>
+      <p>تمام محصولات ژیک ۵ سال گارانتی سازه و ۲ سال گارانتی پوشش دارند. برای استفاده از گارانتی با شماره‌ی دفتر مرکزی تماس بگیرید.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+  document.getElementById('pg-' + id).classList.add('visible');
+  document.querySelectorAll('.pg-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

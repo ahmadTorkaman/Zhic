@@ -128,6 +128,6 @@ For each approved page design, add to `docs/spec/design-system.md` §8 Templates
 | A4 Article Page | ✅ Option B — full-bleed hero, centered prose, no TOC — `.superpowers/a4-article.html` |
 | A5 Showroom Detail | ✅ Option B — glass card overlay on hero, 3 info cards — `.superpowers/a5-showroom.html` |
 | A6 Contact | ✅ Option B — dark hero + frosted glass form — `.superpowers/a6-contact.html` |
-| Phase B (8 template pages) | ⬜ Not started |
-| Phase C (utility pages) | ⬜ Not started |
-| Phase D (implementation) | ⬜ Not started |
+| Phase B (8 template pages) | ✅ All 8 approved — `.superpowers/b-template-pages.html` |
+| Phase C (legal template) | ✅ Approved — `.superpowers/c-legal-template.html` |
+| Phase D (implementation) | ⬜ Ready to start |
