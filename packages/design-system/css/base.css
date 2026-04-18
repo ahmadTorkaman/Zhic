@@ -264,6 +264,39 @@ dialog[data-state="closing"] .drawer-overlay {
   }
 }
 
+/* ── Block reveal (CSS-only, progressive enhancement) ────────────── */
+/* Content is visible by default. Animation runs on mount if CSS is
+   loaded. If CSS/JS fail to load, content is still readable. */
+
+.block-reveal {
+  animation: reveal-up var(--dur-slow) var(--ease-out-soft) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block-reveal {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ── Word reveal (simple fade-in, no per-char split) ─────────────── */
+/* Previous implementation split text into chars with translateY(110%)
+   and animated via GSAP. That left content invisible on initial paint
+   and indefinitely if JS failed. Replaced with a plain opacity fade
+   that respects prefers-reduced-motion. */
+
+.word-reveal {
+  animation: fade-in var(--dur-slow) var(--ease-out-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-reveal {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* ── Fade-in ─────────────────────────────────────────────────────── */
 
 @keyframes fade-in {

@@ -1,79 +1,19 @@
-'use client';
-
-import { useRef, type ReactNode } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
-
-gsap.registerPlugin(ScrollTrigger);
+import type { ReactNode } from 'react';
 
 export type ImageRevealProps = {
   children: ReactNode;
   className?: string;
 };
 
+/**
+ * Image reveal wrapper. Previously used GSAP + clipPath inset to
+ * animate the image in from below with a 1.08→1.0 scale. The clipped
+ * initial state hid the image until hydration; if the scroll trigger
+ * didn't fire, images stayed invisible. Replaced with a plain
+ * passthrough for now — the image renders normally and any reveal
+ * motion can be reintroduced via CSS once the motion system is
+ * redesigned to be progressive-enhancement.
+ */
 export function ImageReveal({ children, className }: ImageRevealProps) {
-  const outerRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (!outerRef.current) return;
-
-    const prefersReduced = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-
-    if (prefersReduced) {
-      gsap.fromTo(
-        outerRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.01 },
-      );
-      return;
-    }
-
-    const inner = outerRef.current.querySelector('[data-image-inner]');
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: outerRef.current,
-        start: 'top 80%',
-        once: true,
-      },
-    });
-
-    tl.fromTo(
-      outerRef.current,
-      { clipPath: 'inset(100% 0 0 0)' },
-      {
-        clipPath: 'inset(0% 0 0 0)',
-        duration: 0.72,
-        ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
-      },
-    );
-
-    if (inner) {
-      tl.fromTo(
-        inner,
-        { scale: 1.08 },
-        {
-          scale: 1,
-          duration: 0.72,
-          ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        },
-        0,
-      );
-    }
-  }, { scope: outerRef });
-
-  return (
-    <div
-      ref={outerRef}
-      className={className}
-      style={{ clipPath: 'inset(100% 0 0 0)', overflow: 'hidden' }}
-    >
-      <div data-image-inner style={{ transform: 'scale(1.08)' }}>
-        {children}
-      </div>
-    </div>
-  );
+  return <div className={className}>{children}</div>;
 }

@@ -1,57 +1,27 @@
-'use client';
-
-import { useRef, type ReactNode } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
-
-gsap.registerPlugin(ScrollTrigger);
+import type { CSSProperties, ReactNode } from 'react';
 
 export type BlockRevealProps = {
   children: ReactNode;
+  /** Animation delay in seconds. Converted to ms for the CSS variable. */
   delay?: number;
   className?: string;
 };
 
+/**
+ * Content reveal wrapper. Content renders visible by default and
+ * animates in via a pure CSS keyframe (`reveal-up` in base.css). If
+ * CSS or JS fail to load, content stays readable — the previous
+ * GSAP-based implementation left content permanently hidden when
+ * hydration or the scroll trigger failed.
+ *
+ * Respects `prefers-reduced-motion` via the CSS rule.
+ */
 export function BlockReveal({ children, delay = 0, className }: BlockRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (!ref.current) return;
-
-    const prefersReduced = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-
-    if (prefersReduced) {
-      gsap.fromTo(
-        ref.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.01 },
-      );
-      return;
-    }
-
-    gsap.fromTo(
-      ref.current,
-      { opacity: 0, y: 24 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        delay,
-        ease: 'cubic-bezier(0.22, 1, 0.36, 1)',
-        scrollTrigger: {
-          trigger: ref.current,
-          start: 'top 80%',
-          once: true,
-        },
-      },
-    );
-  }, { scope: ref });
-
+  const classes = className ? `block-reveal ${className}` : 'block-reveal';
+  const style: CSSProperties | undefined =
+    delay > 0 ? { ['--reveal-delay' as string]: `${Math.round(delay * 1000)}ms` } : undefined;
   return (
-    <div ref={ref} className={className} style={{ opacity: 0 }}>
+    <div className={classes} style={style}>
       {children}
     </div>
   );
