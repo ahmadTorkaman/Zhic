@@ -1,10 +1,9 @@
+import { Container, Section, SkipLink } from '@zhic/ui';
+
 /**
  * /lab — component gallery. Every component built in v2 lands here
  * with its prop variants, so they can be eyeball-verified against
  * the mockups at http://80.240.31.146:9090/.superpowers/.
- *
- * Components are added section by section as they ship. Each section
- * is a labelled <section> with a heading and the component instances.
  */
 export default function LabPage() {
   return (
@@ -24,9 +23,35 @@ export default function LabPage() {
           {' '}<a href="http://80.240.31.146:9090/.superpowers/" className="underline underline-offset-4 hover:decoration-2" target="_blank" rel="noreferrer">superpowers</a>.
         </p>
         <div className="space-y-16">
-          <section id="empty">
-            <h2 className="mb-4 text-h2 font-black text-ink">Empty</h2>
-            <p className="text-small text-stone">No components yet — Phase 1 ships the foundations only. Atoms arrive in Phase 2.</p>
+          <section id="layout-primitives">
+            <h2 className="mb-4 text-h2 font-black text-ink">Layout primitives</h2>
+            <p className="mb-6 text-small text-stone">Container, Section, SkipLink</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Section variants — backgrounds</h3>
+            <div className="space-y-2 mb-8">
+              <Section bg="ivory" padY="sm"><p>bg=ivory padY=sm</p></Section>
+              <Section bg="cream" padY="sm"><p>bg=cream padY=sm</p></Section>
+              <Section bg="sand" padY="sm"><p>bg=sand padY=sm</p></Section>
+              <Section bg="charcoal" padY="sm"><p>bg=charcoal padY=sm</p></Section>
+              <Section bg="ink" padY="sm"><p>bg=ink padY=sm</p></Section>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Section padY scale</h3>
+            <div className="space-y-2 mb-8">
+              <Section bg="cream" padY="sm"><p>padY=sm (py-7 = 3rem)</p></Section>
+              <Section bg="cream" padY="md"><p>padY=md (py-8 = 4rem)</p></Section>
+              <Section bg="cream" padY="lg"><p>padY=lg (py-9 = 6rem)</p></Section>
+              <Section bg="cream" padY="xl"><p>padY=xl (py-10 = 8rem)</p></Section>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Container</h3>
+            <Container className="border border-dashed border-sand p-4 mb-8">
+              <p>Container max-w-[1440px] with px-4 lg:px-6</p>
+            </Container>
+
+            <h3 className="mb-3 text-h4 font-bold">SkipLink</h3>
+            <p className="text-small text-stone mb-2">Press Tab to focus the SkipLink (rendered just below — invisible until focused).</p>
+            <SkipLink />
           </section>
         </div>
       </div>
