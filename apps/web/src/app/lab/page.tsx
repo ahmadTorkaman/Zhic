@@ -1,4 +1,4 @@
-import { Badge, Breadcrumbs, Button, Container, FormField, Input, Pagination, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
+import { Aspect, Badge, Breadcrumbs, Button, Container, DateDisplay, FormField, Input, MoneyDisplay, Pagination, PhoneLink, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -187,6 +187,40 @@ export default function LabPage() {
 
             <h3 className="mb-3 mt-8 text-h4 font-bold">Page 5 of 12 (gaps)</h3>
             <Pagination currentPage={5} totalPages={12} hrefFor={(p) => `?page=${p}`} />
+          </section>
+
+          <section id="utility-primitives">
+            <h2 className="mb-4 text-h2 font-black text-ink">Utility primitives</h2>
+
+            <h3 className="mb-3 text-h4 font-bold">Aspect</h3>
+            <div className="mb-8 grid grid-cols-3 gap-4">
+              {(['1/1','3/2','4/5','3/4','16/9','21/9'] as const).map((r) => (
+                <div key={r}>
+                  <Aspect ratio={r} className="bg-cream">
+                    <div className="flex h-full w-full items-center justify-center text-small text-stone">{r}</div>
+                  </Aspect>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">PhoneLink</h3>
+            <div className="mb-8 space-y-2">
+              <div>Mobile: <PhoneLink raw="09123456789" /></div>
+              <div>Landline: <PhoneLink raw="02188671234" /></div>
+              <div>Inline (no link): <PhoneLink raw="09123456789" inline /></div>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">MoneyDisplay</h3>
+            <div className="mb-8 space-y-2">
+              <div>۴۵ میلیون: <MoneyDisplay rials={450_000_000} /></div>
+              <div>بدون پسوند: <MoneyDisplay rials={12_500_000} withSuffix={false} /></div>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">DateDisplay</h3>
+            <div className="mb-8 space-y-2">
+              <div>Today: <DateDisplay value={new Date()} /></div>
+              <div>With weekday: <DateDisplay value={new Date()} withWeekday /></div>
+            </div>
           </section>
         </div>
       </div>
