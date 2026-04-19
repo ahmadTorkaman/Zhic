@@ -19,3 +19,7 @@ export { Select } from './Select';
 export type { SelectProps } from './Select';
 export { FormField } from './FormField';
 export type { FormFieldProps } from './FormField';
+export { Breadcrumbs } from './Breadcrumbs';
+export type { BreadcrumbsProps, BreadcrumbItem } from './Breadcrumbs';
+export { Pagination } from './Pagination';
+export type { PaginationProps } from './Pagination';

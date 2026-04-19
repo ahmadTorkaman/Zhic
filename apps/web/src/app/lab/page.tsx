@@ -1,4 +1,4 @@
-import { Badge, Button, Container, FormField, Input, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
+import { Badge, Breadcrumbs, Button, Container, FormField, Input, Pagination, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -168,6 +168,25 @@ export default function LabPage() {
                 </FormField>
               </div>
             </div>
+          </section>
+
+          <section id="breadcrumbs">
+            <h2 className="mb-4 text-h2 font-black text-ink">Breadcrumbs</h2>
+            <Breadcrumbs items={[
+              { label: 'خانه', href: '/' },
+              { label: 'محصولات', href: '/products' },
+              { label: 'میز ناهارخوری آرتا' },
+            ]} />
+          </section>
+
+          <section id="pagination">
+            <h2 className="mb-4 text-h2 font-black text-ink">Pagination</h2>
+
+            <h3 className="mb-3 text-h4 font-bold">Page 1 of 3</h3>
+            <Pagination currentPage={1} totalPages={3} hrefFor={(p) => `?page=${p}`} />
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">Page 5 of 12 (gaps)</h3>
+            <Pagination currentPage={5} totalPages={12} hrefFor={(p) => `?page=${p}`} />
           </section>
         </div>
       </div>
