@@ -1,0 +1,75 @@
+/**
+ * Tailwind v4 @theme binding. Maps tokens.css CSS variables into
+ * Tailwind utility namespaces. Must be loaded AFTER tokens.css and
+ * AFTER `@import "tailwindcss"` in globals.css.
+ */
+
+@theme inline {
+  /* Color */
+  --color-ivory:    var(--color-ivory);
+  --color-cream:    var(--color-cream);
+  --color-sand:     var(--color-sand);
+  --color-stone:    var(--color-stone);
+  --color-charcoal: var(--color-charcoal);
+  --color-ink:      var(--color-ink);
+  --color-forest:   var(--color-forest);
+  --color-gold:     var(--color-gold);
+  --color-rust:     var(--color-rust);
+  --color-overlay:  var(--color-overlay);
+
+  /* Font */
+  --font-sans: var(--font-sans);
+
+  /* Type sizes (with paired line-heights) */
+  --text-h1: var(--text-h1);
+  --text-h1--line-height: var(--leading-h1);
+  --text-h2: var(--text-h2);
+  --text-h2--line-height: var(--leading-h2);
+  --text-h3: var(--text-h3);
+  --text-h3--line-height: var(--leading-h3);
+  --text-h4: var(--text-h4);
+  --text-h4--line-height: var(--leading-h4);
+  --text-lead: var(--text-lead);
+  --text-lead--line-height: var(--leading-lead);
+  --text-body: var(--text-body);
+  --text-body--line-height: var(--leading-body);
+  --text-small: var(--text-small);
+  --text-small--line-height: var(--leading-small);
+  --text-eyebrow: var(--text-eyebrow);
+  --text-eyebrow--line-height: var(--leading-eyebrow);
+
+  /* Spacing scale (gap-N, p-N, m-N, etc.) */
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-9: var(--space-9);
+  --spacing-10: var(--space-10);
+  --spacing-11: var(--space-11);
+  --spacing-12: var(--space-12);
+
+  /* Radii */
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  /* Shadows */
+  --shadow-subtle:   var(--shadow-subtle);
+  --shadow-card:     var(--shadow-card);
+  --shadow-elevated: var(--shadow-elevated);
+  --shadow-modal:    var(--shadow-modal);
+
+  /* Breakpoints */
+  --breakpoint-sm:  640px;
+  --breakpoint-md:  768px;
+  --breakpoint-lg:  1024px;
+  --breakpoint-xl:  1440px;
+  --breakpoint-2xl: 1920px;
+
+  /* Container width */
+  --width-container-storefront: var(--container-storefront);
+}
