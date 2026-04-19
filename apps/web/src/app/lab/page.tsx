@@ -1,4 +1,4 @@
-import { Button, Container, Section, SkipLink } from '@zhic/ui';
+import { Badge, Button, Container, Pill, Section, SkipLink } from '@zhic/ui';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -82,6 +82,41 @@ export default function LabPage() {
             <div className="flex gap-3">
               <Button as="a" href="#" variant="primary">link as button</Button>
               <Button as="a" href="#" variant="ghost">ghost link</Button>
+            </div>
+          </section>
+
+          <section id="pill">
+            <h2 className="mb-4 text-h2 font-black text-ink">Pill</h2>
+            <p className="mb-6 text-small text-stone">Filter pills (product index) and category nav (journal). Active state uses bg-charcoal text-ivory + aria-current.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Filter pill row (mockup A1 Option C)</h3>
+            <div className="mb-8 flex flex-wrap items-center gap-2">
+              <Pill active>همه</Pill>
+              <Pill>تخت خواب</Pill>
+              <Pill>میز</Pill>
+              <Pill>صندلی</Pill>
+              <Pill>کمد</Pill>
+              <span aria-hidden className="mx-2 h-6 w-px bg-sand" />
+              <Pill>چوب گردو</Pill>
+              <Pill>چوب بلوط</Pill>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">As anchor (category nav)</h3>
+            <div className="flex flex-wrap gap-2">
+              <Pill as="a" href="#" active>همه</Pill>
+              <Pill as="a" href="#">مواد و متریال</Pill>
+              <Pill as="a" href="#">طراحی</Pill>
+              <Pill as="a" href="#">مراقبت</Pill>
+            </div>
+          </section>
+
+          <section id="badge">
+            <h2 className="mb-4 text-h2 font-black text-ink">Badge</h2>
+            <p className="mb-6 text-small text-stone">Status (glass on image) and meta (cream chip) variants.</p>
+
+            <div className="flex gap-3">
+              <Badge variant="status">جدید</Badge>
+              <Badge variant="meta">موجود</Badge>
             </div>
           </section>
         </div>
