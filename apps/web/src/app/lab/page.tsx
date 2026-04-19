@@ -1,4 +1,4 @@
-import { Badge, Button, Container, Pill, Section, SkipLink } from '@zhic/ui';
+import { Badge, Button, Container, FormField, Input, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -117,6 +117,56 @@ export default function LabPage() {
             <div className="flex gap-3">
               <Badge variant="status">جدید</Badge>
               <Badge variant="meta">موجود</Badge>
+            </div>
+          </section>
+
+          <section id="form-atoms">
+            <h2 className="mb-4 text-h2 font-black text-ink">Form atoms</h2>
+            <p className="mb-6 text-small text-stone">Input, Textarea, Select, FormField. Each input has tone='light' (default) and tone='dark'.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Light tone (on ivory)</h3>
+            <div className="mb-8 max-w-md space-y-3">
+              <FormField id="lab-name" label="نام و نام خانوادگی" required>
+                <Input id="lab-name" placeholder="مثال: علی محمدی" />
+              </FormField>
+              <FormField id="lab-phone" label="شماره تلفن" help="مثال: ۰۹۱۲۳۴۵۶۷۸۹">
+                <Input id="lab-phone" type="tel" dir="ltr" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" />
+              </FormField>
+              <FormField id="lab-city" label="شهر">
+                <Select id="lab-city" defaultValue="">
+                  <option value="" disabled>انتخاب کنید</option>
+                  <option>تهران</option>
+                  <option>اصفهان</option>
+                  <option>همدان</option>
+                </Select>
+              </FormField>
+              <FormField id="lab-msg" label="پیام">
+                <Textarea id="lab-msg" rows={3} placeholder="درباره‌ی چه محصولی سؤال دارید؟" />
+              </FormField>
+              <FormField id="lab-err" label="با خطا" error="لطفاً نام خود را وارد کنید.">
+                <Input id="lab-err" aria-invalid aria-describedby="lab-err-error" />
+              </FormField>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Dark tone (on ink)</h3>
+            <div className="mb-8 -mx-12 bg-ink p-12">
+              <div className="max-w-md space-y-3">
+                <FormField id="lab-d-name" label="نام و نام خانوادگی" tone="dark">
+                  <Input id="lab-d-name" tone="dark" placeholder="مثال: علی محمدی" />
+                </FormField>
+                <FormField id="lab-d-phone" label="شماره تلفن" tone="dark">
+                  <Input id="lab-d-phone" tone="dark" type="tel" dir="ltr" placeholder="۰۹۱۲ ۳۴۵ ۶۷۸۹" />
+                </FormField>
+                <FormField id="lab-d-city" label="شهر" tone="dark">
+                  <Select id="lab-d-city" tone="dark" defaultValue="">
+                    <option value="" disabled>انتخاب کنید</option>
+                    <option>تهران</option>
+                  </Select>
+                </FormField>
+                <FormField id="lab-d-msg" label="پیام" tone="dark">
+                  <Textarea id="lab-d-msg" tone="dark" rows={3} />
+                </FormField>
+              </div>
             </div>
           </section>
         </div>
