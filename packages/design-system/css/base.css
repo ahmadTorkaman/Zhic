@@ -1,1 +1,125 @@
-/* base.css — populated in Task 1.2 */
+/**
+ * base.css — reset, Persian rules, surfaces, animations.
+ * Loaded after tokens.css + theme.css + tailwindcss in globals.css.
+ */
+
+/* ── Reset ────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { background-color: var(--color-ivory); }
+body {
+  background-color: var(--color-ivory);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Persian-specific (Persian doesn't hyphenate, no italic, no case) ── */
+:lang(fa) { hyphens: none; word-spacing: 0.02em; }
+:lang(fa) em, :lang(fa) i { font-style: normal; }
+
+/* ── Focus ring ───────────────────────────────────────────────────── */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+.focus-ring-invert:focus-visible {
+  outline-color: rgba(250, 250, 247, 0.4);
+}
+
+/* ── Glass surfaces ───────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-subtle);
+  transition: all var(--dur-hover) var(--ease-out-soft);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glass-card:hover {
+    background: rgba(250, 250, 247, 0.8);
+    box-shadow: var(--shadow-card);
+    transform: translateY(var(--hover-lift));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card:hover {
+    background: rgba(250, 250, 247, 0.8);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+.glass-card-dark {
+  background: var(--glass-bg-dark);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border-dark);
+  transition: border-color var(--dur-hover) var(--ease-out-soft);
+}
+
+.glass-card-dark:hover {
+  border-color: rgba(250, 250, 247, 0.12);
+}
+
+/* ── Fade-in animation (used by the homepage 'ژ' watermark) ──────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fade-in var(--dur-appear) var(--ease-out-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; opacity: 1; }
+}
+
+/* ── Dialog (modal/drawer) animations ─────────────────────────────── */
+@keyframes dialog-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dialog-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes dialog-content-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dialog-content-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(12px); }
+}
+
+dialog[data-state="open"]::backdrop {
+  animation: dialog-backdrop-in var(--dur-dialog) var(--ease-out-soft) both;
+}
+dialog[data-state="closing"]::backdrop {
+  animation: dialog-backdrop-out 400ms var(--ease-in-soft) both;
+}
+dialog[data-state="open"] .dialog-content {
+  animation: dialog-content-in var(--dur-dialog) var(--ease-out-soft) both;
+  animation-delay: 60ms;
+}
+dialog[data-state="closing"] .dialog-content {
+  animation: dialog-content-out 400ms var(--ease-in-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[data-state="open"]::backdrop,
+  dialog[data-state="closing"]::backdrop,
+  dialog[data-state="open"] .dialog-content,
+  dialog[data-state="closing"] .dialog-content {
+    animation: none;
+  }
+}
