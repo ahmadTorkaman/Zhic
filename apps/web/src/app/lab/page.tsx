@@ -1,4 +1,4 @@
-import { Container, Section, SkipLink } from '@zhic/ui';
+import { Button, Container, Section, SkipLink } from '@zhic/ui';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -52,6 +52,37 @@ export default function LabPage() {
             <h3 className="mb-3 text-h4 font-bold">SkipLink</h3>
             <p className="text-small text-stone mb-2">Press Tab to focus the SkipLink (rendered just below — invisible until focused).</p>
             <SkipLink />
+          </section>
+
+          <section id="button">
+            <h2 className="mb-4 text-h2 font-black text-ink">Button</h2>
+            <p className="mb-6 text-small text-stone">5 variants × 3 sizes (link variant ignores size).</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Variants — md size</h3>
+            <div className="mb-8 flex flex-wrap gap-3">
+              <Button variant="primary">primary</Button>
+              <Button variant="accent">accent</Button>
+              <Button variant="ghost">ghost</Button>
+              <Button variant="link">link</Button>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">on-dark variant</h3>
+            <div className="mb-8 bg-ink p-7 -mx-12">
+              <Button variant="on-dark">on-dark</Button>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Sizes</h3>
+            <div className="mb-8 flex flex-wrap items-center gap-3">
+              <Button variant="primary" size="sm">primary sm</Button>
+              <Button variant="primary" size="md">primary md</Button>
+              <Button variant="primary" size="lg">primary lg</Button>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">As anchor</h3>
+            <div className="flex gap-3">
+              <Button as="a" href="#" variant="primary">link as button</Button>
+              <Button as="a" href="#" variant="ghost">ghost link</Button>
+            </div>
           </section>
         </div>
       </div>

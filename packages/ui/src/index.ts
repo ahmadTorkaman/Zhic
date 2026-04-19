@@ -5,3 +5,5 @@ export { Section } from './Section';
 export type { SectionProps } from './Section';
 export { SkipLink } from './SkipLink';
 export type { SkipLinkProps } from './SkipLink';
+export { Button } from './Button';
+export type { ButtonProps } from './Button';
