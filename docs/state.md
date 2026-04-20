@@ -18,10 +18,10 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-04-18 |
+| Last updated | 2026-04-20 |
 | Current phase | Package 1, Month 1 |
-| Current session | 6.3 shipped (Phase 6 complete); next: 7.1 (infra — manual VPS/CI work) |
-| Active branch | `claude/plan-session-2-1-bUd75` |
+| Current session | 7.5 shipped (ancillary page frames); next: 7.1 (infra — manual VPS/CI work) |
+| Active branch | `claude/redesign-v2` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
 ---
@@ -104,6 +104,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | Session | Status | Commit | Notes |
 | --- | --- | --- | --- |
 | 7.1 VPS + CI/CD | ⬜ | — | Can start after Phase 1 (manual SSH work) |
+| 7.5 FAQ / Events / Editorial / Legal page components | ✅ | `0f8e43f` | Four server components: `FaqAccordion` (native `<details>` list, `+`→`×` on open, `group-open:rotate-45`), `EventCard` (Jalali date block via `@zhic/locale` PERSIAN_MONTHS + Intl, 80px date column grid), `EditorialPage` (EditorialHero + `max-w-[680px]` centered prose, optional lead paragraph), `LegalPage` (Breadcrumbs + header with آخرین به‌روزرسانی + arbitrary-selector legal body typography). Lab `id=ancillary-components` section added after showroom-components with 4 FAQ items, 2 EventCards (ISO 2026-05-15 → اردیبهشت, 2026-06-01 → خرداد), EditorialPage, and LegalPage. Typecheck: 0 errors. Build: clean. /lab 200. 14/15 markers present (missing only empty-state "پرسشی پیدا نشد" — correct, lab has non-empty FAQ). |
 
 ---
 
