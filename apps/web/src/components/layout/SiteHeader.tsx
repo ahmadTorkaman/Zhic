@@ -20,7 +20,7 @@ export function SiteHeader() {
   }, []);
 
   const chromeClass = scrolled
-    ? 'bg-ivory/85 backdrop-blur border-b border-sand shadow-subtle'
+    ? 'bg-ivory/85 backdrop-blur-[var(--glass-blur)] border-b border-sand shadow-subtle'
     : 'bg-transparent border-b border-transparent';
 
   return (
