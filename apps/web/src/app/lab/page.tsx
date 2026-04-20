@@ -5,6 +5,7 @@ import { HorizontalTile } from '@/components/tile/HorizontalTile';
 import { PayloadImage } from '@/components/PayloadImage';
 import { HeroOverlayText } from '@/components/hero/HeroOverlayText';
 import { StickyBreadcrumb } from '@/components/layout/StickyBreadcrumb';
+import { SiteFooter } from '@/components/layout/SiteFooter';
 import { PageHeader } from '@/components/hero/PageHeader';
 import { HomeHero } from '@/components/hero/HomeHero';
 import { CinematicHero } from '@/components/hero/CinematicHero';
@@ -488,6 +489,15 @@ export default function LabPage() {
             <h2 className="mb-4 text-h2 font-black text-ink">Site chrome</h2>
             <p className="mb-6 text-small text-stone">SiteHeader + MobileMenu. Because SiteHeader is fixed-positioned, it can&apos;t be demoed inside this lab page (which already has its own sticky header). See the dedicated demo route:</p>
             <p className="text-small"><a href="/lab/site-header" className="underline underline-offset-4 hover:decoration-2">→ /lab/site-header (scroll to trigger blur)</a></p>
+          </section>
+
+          <section id="site-footer">
+            <h2 className="mb-4 text-h2 font-black text-ink">SiteFooter</h2>
+            <p className="mb-6 text-small text-stone">4-col link grid on charcoal, collapses to 2-col then 1-col responsive. Bottom row with copyright + privacy/terms. Mockup: <a href="http://80.240.31.146:9090/.superpowers/homepage-c-full.html" className="underline" target="_blank" rel="noreferrer">homepage-c-full.html</a> footer.</p>
+
+            <div className="-mx-12 border-t border-dashed border-sand">
+              <SiteFooter />
+            </div>
           </section>
 
           <section id="dark-split-hero">
