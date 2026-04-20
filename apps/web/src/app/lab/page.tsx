@@ -28,7 +28,11 @@ import { ProductGrid } from '@/components/product/ProductGrid';
 import { ProductSidebar } from '@/components/product/ProductSidebar';
 import { ProductThumbnails } from '@/components/product/ProductThumbnails';
 import { SpecsAccordion } from '@/components/product/SpecsAccordion';
-import type { PayloadProduct } from '@/lib/payload';
+import type { PayloadProduct, PayloadArticle, PayloadAuthor, LexicalRoot } from '@/lib/payload';
+import { JournalFeaturedArticle } from '@/components/journal/JournalFeaturedArticle';
+import { JournalGrid } from '@/components/journal/JournalGrid';
+import { AuthorCard } from '@/components/journal/AuthorCard';
+import { ArticleProse } from '@/components/journal/ArticleProse';
 
 const FAKE_PRODUCTS: PayloadProduct[] = [
   {
@@ -85,6 +89,57 @@ const FAKE_MATERIALS = [
   { name: 'چوب گردو', slug: 'walnut' },
   { name: 'چوب بلوط', slug: 'oak' },
 ];
+
+const FAKE_CAT_MATERIAL = { id: 'c1', name: 'مواد و متریال', slug: 'materials' };
+const FAKE_CAT_DESIGN   = { id: 'c2', name: 'طراحی',         slug: 'design'    };
+const FAKE_CAT_CARE     = { id: 'c3', name: 'مراقبت',        slug: 'care'      };
+const FAKE_CAT_LIFE     = { id: 'c4', name: 'سبک زندگی',     slug: 'lifestyle' };
+
+const FAKE_ARTICLE: PayloadArticle = {
+  id: 'a1',
+  title: 'چرا گردوی ایرانی؟ سفر یک تخته از جنگل تا کارگاه',
+  slug: 'why-iranian-walnut',
+  excerpt: 'جنگل‌های هیرکانی شمال ایران میزبان یکی از باارزش‌ترین گونه‌های گردو در جهان هستند. ما این چوب را با احترام به طبیعت تهیه می‌کنیم.',
+  cover: null,
+  category: FAKE_CAT_MATERIAL,
+  readingTimeMinutes: 7,
+  publishedAt: '2026-04-15T00:00:00.000Z',
+} as PayloadArticle;
+
+const FAKE_ARTICLES: PayloadArticle[] = [
+  { id: 'a2', title: 'مینیمالیسم ایرانی: کم‌تر، اما باشکوه‌تر',             slug: 'iranian-minimalism',   cover: null, category: FAKE_CAT_DESIGN,   readingTimeMinutes: 5, publishedAt: null } as PayloadArticle,
+  { id: 'a3', title: 'راهنمای نگهداری از مبلمان چوبی در فصل گرما',         slug: 'wood-care-summer',     cover: null, category: FAKE_CAT_CARE,     readingTimeMinutes: 4, publishedAt: null } as PayloadArticle,
+  { id: 'a4', title: 'هنر آهسته زیستن: خانه‌ای که نفس می‌کشد',             slug: 'slow-living',          cover: null, category: FAKE_CAT_LIFE,     readingTimeMinutes: 6, publishedAt: null } as PayloadArticle,
+  { id: 'a5', title: 'کتان بلژیکی: از مزرعه تا مبل شما',                   slug: 'belgian-linen',        cover: null, category: FAKE_CAT_MATERIAL, readingTimeMinutes: 8, publishedAt: null } as PayloadArticle,
+  { id: 'a6', title: 'تقارن در بی‌قاعدگی: اصول طراحی ژیک',                 slug: 'zhic-design-principles',cover: null, category: FAKE_CAT_DESIGN,  readingTimeMinutes: 5, publishedAt: null } as PayloadArticle,
+  { id: 'a7', title: 'بلوط اروپایی در مقابل گردوی ایرانی',                  slug: 'oak-vs-walnut',        cover: null, category: FAKE_CAT_MATERIAL, readingTimeMinutes: 6, publishedAt: null } as PayloadArticle,
+];
+
+const FAKE_AUTHOR: PayloadAuthor = {
+  id: 'au1',
+  name: 'احمد تهرانی',
+  slug: 'ahmad-tehrani',
+  role: 'بنیان‌گذار و طراح ارشد',
+  bio: {
+    root: {
+      type: 'root',
+      children: [
+        { type: 'paragraph', children: [{ type: 'text', text: 'از سال ۱۳۸۰ در صنایع چوب فعالیت دارد. ژیک را با هدف ساخت مبلمان ماندگار با روح ایرانی تأسیس کرد.' }] },
+      ],
+    },
+  } as LexicalRoot,
+  avatar: null,
+};
+
+const FAKE_BODY: LexicalRoot = {
+  root: {
+    type: 'root',
+    children: [
+      { type: 'paragraph', children: [{ type: 'text', text: 'متن نمونه مقاله. این بخش برای نمایش تایپوگرافی متن مقاله در ArticleProse استفاده می‌شود.' }] },
+      { type: 'paragraph', children: [{ type: 'text', text: 'پاراگراف دوم با متن بلندتر برای نشان دادن فاصله‌گذاری و line-height.' }] },
+    ],
+  },
+} as LexicalRoot;
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -707,6 +762,42 @@ export default function LabPage() {
                 ]}
                 initialOpenIndex={0}
               />
+            </div>
+          </section>
+
+          <section id="journal-components">
+            <h2 className="mb-4 text-h2 font-black text-ink">Journal components</h2>
+            <p className="mb-6 text-small text-stone">
+              Four journal/article components. Mockups:{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/a3-journal-index.html" className="underline" target="_blank" rel="noreferrer">a3-journal-index.html</a>
+              {' '}and{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/a4-article.html" className="underline" target="_blank" rel="noreferrer">a4-article.html</a>
+              {' '}(Option B in both).
+            </p>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">JournalFeaturedArticle</h3>
+            <div className="mb-12 border border-dashed border-sand p-4">
+              <JournalFeaturedArticle article={FAKE_ARTICLE} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">JournalGrid (6 articles)</h3>
+            <div className="mb-12">
+              <JournalGrid articles={FAKE_ARTICLES} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">JournalGrid — empty state</h3>
+            <div className="mb-12 border border-dashed border-sand">
+              <JournalGrid articles={[]} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">AuthorCard</h3>
+            <div className="mb-12 max-w-xl">
+              <AuthorCard author={FAKE_AUTHOR} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ArticleProse</h3>
+            <div className="mb-12 border border-dashed border-sand p-6">
+              <ArticleProse value={FAKE_BODY} />
             </div>
           </section>
 
