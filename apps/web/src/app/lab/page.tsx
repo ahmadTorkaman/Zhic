@@ -6,6 +6,7 @@ import { PayloadImage } from '@/components/PayloadImage';
 import { HeroOverlayText } from '@/components/hero/HeroOverlayText';
 import { StickyBreadcrumb } from '@/components/layout/StickyBreadcrumb';
 import { PageHeader } from '@/components/hero/PageHeader';
+import { HomeHero } from '@/components/hero/HomeHero';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -358,6 +359,25 @@ export default function LabPage() {
                 <div className="mb-3 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">مواد و متریال</div>
                 <h1 className="text-h1 font-black text-ink">چرا گردوی ایرانی؟</h1>
               </HeroOverlayText>
+            </div>
+          </section>
+
+          <section id="home-hero">
+            <h2 className="mb-4 text-h2 font-black text-ink">HomeHero</h2>
+            <p className="mb-6 text-small text-stone">Split-screen hero used on /. Mockup: <a href="http://80.240.31.146:9090/.superpowers/homepage-c-full.html" className="underline" target="_blank" rel="noreferrer">homepage-c-full.html</a> HERO section.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Default (no image — shows gradient + ژ watermark)</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <HomeHero />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">With image override</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <HomeHero image={
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone to-charcoal">
+                  <span className="text-ivory/80">(imagine: hero product photo)</span>
+                </div>
+              } />
             </div>
           </section>
         </div>
