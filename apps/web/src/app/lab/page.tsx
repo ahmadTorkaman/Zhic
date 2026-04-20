@@ -1,5 +1,7 @@
 import { Aspect, Badge, Breadcrumbs, Button, Container, DateDisplay, FormField, Input, MoneyDisplay, Pagination, PhoneLink, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
 import { GlassCard } from '@/components/shared/GlassCard';
+import { Tile } from '@/components/tile/Tile';
+import { PayloadImage } from '@/components/PayloadImage';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -253,6 +255,61 @@ export default function LabPage() {
                 <h4 className="text-h4 font-bold text-ivory mb-3">Dark glass card</h4>
                 <p className="text-small text-sand">Used for the contact form card and homepage CTA form. Hover only brightens border, no lift.</p>
               </GlassCard>
+            </div>
+          </section>
+
+          <section id="tile">
+            <h2 className="mb-4 text-h2 font-black text-ink">Tile</h2>
+            <p className="mb-6 text-small text-stone">Vertical image+body tile. Covers all 8 vertical tile variants from the mockups.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Featured product (3/4, h4 title, hover=full, badge)</h3>
+            <div className="mb-8 max-w-sm">
+              <Tile
+                href="#"
+                image={<PayloadImage media={null} alt="" fallbackText="تصویر" />}
+                aspect="3/4"
+                title="میز ناهارخوری آرتا"
+                titleSize="h4"
+                meta="چوب گردو · دست‌ساز"
+                price={450_000_000}
+                badge="جدید"
+                hover="full"
+              />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Standard product (4/5, body title, hover=full)</h3>
+            <div className="mb-8 grid grid-cols-3 gap-5">
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} aspect="4/5" title="صندلی راحتی پارسا" meta="چوب بلوط · مدرن" price={125_000_000} hover="full" />
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} aspect="4/5" title="تخت خواب دیبا" meta="چوب گردو · کلاسیک" price={680_000_000} hover="full" />
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} aspect="4/5" title="کمد لباس سارا" meta="چوب گردو · مینیمال" price={350_000_000} hover="full" />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Article tile (3/2, eyebrow, hover=soft)</h3>
+            <div className="mb-8 grid grid-cols-3 gap-5">
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} aspect="3/2" eyebrow="مواد و متریال" title="چرا گردوی ایرانی؟" meta="۷ دقیقه مطالعه" hover="soft" />
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} aspect="3/2" eyebrow="طراحی" title="مینیمالیسم ایرانی" meta="۵ دقیقه مطالعه" hover="soft" />
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} aspect="3/2" eyebrow="مراقبت" title="نگهداری مبلمان چوبی" meta="۴ دقیقه مطالعه" hover="soft" />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Featured article (3/4, h3 title, eyebrow)</h3>
+            <div className="mb-8 max-w-sm">
+              <Tile
+                href="#"
+                image={<PayloadImage media={null} alt="" fallbackText="تصویر مقاله" />}
+                aspect="3/4"
+                eyebrow="مواد و متریال"
+                title="چرا گردوی ایرانی؟ سفر یک تخته از جنگل تا کارگاه"
+                titleSize="h3"
+                hover="soft"
+              />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Related (1/1, body title, no meta)</h3>
+            <div className="mb-8 grid grid-cols-4 gap-5">
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="" />} aspect="1/1" title="صندلی آرتا" price={125_000_000} hover="soft" />
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="" />} aspect="1/1" title="پاتختی نیکا" price={85_000_000} hover="soft" />
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="" />} aspect="1/1" title="میز عسلی آوا" price={110_000_000} hover="soft" />
+              <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="" />} aspect="1/1" title="کمد لباس سارا" price={350_000_000} hover="soft" />
             </div>
           </section>
         </div>
