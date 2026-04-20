@@ -21,6 +21,70 @@ import { HomeFeaturedDesigns } from '@/components/home/HomeFeaturedDesigns';
 import { HomeShowroomsStrip } from '@/components/home/HomeShowroomsStrip';
 import { HomeJournalTeaser } from '@/components/home/HomeJournalTeaser';
 import { HomeInquiryCta } from '@/components/home/HomeInquiryCta';
+import { ProductIndexHero } from '@/components/product/ProductIndexHero';
+import { ProductFilterPills } from '@/components/product/ProductFilterPills';
+import { ProductIndexToolbar } from '@/components/product/ProductIndexToolbar';
+import { ProductGrid } from '@/components/product/ProductGrid';
+import { ProductSidebar } from '@/components/product/ProductSidebar';
+import { ProductThumbnails } from '@/components/product/ProductThumbnails';
+import { SpecsAccordion } from '@/components/product/SpecsAccordion';
+import type { PayloadProduct } from '@/lib/payload';
+
+const FAKE_PRODUCTS: PayloadProduct[] = [
+  {
+    id: 1,
+    slug: 'arta',
+    name: 'میز ناهارخوری آرتا',
+    basePriceRials: 450_000_000_000,
+    availability: 'in_stock',
+    sku: 'ART-001',
+    featured: true,
+    gallery: [],
+    materialIds: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
+  } as unknown as PayloadProduct,
+  {
+    id: 2,
+    slug: 'parsa',
+    name: 'صندلی راحتی پارسا',
+    basePriceRials: 125_000_000_000,
+    availability: 'in_stock',
+    sku: 'PAR-001',
+    gallery: [],
+    materialIds: [{ id: 'm2', name: 'چوب بلوط', slug: 'oak' }],
+  } as unknown as PayloadProduct,
+  {
+    id: 3,
+    slug: 'diba',
+    name: 'تخت خواب دیبا',
+    basePriceRials: 680_000_000_000,
+    availability: 'in_stock',
+    sku: 'DIB-001',
+    gallery: [],
+    materialIds: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
+  } as unknown as PayloadProduct,
+  {
+    id: 4,
+    slug: 'sara',
+    name: 'کمد لباس سارا',
+    basePriceRials: 350_000_000_000,
+    availability: 'in_stock',
+    sku: 'SAR-001',
+    gallery: [],
+    materialIds: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
+  } as unknown as PayloadProduct,
+];
+
+const FAKE_CATEGORIES = [
+  { name: 'تخت خواب', slug: 'beds' },
+  { name: 'میز', slug: 'tables' },
+  { name: 'صندلی', slug: 'chairs' },
+  { name: 'کمد', slug: 'cabinets' },
+];
+
+const FAKE_MATERIALS = [
+  { name: 'چوب گردو', slug: 'walnut' },
+  { name: 'چوب بلوط', slug: 'oak' },
+];
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -555,6 +619,94 @@ export default function LabPage() {
             <h3 className="mb-3 mt-8 text-h4 font-bold">HomeInquiryCta</h3>
             <div className="mb-12 -mx-12 border-y border-dashed border-sand">
               <HomeInquiryCta />
+            </div>
+          </section>
+
+          <section id="product-components">
+            <h2 className="mb-4 text-h2 font-black text-ink">Product components</h2>
+            <p className="mb-6 text-small text-stone">
+              Seven product-page components for the /products index and PDP. Mockups:{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/a1-product-index.html" className="underline" target="_blank" rel="noreferrer">a1-product-index.html</a>
+              {' '}and{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/a2-pdp.html" className="underline" target="_blank" rel="noreferrer">a2-pdp.html</a>
+              {' '}(Option C in both).
+            </p>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ProductIndexHero</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand px-12 py-8">
+              <ProductIndexHero products={FAKE_PRODUCTS} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ProductFilterPills</h3>
+            <div className="mb-8">
+              <ProductFilterPills
+                activeCategory={null}
+                activeMaterial={null}
+                categories={FAKE_CATEGORIES}
+                materials={FAKE_MATERIALS}
+                categoryHref={(s) => s ? `/products?cat=${s}` : '/products'}
+                materialHref={(s) => s ? `/products?mat=${s}` : '/products'}
+              />
+              <p className="mt-2 text-eyebrow text-stone">↑ No active filter (همه selected)</p>
+            </div>
+            <div className="mb-8">
+              <ProductFilterPills
+                activeCategory="tables"
+                activeMaterial={null}
+                categories={FAKE_CATEGORIES}
+                materials={FAKE_MATERIALS}
+                categoryHref={(s) => s ? `/products?cat=${s}` : '/products'}
+                materialHref={(s) => s ? `/products?mat=${s}` : '/products'}
+              />
+              <p className="mt-2 text-eyebrow text-stone">↑ cat=tables active</p>
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ProductIndexToolbar</h3>
+            <div className="mb-8">
+              <ProductIndexToolbar
+                totalCount={8}
+                currentSort="newest"
+                sortHrefs={{
+                  newest: '/products?sort=newest',
+                  name: '/products?sort=name',
+                  price_asc: '/products?sort=price_asc',
+                  price_desc: '/products?sort=price_desc',
+                }}
+              />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ProductGrid</h3>
+            <div className="mb-12">
+              <ProductGrid products={FAKE_PRODUCTS} />
+            </div>
+            <div className="mb-8">
+              <p className="mb-3 text-small text-stone">Empty state:</p>
+              <ProductGrid products={[]} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ProductSidebar</h3>
+            <div className="mb-12 flex justify-end">
+              <ProductSidebar product={FAKE_PRODUCTS[0]!} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ProductThumbnails</h3>
+            <div className="mb-8">
+              <p className="mb-3 text-small text-stone">Empty images (renders nothing):</p>
+              <ProductThumbnails images={[]} />
+              <p className="text-eyebrow text-stone">(nothing rendered — correct)</p>
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">SpecsAccordion</h3>
+            <div className="mb-12 max-w-xl">
+              <h2 className="mb-5 text-h4 font-bold text-charcoal">مشخصات</h2>
+              <SpecsAccordion
+                specs={[
+                  { label: 'ابعاد', content: 'طول: ۱۸۰ سانتی‌متر · عرض: ۹۰ سانتی‌متر · ارتفاع: ۷۵ سانتی‌متر' },
+                  { label: 'متریال', content: 'چوب گردوی جنگل‌های شمال · روغن طبیعی دانمارکی' },
+                  { label: 'مشخصات فنی', content: 'اتصالات فاق و زبانه بدون پیچ. پرداخت نهایی با روغن طبیعی.' },
+                ]}
+                initialOpenIndex={0}
+              />
             </div>
           </section>
 
