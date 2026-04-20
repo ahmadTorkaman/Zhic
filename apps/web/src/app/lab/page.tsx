@@ -33,6 +33,12 @@ import { JournalFeaturedArticle } from '@/components/journal/JournalFeaturedArti
 import { JournalGrid } from '@/components/journal/JournalGrid';
 import { AuthorCard } from '@/components/journal/AuthorCard';
 import { ArticleProse } from '@/components/journal/ArticleProse';
+import { ShowroomIndexGrid } from '@/components/showroom/ShowroomIndexGrid';
+import { ShowroomInfoCards } from '@/components/showroom/ShowroomInfoCards';
+import { ShowroomHoursTable } from '@/components/showroom/ShowroomHoursTable';
+import { ShowroomAddressBlock } from '@/components/showroom/ShowroomAddressBlock';
+import { ShowroomMapEmbed } from '@/components/showroom/ShowroomMapEmbed';
+import type { PayloadShowroom, PayloadAddress } from '@/lib/payload';
 
 const FAKE_PRODUCTS: PayloadProduct[] = [
   {
@@ -140,6 +146,65 @@ const FAKE_BODY: LexicalRoot = {
     ],
   },
 } as LexicalRoot;
+
+const FAKE_ADDRESS: PayloadAddress = {
+  province: 'تهران',
+  city: 'تهران',
+  district: 'ونک',
+  street: 'خیابان شهید خدامی',
+  plaque: '42',
+  unit: '1',
+  postalCode: '1994836811',
+};
+
+const FAKE_SHOWROOMS: PayloadShowroom[] = [
+  {
+    id: 's1',
+    slug: 'vanak',
+    name: 'شوروم ونک',
+    address: { city: 'تهران', district: 'ونک', street: 'خیابان شهید خدامی', plaque: '42' },
+    hours: [
+      { day: 'sat', opens: '10:00', closes: '20:00' },
+      { day: 'sun', opens: '10:00', closes: '20:00' },
+      { day: 'mon', opens: '10:00', closes: '20:00' },
+      { day: 'tue', opens: '10:00', closes: '20:00' },
+      { day: 'wed', opens: '10:00', closes: '20:00' },
+      { day: 'thu', opens: '10:00', closes: '18:00' },
+      { day: 'fri', closed: true },
+    ],
+    phone: '02188671234',
+    email: 'vanak@zhicwood.com',
+  } as unknown as PayloadShowroom,
+  {
+    id: 's2',
+    slug: 'chaharba',
+    name: 'شوروم چهارباغ',
+    address: { city: 'اصفهان', street: 'خیابان چهارباغ بالا', plaque: '18' },
+    appointmentOnly: true,
+    phone: '03136001234',
+    email: null,
+  } as unknown as PayloadShowroom,
+  {
+    id: 's3',
+    slug: 'hamedan-central',
+    name: 'کارگاه و شوروم مرکزی',
+    address: { city: 'همدان', street: 'بلوار استاد شهریار', plaque: '7' },
+    hours: [
+      { day: 'sat', opens: '08:00', closes: '17:00' },
+      { day: 'sun', opens: '08:00', closes: '17:00' },
+      { day: 'mon', opens: '08:00', closes: '17:00' },
+      { day: 'tue', opens: '08:00', closes: '17:00' },
+      { day: 'wed', opens: '08:00', closes: '17:00' },
+      { day: 'thu', opens: '08:00', closes: '17:00' },
+      { day: 'fri', opens: '09:00', closes: '12:00' },
+    ],
+    phone: '08134256789',
+    email: 'info@zhicwood.com',
+    is_central: true,
+  } as unknown as PayloadShowroom,
+];
+
+const FAKE_SHOWROOM_DETAIL: PayloadShowroom = FAKE_SHOWROOMS[0] as PayloadShowroom;
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -798,6 +863,67 @@ export default function LabPage() {
             <h3 className="mb-3 mt-8 text-h4 font-bold">ArticleProse</h3>
             <div className="mb-12 border border-dashed border-sand p-6">
               <ArticleProse value={FAKE_BODY} />
+            </div>
+          </section>
+
+          <section id="showroom-components">
+            <h2 className="mb-4 text-h2 font-black text-ink">Showroom components</h2>
+            <p className="mb-6 text-small text-stone">
+              Five showroom components for /showrooms index and /showrooms/[slug] detail. Mockups:{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/a5-showroom.html" className="underline" target="_blank" rel="noreferrer">a5-showroom.html</a>
+              {' '}Option B and{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/b-template-pages.html" className="underline" target="_blank" rel="noreferrer">b-template-pages.html</a>
+              {' '}B1.
+            </p>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomIndexGrid</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand px-12 py-8">
+              <ShowroomIndexGrid showrooms={FAKE_SHOWROOMS} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomIndexGrid — empty state</h3>
+            <div className="mb-12 border border-dashed border-sand p-6">
+              <ShowroomIndexGrid showrooms={[]} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomInfoCards</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand px-12 py-8">
+              <ShowroomInfoCards showroom={FAKE_SHOWROOM_DETAIL} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomHoursTable — weekly (fri closed)</h3>
+            <div className="mb-12 max-w-xs border border-dashed border-sand p-6">
+              <ShowroomHoursTable
+                hours={[
+                  { day: 'sat', opens: '10:00', closes: '20:00' },
+                  { day: 'sun', opens: '10:00', closes: '20:00' },
+                  { day: 'mon', opens: '10:00', closes: '20:00' },
+                  { day: 'tue', opens: '10:00', closes: '20:00' },
+                  { day: 'wed', opens: '10:00', closes: '20:00' },
+                  { day: 'thu', opens: '10:00', closes: '18:00' },
+                  { day: 'fri', closed: true },
+                ]}
+              />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomHoursTable — appointmentOnly</h3>
+            <div className="mb-12 border border-dashed border-sand p-6">
+              <ShowroomHoursTable hours={[]} appointmentOnly />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomAddressBlock</h3>
+            <div className="mb-12 border border-dashed border-sand p-6">
+              <ShowroomAddressBlock address={FAKE_ADDRESS} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomAddressBlock — compact</h3>
+            <div className="mb-12 border border-dashed border-sand p-6">
+              <ShowroomAddressBlock address={FAKE_ADDRESS} compact />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomMapEmbed — fallback (no URL)</h3>
+            <div className="mb-12 max-w-sm border border-dashed border-sand">
+              <ShowroomMapEmbed showroom={{ mapEmbedUrl: null, geo: null, name: 'شوروم ونک' }} aspect="4/3" />
             </div>
           </section>
 
