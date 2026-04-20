@@ -8,6 +8,7 @@ import { StickyBreadcrumb } from '@/components/layout/StickyBreadcrumb';
 import { PageHeader } from '@/components/hero/PageHeader';
 import { HomeHero } from '@/components/hero/HomeHero';
 import { CinematicHero } from '@/components/hero/CinematicHero';
+import { ArticleHero } from '@/components/hero/ArticleHero';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -398,6 +399,21 @@ export default function LabPage() {
                   <span className="text-ivory/80">(imagine: cinematic product photo)</span>
                 </div>
               } />
+            </div>
+          </section>
+
+          <section id="article-hero">
+            <h2 className="mb-4 text-h2 font-black text-ink">ArticleHero</h2>
+            <p className="mb-6 text-small text-stone">Article full-bleed cover with overlay text. Mockup: <a href="http://80.240.31.146:9090/.superpowers/a4-article.html" className="underline" target="_blank" rel="noreferrer">a4-article.html</a> Option B <code>.b-hero</code>.</p>
+
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <ArticleHero
+                category="مواد و متریال"
+                title="چرا گردوی ایرانی؟"
+                authorName="احمد تهرانی"
+                publishedAt="2026-04-15"
+                readingTimeMinutes={7}
+              />
             </div>
           </section>
         </div>
