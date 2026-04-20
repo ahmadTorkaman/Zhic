@@ -12,6 +12,7 @@ import { ArticleHero } from '@/components/hero/ArticleHero';
 import { CollectionHero } from '@/components/hero/CollectionHero';
 import { EditorialHero } from '@/components/hero/EditorialHero';
 import { GlassOverlayHero } from '@/components/hero/GlassOverlayHero';
+import { DarkSplitHero } from '@/components/hero/DarkSplitHero';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -480,6 +481,40 @@ export default function LabPage() {
                   </div>
                 }
               />
+            </div>
+          </section>
+
+          <section id="dark-split-hero">
+            <h2 className="mb-4 text-h2 font-black text-ink">DarkSplitHero</h2>
+            <p className="mb-6 text-small text-stone">Contact page + Home CTA. Mockups: <a href="http://80.240.31.146:9090/.superpowers/a6-contact.html" className="underline" target="_blank" rel="noreferrer">a6-contact.html</a> Option B <code>.b-hero</code> (page variant) and <a href="http://80.240.31.146:9090/.superpowers/homepage-c-full.html" className="underline" target="_blank" rel="noreferrer">homepage-c-full.html</a> CTA section (section variant).</p>
+
+            <h3 className="mb-3 text-h4 font-bold">variant=&quot;page&quot; (Contact /contact — padY=xl)</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <DarkSplitHero
+                variant="page"
+                title="با ما در تماس باشید"
+                lead="برای استعلام قیمت، رزرو بازدید از شوروم، یا مشاوره‌ی پیش از خرید. تیم ما آماده‌ی پاسخ‌گویی است."
+                contact={{ phone: '۰۸۱-۳۴۲۵ ۶۷۸۹', email: 'info@zhicwood.com' }}
+                hours={{ text: 'شنبه تا پنجشنبه · ۰۹:۰۰ – ۱۷:۰۰' }}
+              >
+                <div className="rounded-lg bg-ivory/[0.03] p-7 text-sand/70 backdrop-blur-md border border-ivory/10">
+                  (form slot — InquiryForm arrives in Task 6.1)
+                </div>
+              </DarkSplitHero>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">variant=&quot;section&quot; (HomeInquiryCta — padY=lg)</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <DarkSplitHero
+                variant="section"
+                title="با ما صحبت کنید"
+                lead="تیم ما در ساعات کاری پاسخ‌گوی شماست."
+                contact={{ phone: '۰۸۱-۳۴۲۵ ۶۷۸۹' }}
+              >
+                <div className="rounded-lg bg-ivory/[0.03] p-7 text-sand/70 backdrop-blur-md border border-ivory/10">
+                  (slim form slot — InquiryFormSlim arrives in Task 6.2)
+                </div>
+              </DarkSplitHero>
             </div>
           </section>
         </div>
