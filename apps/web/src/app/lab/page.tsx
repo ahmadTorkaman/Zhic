@@ -14,6 +14,7 @@ import { CollectionHero } from '@/components/hero/CollectionHero';
 import { EditorialHero } from '@/components/hero/EditorialHero';
 import { GlassOverlayHero } from '@/components/hero/GlassOverlayHero';
 import { DarkSplitHero } from '@/components/hero/DarkSplitHero';
+import { InquiryForm } from '@/components/inquiry/InquiryForm';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -485,6 +486,22 @@ export default function LabPage() {
             </div>
           </section>
 
+          <section id="inquiry-form">
+            <h2 className="mb-4 text-h2 font-black text-ink">InquiryForm (full 5-field)</h2>
+            <p className="mb-6 text-small text-stone">
+              Dark glass card + useActionState wrapping <code>submitInquiry</code>. Includes conditional
+              <code>preferred_date</code> field when reason = &quot;رزرو بازدید از شوروم&quot;. Mockup:{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/a6-contact.html" className="underline" target="_blank" rel="noreferrer">
+                a6-contact.html
+              </a>{' '}Option B (<code>.b-form-card</code>).
+            </p>
+            <div className="mx-auto max-w-xl rounded-lg bg-charcoal p-8">
+              <InquiryForm
+                cities={['تهران', 'اصفهان', 'همدان', 'مشهد', 'شیراز', 'تبریز', 'سایر شهرها']}
+              />
+            </div>
+          </section>
+
           <section id="site-chrome">
             <h2 className="mb-4 text-h2 font-black text-ink">Site chrome</h2>
             <p className="mb-6 text-small text-stone">SiteHeader + MobileMenu. Because SiteHeader is fixed-positioned, it can&apos;t be demoed inside this lab page (which already has its own sticky header). See the dedicated demo route:</p>
@@ -513,9 +530,9 @@ export default function LabPage() {
                 contact={{ phone: '۰۸۱-۳۴۲۵ ۶۷۸۹', email: 'info@zhicwood.com' }}
                 hours={{ text: 'شنبه تا پنجشنبه · ۰۹:۰۰ – ۱۷:۰۰' }}
               >
-                <div className="rounded-lg bg-ivory/[0.03] p-7 text-sand/70 backdrop-blur-md border border-ivory/10">
-                  (form slot — InquiryForm arrives in Task 6.1)
-                </div>
+                <InquiryForm
+                  cities={['تهران', 'اصفهان', 'همدان', 'مشهد', 'شیراز', 'تبریز', 'سایر شهرها']}
+                />
               </DarkSplitHero>
             </div>
 
