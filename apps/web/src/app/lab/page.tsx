@@ -11,6 +11,7 @@ import { CinematicHero } from '@/components/hero/CinematicHero';
 import { ArticleHero } from '@/components/hero/ArticleHero';
 import { CollectionHero } from '@/components/hero/CollectionHero';
 import { EditorialHero } from '@/components/hero/EditorialHero';
+import { GlassOverlayHero } from '@/components/hero/GlassOverlayHero';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -451,6 +452,34 @@ export default function LabPage() {
             <h3 className="mb-3 text-h4 font-bold">Care (height=sm — 35vh)</h3>
             <div className="mb-8 -mx-12 border-y border-dashed border-sand">
               <EditorialHero eyebrow="راهنما" title="مراقبت و گارانتی" height="sm" placeholder="تصویر نزدیک از بافت چوب گردو" />
+            </div>
+          </section>
+
+          <section id="glass-overlay-hero">
+            <h2 className="mb-4 text-h2 font-black text-ink">GlassOverlayHero</h2>
+            <p className="mb-6 text-small text-stone">Showroom detail hero: full-bleed photo + dark scrim + centered frosted glass card. Mockup: <a href="http://80.240.31.146:9090/.superpowers/a5-showroom.html" className="underline" target="_blank" rel="noreferrer">a5-showroom.html</a> Option B <code>.b-hero</code>.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Default (cream placeholder — no photo)</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <GlassOverlayHero
+                city="تهران"
+                title="شوروم ونک"
+                headline="فضایی آرام برای دیدن و لمس مبلمان ژیک از نزدیک."
+              />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">With photo override</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <GlassOverlayHero
+                city="همدان"
+                title="کارگاه و شوروم مرکزی"
+                headline="جایی که هر قطعه ساخته می‌شود."
+                image={
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone to-charcoal">
+                    <span className="text-ivory/80">(imagine: photo of workshop)</span>
+                  </div>
+                }
+              />
             </div>
           </section>
         </div>
