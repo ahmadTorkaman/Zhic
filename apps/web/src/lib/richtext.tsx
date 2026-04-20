@@ -96,7 +96,7 @@ function PullQuote({ fields }: { fields: Record<string, unknown> }) {
   const attribution = fields.attribution as string | undefined;
   if (!quote) return null;
   return (
-    <figure className="my-8 border-inline-start-4 border-accent ps-6">
+    <figure className="my-8 border-s-4 border-gold ps-6">
       <blockquote className="text-h4 font-bold text-charcoal italic">
         {quote}
       </blockquote>
@@ -169,7 +169,7 @@ function ProductEmbed({ fields, embeds }: { fields: Record<string, unknown>; emb
       className="my-6 flex items-center gap-4 rounded-lg border border-sand p-4 transition-colors hover:bg-sand/30"
     >
       <div className="flex-1">
-        <p className="text-eyebrow font-bold text-accent">محصول</p>
+        <p className="text-eyebrow font-bold tracking-[var(--tracking-eyebrow)] text-forest">محصول</p>
         <p className="text-h4 font-bold text-charcoal">{product.name}</p>
         {product.shortDescription ? (
           <p className="mt-1 text-small text-stone line-clamp-2">{product.shortDescription}</p>
@@ -186,8 +186,8 @@ function MaterialRef({ fields, embeds }: { fields: Record<string, unknown>; embe
   const material = embeds?.materials?.get(id);
   if (!material) return null;
   return (
-    <aside className="my-6 rounded-lg border border-accent/20 bg-accent/5 p-4">
-      <p className="text-eyebrow font-bold text-accent">متریال</p>
+    <aside className="my-6 rounded-lg border border-forest/20 bg-forest/5 p-4">
+      <p className="text-eyebrow font-bold tracking-[var(--tracking-eyebrow)] text-forest">متریال</p>
       <p className="text-h4 font-bold text-charcoal">{material.name}</p>
       {material.origin ? (
         <p className="mt-1 text-small text-stone">منشأ: {material.origin}</p>
@@ -288,7 +288,7 @@ function RenderNode({ node, embeds }: { node: LexicalNode; embeds?: EmbedContext
       return <li>{renderChildren(node.children, embeds)}</li>;
     case 'quote':
       return (
-        <blockquote className="my-6 border-inline-start-4 border-accent ps-6 text-body italic text-stone">
+        <blockquote className="my-6 border-s-4 border-gold ps-6 text-body italic text-stone">
           {renderChildren(node.children, embeds)}
         </blockquote>
       );
