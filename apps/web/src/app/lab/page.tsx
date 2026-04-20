@@ -15,6 +15,7 @@ import { EditorialHero } from '@/components/hero/EditorialHero';
 import { GlassOverlayHero } from '@/components/hero/GlassOverlayHero';
 import { DarkSplitHero } from '@/components/hero/DarkSplitHero';
 import { InquiryForm } from '@/components/inquiry/InquiryForm';
+import { InquiryFormSlim } from '@/components/inquiry/InquiryFormSlim';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -502,6 +503,21 @@ export default function LabPage() {
             </div>
           </section>
 
+          <section id="inquiry-form-slim">
+            <h2 className="mb-4 text-h2 font-black text-ink">InquiryFormSlim (3-field)</h2>
+            <p className="mb-6 text-small text-stone">
+              Name + phone + short message. City defaults to &quot;سایر شهرها&quot; and reason defaults to <code>price_inquiry</code>
+              via hidden inputs, so the same <code>submitInquiry</code> action works unchanged. Used on the homepage CTA
+              (DarkSplitHero variant=&quot;section&quot;). Mockup:{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/homepage-c-full.html" className="underline" target="_blank" rel="noreferrer">
+                homepage-c-full.html
+              </a>{' '}CTA section.
+            </p>
+            <div className="mx-auto max-w-xl rounded-lg bg-charcoal p-8">
+              <InquiryFormSlim />
+            </div>
+          </section>
+
           <section id="site-chrome">
             <h2 className="mb-4 text-h2 font-black text-ink">Site chrome</h2>
             <p className="mb-6 text-small text-stone">SiteHeader + MobileMenu. Because SiteHeader is fixed-positioned, it can&apos;t be demoed inside this lab page (which already has its own sticky header). See the dedicated demo route:</p>
@@ -544,9 +560,7 @@ export default function LabPage() {
                 lead="تیم ما در ساعات کاری پاسخ‌گوی شماست."
                 contact={{ phone: '۰۸۱-۳۴۲۵ ۶۷۸۹' }}
               >
-                <div className="rounded-lg bg-ivory/[0.03] p-7 text-sand/70 backdrop-blur-md border border-ivory/10">
-                  (slim form slot — InquiryFormSlim arrives in Task 6.2)
-                </div>
+                <InquiryFormSlim />
               </DarkSplitHero>
             </div>
           </section>
