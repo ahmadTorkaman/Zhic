@@ -16,6 +16,11 @@ import { GlassOverlayHero } from '@/components/hero/GlassOverlayHero';
 import { DarkSplitHero } from '@/components/hero/DarkSplitHero';
 import { InquiryForm } from '@/components/inquiry/InquiryForm';
 import { InquiryFormSlim } from '@/components/inquiry/InquiryFormSlim';
+import { HomeBrandStatement } from '@/components/home/HomeBrandStatement';
+import { HomeFeaturedDesigns } from '@/components/home/HomeFeaturedDesigns';
+import { HomeShowroomsStrip } from '@/components/home/HomeShowroomsStrip';
+import { HomeJournalTeaser } from '@/components/home/HomeJournalTeaser';
+import { HomeInquiryCta } from '@/components/home/HomeInquiryCta';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -515,6 +520,41 @@ export default function LabPage() {
             </p>
             <div className="mx-auto max-w-xl rounded-lg bg-charcoal p-8">
               <InquiryFormSlim />
+            </div>
+          </section>
+
+          <section id="home-sections">
+            <h2 className="mb-4 text-h2 font-black text-ink">Home page sections</h2>
+            <p className="mb-6 text-small text-stone">
+              Each home-page section, rendered with empty data (fallback placeholders). Mockup:{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/homepage-c-full.html" className="underline" target="_blank" rel="noreferrer">
+                homepage-c-full.html
+              </a>.
+            </p>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">HomeBrandStatement</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <HomeBrandStatement />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">HomeFeaturedDesigns</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <HomeFeaturedDesigns designs={[]} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">HomeShowroomsStrip</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <HomeShowroomsStrip showrooms={[]} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">HomeJournalTeaser</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <HomeJournalTeaser articles={[]} />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">HomeInquiryCta</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand">
+              <HomeInquiryCta />
             </div>
           </section>
 
