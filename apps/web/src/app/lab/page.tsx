@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/hero/PageHeader';
 import { HomeHero } from '@/components/hero/HomeHero';
 import { CinematicHero } from '@/components/hero/CinematicHero';
 import { ArticleHero } from '@/components/hero/ArticleHero';
+import { CollectionHero } from '@/components/hero/CollectionHero';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -414,6 +415,21 @@ export default function LabPage() {
                 publishedAt="2026-04-15"
                 readingTimeMinutes={7}
               />
+            </div>
+          </section>
+
+          <section id="collection-hero">
+            <h2 className="mb-4 text-h2 font-black text-ink">CollectionHero</h2>
+            <p className="mb-6 text-small text-stone">Full-bleed collection cover with forest eyebrow + h1 overlaid at bottom. Mockup: <a href="http://80.240.31.146:9090/.superpowers/b-template-pages.html" className="underline" target="_blank" rel="noreferrer">b-template-pages.html</a> B2 <code>.hero-bleed</code>.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Default eyebrow &quot;مجموعه&quot;</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <CollectionHero title="مجموعه‌ی آرامش" />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Custom eyebrow</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <CollectionHero title="مجموعه‌ی بهار ۱۴۰۵" eyebrow="کلکسیون فصلی" />
             </div>
           </section>
         </div>
