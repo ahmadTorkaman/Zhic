@@ -7,6 +7,7 @@ import { HeroOverlayText } from '@/components/hero/HeroOverlayText';
 import { StickyBreadcrumb } from '@/components/layout/StickyBreadcrumb';
 import { PageHeader } from '@/components/hero/PageHeader';
 import { HomeHero } from '@/components/hero/HomeHero';
+import { CinematicHero } from '@/components/hero/CinematicHero';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -376,6 +377,25 @@ export default function LabPage() {
               <HomeHero image={
                 <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone to-charcoal">
                   <span className="text-ivory/80">(imagine: hero product photo)</span>
+                </div>
+              } />
+            </div>
+          </section>
+
+          <section id="cinematic-hero">
+            <h2 className="mb-4 text-h2 font-black text-ink">CinematicHero</h2>
+            <p className="mb-6 text-small text-stone">PDP cover image at 21:9 (4:5 mobile) with a bottom gradient fade to ivory. Mockup: <a href="http://80.240.31.146:9090/.superpowers/a2-pdp.html" className="underline" target="_blank" rel="noreferrer">a2-pdp.html</a> Option C <code>.c-hero-img</code>.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Default (no image — cream placeholder)</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <CinematicHero />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">With image override</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <CinematicHero image={
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone to-charcoal">
+                  <span className="text-ivory/80">(imagine: cinematic product photo)</span>
                 </div>
               } />
             </div>
