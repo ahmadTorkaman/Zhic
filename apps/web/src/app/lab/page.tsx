@@ -3,6 +3,9 @@ import { GlassCard } from '@/components/shared/GlassCard';
 import { Tile } from '@/components/tile/Tile';
 import { HorizontalTile } from '@/components/tile/HorizontalTile';
 import { PayloadImage } from '@/components/PayloadImage';
+import { HeroOverlayText } from '@/components/hero/HeroOverlayText';
+import { StickyBreadcrumb } from '@/components/layout/StickyBreadcrumb';
+import { PageHeader } from '@/components/hero/PageHeader';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -328,6 +331,33 @@ export default function LabPage() {
             <div className="mb-8 max-w-md space-y-5">
               <HorizontalTile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} imageWidth={160} eyebrow="طراحی" title="مینیمالیسم ایرانی: کم‌تر، اما باشکوه‌تر" meta="۷ دقیقه مطالعه" />
               <HorizontalTile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} imageWidth={160} eyebrow="مراقبت" title="راهنمای نگهداری از مبلمان چوبی در فصل گرما" meta="۵ دقیقه مطالعه" />
+            </div>
+          </section>
+
+          <section id="hero-helpers">
+            <h2 className="mb-4 text-h2 font-black text-ink">Hero helpers</h2>
+
+            <h3 className="mb-3 text-h4 font-bold">PageHeader</h3>
+            <div className="mb-8 -mx-12 border border-dashed border-sand">
+              <PageHeader title="محصولات" subtitle="مبلمان دست‌ساز از چوب طبیعی ایرانی" />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">StickyBreadcrumb</h3>
+            <p className="mb-2 text-small text-stone">(Sticks to top of viewport — scroll the page to see the effect.)</p>
+            <div className="mb-8 -mx-12 border border-dashed border-sand">
+              <StickyBreadcrumb items={[
+                { label: 'خانه', href: '/' },
+                { label: 'محصولات', href: '/products' },
+                { label: 'میز ناهارخوری آرتا' },
+              ]} />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">HeroOverlayText (inside a relative container)</h3>
+            <div className="mb-8 -mx-12 relative h-[280px] bg-cream">
+              <HeroOverlayText>
+                <div className="mb-3 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">مواد و متریال</div>
+                <h1 className="text-h1 font-black text-ink">چرا گردوی ایرانی؟</h1>
+              </HeroOverlayText>
             </div>
           </section>
         </div>
