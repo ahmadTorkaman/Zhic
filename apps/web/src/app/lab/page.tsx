@@ -39,6 +39,10 @@ import { ShowroomHoursTable } from '@/components/showroom/ShowroomHoursTable';
 import { ShowroomAddressBlock } from '@/components/showroom/ShowroomAddressBlock';
 import { ShowroomMapEmbed } from '@/components/showroom/ShowroomMapEmbed';
 import type { PayloadShowroom, PayloadAddress } from '@/lib/payload';
+import { FaqAccordion } from '@/components/faq/FaqAccordion';
+import { EventCard } from '@/components/events/EventCard';
+import { EditorialPage } from '@/components/editorial/EditorialPage';
+import { LegalPage } from '@/components/editorial/LegalPage';
 
 const FAKE_PRODUCTS: PayloadProduct[] = [
   {
@@ -924,6 +928,164 @@ export default function LabPage() {
             <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomMapEmbed — fallback (no URL)</h3>
             <div className="mb-12 max-w-sm border border-dashed border-sand">
               <ShowroomMapEmbed showroom={{ mapEmbedUrl: null, geo: null, name: 'شوروم ونک' }} aspect="4/3" />
+            </div>
+          </section>
+
+          <section id="ancillary-components">
+            <h2 className="mb-4 text-h2 font-black text-ink">Ancillary page components</h2>
+            <p className="mb-6 text-small text-stone">
+              FAQ accordion, event card, editorial page frame, legal page frame. Mockups:{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/b-template-pages.html" className="underline" target="_blank" rel="noreferrer">b-template-pages.html</a>
+              {' '}B4–B8 and{' '}
+              <a href="http://80.240.31.146:9090/.superpowers/c-legal-template.html" className="underline" target="_blank" rel="noreferrer">c-legal-template.html</a>.
+            </p>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">FaqAccordion</h3>
+            <div className="mb-12 max-w-2xl">
+              <FaqAccordion
+                initialOpenIndex={0}
+                items={[
+                  {
+                    question: 'سایزبندی محصولات چگونه است؟',
+                    answer: {
+                      root: {
+                        type: 'root',
+                        children: [
+                          {
+                            type: 'paragraph',
+                            children: [
+                              { type: 'text', text: 'تمام محصولات ژیک در سه سایز استاندارد (S / M / L) و همچنین به صورت سفارشی ارائه می‌شوند. برای سفارش ابعاد خاص با تیم ما تماس بگیرید.' },
+                            ],
+                          },
+                        ],
+                      },
+                    } as import('@/lib/payload').LexicalRoot,
+                  },
+                  {
+                    question: 'مدت زمان تحویل چقدر است؟',
+                    answer: {
+                      root: {
+                        type: 'root',
+                        children: [
+                          {
+                            type: 'paragraph',
+                            children: [
+                              { type: 'text', text: 'محصولات موجود در انبار ظرف ۵ تا ۷ روز کاری تحویل داده می‌شوند. محصولات سفارشی بین ۴ تا ۸ هفته زمان ساخت دارند.' },
+                            ],
+                          },
+                        ],
+                      },
+                    } as import('@/lib/payload').LexicalRoot,
+                  },
+                  {
+                    question: 'گارانتی محصولات چند سال است؟',
+                    answer: null,
+                  },
+                  {
+                    question: 'آیا امکان بازدید از کارگاه وجود دارد؟',
+                    answer: null,
+                  },
+                ]}
+              />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">EventCard</h3>
+            <div className="mb-12 max-w-2xl">
+              <EventCard
+                event={{
+                  title: 'نمایشگاه بهاره مبلمان ژیک',
+                  description: {
+                    root: {
+                      type: 'root',
+                      children: [
+                        {
+                          type: 'paragraph',
+                          children: [
+                            { type: 'text', text: 'اولین رونمایی از مجموعه‌ی بهار ۱۴۰۵ در شوروم ونک تهران.' },
+                          ],
+                        },
+                      ],
+                    },
+                  } as import('@/lib/payload').LexicalRoot,
+                  date: '2026-05-15',
+                  location: 'شوروم ونک، تهران',
+                }}
+              />
+              <EventCard
+                event={{
+                  title: 'کارگاه آموزشی نگهداری از چوب',
+                  description: null,
+                  date: '2026-06-01',
+                  location: 'کارگاه مرکزی، همدان',
+                }}
+              />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">EditorialPage</h3>
+            <div className="mb-12 -mx-12">
+              <EditorialPage
+                eyebrow="کارگاه ژیک"
+                heading="جایی که چوب نفس می‌کشد"
+                heroHeight="xl"
+                lead="در دل همدان، جایی که ماشین‌آلات قدیمی در کنار مهارت دست استادکاران کار می‌کنند، هر قطعه از ژیک متولد می‌شود."
+                body={{
+                  root: {
+                    type: 'root',
+                    children: [
+                      {
+                        type: 'paragraph',
+                        children: [
+                          { type: 'text', text: 'کارگاه ژیک در سال ۱۳۸۰ با یک اره‌گرد دستی و دو استادکار آغاز به کار کرد. امروز، بیش از ۳۰ نفر از ماهرترین نجاران ایران در این فضا کار می‌کنند.' },
+                        ],
+                      },
+                      {
+                        type: 'paragraph',
+                        children: [
+                          { type: 'text', text: 'هر تخته‌ای که وارد کارگاه می‌شود، ابتدا حداقل دو سال در اتاق خشک‌کن طبیعی استراحت می‌کند تا رطوبتش به سطح مطلوب برسد. این صبر، پایه‌ی کیفیت ما است.' },
+                        ],
+                      },
+                    ],
+                  },
+                } as import('@/lib/payload').LexicalRoot}
+              />
+            </div>
+
+            <h3 className="mb-3 mt-8 text-h4 font-bold">LegalPage</h3>
+            <div className="mb-12 -mx-12 border-y border-dashed border-sand px-12">
+              <LegalPage
+                heading="حریم خصوصی"
+                updatedLabel="۱ فروردین ۱۴۰۵"
+                breadcrumbItems={[{ label: 'حریم خصوصی' }]}
+                body={{
+                  root: {
+                    type: 'root',
+                    children: [
+                      {
+                        type: 'heading',
+                        tag: 'h2',
+                        children: [{ type: 'text', text: 'اطلاعاتی که جمع‌آوری می‌کنیم' }],
+                      },
+                      {
+                        type: 'paragraph',
+                        children: [
+                          { type: 'text', text: 'ژیک تنها اطلاعاتی را که شما آگاهانه در اختیار ما می‌گذارید (مانند نام و شماره تلفن در فرم استعلام) ذخیره می‌کند.' },
+                        ],
+                      },
+                      {
+                        type: 'heading',
+                        tag: 'h2',
+                        children: [{ type: 'text', text: 'نحوه‌ی استفاده از اطلاعات' }],
+                      },
+                      {
+                        type: 'paragraph',
+                        children: [
+                          { type: 'text', text: 'اطلاعات شما صرفاً برای پاسخ به درخواست استعلام و بهبود خدمات ما استفاده می‌شود و هرگز به اشخاص ثالث فروخته نمی‌شود.' },
+                        ],
+                      },
+                    ],
+                  },
+                } as import('@/lib/payload').LexicalRoot}
+              />
             </div>
           </section>
 
