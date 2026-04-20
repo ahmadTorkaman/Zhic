@@ -484,6 +484,12 @@ export default function LabPage() {
             </div>
           </section>
 
+          <section id="site-chrome">
+            <h2 className="mb-4 text-h2 font-black text-ink">Site chrome</h2>
+            <p className="mb-6 text-small text-stone">SiteHeader + MobileMenu. Because SiteHeader is fixed-positioned, it can&apos;t be demoed inside this lab page (which already has its own sticky header). See the dedicated demo route:</p>
+            <p className="text-small"><a href="/lab/site-header" className="underline underline-offset-4 hover:decoration-2">→ /lab/site-header (scroll to trigger blur)</a></p>
+          </section>
+
           <section id="dark-split-hero">
             <h2 className="mb-4 text-h2 font-black text-ink">DarkSplitHero</h2>
             <p className="mb-6 text-small text-stone">Contact page + Home CTA. Mockups: <a href="http://80.240.31.146:9090/.superpowers/a6-contact.html" className="underline" target="_blank" rel="noreferrer">a6-contact.html</a> Option B <code>.b-hero</code> (page variant) and <a href="http://80.240.31.146:9090/.superpowers/homepage-c-full.html" className="underline" target="_blank" rel="noreferrer">homepage-c-full.html</a> CTA section (section variant).</p>
