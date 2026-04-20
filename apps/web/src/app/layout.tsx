@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa-IR" dir="rtl" className={`${ayandeh.variable} antialiased`}>
-      <body>{children}</body>
+    <html lang="fa-IR" dir="rtl" className={`${ayandeh.variable} ${ayandeh.className} antialiased`}>
+      <body className={ayandeh.className}>{children}</body>
     </html>
   );
 }
