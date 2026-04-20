@@ -1,4 +1,5 @@
 import { Aspect, Badge, Breadcrumbs, Button, Container, DateDisplay, FormField, Input, MoneyDisplay, Pagination, PhoneLink, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
+import { GlassCard } from '@/components/shared/GlassCard';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -220,6 +221,38 @@ export default function LabPage() {
             <div className="mb-8 space-y-2">
               <div>Today: <DateDisplay value={new Date()} /></div>
               <div>With weekday: <DateDisplay value={new Date()} withWeekday /></div>
+            </div>
+          </section>
+
+          <section id="glasscard">
+            <h2 className="mb-4 text-h2 font-black text-ink">GlassCard</h2>
+            <p className="mb-6 text-small text-stone">Frosted glass surface. tone=&apos;light&apos; (.glass-card) for light bgs, tone=&apos;dark&apos; (.glass-card-dark) for ink bgs.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">Light tone</h3>
+            <div className="mb-8 grid grid-cols-3 gap-5">
+              <GlassCard href="#">
+                <div className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow)] text-forest mb-2">تهران</div>
+                <h4 className="text-h4 font-bold mb-2">شوروم ونک</h4>
+                <p className="text-small text-stone">خیابان ونک، خیابان شهید خدامی</p>
+              </GlassCard>
+              <GlassCard href="#">
+                <div className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow)] text-forest mb-2">اصفهان</div>
+                <h4 className="text-h4 font-bold mb-2">شوروم چهارباغ</h4>
+                <p className="text-small text-stone">خیابان چهارباغ بالا</p>
+              </GlassCard>
+              <GlassCard>
+                <div className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow)] text-forest mb-2">non-link</div>
+                <h4 className="text-h4 font-bold mb-2">No href</h4>
+                <p className="text-small text-stone">Renders as a div, no hover.</p>
+              </GlassCard>
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Dark tone (on ink)</h3>
+            <div className="mb-8 -mx-12 bg-ink p-12">
+              <GlassCard tone="dark" className="max-w-md">
+                <h4 className="text-h4 font-bold text-ivory mb-3">Dark glass card</h4>
+                <p className="text-small text-sand">Used for the contact form card and homepage CTA form. Hover only brightens border, no lift.</p>
+              </GlassCard>
             </div>
           </section>
         </div>
