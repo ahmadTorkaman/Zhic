@@ -1,6 +1,7 @@
 import { Aspect, Badge, Breadcrumbs, Button, Container, DateDisplay, FormField, Input, MoneyDisplay, Pagination, PhoneLink, Pill, Section, Select, SkipLink, Textarea } from '@zhic/ui';
 import { GlassCard } from '@/components/shared/GlassCard';
 import { Tile } from '@/components/tile/Tile';
+import { HorizontalTile } from '@/components/tile/HorizontalTile';
 import { PayloadImage } from '@/components/PayloadImage';
 
 /**
@@ -310,6 +311,23 @@ export default function LabPage() {
               <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="" />} aspect="1/1" title="پاتختی نیکا" price={85_000_000} hover="soft" />
               <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="" />} aspect="1/1" title="میز عسلی آوا" price={110_000_000} hover="soft" />
               <Tile href="#" image={<PayloadImage media={null} alt="" fallbackText="" />} aspect="1/1" title="کمد لباس سارا" price={350_000_000} hover="soft" />
+            </div>
+          </section>
+
+          <section id="horizontal-tile">
+            <h2 className="mb-4 text-h2 font-black text-ink">HorizontalTile</h2>
+            <p className="mb-6 text-small text-stone">Horizontal image+body. Covers home journal small-articles (160px) and product index mini-cards (120px).</p>
+
+            <h3 className="mb-3 text-h4 font-bold">120px — product mini-card</h3>
+            <div className="mb-8 max-w-md space-y-5">
+              <HorizontalTile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} imageWidth={120} title="صندلی راحتی پارسا" meta="چوب بلوط · مدرن" price={125_000_000} />
+              <HorizontalTile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} imageWidth={120} title="تخت خواب دیبا" meta="چوب گردو · کلاسیک" price={680_000_000} />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">160px — home journal small article</h3>
+            <div className="mb-8 max-w-md space-y-5">
+              <HorizontalTile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} imageWidth={160} eyebrow="طراحی" title="مینیمالیسم ایرانی: کم‌تر، اما باشکوه‌تر" meta="۷ دقیقه مطالعه" />
+              <HorizontalTile href="#" image={<PayloadImage media={null} alt="" fallbackText="تصویر" />} imageWidth={160} eyebrow="مراقبت" title="راهنمای نگهداری از مبلمان چوبی در فصل گرما" meta="۵ دقیقه مطالعه" />
             </div>
           </section>
         </div>
