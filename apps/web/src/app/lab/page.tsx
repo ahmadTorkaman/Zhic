@@ -10,6 +10,7 @@ import { HomeHero } from '@/components/hero/HomeHero';
 import { CinematicHero } from '@/components/hero/CinematicHero';
 import { ArticleHero } from '@/components/hero/ArticleHero';
 import { CollectionHero } from '@/components/hero/CollectionHero';
+import { EditorialHero } from '@/components/hero/EditorialHero';
 
 /**
  * /lab — component gallery. Every component built in v2 lands here
@@ -430,6 +431,26 @@ export default function LabPage() {
             <h3 className="mb-3 text-h4 font-bold">Custom eyebrow</h3>
             <div className="mb-8 -mx-12 border-y border-dashed border-sand">
               <CollectionHero title="مجموعه‌ی بهار ۱۴۰۵" eyebrow="کلکسیون فصلی" />
+            </div>
+          </section>
+
+          <section id="editorial-hero">
+            <h2 className="mb-4 text-h2 font-black text-ink">EditorialHero</h2>
+            <p className="mb-6 text-small text-stone">About / Atelier / Care. Mockup: <a href="http://80.240.31.146:9090/.superpowers/b-template-pages.html" className="underline" target="_blank" rel="noreferrer">b-template-pages.html</a> B4 / B5 / B8 <code>.hero-bleed</code>.</p>
+
+            <h3 className="mb-3 text-h4 font-bold">About (height=lg — 45vh)</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <EditorialHero eyebrow="درباره‌ی ژیک" title="از همدان، برای ایران" height="lg" placeholder="تصویر تیم ژیک در کارگاه" />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Atelier (height=xl — 50vh)</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <EditorialHero eyebrow="کارگاه ژیک" title="جایی که چوب نفس می‌کشد" height="xl" placeholder="تصویر داخل کارگاه — ماشین‌آلات و چوب" />
+            </div>
+
+            <h3 className="mb-3 text-h4 font-bold">Care (height=sm — 35vh)</h3>
+            <div className="mb-8 -mx-12 border-y border-dashed border-sand">
+              <EditorialHero eyebrow="راهنما" title="مراقبت و گارانتی" height="sm" placeholder="تصویر نزدیک از بافت چوب گردو" />
             </div>
           </section>
         </div>
