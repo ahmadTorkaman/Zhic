@@ -20,13 +20,13 @@ export function SiteHeader() {
   }, []);
 
   const chromeClass = scrolled
-    ? 'bg-ivory/85 backdrop-blur-[var(--glass-blur)] border-b border-sand shadow-subtle'
+    ? 'site-header-chrome'
     : 'bg-transparent border-b border-transparent';
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-[var(--z-header)] py-3 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${chromeClass}`}
+        className={`fixed inset-x-0 top-0 z-[var(--z-header)] py-2 md:py-4 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${chromeClass}`}
       >
         <Container>
           <div className="grid grid-cols-[1fr_auto_1fr] items-center md:flex md:justify-between">

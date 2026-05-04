@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چک‌لیست اجرای دکور — ژیک</title>
+<link rel="stylesheet" href="/invoices/shared.css">
+<style>
+  /* ── Document-specific layout (built on top of /invoices/shared.css) ─── */
+  body { font-size: 14px; line-height: 1.7; }
+
+  .page { max-width: 880px; }
+
+  /* Subtitle under the gold-line header */
+  h1 + .subtitle {
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+
+  /* Meta box: 3 fillable fields at top — name, city, code */
+  .meta-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 24px;
+    background: var(--cream);
+    border: 1px solid var(--sand);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+  .meta-box .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .meta-box .label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .meta-box .value {
+    border-bottom: 1px dashed var(--stone);
+    min-height: 22px;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  /* Phase headings — like invoice h2 but slightly bolder */
+  .phase-title {
+    background: var(--ink);
+    color: var(--ivory);
+    padding: 14px 22px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    margin: 36px 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .phase-title.phase-2 { background: var(--forest); }
+  .phase-title .phase-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Tables — extends invoice items table */
+  table.checklist {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+  }
+  table.checklist th {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--charcoal);
+    background: var(--ivory);
+    padding: 12px 14px;
+    text-align: start;
+  }
+  table.checklist td {
+    padding: 14px 14px;
+    border-bottom: 1px solid var(--sand);
+    font-size: 13px;
+    vertical-align: top;
+    line-height: 1.7;
+  }
+  table.checklist tr:last-child td {
+    border-bottom: 1px solid var(--charcoal);
+  }
+  table.checklist tr:hover { background: var(--cream); }
+
+  .col-num    { width: 6%;  text-align: center; font-weight: 900; color: var(--ink); font-size: 15px; }
+  .col-task   { width: 50%; }
+  .col-date   { width: 24%; }
+  .col-status { width: 20%; }
+
+  /* Checkbox — small empty square */
+  .checkbox {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border: 1.4px solid var(--charcoal);
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Main task title + sub-bullet list with checkboxes */
+  .main-task {
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .sub-list {
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sub-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    margin-bottom: 4px;
+    font-size: 12.5px;
+    color: var(--charcoal);
+  }
+  .sub-list li .checkbox {
+    margin-top: 4px;
+  }
+  .sub-list li .sub-text { flex: 1; }
+
+  /* Inline "note" callout — cream with gold accent */
+  .note {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--cream);
+    border-inline-start: 3px solid var(--gold);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--charcoal);
+    line-height: 1.7;
+  }
+  .note strong {
+    color: var(--ink);
+    font-weight: 900;
+    letter-spacing: 0.02em;
+  }
+
+  /* Status + date columns */
+  .status-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .status-row {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: var(--forest);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .date-block {
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .date-block:last-child { margin-bottom: 0; }
+  .date-label {
+    color: var(--stone);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .date-line {
+    border-bottom: 1px dashed var(--stone);
+    min-height: 20px;
+  }
+
+  /* "Gate" callout — between phases. Forest, signaling forward momentum. */
+  .gate {
+    background: var(--forest);
+    color: var(--ivory);
+    padding: 16px 22px;
+    margin: 24px 0 32px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.7;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .gate::before {
+    content: "✓";
+    color: var(--gold);
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  /* Signatures — extends invoice signature block */
+  .signatures {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 48px;
+    page-break-inside: avoid;
+  }
+  .sig-box {
+    border: 1px solid var(--sand);
+    border-radius: 8px;
+    padding: 20px 22px;
+    background: var(--ivory);
+  }
+  .sig-box .sig-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .sig-box .sig-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 12px;
+  }
+  .sig-box .sig-label {
+    color: var(--stone);
+    flex-shrink: 0;
+  }
+  .sig-box .sig-line {
+    flex: 1;
+    border-bottom: 1px dashed var(--stone);
+    min-height: 18px;
+  }
+
+  /* Footer note */
+  .footer-note {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--sand);
+    font-size: 11px;
+    color: var(--stone);
+    text-align: center;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* Print — A4 friendly */
+  @page {
+    size: A4;
+    margin: 14mm 12mm 14mm 12mm;
+  }
+  @media print {
+    body { font-size: 11pt; }
+    .page { padding: 0; max-width: 100%; }
+    table.checklist tr { page-break-inside: avoid; }
+    .signatures { page-break-inside: avoid; }
+    .gate { page-break-inside: avoid; }
+    .phase-title { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="page-header">
+    <div class="brand">
+      <span class="gold-line"></span>
+      چک‌لیست اجرای دکور
+    </div>
+    <div class="meta">
+      <div class="label">سند نظارتی</div>
+      <div class="val">DEC-001</div>
+      <div class="label" style="margin-top: 12px;">مالک</div>
+      <div class="val" style="font-family: Ayandeh;">ژیک</div>
+    </div>
+  </header>
+
+  <h1>چک‌لیست اجرای دکور</h1>
+  <p class="subtitle">سند نظارت و پیگیری مراحل اجرای تغییر دکور نمایندگی.</p>
+
+  <section class="meta-box">
+    <div class="field">
+      <span class="label">نام نمایندگی</span>
+      <span class="value"></span>
+    </div>
+    <div class="field">
+      <span class="label">شهر</span>
+      <span class="value"></span>
+    </div>
+    <div class="field">
+      <span class="label">کد پیگیری</span>
+      <span class="value"></span>
+    </div>
+  </section>
+
+  <!-- ─── PHASE 1 ─── -->
+  <div class="phase-title">
+    <span>مرحله نخست — آماده‌سازی و تأییدات اولیه</span>
+    <span class="phase-num">۰۱</span>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-num">ردیف</th>
+        <th class="col-task">شرح اقدام</th>
+        <th class="col-date">تاریخ</th>
+        <th class="col-status">وضعیت</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-num">۱</td>
+        <td>
+          <div class="main-task">تاریخ درخواست نمایندگی برای اجرای دکور</div>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۲</td>
+        <td>
+          <div class="main-task">نیازهای اولیه شروع تغییر دکور</div>
+          <ul class="sub-list">
+            <li><span class="checkbox"></span><span class="sub-text">۲٫۱ — تأیید مدیریت</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۲٫۲ — بستن قرارداد</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۲٫۳ — اجرا و نصب تابلو با لوگو و رنگ سازمانی شرکت</span></li>
+          </ul>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۳</td>
+        <td>
+          <div class="main-task">تاریخ ارسال پلان دقیق فروشگاه</div>
+          <div class="note">
+            <strong>توجه:</strong> در صورت دقیق نبودن اندازه‌های پلان که منجر به بروز مشکل در نصب شود، هزینه بر عهده فروشگاه است.
+          </div>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۴</td>
+        <td>
+          <div class="main-task">تاریخ شروع طراحی و چیدمان سرویس‌ها</div>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۵</td>
+        <td>
+          <div class="main-task">تاریخ تأیید طراحی‌ها و برش <span class="ltr-num">CNC</span> نئوپان‌ها</div>
+        </td>
+        <td>
+          <div class="date-block">
+            <span class="date-label">دریافت فروشگاه</span>
+            <div class="date-line"></div>
+          </div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۶</td>
+        <td>
+          <div class="main-task">اعلام نیازهای فروشگاه</div>
+          <ul class="sub-list">
+            <li><span class="checkbox"></span><span class="sub-text">۶٫۱ — تهیه اکسسوری مورد تأیید شرکت</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۶٫۲ — تهیه نور مناسب</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۶٫۳ — تأیید کف و سقف</span></li>
+          </ul>
+          <div class="note">
+            <strong>توجه:</strong> اجرای هر کدام از موارد فوق مشروط بر تأیید شرکت می‌باشد.
+          </div>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۷</td>
+        <td>
+          <div class="main-task">تاریخ خرید و دریافت نیازهای دکور</div>
+          <ul class="sub-list">
+            <li><span class="checkbox"></span><span class="sub-text">۷٫۱ — زهوار</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۷٫۲ — رنگ</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۷٫۳ — سایر اقلام</span></li>
+          </ul>
+        </td>
+        <td>
+          <div class="date-block">
+            <span class="date-label">تاریخ خرید</span>
+            <div class="date-line"></div>
+          </div>
+          <div class="date-block">
+            <span class="date-label">تاریخ دریافت</span>
+            <div class="date-line"></div>
+          </div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="gate">
+    پس از انجام و تأیید کامل ۷ مرحله بالا، اجازه ورود به فاز اجرا صادر می‌شود.
+  </div>
+
+  <!-- ─── PHASE 2 ─── -->
+  <div class="phase-title phase-2">
+    <span>مرحله دوم — اجرا و نصب در محل</span>
+    <span class="phase-num">۰۲</span>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-num">ردیف</th>
+        <th class="col-task">شرح اقدام</th>
+        <th class="col-date">تاریخ شروع / پایان</th>
+        <th class="col-status">وضعیت</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-num">۱</td>
+        <td>
+          <div class="main-task">شروع اجرای نصب دکور و تاریخ پایان آن</div>
+        </td>
+        <td>
+          <div class="date-block">
+            <span class="date-label">تاریخ شروع</span>
+            <div class="date-line"></div>
+          </div>
+          <div class="date-block">
+            <span class="date-label">تاریخ پایان</span>
+            <div class="date-line"></div>
+          </div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۲</td>
+        <td>
+          <div class="main-task">تاریخ شروع و پایان رنگ‌کاری</div>
+        </td>
+        <td>
+          <div class="date-block">
+            <span class="date-label">تاریخ شروع</span>
+            <div class="date-line"></div>
+          </div>
+          <div class="date-block">
+            <span class="date-label">تاریخ پایان</span>
+            <div class="date-line"></div>
+          </div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۳</td>
+        <td>
+          <div class="main-task">نظارت بر اجرای صحیح کار</div>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۴</td>
+        <td>
+          <div class="main-task">چیدمان سرویس‌ها و اکسسوری‌ها</div>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۵</td>
+        <td>
+          <div class="main-task">تاریخ پایان اجرا و تأیید نهایی دکور</div>
+        </td>
+        <td>
+          <div class="date-block"><div class="date-line"></div></div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SIGNATURES ─── -->
+  <section class="signatures">
+    <div class="sig-box">
+      <div class="sig-title">نماینده شرکت / ناظر</div>
+      <div class="sig-row">
+        <span class="sig-label">نام و نام خانوادگی</span>
+        <span class="sig-line"></span>
+      </div>
+      <div class="sig-row">
+        <span class="sig-label">تاریخ</span>
+        <span class="sig-line"></span>
+      </div>
+      <div class="sig-row">
+        <span class="sig-label">امضاء و مهر</span>
+        <span class="sig-line"></span>
+      </div>
+    </div>
+    <div class="sig-box">
+      <div class="sig-title">مدیر نمایندگی</div>
+      <div class="sig-row">
+        <span class="sig-label">نام و نام خانوادگی</span>
+        <span class="sig-line"></span>
+      </div>
+      <div class="sig-row">
+        <span class="sig-label">تاریخ</span>
+        <span class="sig-line"></span>
+      </div>
+      <div class="sig-row">
+        <span class="sig-label">امضاء و مهر</span>
+        <span class="sig-line"></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    این چک‌لیست بایستی در پایان هر مرحله توسط ناظر تکمیل و در پرونده نمایندگی بایگانی شود.
+  </div>
+
+</div>
+</body>
+</html>

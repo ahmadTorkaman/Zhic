@@ -27,7 +27,7 @@ export function HomeBrandStatement({
   aboutHref = '/about',
 }: HomeBrandStatementProps) {
   return (
-    <section className="relative overflow-hidden bg-ink py-[var(--space-11)] text-ivory">
+    <section className="relative overflow-hidden bg-ink py-9 text-ivory md:py-11">
       {/* Caramel radial glow in bottom-start corner (RTL: start = right visually) */}
       <div
         aria-hidden
@@ -36,9 +36,12 @@ export function HomeBrandStatement({
       />
       <Container>
         <div className="grid items-center gap-[var(--space-10)] md:grid-cols-[2fr_3fr]">
-          <div className="flex flex-col gap-[var(--space-7)]">
+          {/* Mobile: horizontal ticker (row + overflow scroll). Desktop: vertical column. */}
+          <div className="flex flex-row gap-[var(--space-5)] overflow-x-auto pb-[var(--space-4)] [scrollbar-width:none] md:flex-col md:gap-[var(--space-7)] md:overflow-visible md:pb-0">
             {stats.map((s, i) => (
-              <StatBlock key={i} value={s.value} label={s.label} />
+              <div key={i} className="min-w-[140px] shrink-0 md:min-w-0 md:shrink">
+                <StatBlock value={s.value} label={s.label} />
+              </div>
             ))}
           </div>
           <div>

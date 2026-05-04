@@ -5,15 +5,18 @@ import { ProductGrid } from '@/components/product/ProductGrid';
 import { PayloadImage } from '@/components/PayloadImage';
 import { RichText } from '@/lib/richtext';
 import { fetchCollection } from '@/lib/payload';
+import { buildMetadata } from '@/lib/seo';
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const collection = await fetchCollection(slug);
-  return {
+  return buildMetadata({
+    seo: collection?.seo,
     title: collection?.name ?? 'مجموعه',
-  };
+    path: `/collections/${slug}`,
+  });
 }
 
 export default async function CollectionPage({ params }: PageProps) {

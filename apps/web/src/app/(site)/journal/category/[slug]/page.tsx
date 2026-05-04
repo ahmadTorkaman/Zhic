@@ -1,8 +1,14 @@
 import { notFound } from 'next/navigation';
 import { Container, Breadcrumbs, Pagination } from '@zhic/ui';
 import { PageHeader } from '@/components/hero/PageHeader';
+import { JournalCategoryNav } from '@/components/journal/JournalCategoryNav';
 import { JournalGrid } from '@/components/journal/JournalGrid';
-import { fetchJournalCategory, fetchArticles, journalCategoryPath } from '@/lib/payload';
+import {
+  fetchJournalCategory,
+  fetchJournalCategories,
+  fetchArticles,
+  journalCategoryPath,
+} from '@/lib/payload';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -13,9 +19,10 @@ export default async function JournalCategoryPage({ params, searchParams }: Page
   const [{ slug }, sp] = await Promise.all([params, searchParams]);
   const page = Number(sp.page) > 0 ? Number(sp.page) : 1;
 
-  const [category, articlesPage] = await Promise.all([
+  const [category, articlesPage, categories] = await Promise.all([
     fetchJournalCategory(slug),
     fetchArticles({ category: slug, page }),
+    fetchJournalCategories(),
   ]);
 
   if (!category) notFound();
@@ -25,7 +32,7 @@ export default async function JournalCategoryPage({ params, searchParams }: Page
   return (
     <>
       <Container>
-        <div className="pt-6">
+        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
           <Breadcrumbs items={[
             { label: 'خانه', href: '/' },
             { label: 'ژورنال', href: '/journal' },
@@ -40,6 +47,10 @@ export default async function JournalCategoryPage({ params, searchParams }: Page
       />
 
       <Container>
+        {categories.length > 0 ? (
+          <JournalCategoryNav categories={categories} activeSlug={slug} />
+        ) : null}
+
         <JournalGrid articles={articlesPage.docs} />
         <Pagination
           currentPage={articlesPage.page}

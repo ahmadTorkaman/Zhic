@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { fetchShowroom } from '@/lib/payload';
-import { Container, Breadcrumbs } from '@zhic/ui';
+import { Container } from '@zhic/ui';
 import { ShowroomInfoCards } from '@/components/showroom/ShowroomInfoCards';
 import { GlassOverlayHero } from '@/components/hero/GlassOverlayHero';
 import { PayloadImage } from '@/components/PayloadImage';
@@ -41,18 +41,6 @@ export default async function ShowroomDetailPage({ params }: PageProps) {
         title={showroom.name}
         headline={showroom.headline ?? 'فضایی آرام برای دیدن و لمس مبلمان ژیک از نزدیک.'}
       />
-
-      <Container>
-        <div className="pb-6">
-          <Breadcrumbs
-            items={[
-              { label: 'خانه', href: '/' },
-              { label: 'شوروم‌ها', href: '/showrooms' },
-              { label: showroom.name },
-            ]}
-          />
-        </div>
-      </Container>
 
       <section className="pb-9">
         <ShowroomInfoCards showroom={showroom} />

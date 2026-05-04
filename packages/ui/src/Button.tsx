@@ -36,8 +36,8 @@ const VARIANT_CLASSES: Record<Variant, string> = {
 
 const SIZE_CLASSES: Record<Size, string> = {
   sm: 'px-4 py-1.5 text-eyebrow',
-  md: 'px-7 py-3',
-  lg: 'px-9 py-4',
+  md: 'px-[1.75rem] py-[0.9375rem]',
+  lg: 'px-[2.25rem] py-4',
 };
 
 export function Button(props: ButtonProps) {

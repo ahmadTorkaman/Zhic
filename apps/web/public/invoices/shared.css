@@ -1,0 +1,407 @@
+@font-face {
+  font-family: 'Ayandeh';
+  src: url('/fonts/ayandeh-light.ttf') format('truetype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Ayandeh';
+  src: url('/fonts/ayandeh-regular.ttf') format('truetype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Ayandeh';
+  src: url('/fonts/ayandeh-bold.ttf') format('truetype');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Ayandeh';
+  src: url('/fonts/ayandeh-black.ttf') format('truetype');
+  font-weight: 900; font-style: normal; font-display: swap;
+}
+
+:root {
+  --ivory: #FAFAF7;
+  --cream: #F5F0EB;
+  --sand:  #E8E0D8;
+  --stone: #8C8279;
+  --charcoal: #2C2825;
+  --ink:   #14110F;
+  --forest: #5F7760;
+  --gold:  #C49A6C;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: var(--ivory); }
+body {
+  font-family: 'Ayandeh', 'Tahoma', sans-serif;
+  font-weight: 400;
+  background: var(--ivory);
+  color: var(--charcoal);
+  line-height: 1.7;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 56px 48px;
+  background: var(--ivory);
+}
+
+/* Top gold rule + brand */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--sand);
+  margin-bottom: 40px;
+}
+.page-header .brand {
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.page-header .brand .gold-line {
+  display: block;
+  width: 32px;
+  height: 2px;
+  background: var(--gold);
+  margin-bottom: 12px;
+}
+.page-header .meta {
+  text-align: left; /* LTR for numeric invoice ID */
+  font-size: 13px;
+  color: var(--stone);
+  direction: ltr;
+}
+.page-header .meta .label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--forest);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.page-header .meta .val {
+  color: var(--charcoal);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* H1 — invoice title */
+h1 {
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+h1 + .subtitle {
+  color: var(--stone);
+  font-weight: 300;
+  font-size: 17px;
+  margin-bottom: 40px;
+}
+
+/* Parties — from / to */
+.parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 40px;
+  padding: 24px;
+  background: var(--cream);
+  border-radius: 8px;
+}
+.parties .label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--forest);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.parties .name {
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.parties .sub {
+  font-size: 13px;
+  color: var(--stone);
+  line-height: 1.7;
+}
+.parties a {
+  color: var(--stone);
+  text-decoration: none;
+}
+
+/* Line items table */
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+  margin-top: 32px;
+}
+table.items {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+}
+table.items th, table.items td {
+  padding: 14px 16px;
+  text-align: start;
+  border-bottom: 1px solid var(--sand);
+  font-size: 14px;
+}
+table.items th {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--stone);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--charcoal);
+  background: var(--ivory);
+}
+table.items td.amount {
+  text-align: end;
+  font-weight: 700;
+  font-family: 'Ayandeh', 'Tahoma', sans-serif;
+  direction: ltr;
+  white-space: nowrap;
+}
+table.items td.status {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--forest);
+  white-space: nowrap;
+}
+table.items td.status.pending { color: var(--gold); }
+table.items tbody tr:hover { background: var(--cream); }
+table.items tbody tr:last-child td { border-bottom: 1px solid var(--charcoal); }
+
+/* Totals block */
+.totals {
+  padding: 24px;
+  background: var(--ink);
+  color: var(--ivory);
+  border-radius: 8px;
+  margin-bottom: 32px;
+}
+.totals .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--sand);
+  font-weight: 300;
+}
+.totals .row .amount {
+  font-weight: 700;
+  color: var(--ivory);
+  direction: ltr;
+}
+.totals .row.grand {
+  border-top: 1px solid rgba(250, 250, 247, 0.15);
+  padding-top: 16px;
+  margin-top: 12px;
+  font-size: 18px;
+  color: var(--ivory);
+  font-weight: 700;
+}
+.totals .row.grand .amount {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--gold);
+}
+
+/* Payment block */
+.payment {
+  margin-bottom: 40px;
+  padding: 20px 24px;
+  border: 1px solid var(--sand);
+  border-radius: 8px;
+  background: var(--ivory);
+}
+.payment .label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--forest);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.payment .val {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  direction: ltr;
+  letter-spacing: 0.03em;
+}
+.payment .sub {
+  font-size: 12px;
+  color: var(--stone);
+  margin-top: 8px;
+  font-weight: 300;
+}
+
+/* Notes + signature */
+.notes {
+  font-size: 12px;
+  color: var(--stone);
+  line-height: 1.8;
+  padding: 20px 0;
+  border-top: 1px solid var(--sand);
+  margin-top: 24px;
+  font-weight: 300;
+}
+.signature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--sand);
+}
+.signature .block {
+  border-top: 1px solid var(--charcoal);
+  padding-top: 8px;
+  font-size: 12px;
+  color: var(--stone);
+  font-weight: 300;
+}
+.signature .block .name {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+/* Status pills */
+.pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.pill.overdue { background: #8B4A2B; color: var(--ivory); }
+.pill.pending { background: var(--gold); color: var(--ink); }
+.pill.paid { background: var(--forest); color: var(--ivory); }
+
+/* LTR numbers in Persian context */
+.ltr-num { direction: ltr; display: inline-block; }
+
+/* Print-friendly */
+@media print {
+  body { font-size: 12px; }
+  .page { padding: 20px; max-width: 100%; }
+  .no-print { display: none; }
+  .page-header, .parties, table.items, .totals, .payment { page-break-inside: avoid; }
+}
+
+/* Index page tweaks */
+.index-list {
+  list-style: none;
+  margin: 32px 0;
+}
+.index-list li {
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  background: var(--cream);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.index-list li:hover {
+  border-color: var(--sand);
+  background: var(--ivory);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(20, 17, 15, 0.04);
+}
+.index-list a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 700;
+}
+.index-list .title { font-size: 16px; }
+.index-list .desc {
+  display: block;
+  font-size: 12px;
+  color: var(--stone);
+  font-weight: 300;
+  margin-top: 4px;
+}
+.index-list .amount {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--charcoal);
+  direction: ltr;
+  white-space: nowrap;
+}
+
+/* Budget breakdown table */
+table.budget {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+  font-size: 13px;
+}
+table.budget th, table.budget td {
+  padding: 10px 12px;
+  text-align: start;
+  border-bottom: 1px solid var(--sand);
+}
+table.budget th {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--stone);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--charcoal);
+}
+table.budget td.amount {
+  text-align: end;
+  direction: ltr;
+  font-weight: 700;
+  white-space: nowrap;
+}
+table.budget td.status {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--forest);
+}
+table.budget .cat-row td {
+  background: var(--cream);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+  border-bottom: 2px solid var(--charcoal);
+  padding-top: 20px;
+}
+table.budget tfoot td {
+  font-weight: 900;
+  font-size: 16px;
+  padding: 16px 12px;
+  background: var(--ink);
+  color: var(--gold);
+  border: none;
+}

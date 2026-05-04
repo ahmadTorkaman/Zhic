@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess } from '../lib/access'
 
 export const Authors: CollectionConfig = {
   slug: 'authors',
@@ -7,7 +8,9 @@ export const Authors: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'role'],
+    group: 'ژورنال',
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {

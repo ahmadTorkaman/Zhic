@@ -11,12 +11,12 @@ export function ProductSidebar({ product }: ProductSidebarProps) {
 
   return (
     /*
-     * c-sidebar: cream bg, rounded-lg, padding, sticky with top=var(--space-8)
-     * Full-width on mobile, 380px wide on lg+
+     * c-sidebar: cream bg, rounded-lg, padding. Sticky only on lg+ where
+     * the sidebar sits beside content. On mobile it stacks below and must
+     * scroll with the page — otherwise it overlaps related products.
      */
     <div
-      className="lg:w-[380px] w-full rounded-lg border border-sand bg-cream p-7"
-      style={{ position: 'sticky', top: 'var(--space-7)', alignSelf: 'start' }}
+      className="w-full rounded-lg bg-cream p-7 lg:sticky lg:top-[var(--space-7)] lg:w-[380px] lg:self-start"
     >
       {/* 1. Price */}
       {product.basePriceRials != null ? (

@@ -1,8 +1,11 @@
 import type { CollectionConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: { singular: 'رسانه', plural: 'رسانه‌ها' },
+  admin: { group: 'رسانه' },
+  access: publishedContentAccess,
   upload: {
     mimeTypes: ['image/*', 'video/*', 'application/pdf'],
   },

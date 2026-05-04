@@ -32,7 +32,7 @@ export function InquiryFormSlim({ tone = 'dark' }: InquiryFormSlimProps) {
                  aria-describedby={state.errors?.phone ? 'inquiry-slim-phone-error' : undefined} />
         </FormField>
 
-        <FormField id="inquiry-slim-message" label="پیام کوتاه" tone={tone}>
+        <FormField id="inquiry-slim-message" label="پیام شما" tone={tone}>
           <Textarea id="inquiry-slim-message" name="message" tone={tone} rows={3}
                     placeholder="درباره‌ی چه محصولی سؤال دارید؟" />
         </FormField>

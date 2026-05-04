@@ -77,7 +77,7 @@ export function HomeShowroomsStrip({
     : PLACEHOLDER_SHOWROOMS;
 
   return (
-    <section className="bg-cream py-[var(--space-11)]">
+    <section className="bg-cream py-9 md:py-11">
       <Container>
         <div className="mb-8">
           <h2 className="mb-2 text-h2 font-black text-ink">{heading}</h2>

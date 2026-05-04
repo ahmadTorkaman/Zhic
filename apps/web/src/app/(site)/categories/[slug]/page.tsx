@@ -3,6 +3,7 @@ import { Container, Breadcrumbs, Pagination } from '@zhic/ui';
 import { CollectionHero } from '@/components/hero/CollectionHero';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { fetchCategory, fetchProducts, categoryPath } from '@/lib/payload';
+import { buildMetadata } from '@/lib/seo';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -12,10 +13,12 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const category = await fetchCategory(slug);
-  return {
+  return buildMetadata({
+    seo: category?.seo,
     title: category?.name ?? 'دسته‌بندی',
-    description: category?.description ?? undefined,
-  };
+    description: category?.description,
+    path: `/categories/${slug}`,
+  });
 }
 
 export default async function CategoryPage({ params, searchParams }: PageProps) {

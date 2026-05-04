@@ -1,0 +1,2570 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ژیک — پنل فروشنده (شعبه‌های شهرستان)</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Light.ttf') format('truetype'); font-weight: 300; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Bold.ttf') format('truetype'); font-weight: 700; }
+  @font-face { font-family: 'Ayandeh'; src: url('/apps/web/src/assets/fonts/Ayandeh%20Black.ttf') format('truetype'); font-weight: 900; }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ═══════════════════════════════════════════
+     TOKENS — exact values from tokens.css
+     ═══════════════════════════════════════════ */
+  :root {
+    /* Color */
+    --color-ivory: #FAFAF7;
+    --color-cream: #F5F0EB;
+    --color-sand: #E8E0D8;
+    --color-stone: #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink: #14110F;
+    --color-forest: #5F7760;
+    --color-forest-soft: #758D76;
+    --color-gold: #C49A6C;
+    --color-gold-soft: #D9B58A;
+    --color-overlay: rgba(20, 17, 15, 0.6);
+
+    /* Operator-specific status surfaces (derived from brand) */
+    --status-active-bg: rgba(95, 119, 96, 0.08);
+    --status-active-fg: var(--color-forest);
+    --status-pending-bg: rgba(196, 154, 108, 0.10);
+    --status-pending-fg: #9E7A4F;
+    --status-neutral-bg: rgba(140, 130, 121, 0.10);
+    --status-neutral-fg: var(--color-stone);
+
+    /* Typography */
+    --text-display: clamp(3rem, 5vw + 1rem, 5rem);
+    --text-h1: clamp(2.25rem, 3.5vw + 1rem, 3.5rem);
+    --text-h2: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    --text-h3: clamp(1.375rem, 1.5vw + 0.5rem, 1.75rem);
+    --text-h4: 1.25rem;
+    --text-lead: 1.125rem;
+    --text-body: 1rem;
+    --text-small: 0.875rem;
+    --text-xs: 0.8125rem;
+    --text-eyebrow: 0.75rem;
+
+    --leading-h1: 1.2;
+    --leading-h2: 1.25;
+    --leading-lead: 1.7;
+    --leading-body: 1.7;
+
+    --tracking-eyebrow: 0.18em;
+    --tracking-wide: 0.04em;
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+    --space-9: 6rem;
+    --space-10: 8rem;
+    --space-11: 12rem;
+
+    /* Shadows */
+    --shadow-subtle: 0 2px 8px rgba(20, 17, 15, 0.03);
+    --shadow-card: 0 8px 32px rgba(20, 17, 15, 0.04);
+    --shadow-elevated: 0 12px 40px rgba(20, 17, 15, 0.08);
+    --shadow-modal: 0 24px 64px -24px rgba(20, 17, 15, 0.18);
+
+    /* Glass */
+    --glass-bg: rgba(250, 250, 247, 0.6);
+    --glass-bg-dark: rgba(250, 250, 247, 0.06);
+    --glass-border: rgba(232, 224, 216, 0.5);
+    --glass-border-dark: rgba(250, 250, 247, 0.12);
+    --glass-blur: 24px;
+
+    /* Radii */
+    --radius-md: 4px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-pill: 999px;
+
+    /* Motion */
+    --dur-fast: 240ms;
+    --dur-hover: 720ms;
+    --dur-appear: 720ms;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-soft: cubic-bezier(0.64, 0, 0.78, 0);
+
+    /* Interaction */
+    --hover-lift: -2px;
+    --hover-lift-card: -3px;
+    --focus-ring-color: rgba(95, 119, 96, 0.3);
+
+    /* Operator chrome */
+    --header-h: 72px;
+    --announcement-h: 44px;
+    --order-draft-w: 380px;
+  }
+
+  body {
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    line-height: var(--leading-body);
+    font-size: var(--text-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+  :focus:not(:focus-visible) { outline: none; }
+
+  ::selection { background: var(--color-gold); color: var(--color-ink); }
+
+  .container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-inline: var(--space-6);
+  }
+  @media (max-width: 640px) {
+    .container { padding-inline: var(--space-5); }
+  }
+
+  /* persian-digit helpers */
+  .num { font-feature-settings: "ss01" on; letter-spacing: 0.02em; }
+
+  /* eyebrow */
+  .eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .eyebrow.forest { color: var(--color-forest); }
+  .eyebrow.gold   { color: var(--color-gold); }
+  .eyebrow.ivory  { color: var(--color-cream); }
+  .eyebrow::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+
+  h1, h2, h3, h4 { font-weight: 400; line-height: var(--leading-h2); color: var(--color-ink); }
+  h1 { font-size: var(--text-h1); line-height: var(--leading-h1); letter-spacing: -0.01em; }
+  h2 { font-size: var(--text-h2); }
+  h3 { font-size: var(--text-h3); }
+  h4 { font-size: var(--text-h4); }
+
+  /* ═══════════════════════════════════════════
+     ANNOUNCEMENT RIBBON
+     ═══════════════════════════════════════════ */
+  .announcement {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+    border-inline-start: 3px solid var(--color-gold);
+    padding: var(--space-3) 0;
+    position: relative;
+    z-index: 250;
+  }
+  .announcement-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: var(--text-small);
+  }
+  .announcement-icon {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    color: var(--color-gold);
+  }
+  .announcement-tag {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .announcement-text { flex: 1; line-height: 1.5; }
+  .announcement-text strong { color: var(--color-ivory); font-weight: 700; }
+  .announcement-dismiss {
+    background: none; border: 0; color: var(--color-stone);
+    cursor: pointer; padding: var(--space-2);
+    transition: color var(--dur-fast) var(--ease-out-soft);
+  }
+  .announcement-dismiss:hover { color: var(--color-cream); }
+
+  @media (max-width: 768px) {
+    .announcement-tag { display: none; }
+    .announcement-text { font-size: var(--text-xs); }
+  }
+
+  /* ═══════════════════════════════════════════
+     HEADER — operator chrome
+     ═══════════════════════════════════════════ */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: rgba(250, 250, 247, 0.85);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-bottom: 1px solid var(--color-sand);
+    transition: box-shadow var(--dur-hover) var(--ease-out-soft);
+  }
+  .site-header.scrolled { box-shadow: var(--shadow-subtle); }
+
+  .header-row {
+    height: var(--header-h);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .brand-mark {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--color-forest);
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    color: var(--color-forest);
+    font-family: 'Ayandeh', serif;
+    font-weight: 900;
+    font-size: 1.125rem;
+  }
+  .brand-text { line-height: 1.1; }
+  .brand-name { font-weight: 700; font-size: 1rem; }
+  .brand-sub  {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+
+  .main-nav {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+  .nav-link {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+    text-decoration: none;
+    border-radius: var(--radius-pill);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+    position: relative;
+  }
+  .nav-link:hover { color: var(--color-forest); background: var(--color-cream); }
+  .nav-link.active {
+    color: var(--color-ivory);
+    background: var(--color-charcoal);
+  }
+  .nav-link .badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px; height: 18px;
+    border-radius: var(--radius-pill);
+    background: var(--color-gold);
+    color: var(--color-ink);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding-inline: 6px;
+    margin-inline-start: var(--space-2);
+    line-height: 1;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .icon-btn {
+    width: 40px; height: 40px;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-charcoal);
+    display: grid;
+    place-items: center;
+    position: relative;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .icon-btn:hover { border-color: var(--color-forest); color: var(--color-forest); }
+  .icon-btn .dot {
+    position: absolute;
+    top: 8px;
+    inset-inline-end: 9px;
+    width: 8px; height: 8px;
+    background: var(--color-gold);
+    border-radius: 50%;
+    border: 2px solid var(--color-ivory);
+  }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+    background: transparent;
+  }
+  .user-pill:hover { border-color: var(--color-forest); }
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-forest), var(--color-forest-soft));
+    color: var(--color-ivory);
+    display: grid; place-items: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .user-meta { line-height: 1.15; text-align: start; }
+  .user-name { font-size: var(--text-small); font-weight: 700; }
+  .user-branch {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+
+  .hamburger { display: none; }
+
+  @media (max-width: 1024px) {
+    .main-nav { display: none; }
+    .header-row { grid-template-columns: auto 1fr auto; }
+  }
+  @media (max-width: 768px) {
+    :root { --header-h: 60px; }
+    .header-row { grid-template-columns: auto 1fr auto; gap: var(--space-3); }
+    .brand-text { display: none; }
+    .user-pill { display: none; }
+    .hamburger {
+      display: grid;
+      place-items: center;
+      width: 40px; height: 40px;
+      background: transparent;
+      border: 1px solid var(--color-sand);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      color: var(--color-charcoal);
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     HERO — split greeting
+     ═══════════════════════════════════════════ */
+  .hero {
+    padding: var(--space-9) 0 var(--space-7);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-watermark {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: -3rem;
+    transform: translateY(-50%);
+    font-family: 'Ayandeh', serif;
+    font-weight: 900;
+    font-size: 28rem;
+    line-height: 1;
+    color: var(--color-cream);
+    opacity: 0.55;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+  .hero-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--space-9);
+    align-items: end;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-greeting .eyebrow { margin-bottom: var(--space-5); }
+  .hero-greeting h1 {
+    margin-bottom: var(--space-5);
+  }
+  .hero-greeting h1 .accent { color: var(--color-forest); }
+  .hero-greeting p {
+    font-size: var(--text-lead);
+    color: var(--color-stone);
+    max-width: 32em;
+    line-height: var(--leading-lead);
+  }
+  .hero-meta {
+    display: flex;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-sand);
+    font-size: var(--text-small);
+    color: var(--color-stone);
+  }
+  .hero-meta-item { display: flex; align-items: center; gap: var(--space-2); }
+  .hero-meta-item strong { color: var(--color-charcoal); font-weight: 700; }
+  .hero-meta-item svg { width: 14px; height: 14px; color: var(--color-forest); }
+
+  .hero-quick {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--color-cream);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-sand);
+  }
+  .hero-quick-eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+  .hero-quick-title {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    line-height: 1.4;
+  }
+  .hero-quick-actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 1024px) {
+    .hero-watermark { font-size: 20rem; opacity: 0.4; }
+    .hero-row { grid-template-columns: 1fr; gap: var(--space-7); align-items: stretch; }
+  }
+  @media (max-width: 768px) {
+    .hero { padding: var(--space-7) 0 var(--space-6); }
+    .hero-watermark { display: none; }
+    .hero-meta { flex-direction: column; gap: var(--space-3); }
+  }
+
+  /* ═══════════════════════════════════════════
+     KPI BAND — dark, gold-bordered
+     ═══════════════════════════════════════════ */
+  .kpi-band {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: var(--space-7) 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-band::before {
+    content: '';
+    position: absolute;
+    top: 0; inset-inline-start: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 30% 0%, rgba(196, 154, 108, 0.06), transparent 60%);
+    pointer-events: none;
+  }
+  .kpi-band-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    position: relative;
+    z-index: 1;
+  }
+  .kpi-band-head h3 {
+    color: var(--color-ivory);
+    font-size: var(--text-h3);
+  }
+  .kpi-band-head .period {
+    font-size: var(--text-small);
+    color: var(--color-stone);
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .kpi {
+    padding: var(--space-5) var(--space-5);
+    border-inline-end: 1px solid rgba(250, 250, 247, 0.10);
+  }
+  .kpi:first-child { padding-inline-start: 0; }
+  .kpi:last-child  { border-inline-end: 0; padding-inline-end: 0; }
+  .kpi-eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+    margin-bottom: var(--space-4);
+    font-weight: 400;
+  }
+  .kpi-value {
+    font-size: clamp(2rem, 3vw, 2.75rem);
+    line-height: 1;
+    color: var(--color-ivory);
+    font-weight: 300;
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.01em;
+  }
+  .kpi-value .unit {
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    font-weight: 400;
+    margin-inline-start: var(--space-2);
+  }
+  .kpi-trend {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .kpi-trend .delta { color: var(--color-forest-soft); font-weight: 700; }
+  .kpi-trend .delta.warn { color: var(--color-gold); }
+
+  @media (max-width: 768px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .kpi {
+      padding: var(--space-4);
+      border-inline-end: 1px solid rgba(250, 250, 247, 0.10);
+      border-bottom: 1px solid rgba(250, 250, 247, 0.10);
+    }
+    .kpi:nth-child(2n) { border-inline-end: 0; padding-inline-end: 0; }
+    .kpi:nth-child(2n-1) { padding-inline-start: 0; }
+    .kpi:nth-last-child(-n+2) { border-bottom: 0; padding-bottom: 0; }
+    .kpi:nth-last-child(-n+2) ~ .kpi { padding-top: var(--space-4); }
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION SHELL
+     ═══════════════════════════════════════════ */
+  section.block { padding: var(--space-9) 0; }
+  section.block.tight { padding: var(--space-8) 0; }
+  section.block.bg-cream { background: var(--color-cream); }
+  section.block.bg-ivory { background: var(--color-ivory); }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-7);
+  }
+  .section-head .lead { max-width: 36em; }
+  .section-head h2 { margin-top: var(--space-3); }
+  .section-head .right { text-align: end; }
+  .section-link {
+    color: var(--color-forest);
+    text-decoration: none;
+    font-size: var(--text-small);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur-fast) var(--ease-out-soft);
+  }
+  .section-link:hover { border-bottom-color: var(--color-forest); }
+  .section-link::after { content: ' ←'; }
+
+  @media (max-width: 640px) {
+    .section-head .right { text-align: start; }
+  }
+
+  /* ═══════════════════════════════════════════
+     INQUIRIES INBOX
+     ═══════════════════════════════════════════ */
+  .filter-pills {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+    scrollbar-width: none;
+  }
+  .filter-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-pill);
+    background: var(--color-ivory);
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+    font-family: inherit;
+  }
+  .pill:hover { border-color: var(--color-forest); color: var(--color-forest); }
+  .pill.active {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    border-color: var(--color-charcoal);
+  }
+  .pill .count {
+    margin-inline-start: var(--space-2);
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .inquiry-list {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .inquiry-card {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-4);
+    align-items: start;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .inquiry-card:hover {
+    transform: translateY(var(--hover-lift));
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-forest);
+  }
+  .inquiry-card.new {
+    border-inline-start: 3px solid var(--color-gold);
+  }
+  .inquiry-main { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+  .inquiry-meta-row {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    font-size: var(--text-eyebrow);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+  .inquiry-meta-row .channel-icon {
+    width: 14px; height: 14px;
+    color: var(--color-forest);
+    flex-shrink: 0;
+  }
+  .inquiry-name {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .inquiry-reason {
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+    line-height: 1.5;
+  }
+  .inquiry-reason strong { color: var(--color-forest); font-weight: 700; }
+  .inquiry-phone {
+    color: var(--color-gold);
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur-fast) var(--ease-out-soft);
+    direction: ltr;
+    display: inline-block;
+  }
+  .inquiry-phone:hover { border-bottom-color: var(--color-gold); }
+
+  .inquiry-side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: end;
+    text-align: end;
+  }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-weight: 700;
+  }
+  .status-pill::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .status-pill.new      { background: var(--status-pending-bg); color: var(--status-pending-fg); }
+  .status-pill.contact  { background: var(--status-active-bg);  color: var(--status-active-fg); }
+  .status-pill.closed   { background: var(--status-neutral-bg); color: var(--status-neutral-fg); }
+
+  .inquiry-actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .quick-action {
+    background: transparent;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-pill);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-charcoal);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .quick-action:hover { border-color: var(--color-forest); color: var(--color-forest); }
+  .quick-action.primary { background: var(--color-forest); color: var(--color-ivory); border-color: var(--color-forest); }
+
+  @media (max-width: 768px) {
+    .inquiry-card {
+      grid-template-columns: 1fr;
+      padding: var(--space-4);
+    }
+    .inquiry-side { align-items: start; text-align: start; }
+    .inquiry-actions { width: 100%; }
+  }
+
+  /* ═══════════════════════════════════════════
+     CATALOG + ORDER DRAFT
+     ═══════════════════════════════════════════ */
+  .catalog-layout {
+    display: grid;
+    grid-template-columns: 1fr var(--order-draft-w);
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  .catalog-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .price-toggle {
+    display: inline-flex;
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+  }
+  .price-toggle button {
+    background: transparent;
+    border: 0;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .price-toggle button.active {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .product-card {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .product-card:hover {
+    transform: translateY(var(--hover-lift-card));
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-forest);
+  }
+  .product-image {
+    aspect-ratio: 4/5;
+    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    position: relative;
+    display: grid;
+    place-items: center;
+    color: var(--color-stone);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+  }
+  .stock-tag {
+    position: absolute;
+    top: var(--space-3);
+    inset-inline-start: var(--space-3);
+    background: var(--color-ivory);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-weight: 700;
+    border: 1px solid var(--color-sand);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .stock-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--color-forest);
+  }
+  .stock-tag.production::before  { background: var(--color-gold); }
+  .stock-tag.production           { color: var(--status-pending-fg); }
+  .stock-tag.toorder::before     { background: var(--color-stone); }
+  .stock-tag.toorder              { color: var(--color-stone); }
+  .stock-tag.in::before           { background: var(--color-forest); }
+  .stock-tag.in                   { color: var(--color-forest); }
+
+  .product-body {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+  .product-collection {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+  .product-name {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    line-height: 1.3;
+  }
+  .product-prices {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: auto;
+  }
+  .price-line { display: flex; align-items: baseline; gap: var(--space-2); }
+  .price-line .label {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-stone);
+    width: 5em;
+  }
+  .price-line .amount {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-charcoal);
+  }
+  .price-line .currency {
+    font-size: var(--text-small);
+    color: var(--color-stone);
+  }
+  .price-line.wholesale .amount { color: var(--color-forest); font-weight: 700; }
+  body.show-retail .price-line.wholesale,
+  body:not(.show-wholesale) .price-line.wholesale { display: none; }
+  body.show-wholesale .price-line.wholesale { display: flex; }
+  body.show-wholesale .price-line.retail .amount { text-decoration: line-through; opacity: 0.7; }
+
+  .lead-time {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px dashed var(--color-sand);
+  }
+  .lead-time strong { color: var(--color-charcoal); font-weight: 700; }
+  .lead-time svg { width: 12px; height: 12px; color: var(--color-forest); }
+
+  .add-to-draft {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    background: var(--color-forest);
+    color: var(--color-ivory);
+    border: 0;
+    padding: var(--space-3);
+    margin: 0 var(--space-4) var(--space-4);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-small);
+    font-weight: 700;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .add-to-draft:hover { background: var(--color-charcoal); transform: translateY(-1px); }
+  .add-to-draft svg { width: 14px; height: 14px; }
+
+  /* Order Draft sidebar */
+  .order-draft {
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
+    max-height: calc(100vh - var(--header-h) - var(--space-7));
+    display: flex;
+    flex-direction: column;
+  }
+  .draft-head {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-sand);
+    margin-bottom: var(--space-4);
+  }
+  .draft-eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+    margin-bottom: var(--space-2);
+  }
+  .draft-title {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+  }
+  .draft-meta {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    margin-top: var(--space-2);
+  }
+
+  .draft-items {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-bottom: var(--space-4);
+  }
+  .draft-item {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .draft-thumb {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--color-sand), var(--color-cream));
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    color: var(--color-stone);
+    font-family: 'Ayandeh', serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+  }
+  .draft-name {
+    font-size: var(--text-small);
+    color: var(--color-ink);
+    line-height: 1.3;
+    margin-bottom: var(--space-1);
+  }
+  .draft-line {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+  }
+  .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-pill);
+    background: var(--color-ivory);
+    overflow: hidden;
+  }
+  .qty-stepper button {
+    width: 24px; height: 28px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--color-charcoal);
+    font-family: inherit;
+    font-size: 0.875rem;
+  }
+  .qty-stepper button:hover { background: var(--color-cream); color: var(--color-forest); }
+  .qty-stepper .qty {
+    width: 28px;
+    text-align: center;
+    font-size: var(--text-small);
+    font-weight: 700;
+    border-inline: 1px solid var(--color-sand);
+    line-height: 28px;
+  }
+
+  .draft-footer {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-sand);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .draft-totals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .draft-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+  }
+  .draft-total-row.grand {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    font-weight: 700;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-sand);
+  }
+  .draft-total-row .currency {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    font-weight: 400;
+    margin-inline-start: var(--space-2);
+  }
+  .draft-eta {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    text-align: center;
+    padding: var(--space-3);
+    background: var(--color-ivory);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--color-sand);
+  }
+  .draft-eta strong { color: var(--color-charcoal); font-weight: 700; }
+
+  .btn-draft-submit {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    border: 0;
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-small);
+    font-weight: 700;
+    text-align: center;
+    width: 100%;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .btn-draft-submit:hover { background: var(--color-ink); transform: translateY(-1px); }
+
+  @media (max-width: 1200px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 1024px) {
+    .catalog-layout { grid-template-columns: 1fr; }
+    .order-draft { display: none; }
+  }
+  @media (max-width: 640px) {
+    .product-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ═══════════════════════════════════════════
+     ORDER HISTORY
+     ═══════════════════════════════════════════ */
+  .orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .order-card {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-5);
+    align-items: center;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .order-card:hover {
+    transform: translateY(var(--hover-lift));
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-forest);
+  }
+  .order-thumbs {
+    display: flex;
+  }
+  .order-thumb {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--color-sand), var(--color-cream));
+    border-radius: var(--radius-md);
+    border: 2px solid var(--color-ivory);
+    margin-inline-start: -12px;
+    display: grid;
+    place-items: center;
+    color: var(--color-stone);
+    font-family: 'Ayandeh', serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+  }
+  .order-thumb:first-child { margin-inline-start: 0; }
+  .order-thumb.more {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .order-detail { min-width: 0; }
+  .order-id-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-2);
+  }
+  .order-id {
+    font-family: monospace;
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .order-date {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+  }
+  .order-summary {
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+    margin-bottom: var(--space-3);
+  }
+  .order-summary strong { color: var(--color-ink); font-weight: 700; }
+
+  .timeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .timeline-step {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    position: relative;
+  }
+  .timeline-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--color-sand);
+    border: 2px solid var(--color-ivory);
+    box-shadow: 0 0 0 1px var(--color-sand);
+    flex-shrink: 0;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .timeline-step.done .timeline-dot {
+    background: var(--color-forest);
+    box-shadow: 0 0 0 1px var(--color-forest);
+  }
+  .timeline-step.active .timeline-dot {
+    background: var(--color-gold);
+    box-shadow: 0 0 0 1px var(--color-gold), 0 0 0 4px rgba(196, 154, 108, 0.18);
+    animation: pulse 2s var(--ease-out-soft) infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 1px var(--color-gold), 0 0 0 4px rgba(196, 154, 108, 0.18); }
+    50%      { box-shadow: 0 0 0 1px var(--color-gold), 0 0 0 8px rgba(196, 154, 108, 0); }
+  }
+  .timeline-step::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--color-sand);
+    margin-inline-end: var(--space-2);
+  }
+  .timeline-step.done::after { background: var(--color-forest); }
+  .timeline-step:last-child::after { display: none; }
+  .timeline-label {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+  }
+  .timeline-step.active .timeline-label { color: var(--color-gold); font-weight: 700; }
+  .timeline-step.done .timeline-label   { color: var(--color-forest); }
+
+  .order-side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: end;
+    text-align: end;
+  }
+  .order-amount {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    font-weight: 700;
+    line-height: 1;
+  }
+  .order-eta {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+  }
+  .order-eta strong { color: var(--color-charcoal); }
+
+  @media (max-width: 1024px) {
+    .order-card { grid-template-columns: 1fr; gap: var(--space-4); }
+    .order-side { align-items: start; text-align: start; flex-direction: row; justify-content: space-between; padding-top: var(--space-4); border-top: 1px solid var(--color-sand); }
+    .timeline { overflow-x: auto; padding-bottom: var(--space-3); }
+    .timeline-step { min-width: 120px; }
+  }
+  @media (max-width: 640px) {
+    .timeline { flex-direction: column; align-items: stretch; }
+    .timeline-step {
+      flex-direction: row;
+      padding-inline-start: var(--space-3);
+    }
+    .timeline-step::after {
+      position: absolute;
+      inset-inline-start: 5px;
+      top: 16px;
+      bottom: -8px;
+      width: 2px;
+      height: auto;
+      flex: none;
+      margin: 0;
+    }
+    .timeline-step:last-child::after { display: none; }
+  }
+
+  /* ═══════════════════════════════════════════
+     SHOWROOM PROFILE — dark CTA band
+     ═══════════════════════════════════════════ */
+  .showroom-band {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: var(--space-9) 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .showroom-band::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 50%;
+    background: radial-gradient(ellipse at 80% 30%, rgba(95, 119, 96, 0.10), transparent 60%);
+    pointer-events: none;
+  }
+  .showroom-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: var(--space-9);
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .showroom-text h2 {
+    color: var(--color-ivory);
+    margin-bottom: var(--space-4);
+  }
+  .showroom-text p {
+    color: var(--color-stone);
+    font-size: var(--text-lead);
+    line-height: var(--leading-lead);
+    margin-bottom: var(--space-5);
+    max-width: 32em;
+  }
+  .showroom-text .gold-line {
+    width: 60px; height: 2px;
+    background: var(--color-gold);
+    margin-bottom: var(--space-5);
+  }
+  .editable-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+  .editable-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-small);
+    color: var(--color-cream);
+  }
+  .editable-row svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .editable-row.locked  { color: var(--color-stone); }
+  .editable-row.locked svg  { color: var(--color-stone); }
+  .editable-row.editable svg { color: var(--color-gold); }
+
+  .showroom-form {
+    background: var(--glass-bg-dark);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--space-7);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .showroom-form h4 {
+    color: var(--color-ivory);
+    font-size: var(--text-h4);
+    margin-bottom: var(--space-3);
+  }
+  .field-group { display: flex; flex-direction: column; gap: var(--space-2); }
+  .field-group label {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+  }
+  .field-group .input,
+  .field-group .text-display {
+    background: rgba(250, 250, 247, 0.04);
+    border: 1px solid var(--glass-border-dark);
+    border-radius: var(--radius-md);
+    color: var(--color-ivory);
+    padding: var(--space-3) var(--space-4);
+    font-family: inherit;
+    font-size: var(--text-small);
+    width: 100%;
+  }
+  .field-group .input:focus { border-color: var(--color-gold); outline: 0; }
+  .field-group .text-display.locked {
+    color: var(--color-stone);
+    background: rgba(20, 17, 15, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .field-group .lock {
+    font-size: var(--text-eyebrow);
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-3);
+    align-items: end;
+  }
+  .field-row .field-group label { font-size: 0.6875rem; }
+
+  .gallery-uploader {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+  }
+  .gallery-slot {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, rgba(250, 250, 247, 0.06), rgba(250, 250, 247, 0.02));
+    border: 1px dashed var(--glass-border-dark);
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    color: var(--color-stone);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .gallery-slot:hover { border-color: var(--color-gold); color: var(--color-gold); }
+  .gallery-slot.filled {
+    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    border-style: solid;
+  }
+  .gallery-slot.filled::after {
+    content: '×';
+    position: absolute;
+    top: 4px;
+    inset-inline-end: 4px;
+    background: rgba(20, 17, 15, 0.6);
+    color: var(--color-ivory);
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 0.75rem;
+  }
+  .gallery-slot.filled { position: relative; }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--glass-border-dark);
+  }
+
+  @media (max-width: 1024px) {
+    .showroom-row { grid-template-columns: 1fr; gap: var(--space-7); }
+  }
+  @media (max-width: 640px) {
+    .field-row { grid-template-columns: 1fr; }
+    .gallery-uploader { grid-template-columns: repeat(3, 1fr); }
+    .showroom-form { padding: var(--space-5); }
+  }
+
+  /* ═══════════════════════════════════════════
+     BUTTONS
+     ═══════════════════════════════════════════ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--text-small);
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--color-forest); color: var(--color-ivory); }
+  .btn-primary:hover { background: var(--color-charcoal); transform: translateY(-1px); }
+  .btn-secondary { background: transparent; color: var(--color-ink); border-color: var(--color-charcoal); }
+  .btn-secondary:hover { background: var(--color-charcoal); color: var(--color-ivory); }
+  .btn-ghost { background: transparent; color: var(--color-charcoal); }
+  .btn-ghost:hover { color: var(--color-forest); }
+  .btn-on-dark.btn-primary { background: var(--color-gold); color: var(--color-ink); }
+  .btn-on-dark.btn-primary:hover { background: var(--color-gold-soft); }
+  .btn-on-dark.btn-ghost { color: var(--color-cream); }
+  .btn-on-dark.btn-ghost:hover { color: var(--color-gold); }
+
+  /* ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ */
+  .site-footer {
+    background: var(--color-charcoal);
+    color: var(--color-stone);
+    padding: var(--space-7) 0 var(--space-5);
+    font-size: var(--text-small);
+  }
+  .footer-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-6);
+    align-items: center;
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid rgba(250, 250, 247, 0.08);
+  }
+  .footer-brand { display: flex; align-items: center; gap: var(--space-3); }
+  .footer-brand .brand-mark {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+  .footer-brand strong { color: var(--color-ivory); font-weight: 700; }
+  .footer-links {
+    display: flex;
+    gap: var(--space-5);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    color: var(--color-cream);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out-soft);
+  }
+  .footer-links a:hover { color: var(--color-gold); }
+  .footer-cta {
+    color: var(--color-cream);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-gold);
+    padding-bottom: 2px;
+  }
+  .footer-base {
+    padding-top: var(--space-5);
+    text-align: center;
+    font-size: var(--text-xs);
+  }
+  @media (max-width: 768px) {
+    .footer-row { grid-template-columns: 1fr; text-align: center; gap: var(--space-4); }
+    .footer-brand, .footer-links { justify-content: center; }
+  }
+
+  /* ═══════════════════════════════════════════
+     MOBILE FAB CART + BOTTOM SHEET
+     ═══════════════════════════════════════════ */
+  .mobile-cart-fab {
+    display: none;
+    position: fixed;
+    bottom: var(--space-5);
+    inset-inline: var(--space-5);
+    z-index: 180;
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-elevated);
+    border: 0;
+    font-family: inherit;
+    font-size: var(--text-small);
+    font-weight: 700;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .mobile-cart-fab .left { display: flex; align-items: center; gap: var(--space-3); }
+  .mobile-cart-fab .badge {
+    background: var(--color-gold);
+    color: var(--color-ink);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 0.75rem;
+  }
+  .mobile-cart-fab .total {
+    color: var(--color-gold);
+  }
+
+  .bottom-sheet-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay);
+    z-index: 300;
+    backdrop-filter: blur(8px);
+  }
+  .bottom-sheet-backdrop.open { display: block; }
+  .bottom-sheet {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    inset-inline: 0;
+    z-index: 310;
+    background: var(--color-ivory);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: var(--space-5);
+    max-height: 80vh;
+    overflow-y: auto;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .bottom-sheet.open { display: flex; }
+  .bottom-sheet-handle {
+    width: 40px; height: 4px;
+    background: var(--color-sand);
+    border-radius: var(--radius-pill);
+    align-self: center;
+    margin-bottom: var(--space-3);
+  }
+
+  @media (max-width: 1024px) {
+    .mobile-cart-fab { display: flex; }
+  }
+
+  /* ═══════════════════════════════════════════
+     MOBILE NAV OVERLAY
+     ═══════════════════════════════════════════ */
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: var(--color-ivory);
+    flex-direction: column;
+  }
+  .mobile-nav-overlay.open { display: flex; }
+  .mobile-nav-head {
+    height: var(--header-h);
+    border-bottom: 1px solid var(--color-sand);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--space-5);
+  }
+  .mobile-nav-user {
+    padding: var(--space-6) var(--space-5);
+    background: var(--color-cream);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .mobile-nav-user .user-avatar { width: 48px; height: 48px; font-size: 1rem; }
+  .mobile-nav-user .name {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .mobile-nav-user .branch {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+    margin-top: var(--space-1);
+  }
+  .mobile-nav-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-5) 0;
+  }
+  .mobile-nav-link {
+    padding: var(--space-4) var(--space-5);
+    text-decoration: none;
+    color: var(--color-charcoal);
+    font-size: var(--text-h4);
+    border-bottom: 1px solid var(--color-cream);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .mobile-nav-link.active { color: var(--color-forest); font-weight: 700; }
+  .mobile-nav-link .badge {
+    background: var(--color-gold);
+    color: var(--color-ink);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .mobile-nav-foot {
+    padding: var(--space-5);
+    border-top: 1px solid var(--color-sand);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mobile-nav-foot a {
+    color: var(--color-stone);
+    text-decoration: none;
+    font-size: var(--text-small);
+  }
+</style>
+</head>
+<body class="show-wholesale">
+
+<!-- ═══════════════════════════════════════════
+     ANNOUNCEMENT RIBBON
+     ═══════════════════════════════════════════ -->
+<div class="announcement" id="announcement">
+  <div class="container">
+    <div class="announcement-row">
+      <svg class="announcement-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      </svg>
+      <span class="announcement-tag">اطلاعیه</span>
+      <span class="announcement-text num">
+        کارگاه چوب گردو تا <strong>۲۸ اردیبهشت</strong> تعطیل است. زمان تحویل سفارش‌های جدید گردو هفت روز جابه‌جا شده است.
+      </span>
+      <button class="announcement-dismiss" aria-label="بستن اطلاعیه">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════ -->
+<header class="site-header" id="header">
+  <div class="container">
+    <div class="header-row">
+      <a href="#" class="brand">
+        <div class="brand-mark">ژ</div>
+        <div class="brand-text">
+          <div class="brand-name">ژیک</div>
+          <div class="brand-sub">پنل فروشنده</div>
+        </div>
+      </a>
+
+      <nav class="main-nav">
+        <a href="#" class="nav-link active">داشبورد</a>
+        <a href="#inquiries" class="nav-link">استعلام‌ها<span class="badge num">۳</span></a>
+        <a href="#catalog" class="nav-link">کاتالوگ</a>
+        <a href="#orders" class="nav-link">سفارشات</a>
+        <a href="#showroom" class="nav-link">شوروم من</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" aria-label="اعلانات">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="dot"></span>
+        </button>
+        <button class="user-pill">
+          <div class="user-avatar">ب‌ف</div>
+          <div class="user-meta">
+            <div class="user-name">بهراد فاضلی</div>
+            <div class="user-branch">شعبه‌ی تهران</div>
+          </div>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="منو">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════
+     HERO — split greeting
+     ═══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-watermark">ژ</div>
+  <div class="container">
+    <div class="hero-greeting">
+      <div class="eyebrow forest">دوشنبه ۱۲ اردیبهشت ۱۴۰۵</div>
+      <h1>سلام، <span class="accent">بهراد</span> —<br>خلاصه‌ی شعبه‌ی تهران آماده است.</h1>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     KPI BAND
+     ═══════════════════════════════════════════ -->
+<section class="kpi-band">
+  <div class="container">
+    <div class="kpi-band-head">
+      <h3>اردیبهشت ۱۴۰۵ در یک نگاه</h3>
+      <span class="period num">از ۱ اردیبهشت تا امروز</span>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-eyebrow">سفارشات این ماه</div>
+        <div class="kpi-value num">۱۲<span class="unit">سفارش</span></div>
+        <div class="kpi-trend"><span class="delta num">+۳</span> نسبت به فروردین</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-eyebrow">در حال ارسال</div>
+        <div class="kpi-value num">۴<span class="unit">سفارش</span></div>
+        <div class="kpi-trend">میانگین زمان تحویل: <span class="num">۸ روز</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-eyebrow">استعلام‌های جدید</div>
+        <div class="kpi-value num">۷<span class="unit">استعلام</span></div>
+        <div class="kpi-trend"><span class="delta warn num">۳</span> در انتظار پاسخ</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-eyebrow">ارزش پیش‌نویس</div>
+        <div class="kpi-value num">۸۸٬۲<span class="unit">میلیون تومان</span></div>
+        <div class="kpi-trend"><span class="num">۳</span> کالا · ثبت نشده</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     INQUIRIES INBOX
+     ═══════════════════════════════════════════ -->
+<section class="block bg-cream" id="inquiries">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow forest">صندوق استعلام‌ها</div>
+        <h2>پیام‌های اخیر مشتریان</h2>
+      </div>
+      <div class="right">
+        <a href="#" class="section-link">همه‌ی استعلام‌ها</a>
+      </div>
+    </div>
+
+    <div class="filter-pills">
+      <button class="pill active">همه<span class="count num">۷</span></button>
+      <button class="pill">جدید<span class="count num">۳</span></button>
+      <button class="pill">در حال پیگیری<span class="count num">۲</span></button>
+      <button class="pill">بسته شده<span class="count num">۲</span></button>
+    </div>
+
+    <div class="inquiry-list">
+
+      <article class="inquiry-card new">
+        <div class="inquiry-main">
+          <div class="inquiry-meta-row">
+            <svg class="channel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-label="از وبسایت"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="num">۲ ساعت پیش</span>
+          </div>
+          <div class="inquiry-name">مریم احمدی</div>
+          <div class="inquiry-reason">
+            <strong>استعلام قیمت</strong> — تخت‌خواب آلگرو، چوب گردو، سایز ۱۸۰
+          </div>
+          <a href="tel:+989121234567" class="inquiry-phone num">۰۹۱۲ ۱۲۳ ۴۵۶۷</a>
+        </div>
+        <div class="inquiry-side">
+          <span class="status-pill new">جدید</span>
+          <div class="inquiry-actions">
+            <button class="quick-action primary">تماس گرفتم</button>
+            <button class="quick-action">بستن</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="inquiry-card new">
+        <div class="inquiry-main">
+          <div class="inquiry-meta-row">
+            <svg class="channel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-label="از وبسایت"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="num">۵ ساعت پیش</span>
+          </div>
+          <div class="inquiry-name">علی نوری</div>
+          <div class="inquiry-reason">
+            <strong>رزرو بازدید</strong> از شوروم — تاریخ پیشنهادی: پنج‌شنبه ۱۵ اردیبهشت، عصر
+          </div>
+          <a href="tel:+989351234567" class="inquiry-phone num">۰۹۳۵ ۱۲۳ ۴۵۶۷</a>
+        </div>
+        <div class="inquiry-side">
+          <span class="status-pill new">جدید</span>
+          <div class="inquiry-actions">
+            <button class="quick-action primary">تأیید بازدید</button>
+            <button class="quick-action">جابه‌جا کن</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="inquiry-card">
+        <div class="inquiry-main">
+          <div class="inquiry-meta-row">
+            <svg class="channel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-label="از تماس مستقیم"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span class="num">دیروز، ۱۸:۲۰</span>
+          </div>
+          <div class="inquiry-name">سارا کریمی</div>
+          <div class="inquiry-reason">
+            <strong>استعلام قیمت</strong> — کمد هرمس + دراور لاتیس · ارسال به کرج
+          </div>
+          <a href="tel:+989191234567" class="inquiry-phone num">۰۹۱۹ ۱۲۳ ۴۵۶۷</a>
+        </div>
+        <div class="inquiry-side">
+          <span class="status-pill contact">در حال پیگیری</span>
+          <div class="inquiry-actions">
+            <button class="quick-action primary">پیش‌فاکتور</button>
+            <button class="quick-action">یادداشت</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="inquiry-card">
+        <div class="inquiry-main">
+          <div class="inquiry-meta-row">
+            <svg class="channel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-label="از وبسایت"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="num">۲ روز پیش</span>
+          </div>
+          <div class="inquiry-name">حمید رضوی</div>
+          <div class="inquiry-reason">
+            <strong>استعلام قیمت</strong> — دراور لاتیس · سفارش ثبت شد
+          </div>
+          <a href="tel:+989121234567" class="inquiry-phone num">۰۹۱۲ ۹۸۷ ۶۵۴۳</a>
+        </div>
+        <div class="inquiry-side">
+          <span class="status-pill closed">بسته شده</span>
+          <div class="inquiry-actions">
+            <button class="quick-action">مشاهده‌ی سفارش</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CATALOG + ORDER DRAFT
+     ═══════════════════════════════════════════ -->
+<section class="block bg-ivory" id="catalog">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow forest">کاتالوگ همکاری</div>
+        <h2>فهرست محصولات</h2>
+      </div>
+      <div class="right">
+        <a href="#" class="section-link">مشاهده‌ی همه‌ی محصولات</a>
+      </div>
+    </div>
+
+    <div class="catalog-toolbar">
+      <div class="filter-pills" style="margin-bottom: 0;">
+        <button class="pill active">همه</button>
+        <button class="pill">سری بزرگسالان</button>
+        <button class="pill">سری نوجوان</button>
+        <button class="pill">سری نونهال</button>
+        <button class="pill">چوب گردو</button>
+        <button class="pill">چوب راش</button>
+      </div>
+      <div class="price-toggle" id="priceToggle">
+        <button class="active" data-mode="wholesale">قیمت همکاری</button>
+        <button data-mode="retail">قیمت فروشگاهی</button>
+      </div>
+    </div>
+
+    <div class="catalog-layout">
+      <div class="product-grid">
+
+        <article class="product-card">
+          <div class="product-image">
+            <span class="stock-tag in">موجود</span>
+            تخت‌خواب
+          </div>
+          <div class="product-body">
+            <div class="product-collection">سری بزرگسالان · چوب گردو</div>
+            <div class="product-name">تخت‌خواب آلگرو</div>
+            <div class="product-prices">
+              <div class="price-line wholesale">
+<span class="amount num">۱۹٬۸۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+              <div class="price-line retail">
+<span class="amount num">۲۸٬۴۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+            </div>
+            <div class="lead-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <strong class="num">۲۲ اردیبهشت</strong>
+            </div>
+          </div>
+          <button class="add-to-draft">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            افزودن به پیش‌نویس
+          </button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <span class="stock-tag production">در حال تولید</span>
+            کمد
+          </div>
+          <div class="product-body">
+            <div class="product-collection">سری بزرگسالان · چوب گردو</div>
+            <div class="product-name">کمد هرمس</div>
+            <div class="product-prices">
+              <div class="price-line wholesale">
+<span class="amount num">۲۹٬۴۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+              <div class="price-line retail">
+<span class="amount num">۴۲٬۰۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+            </div>
+            <div class="lead-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <strong class="num">۸ خرداد</strong>
+            </div>
+          </div>
+          <button class="add-to-draft">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            افزودن به پیش‌نویس
+          </button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <span class="stock-tag in">موجود</span>
+            پاتختی
+          </div>
+          <div class="product-body">
+            <div class="product-collection">سری بزرگسالان · چوب راش</div>
+            <div class="product-name">پاتختی نوا</div>
+            <div class="product-prices">
+              <div class="price-line wholesale">
+<span class="amount num">۴٬۸۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+              <div class="price-line retail">
+<span class="amount num">۶٬۸۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+            </div>
+            <div class="lead-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <strong class="num">۱۸ اردیبهشت</strong>
+            </div>
+          </div>
+          <button class="add-to-draft">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            افزودن به پیش‌نویس
+          </button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <span class="stock-tag in">موجود</span>
+            آینه
+          </div>
+          <div class="product-body">
+            <div class="product-collection">سری بزرگسالان · چوب راش</div>
+            <div class="product-name">آینه استلا</div>
+            <div class="product-prices">
+              <div class="price-line wholesale">
+<span class="amount num">۶٬۴۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+              <div class="price-line retail">
+<span class="amount num">۹٬۲۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+            </div>
+            <div class="lead-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <strong class="num">۱۵ اردیبهشت</strong>
+            </div>
+          </div>
+          <button class="add-to-draft">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            افزودن به پیش‌نویس
+          </button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <span class="stock-tag toorder">به سفارش</span>
+            دراور
+          </div>
+          <div class="product-body">
+            <div class="product-collection">سری بزرگسالان · چوب گردو</div>
+            <div class="product-name">دراور لاتیس</div>
+            <div class="product-prices">
+              <div class="price-line wholesale">
+<span class="amount num">۱۲٬۹۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+              <div class="price-line retail">
+<span class="amount num">۱۸٬۵۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+            </div>
+            <div class="lead-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <strong class="num">۲۵ خرداد</strong>
+            </div>
+          </div>
+          <button class="add-to-draft">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            افزودن به پیش‌نویس
+          </button>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <span class="stock-tag in">موجود</span>
+            تخت‌خواب
+          </div>
+          <div class="product-body">
+            <div class="product-collection">سری نونهال · چوب راش</div>
+            <div class="product-name">تخت‌خواب میترا</div>
+            <div class="product-prices">
+              <div class="price-line wholesale">
+<span class="amount num">۸٬۶۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+              <div class="price-line retail">
+<span class="amount num">۱۲٬۴۰۰٬۰۰۰</span>
+                <span class="currency">تومان</span>
+              </div>
+            </div>
+            <div class="lead-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <strong class="num">۱۲ اردیبهشت</strong>
+            </div>
+          </div>
+          <button class="add-to-draft">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            افزودن به پیش‌نویس
+          </button>
+        </article>
+
+      </div>
+
+      <!-- Order Draft -->
+      <aside class="order-draft" id="orderDraft">
+        <div class="draft-head">
+          <div class="draft-eyebrow">پیش‌نویس سفارش</div>
+          <div class="draft-title num">۳ کالا</div>
+        </div>
+
+        <div class="draft-items">
+
+          <div class="draft-item">
+            <div class="draft-thumb">آ</div>
+            <div>
+              <div class="draft-name">تخت‌خواب آلگرو</div>
+              <div class="draft-line num">۳۹٬۶۰۰٬۰۰۰ تومان</div>
+            </div>
+            <div class="qty-stepper">
+              <button>−</button>
+              <span class="qty num">۲</span>
+              <button>+</button>
+            </div>
+          </div>
+
+          <div class="draft-item">
+            <div class="draft-thumb">پ</div>
+            <div>
+              <div class="draft-name">پاتختی نوا</div>
+              <div class="draft-line num">۱۹٬۲۰۰٬۰۰۰ تومان</div>
+            </div>
+            <div class="qty-stepper">
+              <button>−</button>
+              <span class="qty num">۴</span>
+              <button>+</button>
+            </div>
+          </div>
+
+          <div class="draft-item">
+            <div class="draft-thumb">ک</div>
+            <div>
+              <div class="draft-name">کمد هرمس</div>
+              <div class="draft-line num">۲۹٬۴۰۰٬۰۰۰ تومان</div>
+            </div>
+            <div class="qty-stepper">
+              <button>−</button>
+              <span class="qty num">۱</span>
+              <button>+</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="draft-footer">
+          <div class="draft-totals">
+            <div class="draft-total-row">
+              <span>جمع کالاها</span>
+              <span class="num">۸۸٬۲۰۰٬۰۰۰</span>
+            </div>
+            <div class="draft-total-row">
+              <span>تخفیف شعبه (۸٪)</span>
+              <span class="num">−۷٬۰۵۶٬۰۰۰</span>
+            </div>
+            <div class="draft-total-row grand">
+              <span>قابل پرداخت</span>
+              <span class="num">۸۱٬۱۴۴٬۰۰۰<span class="currency">تومان</span></span>
+            </div>
+          </div>
+          <div class="draft-eta num">
+            تحویل کامل: <strong>۸ خرداد</strong>
+          </div>
+          <button class="btn-draft-submit">ادامه‌ی ثبت سفارش ←</button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ORDER HISTORY
+     ═══════════════════════════════════════════ -->
+<section class="block bg-cream" id="orders">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow forest">سفارشات اخیر</div>
+        <h2>وضعیت سفارش‌های شعبه</h2>
+      </div>
+      <div class="right">
+        <a href="#" class="section-link">همه‌ی سفارش‌ها</a>
+      </div>
+    </div>
+
+    <div class="orders-list">
+
+      <article class="order-card">
+        <div class="order-thumbs">
+          <div class="order-thumb">آ</div>
+          <div class="order-thumb">پ</div>
+          <div class="order-thumb">ک</div>
+          <div class="order-thumb more num">+۲</div>
+        </div>
+        <div class="order-detail">
+          <div class="order-id-row">
+            <span class="order-id">ZH-۱۴۰۵-۰۰۴۲</span>
+            <span class="order-date num">۸ اردیبهشت ۱۴۰۵</span>
+          </div>
+          <div class="order-summary">
+            مسعود امیری · تهران، سعادت‌آباد
+          </div>
+          <div class="timeline">
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">تأیید</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">برش</span></div>
+            <div class="timeline-step active"><div class="timeline-dot"></div><span class="timeline-label">تولید</span></div>
+            <div class="timeline-step"><div class="timeline-dot"></div><span class="timeline-label">بسته‌بندی</span></div>
+            <div class="timeline-step"><div class="timeline-dot"></div><span class="timeline-label">ارسال</span></div>
+            <div class="timeline-step"><div class="timeline-dot"></div><span class="timeline-label">تحویل</span></div>
+          </div>
+        </div>
+        <div class="order-side">
+          <div class="order-amount num">۶۲٬۴۰۰٬۰۰۰<span class="currency" style="font-size:.75rem; color:var(--color-stone); font-weight:400; margin-inline-start:4px;">تومان</span></div>
+          <div class="order-eta">تحویل تخمینی: <strong class="num">۲۵ اردیبهشت</strong></div>
+        </div>
+      </article>
+
+      <article class="order-card">
+        <div class="order-thumbs">
+          <div class="order-thumb">د</div>
+          <div class="order-thumb">آ</div>
+          <div class="order-thumb">پ</div>
+          <div class="order-thumb more num">+۵</div>
+        </div>
+        <div class="order-detail">
+          <div class="order-id-row">
+            <span class="order-id">ZH-۱۴۰۵-۰۰۳۸</span>
+            <span class="order-date num">۲۷ فروردین ۱۴۰۵</span>
+          </div>
+          <div class="order-summary">
+            شرکت نگین آرام · تهران، نیاوران
+          </div>
+          <div class="timeline">
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">تأیید</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">برش</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">تولید</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">بسته‌بندی</span></div>
+            <div class="timeline-step active"><div class="timeline-dot"></div><span class="timeline-label">ارسال</span></div>
+            <div class="timeline-step"><div class="timeline-dot"></div><span class="timeline-label">تحویل</span></div>
+          </div>
+        </div>
+        <div class="order-side">
+          <div class="order-amount num">۹۸٬۲۰۰٬۰۰۰<span class="currency" style="font-size:.75rem; color:var(--color-stone); font-weight:400; margin-inline-start:4px;">تومان</span></div>
+          <div class="order-eta">تحویل تخمینی: <strong class="num">پنج‌شنبه</strong></div>
+        </div>
+      </article>
+
+      <article class="order-card">
+        <div class="order-thumbs">
+          <div class="order-thumb">ت</div>
+          <div class="order-thumb">آ</div>
+          <div class="order-thumb">پ</div>
+        </div>
+        <div class="order-detail">
+          <div class="order-id-row">
+            <span class="order-id">ZH-۱۴۰۵-۰۰۳۴</span>
+            <span class="order-date num">۱۸ فروردین ۱۴۰۵</span>
+          </div>
+          <div class="order-summary">
+            مهرناز شریفی · تحویل داده شد
+          </div>
+          <div class="timeline">
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">تأیید</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">برش</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">تولید</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">بسته‌بندی</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">ارسال</span></div>
+            <div class="timeline-step done"><div class="timeline-dot"></div><span class="timeline-label">تحویل</span></div>
+          </div>
+        </div>
+        <div class="order-side">
+          <div class="order-amount num">۲۸٬۴۰۰٬۰۰۰<span class="currency" style="font-size:.75rem; color:var(--color-stone); font-weight:400; margin-inline-start:4px;">تومان</span></div>
+          <div class="order-eta">تحویل شد: <strong class="num">۳ اردیبهشت</strong></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SHOWROOM PROFILE
+     ═══════════════════════════════════════════ -->
+<section class="showroom-band" id="showroom">
+  <div class="container">
+    <div class="showroom-row">
+      <div class="showroom-text">
+        <div class="eyebrow gold">شوروم تهران</div>
+        <div class="gold-line"></div>
+        <h2>اطلاعات شوروم را به‌روز نگه دارید.</h2>
+        <p>ساعات و تصاویر را خودتان مدیریت کنید. نشانی و شماره‌ی تماس قفل دفتر مرکزی است.</p>
+      </div>
+
+      <form class="showroom-form" onsubmit="event.preventDefault();">
+        <h4>ویرایش اطلاعات شوروم</h4>
+
+        <div class="field-group">
+          <label>نشانی شعبه</label>
+          <div class="text-display locked">
+            <span class="num">تهران، سعادت‌آباد، بلوار فرحزادی، پلاک ۸۸</span>
+            <span class="lock">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              قفل
+            </span>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>روز</label>
+            <input class="input" value="شنبه — چهارشنبه" />
+          </div>
+          <div class="field-group">
+            <label>باز</label>
+            <input class="input num" value="۱۰:۰۰" />
+          </div>
+          <div class="field-group">
+            <label>بسته</label>
+            <input class="input num" value="۲۰:۰۰" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>یادداشت برای مشتری</label>
+          <input class="input" value="پارکینگ از در شرقی، طبقه‌ی ۲- در دسترس است." />
+        </div>
+
+        <div class="field-group">
+          <label>گالری تصاویر <span style="color: var(--color-stone); text-transform: none; letter-spacing: 0; margin-inline-start: var(--space-2);">حداکثر ۸ تصویر</span></label>
+          <div class="gallery-uploader">
+            <div class="gallery-slot filled"></div>
+            <div class="gallery-slot filled"></div>
+            <div class="gallery-slot filled"></div>
+            <div class="gallery-slot filled"></div>
+            <div class="gallery-slot">+ افزودن</div>
+            <div class="gallery-slot">+ افزودن</div>
+            <div class="gallery-slot">+ افزودن</div>
+            <div class="gallery-slot">+ افزودن</div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-on-dark btn-ghost">انصراف</button>
+          <button type="submit" class="btn btn-on-dark btn-primary">ذخیره‌ی تغییرات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-row">
+      <div class="footer-brand">
+        <div class="brand-mark">ژ</div>
+        <div>
+          <strong>پنل فروشنده</strong> · شعبه‌ی تهران
+        </div>
+      </div>
+      <nav class="footer-links">
+        <a href="#">راهنمای فروشنده</a>
+        <a href="#">سوالات متداول</a>
+        <a href="#">قوانین همکاری</a>
+        <a href="#">پشتیبانی فنی</a>
+      </nav>
+      <a href="tel:+988132511234" class="footer-cta num">دفتر مرکزی همدان: ۰۸۱-۳۲۵۱-۱۲۳۴</a>
+    </div>
+    <div class="footer-base num">© ۱۴۰۵ ژیک — همه‌ی حقوق محفوظ است</div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     MOBILE FAB CART + BOTTOM SHEET
+     ═══════════════════════════════════════════ -->
+<button class="mobile-cart-fab" id="cartFab">
+  <span class="left">
+    <span class="badge num">۳</span>
+    <span>پیش‌نویس سفارش</span>
+  </span>
+  <span class="total num">۸۸٬۲۰۰٬۰۰۰ ت</span>
+</button>
+
+<div class="bottom-sheet-backdrop" id="sheetBackdrop"></div>
+<aside class="bottom-sheet" id="bottomSheet">
+  <div class="bottom-sheet-handle"></div>
+  <div class="draft-head">
+    <div class="draft-eyebrow">پیش‌نویس سفارش</div>
+    <div class="draft-title num">۳ کالا · ذخیره شده</div>
+    <div class="draft-meta num">آخرین تغییر: ۲۰ دقیقه پیش</div>
+  </div>
+  <div class="draft-items" style="max-height: 40vh; overflow-y: auto;">
+    <div class="draft-item">
+      <div class="draft-thumb">آ</div>
+      <div>
+        <div class="draft-name">تخت‌خواب آلگرو</div>
+        <div class="draft-line num">۱۹٬۸۰۰٬۰۰۰ × ۲ = ۳۹٬۶۰۰٬۰۰۰</div>
+      </div>
+      <div class="qty-stepper">
+        <button>−</button>
+        <span class="qty num">۲</span>
+        <button>+</button>
+      </div>
+    </div>
+    <div class="draft-item">
+      <div class="draft-thumb">پ</div>
+      <div>
+        <div class="draft-name">پاتختی نوا</div>
+        <div class="draft-line num">۴٬۸۰۰٬۰۰۰ × ۴ = ۱۹٬۲۰۰٬۰۰۰</div>
+      </div>
+      <div class="qty-stepper">
+        <button>−</button>
+        <span class="qty num">۴</span>
+        <button>+</button>
+      </div>
+    </div>
+    <div class="draft-item">
+      <div class="draft-thumb">ک</div>
+      <div>
+        <div class="draft-name">کمد هرمس</div>
+        <div class="draft-line num">۲۹٬۴۰۰٬۰۰۰ × ۱</div>
+      </div>
+      <div class="qty-stepper">
+        <button>−</button>
+        <span class="qty num">۱</span>
+        <button>+</button>
+      </div>
+    </div>
+  </div>
+  <div class="draft-footer">
+    <div class="draft-totals">
+      <div class="draft-total-row">
+        <span>جمع کالاها</span>
+        <span class="num">۸۸٬۲۰۰٬۰۰۰</span>
+      </div>
+      <div class="draft-total-row">
+        <span>تخفیف شعبه (۸٪)</span>
+        <span class="num">−۷٬۰۵۶٬۰۰۰</span>
+      </div>
+      <div class="draft-total-row grand">
+        <span>قابل پرداخت</span>
+        <span class="num">۸۱٬۱۴۴٬۰۰۰<span class="currency">تومان</span></span>
+      </div>
+    </div>
+    <button class="btn-draft-submit">ادامه‌ی ثبت سفارش ←</button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════
+     MOBILE NAV
+     ═══════════════════════════════════════════ -->
+<aside class="mobile-nav-overlay" id="mobileNav">
+  <div class="mobile-nav-head">
+    <a href="#" class="brand">
+      <div class="brand-mark">ژ</div>
+      <div class="brand-text">
+        <div class="brand-name">ژیک</div>
+        <div class="brand-sub">پنل فروشنده</div>
+      </div>
+    </a>
+    <button class="icon-btn" id="closeNav" aria-label="بستن">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="mobile-nav-user">
+    <div class="user-avatar">ب‌ف</div>
+    <div>
+      <div class="name">بهراد فاضلی</div>
+      <div class="branch">شعبه‌ی تهران · مدیر فروش</div>
+    </div>
+  </div>
+  <nav class="mobile-nav-links">
+    <a href="#" class="mobile-nav-link active">داشبورد</a>
+    <a href="#inquiries" class="mobile-nav-link">استعلام‌ها <span class="badge num">۳</span></a>
+    <a href="#catalog" class="mobile-nav-link">کاتالوگ</a>
+    <a href="#orders" class="mobile-nav-link">سفارشات</a>
+    <a href="#showroom" class="mobile-nav-link">شوروم من</a>
+  </nav>
+  <div class="mobile-nav-foot">
+    <a href="#">راهنمای فروشنده</a>
+    <a href="#" style="color: var(--color-gold);">خروج ←</a>
+  </div>
+</aside>
+
+<script>
+  // Header scroll-shadow
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 12) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  }, { passive: true });
+
+  // Announcement dismiss
+  document.querySelector('.announcement-dismiss').addEventListener('click', () => {
+    document.getElementById('announcement').style.display = 'none';
+  });
+
+  // Price toggle
+  const toggle = document.getElementById('priceToggle');
+  toggle.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    toggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    document.body.classList.toggle('show-wholesale', mode === 'wholesale');
+    document.body.classList.toggle('show-retail',    mode === 'retail');
+  });
+
+  // Inquiry filter pills (visual only)
+  document.querySelectorAll('.filter-pills').forEach(group => {
+    group.addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill');
+      if (!btn) return;
+      group.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Mobile cart bottom-sheet
+  const fab = document.getElementById('cartFab');
+  const sheet = document.getElementById('bottomSheet');
+  const backdrop = document.getElementById('sheetBackdrop');
+  const openSheet = () => { sheet.classList.add('open'); backdrop.classList.add('open'); document.body.style.overflow = 'hidden'; };
+  const closeSheet = () => { sheet.classList.remove('open'); backdrop.classList.remove('open'); document.body.style.overflow = ''; };
+  fab.addEventListener('click', openSheet);
+  backdrop.addEventListener('click', closeSheet);
+
+  // Mobile nav
+  const mobileNav = document.getElementById('mobileNav');
+  document.getElementById('hamburger').addEventListener('click', () => {
+    mobileNav.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+  document.getElementById('closeNav').addEventListener('click', () => {
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  }));
+
+  // Quantity steppers (visual)
+  document.querySelectorAll('.qty-stepper').forEach(stepper => {
+    const buttons = stepper.querySelectorAll('button');
+    const qty = stepper.querySelector('.qty');
+    const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    const toEn = s => s.replace(/[۰-۹]/g, d => persianDigits.indexOf(d));
+    const toFa = n => String(n).split('').map(d => persianDigits[+d] ?? d).join('');
+    buttons[0].addEventListener('click', () => {
+      const n = Math.max(1, +toEn(qty.textContent) - 1);
+      qty.textContent = toFa(n);
+    });
+    buttons[1].addEventListener('click', () => {
+      const n = +toEn(qty.textContent) + 1;
+      qty.textContent = toFa(n);
+    });
+  });
+</script>
+
+</body>
+</html>

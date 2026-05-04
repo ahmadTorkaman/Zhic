@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Faq: GlobalConfig = {
   slug: 'faq',
   label: 'سوالات متداول',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'title',

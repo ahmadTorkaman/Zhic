@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 export const JournalCategories: CollectionConfig = {
   slug: 'journal-categories',
@@ -7,7 +9,9 @@ export const JournalCategories: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug'],
+    group: 'ژورنال',
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -40,5 +44,6 @@ export const JournalCategories: CollectionConfig = {
       type: 'textarea',
       label: 'توضیحات',
     },
+    seoFields,
   ],
 }

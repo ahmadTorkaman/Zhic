@@ -1,16 +1,19 @@
-import { notFound } from 'next/navigation';
 import { Container, Breadcrumbs, Pagination } from '@zhic/ui';
 import { PageHeader } from '@/components/hero/PageHeader';
 import { JournalFeaturedArticle } from '@/components/journal/JournalFeaturedArticle';
+import { JournalCategoryNav } from '@/components/journal/JournalCategoryNav';
 import { JournalGrid } from '@/components/journal/JournalGrid';
-import { fetchArticles } from '@/lib/payload';
+import { fetchArticles, fetchJournalCategories } from '@/lib/payload';
 
 type PageProps = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 export default async function JournalIndexPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const page = Number(sp.page) > 0 ? Number(sp.page) : 1;
-  const articlesPage = await fetchArticles({ page });
+  const [articlesPage, categories] = await Promise.all([
+    fetchArticles({ page }),
+    fetchJournalCategories(),
+  ]);
 
   // Featured = first article on page 1; grid = rest on page 1, or all on subsequent pages.
   const showFeatured = page === 1 && articlesPage.docs.length > 0;
@@ -22,7 +25,7 @@ export default async function JournalIndexPage({ searchParams }: PageProps) {
   return (
     <>
       <Container>
-        <div className="pt-6">
+        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
           <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'ژورنال' }]} />
         </div>
       </Container>
@@ -33,10 +36,15 @@ export default async function JournalIndexPage({ searchParams }: PageProps) {
       />
 
       <Container>
+        {categories.length > 0 ? (
+          <JournalCategoryNav categories={categories} activeSlug={null} />
+        ) : null}
+
         {featured ? (
-          <div className="mb-[var(--space-8)]">
+          <>
             <JournalFeaturedArticle article={featured} />
-          </div>
+            <div aria-hidden className="mb-[var(--space-7)] mt-[var(--space-7)] h-px bg-sand" />
+          </>
         ) : null}
 
         <JournalGrid articles={gridArticles} />

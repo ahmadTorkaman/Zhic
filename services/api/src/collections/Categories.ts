@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
@@ -7,7 +9,9 @@ export const Categories: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'parent', 'slug'],
+    group: 'کاتالوگ',
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -50,5 +54,6 @@ export const Categories: CollectionConfig = {
         description: 'برای ساخت ساختار درختی (اختیاری)',
       },
     },
+    seoFields,
   ],
 }

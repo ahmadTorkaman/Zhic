@@ -4,8 +4,13 @@
  */
 
 /* ── Reset ────────────────────────────────────────────────────────── */
+/* Tailwind v4's preflight already resets margin/padding on elements
+   that need it (body, h1–h6, p, etc.). A universal `* { padding: 0 }`
+   reset here runs AFTER tailwind's @layer base and overrides every
+   `py-*`/`px-*` utility because physical-padding rules resolved from
+   `padding: 0` tie-break against logical `padding-block` utilities.
+   Keep only box-sizing. */
 *, *::before, *::after { box-sizing: border-box; }
-* { margin: 0; padding: 0; }
 html { background-color: var(--color-ivory); }
 body {
   background-color: var(--color-ivory);
@@ -67,6 +72,17 @@ body {
 
 .glass-card-dark:hover {
   border-color: rgba(250, 250, 247, 0.12);
+}
+
+/* ── Site header chrome (scrolled) ────────────────────────────────── */
+/* Activates once user scrolls past 60px. Keeps the same visual
+   language as .glass-card but sized/tuned for the fixed top bar. */
+.site-header-chrome {
+  background: rgba(250, 250, 247, 0.85);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--color-sand);
+  box-shadow: var(--shadow-subtle);
 }
 
 /* ── Fade-in animation (used by the homepage 'ژ' watermark) ──────── */

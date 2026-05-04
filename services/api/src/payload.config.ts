@@ -7,6 +7,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 
 // Collections
+import { Users } from './collections/Users'
 import { Designs } from './collections/Designs'
 import { Products } from './collections/Products'
 import { Showrooms } from './collections/Showrooms'
@@ -38,6 +39,9 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    // Pin theme to a deterministic value. Default 'all' uses Sec-CH-Prefers-Color-Scheme
+    // which is unreliable across VPN/proxy paths and causes React #418 hydration mismatch.
+    theme: 'light',
     meta: {
       titleSuffix: ' — ژیک ادمین',
     },
@@ -47,6 +51,7 @@ export default buildConfig({
   },
 
   collections: [
+    // Users,  // temp disabled — debugging admin crash
     Designs,
     Products,
     Showrooms,

@@ -13,7 +13,7 @@ export type LegalPageProps = {
 
 export function LegalPage({ heading, updatedLabel, body, breadcrumbItems }: LegalPageProps) {
   return (
-    <section className="py-[var(--space-7)]">
+    <section className="pb-[var(--space-7)] pt-[calc(var(--header-height)+var(--space-5))]">
       <Container>
         <Breadcrumbs items={[{ label: 'خانه', href: '/' }, ...breadcrumbItems]} />
 

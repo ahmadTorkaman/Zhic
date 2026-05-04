@@ -98,4 +98,7 @@
 
   /* Container */
   --container-storefront: 1440px;
+
+  /* Chrome */
+  --header-height: 3.5rem;
 }

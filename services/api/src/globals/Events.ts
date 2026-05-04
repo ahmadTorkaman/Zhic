@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Events: GlobalConfig = {
   slug: 'events',
   label: 'رویدادها',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'title',

@@ -25,7 +25,7 @@ export default async function JournalTagPage({ params, searchParams }: PageProps
   return (
     <>
       <Container>
-        <div className="pt-6">
+        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
           <Breadcrumbs items={[
             { label: 'خانه', href: '/' },
             { label: 'ژورنال', href: '/journal' },

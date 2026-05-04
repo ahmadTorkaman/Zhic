@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Terms: GlobalConfig = {
   slug: 'terms',
   label: 'شرایط و قوانین',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'title',

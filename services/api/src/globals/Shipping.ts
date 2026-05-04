@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Shipping: GlobalConfig = {
   slug: 'shipping',
   label: 'ارسال و تحویل',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'title',

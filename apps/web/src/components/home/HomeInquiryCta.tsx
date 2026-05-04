@@ -10,9 +10,15 @@ export type HomeInquiryCtaProps = {
 export function HomeInquiryCta({
   heading = 'با ما در تماس باشید',
   lead = 'برای استعلام قیمت، رزرو بازدید از شوروم، یا مشاوره‌ی پیش از خرید. تیم ما آماده‌ی پاسخ‌گویی است.',
+  showroomsHref = '/showrooms',
 }: HomeInquiryCtaProps) {
   return (
-    <DarkSplitHero variant="section" title={heading} lead={lead}>
+    <DarkSplitHero
+      variant="section"
+      title={heading}
+      lead={lead}
+      action={{ label: 'مشاهده‌ی شوروم‌ها', href: showroomsHref }}
+    >
       <InquiryFormSlim />
     </DarkSplitHero>
   );

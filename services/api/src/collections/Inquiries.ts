@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { isAdmin, isAuthenticated, isMarketingOrAbove, isPublic } from '../lib/access'
 
 export const Inquiries: CollectionConfig = {
   slug: 'inquiries',
@@ -6,6 +7,16 @@ export const Inquiries: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'phone', 'city', 'reason', 'status', 'createdAt'],
+    group: 'صندوق ورودی',
+  },
+  // Inquiries are the one collection with anonymous create (public form
+  // submits here). Read is staff-only (PII), update is marketing+,
+  // delete is admin-only.
+  access: {
+    create: isPublic,
+    read: isAuthenticated,
+    update: isMarketingOrAbove,
+    delete: isAdmin,
   },
   fields: [
     {

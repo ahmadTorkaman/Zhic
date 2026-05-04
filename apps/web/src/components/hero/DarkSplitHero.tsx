@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Container, Section } from '@zhic/ui';
+import { Button, Container, Section } from '@zhic/ui';
 
 type Variant = 'page' | 'section';
 
@@ -19,6 +19,8 @@ export type DarkSplitHeroProps = {
     label?: string;  // defaults to "ساعات پاسخ‌گویی"
     text: string;    // e.g. "شنبه تا پنجشنبه · ۰۹:۰۰ – ۱۷:۰۰"
   };
+  /** Optional text-column CTA — renders as on-dark ghost button below the lead. */
+  action?: { label: string; href: string };
   /** Form slot — typically <InquiryForm /> (page variant) or <InquiryFormSlim /> (section variant). */
   children: ReactNode;
   /** 'page' uses padY=xl (for /contact standalone page); 'section' uses padY=lg (for HomeInquiryCta embedded in /). */
@@ -26,7 +28,7 @@ export type DarkSplitHeroProps = {
 };
 
 export function DarkSplitHero({
-  title, lead, contact, hours, children,
+  title, lead, contact, hours, action, children,
   variant = 'page',
 }: DarkSplitHeroProps) {
   const padY = variant === 'page' ? 'xl' : 'lg';
@@ -75,6 +77,18 @@ export function DarkSplitHero({
                 </div>
                 <div className="text-small font-light text-sand">{hours.text}</div>
               </div>
+            ) : null}
+
+            {action ? (
+              <Button
+                as="a"
+                href={action.href}
+                variant="on-dark"
+                size="md"
+                className={variant === 'section' ? 'max-md:hidden' : ''}
+              >
+                {action.label}
+              </Button>
             ) : null}
           </div>
 

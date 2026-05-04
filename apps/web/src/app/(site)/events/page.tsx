@@ -81,7 +81,7 @@ export default async function EventsPage() {
 
   return (
     <Container>
-      <div className="pt-6">
+      <div className="pt-[calc(var(--header-height)+var(--space-5))]">
         <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'رویدادها' }]} />
       </div>
       <div className="mx-auto max-w-[680px] pb-[var(--space-9)] pt-[var(--space-7)]">

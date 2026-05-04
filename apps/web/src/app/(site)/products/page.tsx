@@ -70,7 +70,7 @@ export default async function ProductsIndexPage({ searchParams }: PageProps) {
   return (
     <>
       <Container>
-        <div className="pt-6">
+        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
           <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'محصولات' }]} />
         </div>
         <div className="mb-7 mt-4">

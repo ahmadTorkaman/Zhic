@@ -9,16 +9,19 @@ import { PayloadImage } from '@/components/PayloadImage';
 import { Tile } from '@/components/tile/Tile';
 import { RichText } from '@/lib/richtext';
 import { fetchProduct, productPath } from '@/lib/payload';
+import { buildMetadata } from '@/lib/seo';
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const product = await fetchProduct(slug);
-  return {
+  return buildMetadata({
+    seo: product?.seo,
     title: product?.name ?? 'محصول',
-    description: product?.shortDescription ?? undefined,
-  };
+    description: product?.shortDescription,
+    path: `/products/${slug}`,
+  });
 }
 
 export default async function ProductPage({ params }: PageProps) {
@@ -130,7 +133,7 @@ export default async function ProductPage({ params }: PageProps) {
                       fallbackText="تصویر"
                     />
                   }
-                  aspect="1/1"
+                  aspect="4/5"
                   title={rp.name}
                   price={rp.basePriceRials ?? undefined}
                   hover="full"

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چک‌لیست بازرسی فروشگاه — ژیک</title>
+<link rel="stylesheet" href="/invoices/shared.css">
+<style>
+  /* ── Document-specific layout (built on top of /invoices/shared.css) ─── */
+  body { font-size: 14px; line-height: 1.7; }
+  .page { max-width: 880px; }
+
+  h1 + .subtitle {
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+
+  /* Meta box — 6 fillable fields at top (3-col grid, 2 rows) */
+  .meta-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 24px;
+    background: var(--cream);
+    border: 1px solid var(--sand);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .meta-box .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .meta-box .label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .meta-box .value {
+    border-bottom: 1px dashed var(--stone);
+    min-height: 22px;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  /* Legend — full-width strip with 4 status definitions */
+  .legend {
+    background: var(--cream);
+    border-inline-start: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 32px;
+    font-size: 12px;
+    color: var(--charcoal);
+    line-height: 1.7;
+  }
+  .legend strong {
+    color: var(--ink);
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    margin-inline-end: 8px;
+  }
+  .legend .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-inline-end: 4px;
+    vertical-align: middle;
+  }
+  .legend .dot.ok   { background: var(--forest); }
+  .legend .dot.warn { background: var(--gold); }
+  .legend .dot.fail { background: var(--rust); }
+  .legend .dot.na   { background: var(--stone); }
+
+  /* Section heading bars — A / B / C / D */
+  .section-title {
+    background: var(--forest);
+    color: var(--ivory);
+    padding: 14px 22px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    margin: 32px 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-title .section-letter {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Tables — same shell as decor checklist */
+  table.checklist {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+  }
+  table.checklist th {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--charcoal);
+    background: var(--ivory);
+    padding: 12px 14px;
+    text-align: start;
+  }
+  table.checklist td {
+    padding: 14px;
+    border-bottom: 1px solid var(--sand);
+    font-size: 13px;
+    vertical-align: top;
+    line-height: 1.7;
+  }
+  table.checklist tr:last-child td { border-bottom: 1px solid var(--charcoal); }
+
+  .col-num    { width: 6%;  text-align: center; font-weight: 900; color: var(--ink); font-size: 15px; }
+  .col-task   { width: 44%; color: var(--charcoal); }
+  .col-status { width: 22%; }
+  .col-notes  { width: 28%; color: var(--stone); }
+
+  .col-task em {
+    color: var(--stone);
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 300;
+  }
+
+  /* 3-state status column: ✓ / ⚠ / ✗ */
+  .status-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .status-row .checkbox {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1.4px solid var(--charcoal);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .status-row .checkbox.ok   { border-color: var(--forest); border-width: 1.6px; }
+  .status-row .checkbox.warn { border-color: var(--gold);   border-width: 1.6px; }
+  .status-row .checkbox.fail { border-color: var(--rust);   border-width: 1.6px; }
+
+  .status-label { font-weight: 700; }
+  .status-label.ok   { color: var(--forest); }
+  .status-label.warn { color: var(--gold);   }
+  .status-label.fail { color: var(--rust);   }
+
+  /* Summary box — final review block */
+  .summary-box {
+    margin-top: 32px;
+    padding: 24px 26px;
+    background: var(--cream);
+    border: 1px solid var(--sand);
+    border-radius: 8px;
+    page-break-inside: avoid;
+  }
+  .summary-box h3 {
+    margin: 0 0 18px;
+    color: var(--ink);
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    margin-bottom: 14px;
+    align-items: flex-end;
+  }
+  .summary-row .summary-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    align-self: flex-end;
+    padding-bottom: 2px;
+  }
+  .summary-row .summary-value {
+    flex: 1;
+    min-width: 120px;
+    border-bottom: 1px dashed var(--stone);
+    min-height: 22px;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  /* Grade options — radio-style inline list */
+  .grade-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 4px;
+  }
+  .grade-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--charcoal);
+  }
+  .grade-option .checkbox {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1.4px solid var(--charcoal);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .grade-option.ok   .checkbox { border-color: var(--forest); border-width: 1.6px; }
+  .grade-option.warn .checkbox { border-color: var(--gold);   border-width: 1.6px; }
+  .grade-option.fail .checkbox { border-color: var(--rust);   border-width: 1.6px; }
+
+  /* Corrective actions box — open writing area */
+  .corrective-box {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--ivory);
+    border: 1px dashed var(--sand);
+    border-radius: 6px;
+    min-height: 80px;
+    font-size: 12px;
+    color: var(--stone);
+  }
+  .corrective-box .ca-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* Signatures — 3-column for inspector / dealer / oversight */
+  .signatures {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 36px;
+    page-break-inside: avoid;
+  }
+  .sig-box {
+    border: 1px solid var(--sand);
+    border-radius: 8px;
+    padding: 18px 20px;
+    background: var(--ivory);
+  }
+  .sig-box .sig-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .sig-box .sig-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .sig-box .sig-label {
+    color: var(--stone);
+    flex-shrink: 0;
+  }
+  .sig-box .sig-line {
+    flex: 1;
+    border-bottom: 1px dashed var(--stone);
+    min-height: 18px;
+  }
+
+  .footer-note {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--sand);
+    font-size: 11px;
+    color: var(--stone);
+    text-align: center;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* Print — A4 friendly */
+  @page {
+    size: A4;
+    margin: 14mm 12mm 14mm 12mm;
+  }
+  @media print {
+    body { font-size: 11pt; }
+    .page { padding: 0; max-width: 100%; }
+    table.checklist tr { page-break-inside: avoid; }
+    .signatures, .summary-box, .section-title { page-break-inside: avoid; }
+    .section-title { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="page-header">
+    <div class="brand">
+      <span class="gold-line"></span>
+      چک‌لیست بازرسی فروشگاه
+    </div>
+    <div class="meta">
+      <div class="label">سند بازرسی</div>
+      <div class="val">INS-001</div>
+      <div class="label" style="margin-top: 12px;">مالک</div>
+      <div class="val" style="font-family: Ayandeh;">ژیک</div>
+    </div>
+  </header>
+
+  <h1>چک‌لیست بازرسی فروشگاه</h1>
+  <p class="subtitle">ارزیابی کیفی نمایندگی — ظاهر، اجرا، اکسسوری، نیروی فروش، و انبار.</p>
+
+  <section class="meta-box">
+    <div class="field"><span class="label">نام شعبه</span><span class="value"></span></div>
+    <div class="field"><span class="label">شهر</span><span class="value"></span></div>
+    <div class="field"><span class="label">نام بازرس</span><span class="value"></span></div>
+    <div class="field"><span class="label">تاریخ بازرسی</span><span class="value"></span></div>
+    <div class="field"><span class="label">ساعت شروع</span><span class="value"></span></div>
+    <div class="field"><span class="label">ساعت پایان</span><span class="value"></span></div>
+  </section>
+
+  <div class="legend">
+    <strong>راهنمای امتیازدهی:</strong>
+    <span><span class="dot ok"></span>تأیید — مطابق استاندارد</span>
+    &nbsp;&nbsp;<span><span class="dot warn"></span>نیاز به اصلاح — قابل قبول با ایراد جزئی</span>
+    &nbsp;&nbsp;<span><span class="dot fail"></span>مردود — ایراد جدی و نیازمند اقدام فوری</span>
+    &nbsp;&nbsp;<span><span class="dot na"></span>منتفی — موضوع موضوعیت ندارد</span>
+  </div>
+
+  <!-- ─── SECTION A — Exterior & Visual Identity ─── -->
+  <div class="section-title">
+    <span>الف — ظاهر بیرونی و هویت بصری فروشگاه</span>
+    <span class="section-letter">۰۱</span>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-num">ردیف</th>
+        <th class="col-task">مورد بازرسی</th>
+        <th class="col-status">وضعیت</th>
+        <th class="col-notes">توضیحات / ایرادات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-num">۱</td>
+        <td>نظافت بیرون فروشگاه (نما، ورودی، محوطه)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۲</td>
+        <td>نظافت شیشه (ویترین، درب ورودی، عاری از لک و گرد و غبار)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۳</td>
+        <td>تابلو و لوگوی جدید (سلامت ساختاری، روشنایی، مطابقت با استاندارد برند)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۴</td>
+        <td>اجرای کامل جشنواره‌ها بر اساس طراحی‌های مورد تأیید شرکت (پوسترها، استرابرد، ویترین)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SECTION B — Interior & Display ─── -->
+  <div class="section-title">
+    <span>ب — داخل فروشگاه، چیدمان و کیفیت اجرا</span>
+    <span class="section-letter">۰۲</span>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-num">ردیف</th>
+        <th class="col-task">مورد بازرسی</th>
+        <th class="col-status">وضعیت</th>
+        <th class="col-notes">توضیحات / ایرادات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-num">۵</td>
+        <td>چیدمان مورد تأیید سرویس‌ها (مطابقت با پلان رسمی شرکت)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۶</td>
+        <td>تأیید اکسسوری‌های سرویس‌ها و ایرادات آن‌ها (کامل بودن، سلامت ظاهری، اصالت)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۷</td>
+        <td>چک کردن نحوه نصب صحیح و ریگلاژ سرویس‌ها (تراز، اتصالات، ایمنی)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۸</td>
+        <td>نظافت اتاق‌ها، کف و سقف فروشگاه (غبارگیری، شستشو، عدم لکه)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۹</td>
+        <td>تأیید نور فروشگاه (شدت کافی، یکنواختی، سالم بودن لامپ‌ها و اسپات‌ها)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۱۰</td>
+        <td>سیستم سرمایش / گرمایش / تهویه — عملکرد و دمای محیط <em>(پیشنهادی)</em></td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۱۱</td>
+        <td>برچسب قیمت و کارت معرفی روی هر سرویس — وجود، خوانایی، صحت قیمت <em>(پیشنهادی)</em></td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SECTION C — Sales Staff ─── -->
+  <div class="section-title">
+    <span>ج — نیروی فروش و تعامل با مشتری</span>
+    <span class="section-letter">۰۳</span>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-num">ردیف</th>
+        <th class="col-task">مورد بازرسی</th>
+        <th class="col-status">وضعیت</th>
+        <th class="col-notes">توضیحات / ایرادات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-num">۱۲</td>
+        <td>چک کردن اطلاعات فنی فروشنده درباره سرویس‌ها (مواد، ابعاد، گارانتی)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۱۳</td>
+        <td>نحوه برخورد فروشنده با مشتری (استقبال، گفتار، پیگیری)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۱۴</td>
+        <td>ظاهر و یونیفرم پرسنل (آراستگی، اتیکت اسم، رعایت کدینگ شرکت) <em>(پیشنهادی)</em></td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۱۵</td>
+        <td>صدور فاکتور رسمی، عملکرد <span class="ltr-num">POS</span> و ثبت دقیق فروش <em>(پیشنهادی)</em></td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SECTION D — Warehouse, Installers & Safety ─── -->
+  <div class="section-title">
+    <span>د — انبار، نصاب‌ها و ایمنی</span>
+    <span class="section-letter">۰۴</span>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-num">ردیف</th>
+        <th class="col-task">مورد بازرسی</th>
+        <th class="col-status">وضعیت</th>
+        <th class="col-notes">توضیحات / ایرادات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-num">۱۶</td>
+        <td>چک کردن انبار فروشگاه و نحوه چیدمان بسته‌بندی‌ها (نظم، سلامت کارتن‌ها، ایمنی)</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۱۷</td>
+        <td>بازرسی سرزده نصاب‌ها — نظافت ظاهری، رفتار حرفه‌ای، نحوه نصب در محل مشتری</td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="col-num">۱۸</td>
+        <td>ایمنی فروشگاه — کپسول آتش‌نشانی شارژ، خروج اضطراری بدون مانع، سیم‌کشی سالم <em>(پیشنهادی)</em></td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox ok"></span><span class="status-label ok">تأیید</span></div>
+            <div class="status-row"><span class="checkbox warn"></span><span class="status-label warn">نیاز به اصلاح</span></div>
+            <div class="status-row"><span class="checkbox fail"></span><span class="status-label fail">مردود</span></div>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SUMMARY ─── -->
+  <div class="summary-box">
+    <h3>جمع‌بندی نهایی بازرسی</h3>
+
+    <div class="summary-row">
+      <span class="summary-label">تعداد تأیید شده</span>
+      <span class="summary-value"></span>
+      <span class="summary-label">نیاز به اصلاح</span>
+      <span class="summary-value"></span>
+      <span class="summary-label">مردود</span>
+      <span class="summary-value"></span>
+    </div>
+
+    <div class="summary-row" style="margin-top: 18px;">
+      <span class="summary-label" style="align-self: center;">ارزیابی کلی فروشگاه</span>
+      <div class="grade-options">
+        <div class="grade-option ok"><span class="checkbox"></span><span>عالی</span></div>
+        <div class="grade-option ok"><span class="checkbox"></span><span>خوب</span></div>
+        <div class="grade-option warn"><span class="checkbox"></span><span>قابل قبول</span></div>
+        <div class="grade-option fail"><span class="checkbox"></span><span>ضعیف</span></div>
+        <div class="grade-option fail"><span class="checkbox"></span><span>نیاز به بازرسی مجدد فوری</span></div>
+      </div>
+    </div>
+
+    <div class="corrective-box">
+      <div class="ca-title">اقدامات اصلاحی مورد نیاز و مهلت اجرا</div>
+    </div>
+
+    <div class="summary-row" style="margin-top: 14px;">
+      <span class="summary-label">مهلت رفع ایرادات</span>
+      <span class="summary-value"></span>
+      <span class="summary-label">تاریخ بازرسی بعدی</span>
+      <span class="summary-value"></span>
+    </div>
+  </div>
+
+  <!-- ─── SIGNATURES ─── -->
+  <section class="signatures">
+    <div class="sig-box">
+      <div class="sig-title">بازرس شرکت</div>
+      <div class="sig-row"><span class="sig-label">نام و نام خانوادگی</span><span class="sig-line"></span></div>
+      <div class="sig-row"><span class="sig-label">تاریخ</span><span class="sig-line"></span></div>
+      <div class="sig-row"><span class="sig-label">امضاء</span><span class="sig-line"></span></div>
+    </div>
+    <div class="sig-box">
+      <div class="sig-title">مدیر فروشگاه / نمایندگی</div>
+      <div class="sig-row"><span class="sig-label">نام و نام خانوادگی</span><span class="sig-line"></span></div>
+      <div class="sig-row"><span class="sig-label">تاریخ</span><span class="sig-line"></span></div>
+      <div class="sig-row"><span class="sig-label">امضاء و مهر</span><span class="sig-line"></span></div>
+    </div>
+    <div class="sig-box">
+      <div class="sig-title">تأیید واحد نظارت</div>
+      <div class="sig-row"><span class="sig-label">نام و نام خانوادگی</span><span class="sig-line"></span></div>
+      <div class="sig-row"><span class="sig-label">تاریخ</span><span class="sig-line"></span></div>
+      <div class="sig-row"><span class="sig-label">امضاء</span><span class="sig-line"></span></div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    این چک‌لیست بایستی در پایان هر بازرسی توسط بازرس تکمیل و در پرونده نمایندگی بایگانی شود.
+  </div>
+
+</div>
+</body>
+</html>

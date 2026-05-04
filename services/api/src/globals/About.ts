@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const About: GlobalConfig = {
   slug: 'about',
   label: 'درباره ما',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'title',

@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 export const Collections: CollectionConfig = {
   slug: 'collections',
@@ -7,7 +9,9 @@ export const Collections: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'featured', 'slug'],
+    group: 'کاتالوگ',
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -63,5 +67,6 @@ export const Collections: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    seoFields,
   ],
 }

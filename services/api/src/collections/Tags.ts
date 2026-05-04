@@ -1,12 +1,15 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess } from '../lib/access'
 
 export const Tags: CollectionConfig = {
   slug: 'tags',
   labels: { singular: 'تگ', plural: 'تگ‌ها' },
   admin: {
     useAsTitle: 'name',
+    group: 'کاتالوگ',
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {

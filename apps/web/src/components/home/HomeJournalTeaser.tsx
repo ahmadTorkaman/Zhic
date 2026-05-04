@@ -67,7 +67,7 @@ export function HomeJournalTeaser({
   const smalls = items.slice(1, 3);
 
   return (
-    <section className="bg-ivory py-[var(--space-11)]">
+    <section className="bg-ivory py-9 md:py-11">
       <Container>
         <div className="mb-8 flex items-end justify-between gap-4">
           <h2 className="text-h2 font-black text-ink">{heading}</h2>
@@ -125,6 +125,7 @@ export function HomeJournalTeaser({
                   />
                 }
                 imageWidth={160}
+                mobileImageWidth={100}
                 eyebrow={article.category}
                 title={article.title}
                 meta={article.readTime}

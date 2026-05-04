@@ -31,8 +31,8 @@ const BG_CLASSES: Record<Bg, string> = {
 const PAD_Y_CLASSES: Record<PadY, string> = {
   sm: 'py-7',
   md: 'py-8',
-  lg: 'py-9',
-  xl: 'py-10',
+  lg: 'py-9 md:py-11',
+  xl: 'py-9 md:py-11',
 };
 
 export function Section({

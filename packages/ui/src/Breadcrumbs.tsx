@@ -13,7 +13,7 @@ export type BreadcrumbsProps = {
 
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   return (
-    <nav aria-label="مسیر" className={className}>
+    <nav aria-label="مسیر" dir="ltr" className={className}>
       <ol className="flex flex-wrap items-center gap-x-2 text-small text-stone">
         {items.map((item, idx) => {
           const isLast = idx === items.length - 1;
@@ -32,7 +32,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
                 </span>
               )}
               {!isLast ? (
-                <span aria-hidden className="text-stone/60">‹</span>
+                <span aria-hidden className="text-stone/60">›</span>
               ) : null}
             </li>
           );

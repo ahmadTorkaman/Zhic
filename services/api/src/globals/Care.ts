@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Care: GlobalConfig = {
   slug: 'care',
   label: 'نگهداری',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'title',

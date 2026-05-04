@@ -1,6 +1,6 @@
-import { Container, Breadcrumbs } from '@zhic/ui';
 import { DarkSplitHero } from '@/components/hero/DarkSplitHero';
 import { InquiryForm } from '@/components/inquiry/InquiryForm';
+import { HomeShowroomsStrip } from '@/components/home/HomeShowroomsStrip';
 import { fetchContact, fetchAllShowrooms } from '@/lib/payload';
 
 const DEFAULT_CITIES = ['تهران', 'اصفهان', 'همدان', 'مشهد', 'شیراز', 'تبریز', 'سایر شهرها'];
@@ -35,12 +35,6 @@ export default async function ContactPage() {
 
   return (
     <>
-      <Container>
-        <div className="pt-6">
-          <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'تماس' }]} />
-        </div>
-      </Container>
-
       <DarkSplitHero
         variant="page"
         title={title}
@@ -53,6 +47,8 @@ export default async function ContactPage() {
       >
         <InquiryForm cities={cities} />
       </DarkSplitHero>
+
+      <HomeShowroomsStrip showrooms={showrooms} />
 
       <div className="pb-12" />
     </>

@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
-import { Container, Breadcrumbs } from '@zhic/ui';
+import { Container } from '@zhic/ui';
 import { ArticleHero } from '@/components/hero/ArticleHero';
 import { JournalGrid } from '@/components/journal/JournalGrid';
 import { AuthorCard } from '@/components/journal/AuthorCard';
 import { ArticleProse } from '@/components/journal/ArticleProse';
 import { PayloadImage } from '@/components/PayloadImage';
 import { fetchArticle, fetchLatestArticles } from '@/lib/payload';
+import { buildMetadata } from '@/lib/seo';
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -43,16 +44,6 @@ export default async function ArticlePage({ params }: PageProps) {
         publishedAt={article.publishedAt ?? undefined}
         readingTimeMinutes={article.readingTimeMinutes ?? undefined}
       />
-
-      <Container>
-        <div className="pt-6">
-          <Breadcrumbs items={[
-            { label: 'خانه', href: '/' },
-            { label: 'ژورنال', href: '/journal' },
-            { label: article.title },
-          ]} />
-        </div>
-      </Container>
 
       <section className="py-9">
         <Container>
@@ -92,8 +83,10 @@ export default async function ArticlePage({ params }: PageProps) {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const article = await fetchArticle(slug);
-  return {
+  return buildMetadata({
+    seo: article?.seo,
     title: article?.title ?? 'مقاله',
-    description: article?.excerpt ?? undefined,
-  };
+    description: article?.excerpt,
+    path: `/journal/${slug}`,
+  });
 }

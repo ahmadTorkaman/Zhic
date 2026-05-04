@@ -1,0 +1,2779 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ژیک — پنل مدیریت ارشد</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-weight: 300; }
+  @font-face { font-family: 'Ayandeh'; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Ayandeh'; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-weight: 700; }
+  @font-face { font-family: 'Ayandeh'; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-weight: 900; }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ═══════════════════════════════════════════
+     TOKENS
+     ═══════════════════════════════════════════ */
+  :root {
+    --color-ivory: #FAFAF7;
+    --color-cream: #F5F0EB;
+    --color-sand: #E8E0D8;
+    --color-stone: #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink: #14110F;
+    --color-forest: #5F7760;
+    --color-forest-soft: #758D76;
+    --color-forest-dim: #3F4F40;
+    --color-gold: #C49A6C;
+    --color-gold-soft: #D9B58A;
+    --color-gold-bright: #E8C496;
+
+    --status-up-bg: rgba(95, 119, 96, 0.10);
+    --status-up-fg: #5F7760;
+    --status-down-bg: rgba(196, 154, 108, 0.12);
+    --status-down-fg: #9E7A4F;
+    --status-flat-bg: rgba(140, 130, 121, 0.10);
+    --status-flat-fg: #8C8279;
+
+    --text-display: clamp(3.5rem, 7vw + 1rem, 7.5rem);
+    --text-h1: clamp(2.25rem, 3.5vw + 1rem, 3.5rem);
+    --text-h2: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    --text-h3: clamp(1.375rem, 1.5vw + 0.5rem, 1.75rem);
+    --text-h4: 1.25rem;
+    --text-lead: 1.125rem;
+    --text-body: 1rem;
+    --text-small: 0.875rem;
+    --text-xs: 0.8125rem;
+    --text-eyebrow: 0.75rem;
+
+    --leading-h1: 1.05;
+    --leading-h2: 1.25;
+    --leading-body: 1.7;
+
+    --tracking-eyebrow: 0.18em;
+    --tracking-wide: 0.04em;
+    --tracking-tight: -0.02em;
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+    --space-9: 6rem;
+    --space-10: 8rem;
+
+    --shadow-subtle: 0 2px 8px rgba(20, 17, 15, 0.03);
+    --shadow-card: 0 8px 32px rgba(20, 17, 15, 0.05);
+    --shadow-elevated: 0 20px 60px -20px rgba(20, 17, 15, 0.18);
+
+    --glass-bg: rgba(250, 250, 247, 0.6);
+    --glass-bg-dark: rgba(250, 250, 247, 0.04);
+    --glass-bg-dark-2: rgba(250, 250, 247, 0.07);
+    --glass-border: rgba(232, 224, 216, 0.5);
+    --glass-border-dark: rgba(250, 250, 247, 0.12);
+    --glass-border-gold: rgba(196, 154, 108, 0.30);
+    --glass-blur: 24px;
+
+    --radius-md: 4px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-pill: 999px;
+
+    --dur-fast: 240ms;
+    --dur-hover: 720ms;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --header-h: 72px;
+  }
+
+  body {
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    line-height: var(--leading-body);
+    font-size: var(--text-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  :focus-visible { outline: 2px solid rgba(196, 154, 108, 0.5); outline-offset: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+
+  ::selection { background: var(--color-gold); color: var(--color-ink); }
+
+  .container {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding-inline: var(--space-6);
+  }
+  @media (max-width: 640px) { .container { padding-inline: var(--space-5); } }
+
+  .num { font-feature-settings: "ss01" on; letter-spacing: 0.01em; }
+
+  .eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .eyebrow.gold { color: var(--color-gold); }
+  .eyebrow.forest { color: var(--color-forest); }
+  .eyebrow.ivory { color: var(--color-cream); }
+  .eyebrow::before {
+    content: ''; width: 24px; height: 1px;
+    background: currentColor; opacity: 0.5;
+  }
+
+  h1, h2, h3, h4 { font-weight: 400; line-height: var(--leading-h2); color: var(--color-ink); }
+  h1 { font-size: var(--text-h1); line-height: var(--leading-h1); letter-spacing: var(--tracking-tight); }
+  h2 { font-size: var(--text-h2); }
+  h3 { font-size: var(--text-h3); }
+  h4 { font-size: var(--text-h4); }
+
+  /* ═══════════════════════════════════════════
+     HEADER — operator chrome (HQ flavor)
+     ═══════════════════════════════════════════ */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: rgba(20, 17, 15, 0.95);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-bottom: 1px solid rgba(250, 250, 247, 0.08);
+    color: var(--color-cream);
+    transition: background var(--dur-fast) var(--ease-out-soft);
+  }
+  .header-row {
+    height: var(--header-h);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--color-cream);
+  }
+  .brand-mark {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--color-gold);
+    border-radius: var(--radius-md);
+    display: grid; place-items: center;
+    color: var(--color-gold);
+    font-family: 'Ayandeh', serif;
+    font-weight: 900;
+    font-size: 1.125rem;
+  }
+  .brand-text { line-height: 1.1; }
+  .brand-name { font-weight: 700; font-size: 1rem; color: var(--color-ivory); }
+  .brand-sub  {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+  }
+
+  .main-nav {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+  .nav-link {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    text-decoration: none;
+    border-radius: var(--radius-pill);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .nav-link:hover { color: var(--color-gold); }
+  .nav-link.active {
+    color: var(--color-ink);
+    background: var(--color-gold);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(95, 119, 96, 0.18);
+    border: 1px solid rgba(95, 119, 96, 0.4);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-forest-soft);
+    font-weight: 700;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--color-forest-soft);
+    box-shadow: 0 0 0 4px rgba(95, 119, 96, 0);
+    animation: livePulse 2s var(--ease-out-soft) infinite;
+  }
+  @keyframes livePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(95, 119, 96, 0.6); }
+    50%      { box-shadow: 0 0 0 6px rgba(95, 119, 96, 0); }
+  }
+
+  .icon-btn-dark {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(250, 250, 247, 0.12);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-cream);
+    display: grid; place-items: center;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .icon-btn-dark:hover { border-color: var(--color-gold); color: var(--color-gold); }
+  .icon-btn-dark svg { width: 18px; height: 18px; }
+
+  .user-pill-dark {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+    border: 1px solid rgba(250, 250, 247, 0.12);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out-soft);
+    background: transparent;
+  }
+  .user-pill-dark:hover { border-color: var(--color-gold); }
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-gold), var(--color-gold-soft));
+    color: var(--color-ink);
+    display: grid; place-items: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .user-meta { line-height: 1.15; text-align: start; }
+  .user-name { font-size: var(--text-small); font-weight: 700; color: var(--color-ivory); }
+  .user-branch {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+  }
+
+  .hamburger { display: none; }
+  @media (max-width: 1024px) {
+    .main-nav { display: none; }
+  }
+  @media (max-width: 768px) {
+    :root { --header-h: 60px; }
+    .brand-text { display: none; }
+    .user-pill-dark, .live-badge { display: none; }
+    .hamburger {
+      display: grid;
+      place-items: center;
+      width: 40px; height: 40px;
+      background: transparent;
+      border: 1px solid rgba(250, 250, 247, 0.12);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      color: var(--color-cream);
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     PERIOD SWITCHER (dark band)
+     ═══════════════════════════════════════════ */
+  .period-band {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid rgba(250, 250, 247, 0.06);
+  }
+  .period-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .period-label {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+  .period-pills {
+    display: inline-flex;
+    background: rgba(250, 250, 247, 0.04);
+    border: 1px solid rgba(250, 250, 247, 0.08);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+  }
+  .period-pills button {
+    background: transparent;
+    border: 0;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .period-pills button.active {
+    background: var(--color-gold);
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+  .period-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+  .period-meta strong { color: var(--color-gold); font-weight: 700; }
+
+  @media (max-width: 640px) {
+    .period-meta { display: none; }
+  }
+
+  /* ═══════════════════════════════════════════
+     HERO — the money shot
+     ═══════════════════════════════════════════ */
+  .hero {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: var(--space-9) 0 var(--space-10);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -10%; bottom: -10%;
+    inset-inline-end: -15%;
+    width: 60%;
+    background: radial-gradient(ellipse at center, rgba(196, 154, 108, 0.16), transparent 60%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -10%; top: 10%;
+    inset-inline-start: -10%;
+    width: 50%;
+    background: radial-gradient(ellipse at center, rgba(95, 119, 96, 0.10), transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-bg-chart {
+    position: absolute;
+    bottom: 0; inset-inline: 0;
+    height: 60%;
+    width: 100%;
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-row {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-9);
+    align-items: end;
+  }
+  .hero-main { min-width: 0; }
+  .hero-eyebrow {
+    color: var(--color-gold);
+    margin-bottom: var(--space-5);
+  }
+  .hero-number {
+    font-family: 'Ayandeh', serif;
+    font-weight: 300;
+    font-size: var(--text-display);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--color-ivory);
+    margin-bottom: var(--space-5);
+    direction: ltr;
+    text-align: start;
+  }
+  .hero-number .currency {
+    font-size: 0.25em;
+    color: var(--color-gold);
+    margin-inline-start: var(--space-4);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  .hero-sub {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    align-items: baseline;
+    margin-bottom: var(--space-6);
+  }
+  .hero-sub-item { line-height: 1.3; }
+  .hero-sub-label {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+    margin-bottom: var(--space-1);
+  }
+  .hero-sub-value {
+    font-size: var(--text-h4);
+    color: var(--color-ivory);
+    font-weight: 400;
+  }
+  .hero-sub-value .delta {
+    font-size: var(--text-small);
+    color: var(--color-forest-soft);
+    font-weight: 700;
+    margin-inline-end: var(--space-2);
+  }
+
+  .hero-stats {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .stat-card {
+    background: var(--glass-bg-dark);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .stat-card:hover {
+    border-color: var(--glass-border-gold);
+    transform: translateY(-2px);
+  }
+  .stat-card-eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+    margin-bottom: var(--space-3);
+  }
+  .stat-card-value {
+    font-size: 1.75rem;
+    color: var(--color-ivory);
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: var(--space-2);
+  }
+  .stat-card-value .unit {
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    font-weight: 400;
+    margin-inline-start: var(--space-2);
+  }
+  .stat-card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+  }
+  .stat-card-foot .delta { color: var(--color-forest-soft); font-weight: 700; }
+  .stat-card-foot .delta.warn { color: var(--color-gold); }
+
+  @media (max-width: 1024px) {
+    .hero-row { grid-template-columns: 1fr; gap: var(--space-7); }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .hero-stats { grid-template-columns: 1fr; }
+    .hero-sub { gap: var(--space-4); }
+  }
+
+  /* ═══════════════════════════════════════════
+     KPI GRID with sparklines
+     ═══════════════════════════════════════════ */
+  .kpi-grid-band {
+    background: var(--color-ivory);
+    padding: var(--space-7) 0;
+    margin-top: -1px;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-ivory);
+    box-shadow: var(--shadow-card);
+  }
+  .kpi-cell {
+    padding: var(--space-5);
+    border-inline-end: 1px solid var(--color-sand);
+    border-bottom: 1px solid var(--color-sand);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    transition: background var(--dur-fast) var(--ease-out-soft);
+  }
+  .kpi-cell:hover { background: var(--color-cream); }
+  .kpi-cell:nth-child(4n) { border-inline-end: 0; }
+  .kpi-cell:nth-last-child(-n+4) { border-bottom: 0; }
+  .kpi-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: var(--space-3);
+  }
+  .kpi-head-title {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+  .kpi-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-weight: 700;
+  }
+  .kpi-delta.up   { background: var(--status-up-bg);   color: var(--status-up-fg); }
+  .kpi-delta.down { background: var(--status-down-bg); color: var(--status-down-fg); }
+  .kpi-delta.flat { background: var(--status-flat-bg); color: var(--status-flat-fg); }
+  .kpi-delta svg { width: 10px; height: 10px; }
+  .kpi-value {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--color-ink);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .kpi-value .unit {
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    font-weight: 400;
+    margin-inline-start: var(--space-2);
+  }
+  .kpi-spark {
+    height: 36px;
+    width: 100%;
+    overflow: visible;
+  }
+  .kpi-foot {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    display: flex;
+    justify-content: space-between;
+  }
+  .kpi-foot strong { color: var(--color-charcoal); font-weight: 700; }
+
+  @media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .kpi-cell:nth-child(4n) { border-inline-end: 1px solid var(--color-sand); }
+    .kpi-cell:nth-child(2n) { border-inline-end: 0; }
+    .kpi-cell:nth-last-child(-n+4) { border-bottom: 1px solid var(--color-sand); }
+    .kpi-cell:nth-last-child(-n+2) { border-bottom: 0; }
+  }
+  @media (max-width: 640px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .kpi-cell { border-inline-end: 0 !important; }
+    .kpi-cell:not(:last-child) { border-bottom: 1px solid var(--color-sand) !important; }
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION SHELL
+     ═══════════════════════════════════════════ */
+  section.block { padding: var(--space-8) 0; }
+  section.block.bg-cream { background: var(--color-cream); }
+  section.block.bg-ivory { background: var(--color-ivory); }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+  .section-head .lead { max-width: 36em; color: var(--color-stone); margin-top: var(--space-2); }
+  .section-head h2 { margin-top: var(--space-3); }
+  .section-link {
+    color: var(--color-forest);
+    text-decoration: none;
+    font-size: var(--text-small);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur-fast) var(--ease-out-soft);
+  }
+  .section-link:hover { border-bottom-color: var(--color-forest); }
+  .section-link::after { content: ' ←'; }
+
+  /* ═══════════════════════════════════════════
+     REVENUE CHART
+     ═══════════════════════════════════════════ */
+  .chart-wrap {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-card);
+  }
+  .chart-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .chart-legend {
+    display: flex;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+  }
+  .legend-swatch {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+  }
+  .legend-swatch.forest { background: var(--color-forest); }
+  .legend-swatch.gold   { background: var(--color-gold); }
+  .legend-swatch.charcoal { background: var(--color-charcoal); }
+  .legend-swatch.stone  { background: var(--color-stone); }
+  .legend-swatch.sand   { background: var(--color-sand); }
+
+  .view-toggle {
+    display: inline-flex;
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+  }
+  .view-toggle button {
+    background: transparent;
+    border: 0;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .view-toggle button.active {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+
+  .chart-container {
+    width: 100%;
+    height: 360px;
+    position: relative;
+  }
+  .chart-svg { width: 100%; height: 100%; overflow: visible; }
+  .chart-tick-label {
+    font-size: var(--text-xs);
+    fill: var(--color-stone);
+    font-family: inherit;
+  }
+  .chart-axis-line { stroke: var(--color-sand); stroke-width: 1; }
+  .chart-grid-line { stroke: var(--color-sand); stroke-width: 1; stroke-dasharray: 3 3; }
+
+  .area-path { animation: areaReveal 1800ms var(--ease-out-soft) forwards; }
+  @keyframes areaReveal {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .chart-spotlight {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    border: 2px solid var(--color-ivory);
+    box-shadow: 0 0 0 4px rgba(196, 154, 108, 0.3);
+    pointer-events: none;
+    transform: translate(50%, -50%);
+    animation: spotPulse 2s var(--ease-out-soft) infinite;
+  }
+  @keyframes spotPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(196, 154, 108, 0.3); }
+    50%      { box-shadow: 0 0 0 10px rgba(196, 154, 108, 0); }
+  }
+
+  .chart-tooltip {
+    position: absolute;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    border: 1px solid var(--glass-border-gold);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-small);
+    pointer-events: none;
+    transform: translate(50%, -100%) translateY(-12px);
+    box-shadow: var(--shadow-elevated);
+    white-space: nowrap;
+  }
+  .chart-tooltip-eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+    margin-bottom: var(--space-1);
+  }
+  .chart-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .chart-tooltip-row .num { color: var(--color-ivory); font-weight: 700; }
+
+  /* ═══════════════════════════════════════════
+     BRANCH LEADERBOARD
+     ═══════════════════════════════════════════ */
+  .branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+  .branch-card {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .branch-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-forest);
+  }
+  .branch-card.lead {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    border-color: var(--color-ink);
+    grid-column: span 2;
+    background-image:
+      radial-gradient(ellipse at 80% 20%, rgba(196, 154, 108, 0.18), transparent 60%),
+      radial-gradient(ellipse at 0% 100%, rgba(95, 119, 96, 0.14), transparent 60%);
+  }
+  .branch-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+  }
+  .branch-card-head-left { display: flex; align-items: center; gap: var(--space-3); }
+  .branch-rank {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    background: var(--color-cream);
+    color: var(--color-stone);
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-small);
+    border: 1px solid var(--color-sand);
+  }
+  .branch-card.lead .branch-rank {
+    background: var(--color-gold);
+    color: var(--color-ink);
+    border-color: var(--color-gold);
+  }
+  .branch-card.lead .branch-rank::before {
+    content: '★';
+    margin-inline-end: 2px;
+  }
+  .branch-name {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    line-height: 1.2;
+  }
+  .branch-card.lead .branch-name { color: var(--color-ivory); font-size: var(--text-h3); }
+  .branch-meta {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+    margin-top: var(--space-1);
+  }
+  .branch-card.lead .branch-meta { color: var(--color-gold); }
+
+  .branch-revenue {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--color-ink);
+    line-height: 1;
+    text-align: end;
+  }
+  .branch-card.lead .branch-revenue {
+    font-size: 2.25rem;
+    color: var(--color-ivory);
+  }
+  .branch-revenue .currency {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    font-weight: 400;
+    margin-inline-start: var(--space-2);
+  }
+  .branch-card.lead .branch-revenue .currency { color: var(--color-gold); }
+
+  .branch-bars {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-4);
+  }
+  .branch-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .bar-label {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+    display: flex;
+    justify-content: space-between;
+  }
+  .branch-card.lead .bar-label { color: var(--color-gold); }
+  .bar-value {
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+    font-weight: 700;
+  }
+  .branch-card.lead .bar-value { color: var(--color-ivory); }
+  .bar-track {
+    height: 4px;
+    background: var(--color-sand);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .branch-card.lead .bar-track { background: rgba(250, 250, 247, 0.10); }
+  .bar-fill {
+    height: 100%;
+    background: var(--color-forest);
+    border-radius: var(--radius-pill);
+    transform-origin: 0% 50%;
+    animation: barGrow 1400ms var(--ease-out-soft) forwards;
+    transform: scaleX(0);
+  }
+  .bar-fill.gold { background: var(--color-gold); }
+  .bar-fill.charcoal { background: var(--color-charcoal); }
+  .branch-card.lead .bar-fill { background: var(--color-gold); }
+  .branch-card.lead .bar-fill.alt { background: var(--color-forest-soft); }
+  @keyframes barGrow {
+    to { transform: scaleX(1); }
+  }
+
+  @media (max-width: 1024px) {
+    .branch-grid { grid-template-columns: 1fr; }
+    .branch-card.lead { grid-column: span 1; }
+  }
+  @media (max-width: 640px) {
+    .branch-bars { grid-template-columns: 1fr; gap: var(--space-3); }
+    .branch-card-head { flex-direction: column; align-items: start; gap: var(--space-3); }
+    .branch-revenue { text-align: start; }
+  }
+
+  /* ═══════════════════════════════════════════
+     TOP PRODUCTS
+     ═══════════════════════════════════════════ */
+  .products-row {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  .product-rank-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .product-rank {
+    display: grid;
+    grid-template-columns: 32px 56px 1fr auto;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-3);
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .product-rank:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-forest);
+  }
+  .product-rank-num {
+    font-family: 'Ayandeh', serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--color-stone);
+    text-align: center;
+    line-height: 1;
+  }
+  .product-rank:nth-child(1) .product-rank-num { color: var(--color-gold); font-size: 2rem; }
+  .product-rank:nth-child(2) .product-rank-num { color: var(--color-forest); }
+  .product-rank-img {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    color: var(--color-stone);
+    font-family: 'Ayandeh', serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+  }
+  .product-rank-body { min-width: 0; }
+  .product-rank-name {
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    font-weight: 400;
+    margin-bottom: var(--space-1);
+  }
+  .product-rank-meta {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .product-rank-meta .dot {
+    width: 3px; height: 3px;
+    background: currentColor;
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+  .product-rank-bar {
+    margin-top: var(--space-2);
+    height: 3px;
+    background: var(--color-sand);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    width: 100%;
+  }
+  .product-rank-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--color-forest);
+    border-radius: var(--radius-pill);
+    transform-origin: 0% 50%;
+    transform: scaleX(0);
+    animation: barGrow 1600ms var(--ease-out-soft) forwards;
+  }
+  .product-rank:nth-child(1) .product-rank-bar > span { background: var(--color-gold); }
+  .product-rank-revenue {
+    text-align: end;
+    line-height: 1.2;
+  }
+  .product-rank-revenue .amount {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    font-weight: 400;
+  }
+  .product-rank-revenue .currency {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    margin-inline-start: var(--space-1);
+  }
+  .product-rank-revenue .delta {
+    font-size: var(--text-xs);
+    color: var(--color-forest);
+    font-weight: 700;
+    display: block;
+    margin-top: var(--space-1);
+  }
+  .product-rank-revenue .delta.warn { color: var(--color-gold); }
+
+  /* ═══════════════════════════════════════════
+     PRODUCTION CAPACITY (rings)
+     ═══════════════════════════════════════════ */
+  .capacity-card {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    position: relative;
+    overflow: hidden;
+  }
+  .capacity-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 100% 0%, rgba(196, 154, 108, 0.10), transparent 60%);
+    pointer-events: none;
+  }
+  .capacity-card-head {
+    margin-bottom: var(--space-6);
+    position: relative;
+    z-index: 1;
+  }
+  .capacity-card-title {
+    font-size: var(--text-h3);
+    color: var(--color-ivory);
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+  .capacity-card-sub {
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    line-height: 1.6;
+  }
+  .capacity-rings {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+    position: relative;
+    z-index: 1;
+  }
+  .ring-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-border-dark);
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
+  .ring {
+    position: relative;
+    width: 96px; height: 96px;
+  }
+  .ring svg {
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-track {
+    fill: none;
+    stroke: rgba(250, 250, 247, 0.10);
+    stroke-width: 6;
+  }
+  .ring-fill {
+    fill: none;
+    stroke: var(--color-gold);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1500ms var(--ease-out-soft);
+  }
+  .ring-fill.forest { stroke: var(--color-forest-soft); }
+  .ring-fill.warn { stroke: var(--color-gold); }
+  .ring-label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.125rem;
+    color: var(--color-ivory);
+    font-weight: 400;
+  }
+  .ring-tile-name {
+    font-size: var(--text-small);
+    color: var(--color-cream);
+    line-height: 1.3;
+  }
+  .ring-tile-eta {
+    font-size: var(--text-xs);
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  @media (max-width: 1024px) {
+    .products-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .capacity-rings { grid-template-columns: 1fr; }
+    .product-rank { grid-template-columns: 28px 48px 1fr auto; gap: var(--space-3); padding: var(--space-3); }
+  }
+
+  /* ═══════════════════════════════════════════
+     INQUIRY FUNNEL
+     ═══════════════════════════════════════════ */
+  .funnel-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-6);
+    align-items: stretch;
+  }
+  .funnel-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .funnel-step {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4) var(--space-5);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-4);
+    align-items: center;
+    position: relative;
+  }
+  .funnel-step::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 24px;
+    top: 100%;
+    width: 1px;
+    height: var(--space-3);
+    background: var(--color-sand);
+  }
+  .funnel-step:last-child::after { display: none; }
+  .funnel-step-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    display: grid; place-items: center;
+    color: var(--color-forest);
+  }
+  .funnel-step-icon svg { width: 16px; height: 16px; }
+  .funnel-step-body { min-width: 0; }
+  .funnel-step-name {
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    margin-bottom: var(--space-2);
+  }
+  .funnel-step-bar {
+    height: 6px;
+    background: var(--color-sand);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .funnel-step-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--color-forest);
+    border-radius: var(--radius-pill);
+    transform-origin: 0% 50%;
+    transform: scaleX(0);
+    animation: barGrow 1600ms var(--ease-out-soft) forwards;
+  }
+  .funnel-step-stats {
+    text-align: end;
+    line-height: 1.2;
+  }
+  .funnel-step-count {
+    font-size: var(--text-h4);
+    color: var(--color-ink);
+    font-weight: 400;
+  }
+  .funnel-step-pct {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+  }
+
+  .funnel-aside {
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .funnel-aside .eyebrow { color: var(--color-forest); }
+  .funnel-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .funnel-summary-value {
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--color-ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .funnel-summary-value .pct { color: var(--color-gold); }
+  .funnel-summary-label {
+    font-size: var(--text-small);
+    color: var(--color-stone);
+    line-height: 1.6;
+  }
+  .funnel-summary-label strong { color: var(--color-charcoal); font-weight: 700; }
+  .funnel-aside-foot {
+    margin-top: auto;
+    padding-top: var(--space-5);
+    border-top: 1px dashed var(--color-sand);
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    line-height: 1.6;
+  }
+  .funnel-aside-foot strong { color: var(--color-forest); font-weight: 700; }
+
+  @media (max-width: 1024px) {
+    .funnel-row { grid-template-columns: 1fr; }
+  }
+
+  /* ═══════════════════════════════════════════
+     LIVE ACTIVITY TICKER
+     ═══════════════════════════════════════════ */
+  .ticker-band {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: var(--space-7) 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .ticker-band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(196, 154, 108, 0.06), transparent 60%);
+  }
+  .ticker-row {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: var(--space-7);
+    align-items: stretch;
+    position: relative;
+    z-index: 1;
+  }
+  .ticker-text h2 {
+    color: var(--color-ivory);
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .ticker-text p {
+    color: var(--color-stone);
+    font-size: var(--text-small);
+    line-height: 1.7;
+  }
+  .ticker-text .live-badge { margin-top: var(--space-5); }
+
+  .ticker-feed {
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-border-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    height: 360px;
+    overflow: hidden;
+    position: relative;
+    mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+  }
+  .ticker-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    will-change: transform;
+  }
+  .ticker-item {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-3);
+    background: rgba(250, 250, 247, 0.04);
+    border-inline-start: 2px solid transparent;
+    border-radius: var(--radius-md);
+    animation: tickerIn 600ms var(--ease-out-soft);
+  }
+  @keyframes tickerIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .ticker-item.order  { border-inline-start-color: var(--color-forest-soft); }
+  .ticker-item.inquiry { border-inline-start-color: var(--color-gold); }
+  .ticker-item.shipped { border-inline-start-color: var(--color-cream); }
+  .ticker-item.customer { border-inline-start-color: var(--color-stone); }
+
+  .ticker-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(250, 250, 247, 0.06);
+    display: grid; place-items: center;
+    color: var(--color-cream);
+  }
+  .ticker-item.order .ticker-icon  { color: var(--color-forest-soft); }
+  .ticker-item.inquiry .ticker-icon { color: var(--color-gold); }
+  .ticker-icon svg { width: 14px; height: 14px; }
+
+  .ticker-body { min-width: 0; }
+  .ticker-headline {
+    font-size: var(--text-small);
+    color: var(--color-ivory);
+    line-height: 1.4;
+  }
+  .ticker-headline strong { color: var(--color-gold); font-weight: 700; }
+  .ticker-meta {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-stone);
+    margin-top: var(--space-1);
+  }
+  .ticker-time {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+  }
+
+  @media (max-width: 1024px) {
+    .ticker-row { grid-template-columns: 1fr; }
+    .ticker-feed { height: 300px; }
+  }
+
+  /* ═══════════════════════════════════════════
+     ALERTS STRIP
+     ═══════════════════════════════════════════ */
+  .alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .alert-card {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    border-inline-start: 3px solid var(--color-stone);
+    transition: all var(--dur-fast) var(--ease-out-soft);
+  }
+  .alert-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+  .alert-card.warn { border-inline-start-color: var(--color-gold); }
+  .alert-card.note { border-inline-start-color: var(--color-forest); }
+  .alert-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .alert-card-eyebrow {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-stone);
+  }
+  .alert-card.warn .alert-card-eyebrow { color: var(--color-gold); }
+  .alert-card.note .alert-card-eyebrow { color: var(--color-forest); }
+  .alert-card-count {
+    font-size: 2.25rem;
+    font-weight: 300;
+    color: var(--color-ink);
+    line-height: 1;
+  }
+  .alert-card-body {
+    font-size: var(--text-small);
+    color: var(--color-charcoal);
+    line-height: 1.6;
+  }
+  .alert-card-body strong { color: var(--color-ink); font-weight: 700; }
+  .alert-card-link {
+    font-size: var(--text-xs);
+    color: var(--color-forest);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur-fast) var(--ease-out-soft);
+    align-self: start;
+    margin-top: auto;
+    padding-top: var(--space-3);
+  }
+  .alert-card-link:hover { border-bottom-color: var(--color-forest); }
+  .alert-card-link::after { content: ' ←'; }
+
+  @media (max-width: 1024px) {
+    .alerts-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ */
+  .site-footer {
+    background: var(--color-ink);
+    color: var(--color-stone);
+    padding: var(--space-7) 0 var(--space-5);
+    font-size: var(--text-small);
+    border-top: 1px solid rgba(250, 250, 247, 0.06);
+  }
+  .footer-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-6);
+    align-items: center;
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid rgba(250, 250, 247, 0.06);
+  }
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--color-cream);
+  }
+  .footer-brand strong { color: var(--color-ivory); font-weight: 700; }
+  .footer-links {
+    display: flex;
+    gap: var(--space-5);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    color: var(--color-cream);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out-soft);
+  }
+  .footer-links a:hover { color: var(--color-gold); }
+  .footer-version {
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+  .footer-base {
+    padding-top: var(--space-5);
+    text-align: center;
+    font-size: var(--text-xs);
+    color: var(--color-stone);
+  }
+  @media (max-width: 768px) {
+    .footer-row { grid-template-columns: 1fr; text-align: center; gap: var(--space-4); }
+    .footer-brand, .footer-links { justify-content: center; }
+  }
+
+  /* ═══════════════════════════════════════════
+     MOBILE NAV
+     ═══════════════════════════════════════════ */
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    flex-direction: column;
+  }
+  .mobile-nav-overlay.open { display: flex; }
+  .mobile-nav-head {
+    height: var(--header-h);
+    border-bottom: 1px solid rgba(250, 250, 247, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--space-5);
+  }
+  .mobile-nav-user {
+    padding: var(--space-6) var(--space-5);
+    background: var(--glass-bg-dark);
+    border-bottom: 1px solid rgba(250, 250, 247, 0.06);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .mobile-nav-user .user-avatar { width: 48px; height: 48px; font-size: 1rem; }
+  .mobile-nav-user .name {
+    font-size: var(--text-h4);
+    color: var(--color-ivory);
+    font-weight: 700;
+  }
+  .mobile-nav-user .role {
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-gold);
+    margin-top: var(--space-1);
+  }
+  .mobile-nav-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-5) 0;
+  }
+  .mobile-nav-link {
+    padding: var(--space-4) var(--space-5);
+    text-decoration: none;
+    color: var(--color-cream);
+    font-size: var(--text-h4);
+    border-bottom: 1px solid rgba(250, 250, 247, 0.06);
+  }
+  .mobile-nav-link.active { color: var(--color-gold); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-row">
+      <a href="#" class="brand">
+        <div class="brand-mark">ژ</div>
+        <div class="brand-text">
+          <div class="brand-name">ژیک</div>
+          <div class="brand-sub">پنل مدیریت ارشد</div>
+        </div>
+      </a>
+      <nav class="main-nav">
+        <a href="#" class="nav-link active">نمای کلی</a>
+        <a href="#branches" class="nav-link">شعبه‌ها</a>
+        <a href="#products" class="nav-link">محصولات</a>
+        <a href="#capacity" class="nav-link">تولید</a>
+        <a href="#funnel" class="nav-link">قیف فروش</a>
+        <a href="#activity" class="nav-link">فعالیت</a>
+      </nav>
+      <div class="header-actions">
+        <span class="live-badge">
+          <span class="live-dot"></span>
+          داده‌های زنده
+        </span>
+        <button class="icon-btn-dark" aria-label="اعلانات">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </button>
+        <button class="user-pill-dark">
+          <div class="user-avatar">س‌ز</div>
+          <div class="user-meta">
+            <div class="user-name">سعید زمانی</div>
+            <div class="user-branch">مدیرعامل</div>
+          </div>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="منو">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════
+     PERIOD SWITCHER BAND
+     ═══════════════════════════════════════════ -->
+<div class="period-band">
+  <div class="container">
+    <div class="period-row">
+      <div style="display: flex; align-items: center; gap: var(--space-4);">
+        <span class="period-label">دوره</span>
+        <div class="period-pills" id="periodPills">
+          <button class="active">این ماه</button>
+          <button>سه ماه</button>
+          <button>شش ماه</button>
+          <button>سال جاری</button>
+        </div>
+      </div>
+      <div class="period-meta num">
+        <span>به‌روزرسانی: <strong>همین الان</strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HERO — the money shot
+     ═══════════════════════════════════════════ -->
+<section class="hero">
+  <!-- Background sparkline area chart -->
+  <svg class="hero-bg-chart" viewBox="0 0 1200 200" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="heroGold" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%"  stop-color="#C49A6C" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#C49A6C" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,160 L80,150 L160,155 L240,140 L320,148 L400,128 L480,135 L560,118 L640,105 L720,112 L800,90 L880,78 L960,65 L1040,52 L1120,38 L1200,28 L1200,200 L0,200 Z" fill="url(#heroGold)"/>
+    <path d="M0,160 L80,150 L160,155 L240,140 L320,148 L400,128 L480,135 L560,118 L640,105 L720,112 L800,90 L880,78 L960,65 L1040,52 L1120,38 L1200,28" fill="none" stroke="#C49A6C" stroke-width="1.5" opacity="0.7"/>
+  </svg>
+
+  <div class="container">
+    <div class="hero-row">
+      <div class="hero-main">
+        <div class="hero-eyebrow eyebrow gold">درآمد اردیبهشت ۱۴۰۵ — تجمیع پنج شعبه</div>
+        <div class="hero-number num">
+          <span id="heroAmount">۰</span>
+          <span class="currency">تومان</span>
+        </div>
+        <div class="hero-sub">
+          <div class="hero-sub-item">
+            <div class="hero-sub-label">نسبت به فروردین</div>
+            <div class="hero-sub-value"><span class="delta">+۱۸٪</span> <span class="num">۲۴۲M</span></div>
+          </div>
+          <div class="hero-sub-item">
+            <div class="hero-sub-label">سفارشات</div>
+            <div class="hero-sub-value num"><span class="delta">+۹</span> ۸۷ سفارش</div>
+          </div>
+          <div class="hero-sub-item">
+            <div class="hero-sub-label">میانگین سفارش</div>
+            <div class="hero-sub-value num">۱۸٬۲M تومان</div>
+          </div>
+          <div class="hero-sub-item">
+            <div class="hero-sub-label">مشتریان جدید</div>
+            <div class="hero-sub-value num"><span class="delta">+۱۴</span> ۲۸ نفر</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-card-eyebrow">شعبه‌ی برتر</div>
+          <div class="stat-card-value">تهران</div>
+          <div class="stat-card-foot">
+            <span class="num">۴۸۲٬۴۰۰٬۰۰۰ تومان</span>
+            <span class="delta num">+۲۲٪</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-eyebrow">پرفروش‌ترین</div>
+          <div class="stat-card-value">کمد هرمس</div>
+          <div class="stat-card-foot">
+            <span class="num">۱۶ عدد · ۲۸۴M</span>
+            <span class="delta num">+۳۸٪</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-eyebrow">نرخ تبدیل</div>
+          <div class="stat-card-value num">۳۴٫۲٪<span class="unit">از استعلام به سفارش</span></div>
+          <div class="stat-card-foot">
+            <span>هدف ماه: ۳۰٪</span>
+            <span class="delta num">+۴٫۲٪</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     KPI GRID with sparklines
+     ═══════════════════════════════════════════ -->
+<section class="kpi-grid-band">
+  <div class="container">
+    <div class="kpi-grid">
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">درآمد روزانه</div>
+          <span class="kpi-delta up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l7-7 7 7M12 5v14"/></svg>
+            ۱۸٪
+          </span>
+        </div>
+        <div class="kpi-value num">۵۲٫۸<span class="unit">میلیون تومان</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sp1" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#5F7760" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#5F7760" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,28 L10,26 L20,22 L30,24 L40,18 L50,20 L60,14 L70,16 L80,10 L90,12 L100,6 L100,36 L0,36 Z" fill="url(#sp1)"/>
+          <path d="M0,28 L10,26 L20,22 L30,24 L40,18 L50,20 L60,14 L70,16 L80,10 L90,12 L100,6" fill="none" stroke="#5F7760" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>۳۰ روز اخیر</span><span><strong class="num">۱٬۵۸۴M</strong> جمع</span></div>
+      </div>
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">سفارشات</div>
+          <span class="kpi-delta up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l7-7 7 7M12 5v14"/></svg>
+            ۱۲٪
+          </span>
+        </div>
+        <div class="kpi-value num">۸۷<span class="unit">سفارش</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sp2" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#5F7760" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#5F7760" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,30 L10,24 L20,28 L30,20 L40,22 L50,16 L60,18 L70,12 L80,14 L90,8 L100,10 L100,36 L0,36 Z" fill="url(#sp2)"/>
+          <path d="M0,30 L10,24 L20,28 L30,20 L40,22 L50,16 L60,18 L70,12 L80,14 L90,8 L100,10" fill="none" stroke="#5F7760" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>میانگین روزانه</span><span><strong class="num">۲٫۹</strong> سفارش</span></div>
+      </div>
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">مشتریان جدید</div>
+          <span class="kpi-delta up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l7-7 7 7M12 5v14"/></svg>
+            ۳۲٪
+          </span>
+        </div>
+        <div class="kpi-value num">۲۸<span class="unit">نفر</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sp3" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#C49A6C" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#C49A6C" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,32 L10,28 L20,30 L30,22 L40,26 L50,18 L60,20 L70,14 L80,16 L90,10 L100,8 L100,36 L0,36 Z" fill="url(#sp3)"/>
+          <path d="M0,32 L10,28 L20,30 L30,22 L40,26 L50,18 L60,20 L70,14 L80,16 L90,10 L100,8" fill="none" stroke="#C49A6C" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>منبع برتر</span><span><strong>اینستاگرام</strong></span></div>
+      </div>
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">میانگین زمان پاسخ</div>
+          <span class="kpi-delta down">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12l-7 7-7-7M12 5v14"/></svg>
+            ۸٪
+          </span>
+        </div>
+        <div class="kpi-value num">۴۲<span class="unit">دقیقه</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <path d="M0,12 L10,14 L20,11 L30,16 L40,13 L50,18 L60,16 L70,20 L80,18 L90,22 L100,24" fill="none" stroke="#C49A6C" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>هدف</span><span><strong class="num">زیر ۳۰ دقیقه</strong></span></div>
+      </div>
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">نرخ تبدیل</div>
+          <span class="kpi-delta up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l7-7 7 7M12 5v14"/></svg>
+            ۴٫۲٪
+          </span>
+        </div>
+        <div class="kpi-value num">۳۴٫۲<span class="unit">درصد</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sp5" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#5F7760" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#5F7760" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,24 L10,22 L20,26 L30,18 L40,20 L50,14 L60,18 L70,12 L80,14 L90,10 L100,6 L100,36 L0,36 Z" fill="url(#sp5)"/>
+          <path d="M0,24 L10,22 L20,26 L30,18 L40,20 L50,14 L60,18 L70,12 L80,14 L90,10 L100,6" fill="none" stroke="#5F7760" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>هدف ۳۰٪</span><span><strong class="num">۲۹۸ استعلام</strong></span></div>
+      </div>
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">میانگین ارزش سفارش</div>
+          <span class="kpi-delta up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l7-7 7 7M12 5v14"/></svg>
+            ۶٪
+          </span>
+        </div>
+        <div class="kpi-value num">۱۸٫۲<span class="unit">میلیون تومان</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <path d="M0,16 L10,18 L20,14 L30,20 L40,16 L50,18 L60,14 L70,16 L80,12 L90,14 L100,10" fill="none" stroke="#5F7760" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>بالاترین</span><span><strong class="num">۱۲۰M</strong> یک سفارش</span></div>
+      </div>
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">زمان میانه‌ی تحویل</div>
+          <span class="kpi-delta flat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
+            ثابت
+          </span>
+        </div>
+        <div class="kpi-value num">۲۲<span class="unit">روز</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <path d="M0,16 L10,18 L20,16 L30,18 L40,15 L50,17 L60,16 L70,18 L80,16 L90,18 L100,17" fill="none" stroke="#8C8279" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>محدوده</span><span><strong class="num">۸ — ۴۵</strong> روز</span></div>
+      </div>
+
+      <div class="kpi-cell">
+        <div class="kpi-head">
+          <div class="kpi-head-title">رضایت مشتری</div>
+          <span class="kpi-delta up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l7-7 7 7M12 5v14"/></svg>
+            ۲٪
+          </span>
+        </div>
+        <div class="kpi-value num">۴٫۸<span class="unit">از ۵</span></div>
+        <svg class="kpi-spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sp8" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#C49A6C" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#C49A6C" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,14 L10,12 L20,14 L30,10 L40,12 L50,8 L60,10 L70,6 L80,8 L90,4 L100,4 L100,36 L0,36 Z" fill="url(#sp8)"/>
+          <path d="M0,14 L10,12 L20,14 L30,10 L40,12 L50,8 L60,10 L70,6 L80,8 L90,4 L100,4" fill="none" stroke="#C49A6C" stroke-width="1.5"/>
+        </svg>
+        <div class="kpi-foot"><span>۴۲ نظر این ماه</span><span><strong>۹۲٪</strong> پنج‌ستاره</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     REVENUE CHART
+     ═══════════════════════════════════════════ -->
+<section class="block bg-cream" id="revenue">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow forest">روند درآمد</div>
+        <h2>درآمد در یک سال گذشته</h2>
+      </div>
+      <div class="view-toggle" id="viewToggle">
+        <button class="active">شعبه‌ها</button>
+        <button>محصولات</button>
+        <button>مواد</button>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-toolbar">
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-swatch charcoal"></span>تهران</span>
+          <span class="legend-item"><span class="legend-swatch forest"></span>همدان</span>
+          <span class="legend-item"><span class="legend-swatch gold"></span>اصفهان</span>
+          <span class="legend-item"><span class="legend-swatch stone"></span>مشهد</span>
+          <span class="legend-item"><span class="legend-swatch sand"></span>شیراز</span>
+        </div>
+        <span class="period-label num">خرداد ۱۴۰۴ — اردیبهشت ۱۴۰۵</span>
+      </div>
+
+      <div class="chart-container">
+        <svg class="chart-svg" viewBox="0 0 1200 360" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="aTehran" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#2C2825" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#2C2825" stop-opacity="0.55"/>
+            </linearGradient>
+            <linearGradient id="aHamedan" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#5F7760" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#5F7760" stop-opacity="0.55"/>
+            </linearGradient>
+            <linearGradient id="aIsfahan" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#C49A6C" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#C49A6C" stop-opacity="0.55"/>
+            </linearGradient>
+            <linearGradient id="aMashhad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#8C8279" stop-opacity="0.7"/>
+              <stop offset="100%" stop-color="#8C8279" stop-opacity="0.4"/>
+            </linearGradient>
+            <linearGradient id="aShiraz" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#E8E0D8" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#E8E0D8" stop-opacity="0.5"/>
+            </linearGradient>
+          </defs>
+
+          <!-- grid -->
+          <line class="chart-axis-line" x1="0" y1="320" x2="1200" y2="320"/>
+          <line class="chart-grid-line" x1="0" y1="240" x2="1200" y2="240"/>
+          <line class="chart-grid-line" x1="0" y1="160" x2="1200" y2="160"/>
+          <line class="chart-grid-line" x1="0" y1="80"  x2="1200" y2="80"/>
+
+          <!-- y-axis labels (placed via foreignObject for Persian digits) -->
+          <text x="20"   y="324" class="chart-tick-label">۰</text>
+          <text x="20"   y="244" class="chart-tick-label">۴۰۰M</text>
+          <text x="20"   y="164" class="chart-tick-label">۸۰۰M</text>
+          <text x="20"   y="84"  class="chart-tick-label">۱٫۲B</text>
+
+          <!-- Stacked area chart: Shiraz bottom → Mashhad → Isfahan → Hamedan → Tehran top -->
+          <!-- Total stack values per month: stacks reach roughly 220, 240, 260, 280, 320, 360, 400, 460, 540, 580, 1280, 1584 (×million) -->
+          <!-- Scale: 1.6B = full chart height (320). 1pt = 1.6B / 320 = 5M -->
+
+          <!-- Shiraz (sand) -->
+          <path class="area-path" style="animation-delay: 0ms" d="M100,310 L200,308 L300,306 L400,304 L500,302 L600,300 L700,298 L800,296 L900,294 L1000,290 L1100,280 L1200,278 L1200,320 L100,320 Z" fill="url(#aShiraz)"/>
+
+          <!-- Mashhad on top of Shiraz -->
+          <path class="area-path" style="animation-delay: 100ms" d="M100,290 L200,286 L300,282 L400,280 L500,276 L600,272 L700,268 L800,264 L900,258 L1000,250 L1100,232 L1200,228 L1200,278 L1100,280 L1000,290 L900,294 L800,296 L700,298 L600,300 L500,302 L400,304 L300,306 L200,308 L100,310 Z" fill="url(#aMashhad)"/>
+
+          <!-- Isfahan -->
+          <path class="area-path" style="animation-delay: 200ms" d="M100,260 L200,254 L300,248 L400,244 L500,238 L600,232 L700,224 L800,218 L900,210 L1000,196 L1100,168 L1200,160 L1200,228 L1100,232 L1000,250 L900,258 L800,264 L700,268 L600,272 L500,276 L400,280 L300,282 L200,286 L100,290 Z" fill="url(#aIsfahan)"/>
+
+          <!-- Hamedan -->
+          <path class="area-path" style="animation-delay: 300ms" d="M100,210 L200,200 L300,192 L400,184 L500,174 L600,164 L700,150 L800,138 L900,124 L1000,104 L1100,68 L1200,52 L1200,160 L1100,168 L1000,196 L900,210 L800,218 L700,224 L600,232 L500,238 L400,244 L300,248 L200,254 L100,260 Z" fill="url(#aHamedan)"/>
+
+          <!-- Tehran (top) -->
+          <path class="area-path" style="animation-delay: 400ms" d="M100,158 L200,144 L300,132 L400,120 L500,108 L600,96 L700,82 L800,68 L900,52 L1000,30 L1100,14 L1200,6 L1200,52 L1100,68 L1000,104 L900,124 L800,138 L700,150 L600,164 L500,174 L400,184 L300,192 L200,200 L100,210 Z" fill="url(#aTehran)"/>
+
+          <!-- Top line for emphasis -->
+          <path class="area-path" style="animation-delay: 500ms" d="M100,158 L200,144 L300,132 L400,120 L500,108 L600,96 L700,82 L800,68 L900,52 L1000,30 L1100,14 L1200,6" fill="none" stroke="#14110F" stroke-width="2"/>
+
+          <!-- X axis month labels -->
+          <text x="100" y="346" class="chart-tick-label" text-anchor="middle">خرداد</text>
+          <text x="200" y="346" class="chart-tick-label" text-anchor="middle">تیر</text>
+          <text x="300" y="346" class="chart-tick-label" text-anchor="middle">مرداد</text>
+          <text x="400" y="346" class="chart-tick-label" text-anchor="middle">شهریور</text>
+          <text x="500" y="346" class="chart-tick-label" text-anchor="middle">مهر</text>
+          <text x="600" y="346" class="chart-tick-label" text-anchor="middle">آبان</text>
+          <text x="700" y="346" class="chart-tick-label" text-anchor="middle">آذر</text>
+          <text x="800" y="346" class="chart-tick-label" text-anchor="middle">دی</text>
+          <text x="900" y="346" class="chart-tick-label" text-anchor="middle">بهمن</text>
+          <text x="1000" y="346" class="chart-tick-label" text-anchor="middle">اسفند</text>
+          <text x="1100" y="346" class="chart-tick-label" text-anchor="middle" style="fill:#5F7760; font-weight:700;">فروردین</text>
+          <text x="1200" y="346" class="chart-tick-label" text-anchor="middle" style="fill:#C49A6C; font-weight:700;">اردیبهشت</text>
+        </svg>
+
+        <div class="chart-spotlight" style="top: 1.7%; right: 2%;"></div>
+        <div class="chart-tooltip" style="top: 1.7%; right: 2%;">
+          <div class="chart-tooltip-eyebrow">اردیبهشت ۱۴۰۵</div>
+          <div class="chart-tooltip-row"><span>تهران</span><span class="num">۴۸۲٫۴M</span></div>
+          <div class="chart-tooltip-row"><span>همدان</span><span class="num">۴۵۲٫۸M</span></div>
+          <div class="chart-tooltip-row"><span>اصفهان</span><span class="num">۲۸۸٫۶M</span></div>
+          <div class="chart-tooltip-row" style="border-top: 1px solid rgba(196,154,108,0.3); padding-top: 4px; margin-top: 4px;"><span>جمع</span><span class="num">۱٬۵۸۴M</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     BRANCH LEADERBOARD
+     ═══════════════════════════════════════════ -->
+<section class="block bg-ivory" id="branches">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow forest">شعبه‌های فعال</div>
+        <h2>رتبه‌بندی شعبه‌ها</h2>
+      </div>
+      <a href="#" class="section-link">مشاهده‌ی جدول کامل</a>
+    </div>
+
+    <div class="branch-grid">
+
+      <article class="branch-card lead">
+        <div class="branch-card-head">
+          <div class="branch-card-head-left">
+            <div class="branch-rank num">۱</div>
+            <div>
+              <div class="branch-name">تهران، سعادت‌آباد</div>
+              <div class="branch-meta">شعبه‌ی برتر</div>
+            </div>
+          </div>
+          <div class="branch-revenue num">
+            ۴۸۲٫۴M<span class="currency">تومان</span>
+          </div>
+        </div>
+        <div class="branch-bars">
+          <div class="branch-bar">
+            <div class="bar-label"><span>سفارشات</span><span class="bar-value num">۲۲</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 100%; animation-delay: 100ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>نرخ تبدیل</span><span class="bar-value num">۴۲٪</span></div>
+            <div class="bar-track"><div class="bar-fill alt" style="width: 84%; animation-delay: 200ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>میانگین پاسخ</span><span class="bar-value num">۲۸ دقیقه</span></div>
+            <div class="bar-track"><div class="bar-fill alt" style="width: 92%; animation-delay: 300ms;"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="branch-card">
+        <div class="branch-card-head">
+          <div class="branch-card-head-left">
+            <div class="branch-rank num">۲</div>
+            <div>
+              <div class="branch-name">همدان (مرکزی)</div>
+              <div class="branch-meta">دفتر اصلی</div>
+            </div>
+          </div>
+          <div class="branch-revenue num">
+            ۴۵۲٫۸M<span class="currency">تومان</span>
+          </div>
+        </div>
+        <div class="branch-bars">
+          <div class="branch-bar">
+            <div class="bar-label"><span>سفارشات</span><span class="bar-value num">۲۸</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 94%; animation-delay: 200ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>نرخ تبدیل</span><span class="bar-value num">۳۸٪</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 76%; animation-delay: 300ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>میانگین پاسخ</span><span class="bar-value num">۳۲ دقیقه</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 86%; animation-delay: 400ms;"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="branch-card">
+        <div class="branch-card-head">
+          <div class="branch-card-head-left">
+            <div class="branch-rank num">۳</div>
+            <div>
+              <div class="branch-name">اصفهان</div>
+              <div class="branch-meta">شعبه‌ی فعال</div>
+            </div>
+          </div>
+          <div class="branch-revenue num">
+            ۲۸۸٫۶M<span class="currency">تومان</span>
+          </div>
+        </div>
+        <div class="branch-bars">
+          <div class="branch-bar">
+            <div class="bar-label"><span>سفارشات</span><span class="bar-value num">۱۸</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 64%; animation-delay: 300ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>نرخ تبدیل</span><span class="bar-value num">۳۲٪</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 64%; animation-delay: 400ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>میانگین پاسخ</span><span class="bar-value num">۴۸ دقیقه</span></div>
+            <div class="bar-track"><div class="bar-fill gold" style="width: 56%; animation-delay: 500ms;"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="branch-card">
+        <div class="branch-card-head">
+          <div class="branch-card-head-left">
+            <div class="branch-rank num">۴</div>
+            <div>
+              <div class="branch-name">مشهد</div>
+              <div class="branch-meta">شعبه‌ی فعال</div>
+            </div>
+          </div>
+          <div class="branch-revenue num">
+            ۱۹۸٫۲M<span class="currency">تومان</span>
+          </div>
+        </div>
+        <div class="branch-bars">
+          <div class="branch-bar">
+            <div class="bar-label"><span>سفارشات</span><span class="bar-value num">۱۲</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 42%; animation-delay: 400ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>نرخ تبدیل</span><span class="bar-value num">۲۸٪</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 56%; animation-delay: 500ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>میانگین پاسخ</span><span class="bar-value num">۵۲ دقیقه</span></div>
+            <div class="bar-track"><div class="bar-fill gold" style="width: 48%; animation-delay: 600ms;"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="branch-card">
+        <div class="branch-card-head">
+          <div class="branch-card-head-left">
+            <div class="branch-rank num">۵</div>
+            <div>
+              <div class="branch-name">شیراز</div>
+              <div class="branch-meta">شعبه‌ی نوپا</div>
+            </div>
+          </div>
+          <div class="branch-revenue num">
+            ۱۶۲٫۲M<span class="currency">تومان</span>
+          </div>
+        </div>
+        <div class="branch-bars">
+          <div class="branch-bar">
+            <div class="bar-label"><span>سفارشات</span><span class="bar-value num">۷</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 24%; animation-delay: 500ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>نرخ تبدیل</span><span class="bar-value num">۲۲٪</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 44%; animation-delay: 600ms;"></div></div>
+          </div>
+          <div class="branch-bar">
+            <div class="bar-label"><span>میانگین پاسخ</span><span class="bar-value num">۶۸ دقیقه</span></div>
+            <div class="bar-track"><div class="bar-fill gold" style="width: 32%; animation-delay: 700ms;"></div></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     TOP PRODUCTS + PRODUCTION CAPACITY
+     ═══════════════════════════════════════════ -->
+<section class="block bg-cream" id="products">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow forest">عملکرد محصولات</div>
+        <h2>پرفروش‌ها و ظرفیت تولید</h2>
+      </div>
+      <a href="#" class="section-link">گزارش کامل محصولات</a>
+    </div>
+
+    <div class="products-row">
+
+      <div class="product-rank-list">
+        <article class="product-rank">
+          <div class="product-rank-num num">۱</div>
+          <div class="product-rank-img">ک</div>
+          <div class="product-rank-body">
+            <div class="product-rank-name">کمد هرمس</div>
+            <div class="product-rank-meta">
+              <span>سری بزرگسالان</span>
+              <span class="dot"></span>
+              <span class="num">۱۶ عدد</span>
+              <span class="dot"></span>
+              <span>گردو</span>
+            </div>
+            <div class="product-rank-bar"><span style="width: 100%; animation-delay: 100ms;"></span></div>
+          </div>
+          <div class="product-rank-revenue">
+            <div><span class="amount num">۲۸۴٫۲M</span><span class="currency">تومان</span></div>
+            <span class="delta num">+۳۸٪</span>
+          </div>
+        </article>
+
+        <article class="product-rank">
+          <div class="product-rank-num num">۲</div>
+          <div class="product-rank-img">آ</div>
+          <div class="product-rank-body">
+            <div class="product-rank-name">تخت‌خواب آلگرو</div>
+            <div class="product-rank-meta">
+              <span>سری بزرگسالان</span>
+              <span class="dot"></span>
+              <span class="num">۱۲ عدد</span>
+              <span class="dot"></span>
+              <span>گردو</span>
+            </div>
+            <div class="product-rank-bar"><span style="width: 84%; animation-delay: 200ms;"></span></div>
+          </div>
+          <div class="product-rank-revenue">
+            <div><span class="amount num">۲۳۸٫۸M</span><span class="currency">تومان</span></div>
+            <span class="delta num">+۲۲٪</span>
+          </div>
+        </article>
+
+        <article class="product-rank">
+          <div class="product-rank-num num">۳</div>
+          <div class="product-rank-img">ل</div>
+          <div class="product-rank-body">
+            <div class="product-rank-name">دراور لاتیس</div>
+            <div class="product-rank-meta">
+              <span>سری بزرگسالان</span>
+              <span class="dot"></span>
+              <span class="num">۸ عدد</span>
+              <span class="dot"></span>
+              <span>گردو</span>
+            </div>
+            <div class="product-rank-bar"><span style="width: 52%; animation-delay: 300ms;"></span></div>
+          </div>
+          <div class="product-rank-revenue">
+            <div><span class="amount num">۱۴۸٫۰M</span><span class="currency">تومان</span></div>
+            <span class="delta num">+۱۲٪</span>
+          </div>
+        </article>
+
+        <article class="product-rank">
+          <div class="product-rank-num num">۴</div>
+          <div class="product-rank-img">م</div>
+          <div class="product-rank-body">
+            <div class="product-rank-name">تخت‌خواب میترا</div>
+            <div class="product-rank-meta">
+              <span>سری نونهال</span>
+              <span class="dot"></span>
+              <span class="num">۸ عدد</span>
+              <span class="dot"></span>
+              <span>راش</span>
+            </div>
+            <div class="product-rank-bar"><span style="width: 34%; animation-delay: 400ms;"></span></div>
+          </div>
+          <div class="product-rank-revenue">
+            <div><span class="amount num">۹۸٫۴M</span><span class="currency">تومان</span></div>
+            <span class="delta num">+۲۸٪</span>
+          </div>
+        </article>
+
+        <article class="product-rank">
+          <div class="product-rank-num num">۵</div>
+          <div class="product-rank-img">پ</div>
+          <div class="product-rank-body">
+            <div class="product-rank-name">پاتختی نوا</div>
+            <div class="product-rank-meta">
+              <span>سری بزرگسالان</span>
+              <span class="dot"></span>
+              <span class="num">۱۲ عدد</span>
+              <span class="dot"></span>
+              <span>راش</span>
+            </div>
+            <div class="product-rank-bar"><span style="width: 31%; animation-delay: 500ms;"></span></div>
+          </div>
+          <div class="product-rank-revenue">
+            <div><span class="amount num">۸۸٫۲M</span><span class="currency">تومان</span></div>
+            <span class="delta num">+۸٪</span>
+          </div>
+        </article>
+
+        <article class="product-rank">
+          <div class="product-rank-num num">۶</div>
+          <div class="product-rank-img">س</div>
+          <div class="product-rank-body">
+            <div class="product-rank-name">آینه استلا</div>
+            <div class="product-rank-meta">
+              <span>سری بزرگسالان</span>
+              <span class="dot"></span>
+              <span class="num">۶ عدد</span>
+              <span class="dot"></span>
+              <span>راش</span>
+            </div>
+            <div class="product-rank-bar"><span style="width: 15%; animation-delay: 600ms;"></span></div>
+          </div>
+          <div class="product-rank-revenue">
+            <div><span class="amount num">۴۲٫۶M</span><span class="currency">تومان</span></div>
+            <span class="delta warn num">−۴٪</span>
+          </div>
+        </article>
+      </div>
+
+      <aside class="capacity-card" id="capacity">
+        <div class="capacity-card-head">
+          <div class="eyebrow gold">ظرفیت تولید</div>
+          <h3 class="capacity-card-title">وضعیت کارگاه‌ها</h3>
+        </div>
+        <div class="capacity-rings">
+
+          <div class="ring-tile">
+            <div class="ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="ring-track" cx="50" cy="50" r="42"/>
+                <circle class="ring-fill warn" cx="50" cy="50" r="42" stroke-dasharray="263.89" stroke-dashoffset="21.11"/>
+              </svg>
+              <div class="ring-label num">۹۲٪</div>
+            </div>
+            <div class="ring-tile-name">کارگاه گردو</div>
+            <div class="ring-tile-eta">آزاد از ۲۸ اردیبهشت</div>
+          </div>
+
+          <div class="ring-tile">
+            <div class="ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="ring-track" cx="50" cy="50" r="42"/>
+                <circle class="ring-fill forest" cx="50" cy="50" r="42" stroke-dasharray="263.89" stroke-dashoffset="84.44"/>
+              </svg>
+              <div class="ring-label num">۶۸٪</div>
+            </div>
+            <div class="ring-tile-name">کارگاه راش</div>
+            <div class="ring-tile-eta">آزاد از ۱۸ اردیبهشت</div>
+          </div>
+
+          <div class="ring-tile">
+            <div class="ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="ring-track" cx="50" cy="50" r="42"/>
+                <circle class="ring-fill warn" cx="50" cy="50" r="42" stroke-dasharray="263.89" stroke-dashoffset="42.22"/>
+              </svg>
+              <div class="ring-label num">۸۴٪</div>
+            </div>
+            <div class="ring-tile-name">روکش و رنگ</div>
+            <div class="ring-tile-eta">آزاد از ۲۲ اردیبهشت</div>
+          </div>
+
+          <div class="ring-tile">
+            <div class="ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="ring-track" cx="50" cy="50" r="42"/>
+                <circle class="ring-fill forest" cx="50" cy="50" r="42" stroke-dasharray="263.89" stroke-dashoffset="58.06"/>
+              </svg>
+              <div class="ring-label num">۷۸٪</div>
+            </div>
+            <div class="ring-tile-name">مونتاژ نهایی</div>
+            <div class="ring-tile-eta">آزاد از ۲۰ اردیبهشت</div>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     INQUIRY CONVERSION FUNNEL
+     ═══════════════════════════════════════════ -->
+<section class="block bg-ivory" id="funnel">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow forest">قیف فروش</div>
+        <h2>از استعلام تا سفارش</h2>
+      </div>
+    </div>
+
+    <div class="funnel-row">
+      <div class="funnel-list">
+
+        <div class="funnel-step">
+          <div class="funnel-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+          </div>
+          <div class="funnel-step-body">
+            <div class="funnel-step-name">استعلام دریافت‌شده</div>
+            <div class="funnel-step-bar"><span style="width: 100%; animation-delay: 100ms;"></span></div>
+          </div>
+          <div class="funnel-step-stats">
+            <div class="funnel-step-count num">۲۹۸</div>
+            <div class="funnel-step-pct num">۱۰۰٪</div>
+          </div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="funnel-step-body">
+            <div class="funnel-step-name">اولین تماس برقرار شد</div>
+            <div class="funnel-step-bar"><span style="width: 78%; animation-delay: 250ms;"></span></div>
+          </div>
+          <div class="funnel-step-stats">
+            <div class="funnel-step-count num">۲۳۲</div>
+            <div class="funnel-step-pct num">۷۸٪</div>
+          </div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          </div>
+          <div class="funnel-step-body">
+            <div class="funnel-step-name">پیش‌فاکتور صادر شد</div>
+            <div class="funnel-step-bar"><span style="width: 58%; animation-delay: 400ms;"></span></div>
+          </div>
+          <div class="funnel-step-stats">
+            <div class="funnel-step-count num">۱۷۲</div>
+            <div class="funnel-step-pct num">۵۸٪</div>
+          </div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="funnel-step-body">
+            <div class="funnel-step-name">تأیید و پرداخت پیش‌قسط</div>
+            <div class="funnel-step-bar"><span style="width: 42%; animation-delay: 550ms;"></span></div>
+          </div>
+          <div class="funnel-step-stats">
+            <div class="funnel-step-count num">۱۲۵</div>
+            <div class="funnel-step-pct num">۴۲٪</div>
+          </div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>
+          </div>
+          <div class="funnel-step-body">
+            <div class="funnel-step-name">سفارش ثبت‌شده</div>
+            <div class="funnel-step-bar"><span style="width: 34%; animation-delay: 700ms;"></span></div>
+          </div>
+          <div class="funnel-step-stats">
+            <div class="funnel-step-count num">۸۷</div>
+            <div class="funnel-step-pct num">۳۴٫۲٪</div>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="funnel-aside">
+        <div class="eyebrow forest">نرخ تبدیل کلی</div>
+        <div class="funnel-summary">
+          <div class="funnel-summary-value num">۳۴٫۲<span class="pct">٪</span></div>
+          <div class="funnel-summary-label">از <strong>۲۹۸ استعلام</strong> این ماه، <strong>۸۷ مورد</strong> به سفارش تبدیل شد. هدف ماه: ۳۰٪.</div>
+        </div>
+        <div class="funnel-aside-foot">
+          بزرگ‌ترین ریزش بین <strong>پیش‌فاکتور و تأیید پرداخت</strong> رخ می‌دهد (۲۷٪ ریزش). پیشنهاد: تماس پیگیری در ۴۸ ساعت پس از صدور پیش‌فاکتور.
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     LIVE ACTIVITY TICKER
+     ═══════════════════════════════════════════ -->
+<section class="ticker-band" id="activity">
+  <div class="container">
+    <div class="ticker-row">
+      <div class="ticker-text">
+        <div class="eyebrow gold">فعالیت زنده</div>
+        <h2 style="color: var(--color-ivory);">آخرین رویدادهای پلتفرم</h2>
+        <span class="live-badge">
+          <span class="live-dot"></span>
+          داده‌های زنده
+        </span>
+      </div>
+
+      <div class="ticker-feed">
+        <div class="ticker-list" id="tickerList">
+
+          <article class="ticker-item order">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <div class="ticker-body">
+              <div class="ticker-headline"><strong>تهران</strong> — کمد هرمس × ۱ سفارش شد · <span class="num">۲۹٫۴M تومان</span></div>
+              <div class="ticker-meta">سفارش جدید · ZH-۱۴۰۵-۰۰۸۸</div>
+            </div>
+            <div class="ticker-time num">۲ دقیقه</div>
+          </article>
+
+          <article class="ticker-item inquiry">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+            </div>
+            <div class="ticker-body">
+              <div class="ticker-headline"><strong>اصفهان</strong> — استعلام جدید: مهسا کاظمی · تخت‌خواب آلگرو</div>
+              <div class="ticker-meta">استعلام · از وب‌سایت</div>
+            </div>
+            <div class="ticker-time num">۵ دقیقه</div>
+          </article>
+
+          <article class="ticker-item shipped">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div class="ticker-body">
+              <div class="ticker-headline"><strong>مشهد</strong> — سفارش ZH-۱۴۰۵-۰۰۷۸ ارسال شد</div>
+              <div class="ticker-meta">ارسال · ۸ کالا</div>
+            </div>
+            <div class="ticker-time num">۱۲ دقیقه</div>
+          </article>
+
+          <article class="ticker-item customer">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+            </div>
+            <div class="ticker-body">
+              <div class="ticker-headline"><strong>همدان</strong> — مشتری جدید ثبت شد: امیرحسین طاهری</div>
+              <div class="ticker-meta">مشتری جدید</div>
+            </div>
+            <div class="ticker-time num">۱۸ دقیقه</div>
+          </article>
+
+          <article class="ticker-item order">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <div class="ticker-body">
+              <div class="ticker-headline"><strong>تهران</strong> — تخت‌خواب آلگرو × ۲ + پاتختی نوا × ۴ · <span class="num">۵۸٫۸M تومان</span></div>
+              <div class="ticker-meta">سفارش جدید · ZH-۱۴۰۵-۰۰۸۷</div>
+            </div>
+            <div class="ticker-time num">۲۴ دقیقه</div>
+          </article>
+
+          <article class="ticker-item inquiry">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+            </div>
+            <div class="ticker-body">
+              <div class="ticker-headline"><strong>شیراز</strong> — رزرو بازدید: کوروش بیگی، شنبه عصر</div>
+              <div class="ticker-meta">استعلام · رزرو شوروم</div>
+            </div>
+            <div class="ticker-time num">۳۲ دقیقه</div>
+          </article>
+
+          <article class="ticker-item order">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <div class="ticker-body">
+              <div class="ticker-headline"><strong>اصفهان</strong> — دراور لاتیس × ۱ · <span class="num">۱۸٫۵M تومان</span></div>
+              <div class="ticker-meta">سفارش جدید · ZH-۱۴۰۵-۰۰۸۶</div>
+            </div>
+            <div class="ticker-time num">۴۸ دقیقه</div>
+          </article>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ALERTS STRIP
+     ═══════════════════════════════════════════ -->
+<section class="block bg-cream">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow gold">نکات نیازمند توجه</div>
+        <h2>هشدارها و پیگیری‌ها</h2>
+      </div>
+    </div>
+    <div class="alerts-grid">
+
+      <article class="alert-card warn">
+        <div class="alert-card-head">
+          <span class="alert-card-eyebrow">سفارش‌های عقب‌افتاده</span>
+          <div class="alert-card-count num">۳</div>
+        </div>
+        <div class="alert-card-body">
+          قدیمی‌ترین <strong>۸ روز</strong> · کارگاه گردو در پیک
+        </div>
+        <a href="#" class="alert-card-link">مشاهده‌ی فهرست</a>
+      </article>
+
+      <article class="alert-card warn">
+        <div class="alert-card-head">
+          <span class="alert-card-eyebrow">پاسخ‌گویی شعبه</span>
+          <div class="alert-card-count num">۲</div>
+        </div>
+        <div class="alert-card-body">
+          <strong>تهران</strong> و <strong>شیراز</strong> · میانگین بالای ۶۰ دقیقه · ۴ استعلام بدون پاسخ
+        </div>
+        <a href="#" class="alert-card-link">پیگیری</a>
+      </article>
+
+      <article class="alert-card warn">
+        <div class="alert-card-head">
+          <span class="alert-card-eyebrow">موجودی کم</span>
+          <div class="alert-card-count num">۴</div>
+        </div>
+        <div class="alert-card-body">
+          <strong>استلا</strong> ۴ · <strong>نوا</strong> ۶ · <strong>میترا</strong> ۲ — اتمام تا هفته‌ی آینده
+        </div>
+        <a href="#" class="alert-card-link">برنامه‌ریزی تولید</a>
+      </article>
+
+      <article class="alert-card note">
+        <div class="alert-card-head">
+          <span class="alert-card-eyebrow">رشد چشم‌گیر</span>
+          <div class="alert-card-count num">+۳۸٪</div>
+        </div>
+        <div class="alert-card-body">
+          <strong>کمد هرمس</strong> · پیشنهاد: افزایش ظرفیت کارگاه گردو
+        </div>
+        <a href="#" class="alert-card-link">گزارش رشد</a>
+      </article>
+
+      <article class="alert-card note">
+        <div class="alert-card-head">
+          <span class="alert-card-eyebrow">شعبه‌ی نوپا</span>
+          <div class="alert-card-count num">+۲۴٪</div>
+        </div>
+        <div class="alert-card-body">
+          <strong>شیراز</strong> · ماه دوم · بازخورد ۴٫۹ از ۵
+        </div>
+        <a href="#" class="alert-card-link">مشاهده‌ی شعبه</a>
+      </article>
+
+      <article class="alert-card">
+        <div class="alert-card-head">
+          <span class="alert-card-eyebrow">کارگاه گردو</span>
+          <div class="alert-card-count num">۹۲٪</div>
+        </div>
+        <div class="alert-card-body">
+          سقف ظرفیت · تأخیر <strong>۷ روز</strong> تا ۲۸ اردیبهشت
+        </div>
+        <a href="#" class="alert-card-link">مدیریت ظرفیت</a>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-row">
+      <div class="footer-brand">
+        <div class="brand-mark">ژ</div>
+        <div>
+          <strong>پنل مدیریت ارشد</strong> · ژیک
+        </div>
+      </div>
+      <nav class="footer-links">
+        <a href="#">گزارش روزانه</a>
+        <a href="#">گزارش هفتگی</a>
+        <a href="#">صادر کردن داده</a>
+        <a href="#">تنظیمات هشدار</a>
+        <a href="#">راهنما</a>
+      </nav>
+      <span class="footer-version num">نسخه‌ی ۱٫۴٫۲ · ۲ اردیبهشت ۱۴۰۵</span>
+    </div>
+    <div class="footer-base num">© ۱۴۰۵ ژیک — همه‌ی حقوق محفوظ است</div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     MOBILE NAV
+     ═══════════════════════════════════════════ -->
+<aside class="mobile-nav-overlay" id="mobileNav">
+  <div class="mobile-nav-head">
+    <a href="#" class="brand">
+      <div class="brand-mark">ژ</div>
+      <div class="brand-text">
+        <div class="brand-name">ژیک</div>
+        <div class="brand-sub">پنل مدیریت</div>
+      </div>
+    </a>
+    <button class="icon-btn-dark" id="closeNav" aria-label="بستن">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="mobile-nav-user">
+    <div class="user-avatar">س‌ز</div>
+    <div>
+      <div class="name">سعید زمانی</div>
+      <div class="role">مدیرعامل</div>
+    </div>
+  </div>
+  <nav class="mobile-nav-links">
+    <a href="#" class="mobile-nav-link active">نمای کلی</a>
+    <a href="#branches" class="mobile-nav-link">شعبه‌ها</a>
+    <a href="#products" class="mobile-nav-link">محصولات</a>
+    <a href="#capacity" class="mobile-nav-link">تولید</a>
+    <a href="#funnel" class="mobile-nav-link">قیف فروش</a>
+    <a href="#activity" class="mobile-nav-link">فعالیت</a>
+  </nav>
+</aside>
+
+<script>
+  const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  const toFa = n => String(n).split('').map(d => persianDigits[+d] ?? d).join('');
+  const formatPersianMoney = v => {
+    const groups = String(Math.floor(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '٬');
+    return toFa(groups);
+  };
+
+  // Animated hero counter
+  const heroEl = document.getElementById('heroAmount');
+  const target = 1584200000;
+  const duration = 1800;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const v = Math.floor(target * eased);
+    heroEl.textContent = formatPersianMoney(v);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+
+  // Ticker rotation — subtly cycle items
+  const tickerList = document.getElementById('tickerList');
+  const tickerSamples = [
+    { kind: 'order',    branch: 'تهران',    text: 'تخت‌خواب میترا × ۱ سفارش شد', meta: 'سفارش جدید · ZH-۱۴۰۵-۰۰۸۹', amount: '۱۲٫۴M تومان', time: 'الان' },
+    { kind: 'inquiry',  branch: 'مشهد',     text: 'استعلام جدید: نگار رحیمی · کمد هرمس', meta: 'استعلام · از تماس مستقیم', amount: '', time: 'الان' },
+    { kind: 'customer', branch: 'اصفهان',   text: 'مشتری جدید ثبت شد: لیلا حسنی', meta: 'مشتری جدید', amount: '', time: 'الان' },
+    { kind: 'order',    branch: 'همدان',    text: 'دراور لاتیس × ۲ سفارش شد', meta: 'سفارش جدید · ZH-۱۴۰۵-۰۰۹۰', amount: '۳۷٫۰M تومان', time: 'الان' },
+  ];
+  let sampleIdx = 0;
+
+  function makeTickerItem({ kind, branch, text, meta, amount, time }) {
+    const wrap = document.createElement('article');
+    wrap.className = `ticker-item ${kind}`;
+    const iconPaths = {
+      order:    '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>',
+      inquiry:  '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>',
+      customer: '<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/>',
+      shipped:  '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/>',
+    };
+    const amountSpan = amount ? ` · <span class="num">${amount}</span>` : '';
+    wrap.innerHTML = `
+      <div class="ticker-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${iconPaths[kind]}</svg>
+      </div>
+      <div class="ticker-body">
+        <div class="ticker-headline"><strong>${branch}</strong> — ${text}${amountSpan}</div>
+        <div class="ticker-meta">${meta}</div>
+      </div>
+      <div class="ticker-time num">${time}</div>
+    `;
+    return wrap;
+  }
+
+  setInterval(() => {
+    const sample = tickerSamples[sampleIdx % tickerSamples.length];
+    sampleIdx++;
+    const newItem = makeTickerItem(sample);
+    tickerList.insertBefore(newItem, tickerList.firstChild);
+    while (tickerList.children.length > 8) {
+      tickerList.removeChild(tickerList.lastChild);
+    }
+    // bump prior items' time labels
+    Array.from(tickerList.children).forEach((el, i) => {
+      if (i === 0) return;
+      const t = el.querySelector('.ticker-time');
+      if (!t) return;
+      const m = t.textContent.match(/[۰-۹\d]+/);
+      if (!m) return;
+      const en = m[0].replace(/[۰-۹]/g, d => persianDigits.indexOf(d));
+      const next = parseInt(en, 10) + 4;
+      t.textContent = toFa(String(next)) + ' دقیقه';
+    });
+  }, 5000);
+
+  // View toggles (visual only)
+  document.querySelectorAll('.view-toggle, #periodPills').forEach(group => {
+    group.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Mobile nav
+  const mobileNav = document.getElementById('mobileNav');
+  document.getElementById('hamburger')?.addEventListener('click', () => {
+    mobileNav.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+  document.getElementById('closeNav')?.addEventListener('click', () => {
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+  mobileNav?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  }));
+</script>
+
+</body>
+</html>

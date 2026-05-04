@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Home: GlobalConfig = {
   slug: 'home',
   label: 'صفحه اصلی',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'hero_media',

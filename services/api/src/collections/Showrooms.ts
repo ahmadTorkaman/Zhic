@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess } from '../lib/access'
 
 const PERSIAN_DAY_OPTIONS = [
   { label: 'شنبه', value: 'sat' },
@@ -25,7 +26,9 @@ export const Showrooms: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'is_central', 'phone'],
+    group: 'شوروم‌ها',
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {

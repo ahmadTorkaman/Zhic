@@ -1,8 +1,10 @@
 import type { GlobalConfig } from 'payload'
+import { publishedContentAccess } from '../lib/access'
 
 export const Contact: GlobalConfig = {
   slug: 'contact',
   label: 'تماس با ما',
+  access: publishedContentAccess,
   fields: [
     {
       name: 'title',

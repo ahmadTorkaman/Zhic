@@ -2,6 +2,8 @@ import type { Block, CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess, isEditorField } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 // --- Custom Lexical blocks for article body --------------------------------
 
@@ -118,7 +120,9 @@ export const Articles: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'status', 'publishedAt'],
+    group: 'ژورنال',
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -187,8 +191,10 @@ export const Articles: CollectionConfig = {
       name: 'cover',
       type: 'upload',
       relationTo: 'media',
-      required: true,
       label: 'تصویر کاور',
+      admin: {
+        description: 'اختیاری در حال حاضر — اگر خالی باشد، صفحه از تصویر پیش‌فرض استفاده می‌کند.',
+      },
     },
     {
       name: 'author',
@@ -256,6 +262,11 @@ export const Articles: CollectionConfig = {
       ],
       admin: {
         position: 'sidebar',
+        description: 'فقط ویراستار یا مدیر می‌تواند وضعیت را به «منتشرشده» تغییر دهد.',
+      },
+      access: {
+        // Only editor+ can publish or unpublish. Marketing can't flip this.
+        update: isEditorField,
       },
     },
     {
@@ -269,5 +280,6 @@ export const Articles: CollectionConfig = {
         },
       },
     },
+    seoFields,
   ],
 }

@@ -19,6 +19,17 @@ export default async function HomePage() {
         eyebrow={home?.hero_heading ? undefined : undefined}
         heading={home?.hero_heading ?? undefined}
         subheading={home?.hero_subheading ?? undefined}
+        image={
+          <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10">
+            <img
+              src="/hero/IMG_0889.jpeg"
+              alt="هموطن گرامی — پیشنهاد بازسازی رایگان سرویس خواب از ژیک"
+              className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+              loading="eager"
+              fetchPriority="high"
+            />
+          </div>
+        }
       />
       <HomeBrandStatement statement={home?.brand_statement ?? null} />
       <HomeFeaturedDesigns designs={home?.featured_designs ?? []} />

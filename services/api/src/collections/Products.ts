@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
+import { publishedContentAccess, isEditorField } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 const SKU_PATTERN = /^[A-Z]{2,4}-\d{3,5}$/
 
@@ -8,8 +10,11 @@ export const Products: CollectionConfig = {
   labels: { singular: 'محصول', plural: 'محصولات' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'piece_type', 'sku', 'basePriceRials', 'availability'],
+    defaultColumns: ['name', 'status', 'basePriceRials', 'availability', 'piece_type'],
+    group: 'کاتالوگ',
+    listSearchableFields: ['name', 'sku'],
   },
+  access: publishedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -246,5 +251,33 @@ export const Products: CollectionConfig = {
         description: 'هرچه کمتر، بالاتر',
       },
     },
+    {
+      name: 'status',
+      type: 'select',
+      defaultValue: 'draft',
+      required: true,
+      label: 'وضعیت',
+      options: [
+        { label: 'پیش‌نویس', value: 'draft' },
+        { label: 'منتشرشده', value: 'published' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'محصولات «پیش‌نویس» روی سایت نمایش داده نمی‌شوند. فقط ویراستار یا مدیر می‌تواند منتشر کند.',
+      },
+      access: {
+        update: isEditorField,
+      },
+    },
+    {
+      name: 'publishedAt',
+      type: 'date',
+      label: 'تاریخ انتشار',
+      admin: {
+        position: 'sidebar',
+        date: { pickerAppearance: 'dayOnly' },
+      },
+    },
+    seoFields,
   ],
 }

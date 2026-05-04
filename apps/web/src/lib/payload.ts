@@ -16,6 +16,7 @@ export type PayloadDesign = {
   description?: LexicalRoot | null;
   gallery?: PayloadMedia[] | null;
   featured?: boolean | null;
+  basePriceRials?: number | null;
 };
 
 export type PayloadAddress = {
@@ -111,6 +112,20 @@ export type PayloadJournalCategory = {
   name: string;
   slug: string;
   description?: string | null;
+  seo?: PayloadSeo | null;
+};
+
+/**
+ * Shared SEO field group — lives on Products, Articles, Categories,
+ * JournalCategories, Collections. Every field is optional; the storefront
+ * falls back to primary title/excerpt/cover when a field is blank.
+ */
+export type PayloadSeo = {
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  ogImage?: PayloadMedia | null;
+  canonicalUrl?: string | null;
+  noindex?: boolean | null;
 };
 
 export type PayloadArticle = {
@@ -129,6 +144,7 @@ export type PayloadArticle = {
   readingTimeMinutes?: number | null;
   featured?: boolean | null;
   status?: 'draft' | 'published' | null;
+  seo?: PayloadSeo | null;
 };
 
 export type PayloadHome = {
@@ -162,6 +178,7 @@ export type PayloadCategory = {
   slug: string;
   description?: string | null;
   parent?: PayloadCategory | string | number | null;
+  seo?: PayloadSeo | null;
 };
 
 export type PayloadTag = {
@@ -221,6 +238,9 @@ export type PayloadProduct = {
   pairsWithProductIds?: PayloadProduct[] | null;
   specs?: LexicalRoot | null;
   createdAt?: string | null;
+  status?: 'draft' | 'published' | null;
+  publishedAt?: string | null;
+  seo?: PayloadSeo | null;
 };
 
 export type PayloadCollection = {
@@ -231,6 +251,7 @@ export type PayloadCollection = {
   cover?: PayloadMedia | null;
   products?: PayloadProduct[] | null;
   featured?: boolean | null;
+  seo?: PayloadSeo | null;
 };
 
 export type PayloadStaticPage = {
@@ -527,6 +548,7 @@ export async function fetchProducts(
   params.set('page', String(query.page ?? 1));
   params.set('depth', '2');
   params.set('sort', sortToPayload(query.sort));
+  params.set('where[status][equals]', 'published');
   if (query.category) {
     params.set('where[categoryIds.slug][equals]', query.category);
   }
@@ -560,6 +582,7 @@ export async function fetchProduct(
 ): Promise<PayloadProduct | null> {
   const params = new URLSearchParams({
     'where[slug][equals]': slug,
+    'where[status][equals]': 'published',
     depth: '3',
     limit: '1',
   });

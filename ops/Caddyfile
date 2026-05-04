@@ -1,0 +1,120 @@
+# Caddyfile — Zhic reverse proxy
+# Auto-TLS via Let's Encrypt. Single file covers staging + production;
+# branches pick behavior from env vars.
+#
+# Env vars loaded by Caddy (via systemd EnvironmentFile or caddy adapt):
+#   ZHIC_ENV            staging | production
+#   ZHIC_DOMAIN         staging.zhicwood.com | zhicwood.com
+#   ZHIC_ACME_EMAIL     Let's Encrypt notification address
+#   ZHIC_STAGING_USER   basic-auth user (staging only)
+#   ZHIC_STAGING_PASS_HASH  bcrypt hash (staging only)
+#
+# Usage:
+#   sudo cp /var/zhic/app/ops/Caddyfile /etc/caddy/Caddyfile
+#   sudo systemctl reload caddy
+
+{
+    email {$ZHIC_ACME_EMAIL}
+    # Uncomment the next line to use Let's Encrypt staging (no rate limits,
+    # but browsers will show "not secure" — use only while debugging certs):
+    # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Main storefront — zhicwood.com OR staging.zhicwood.com
+# ─────────────────────────────────────────────────────────────────
+{$ZHIC_DOMAIN} {
+    encode zstd gzip
+
+    # Staging: basic auth. Production: {$ZHIC_STAGING_PASS_HASH} is empty
+    # → this block is a no-op and the site is public.
+    @staging_gate expression {$ZHIC_STAGING_PASS_HASH} != ""
+    basic_auth @staging_gate {
+        {$ZHIC_STAGING_USER} {$ZHIC_STAGING_PASS_HASH}
+    }
+
+    # Static assets cache headers
+    @static {
+        path *.css *.js *.jpg *.jpeg *.png *.webp *.avif *.svg *.woff2 *.ttf *.ico
+    }
+    header @static Cache-Control "public, max-age=31536000, immutable"
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        X-Frame-Options "DENY"
+        Permissions-Policy "geolocation=(), camera=(), microphone=()"
+        -Server
+    }
+
+    reverse_proxy 127.0.0.1:3000 {
+        header_up Host {upstream_hostport}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    log {
+        output file /var/log/caddy/zhic-web.log {
+            roll_size 50mib
+            roll_keep 14
+        }
+        format json
+    }
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Payload CMS — api.zhicwood.com / api.staging.zhicwood.com
+# Always public (has its own auth layer in Payload admin)
+# ─────────────────────────────────────────────────────────────────
+api.{$ZHIC_DOMAIN} {
+    encode zstd gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        -Server
+    }
+
+    reverse_proxy 127.0.0.1:3001 {
+        header_up Host {upstream_hostport}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    log {
+        output file /var/log/caddy/zhic-api.log {
+            roll_size 50mib
+            roll_keep 14
+        }
+        format json
+    }
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Gitea — git.zhicwood.com (production only — skipped on staging via
+# DNS: no git.staging.zhicwood.com record means this block never matches)
+# ─────────────────────────────────────────────────────────────────
+git.zhicwood.com {
+    reverse_proxy 127.0.0.1:3300
+    log {
+        output file /var/log/caddy/zhic-git.log {
+            roll_size 50mib
+            roll_keep 7
+        }
+    }
+}
+
+# ─────────────────────────────────────────────────────────────────
+# Plausible — analytics.zhicwood.com (production only, same logic)
+# ─────────────────────────────────────────────────────────────────
+analytics.zhicwood.com {
+    reverse_proxy 127.0.0.1:8000
+    log {
+        output file /var/log/caddy/zhic-analytics.log {
+            roll_size 50mib
+            roll_keep 7
+        }
+    }
+}
