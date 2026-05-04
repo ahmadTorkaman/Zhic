@@ -48,6 +48,59 @@
     font-size: 15px;
   }
 
+  /* Management approval block — sits at the top of the list */
+  .approval-block {
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 18px 22px 14px;
+    margin-bottom: 28px;
+    background: var(--ivory);
+  }
+  .approval-block .approval-title {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--ink);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .approval-block .approval-title::before {
+    content: "";
+    display: inline-block;
+    width: 22px;
+    height: 2px;
+    background: var(--gold);
+  }
+  .approval-block .approval-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px 24px;
+    align-items: end;
+  }
+  .approval-block .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .approval-block .label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+  .approval-block .sig-area {
+    border-bottom: 1px dashed var(--stone);
+    min-height: 44px;
+  }
+  .approval-block .value {
+    border-bottom: 1px dashed var(--stone);
+    min-height: 22px;
+  }
+
   /* Phase headings — like invoice h2 but slightly bolder */
   .phase-title {
     background: var(--ink);
@@ -314,6 +367,21 @@
     </div>
   </section>
 
+  <!-- ─── MANAGEMENT APPROVAL — gates the entire checklist ─── -->
+  <section class="approval-block">
+    <div class="approval-title">تأیید مدیریت</div>
+    <div class="approval-grid">
+      <div class="field">
+        <span class="label">امضاء و مهر مدیریت</span>
+        <span class="sig-area"></span>
+      </div>
+      <div class="field">
+        <span class="label">تاریخ تأیید</span>
+        <span class="value"></span>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── PHASE 1 ─── -->
   <div class="phase-title">
     <span>مرحله نخست — آماده‌سازی و تأییدات اولیه</span>
@@ -350,9 +418,8 @@
         <td>
           <div class="main-task">نیازهای اولیه شروع تغییر دکور</div>
           <ul class="sub-list">
-            <li><span class="checkbox"></span><span class="sub-text">۲٫۱ — تأیید مدیریت</span></li>
-            <li><span class="checkbox"></span><span class="sub-text">۲٫۲ — بستن قرارداد</span></li>
-            <li><span class="checkbox"></span><span class="sub-text">۲٫۳ — اجرا و نصب تابلو با لوگو و رنگ سازمانی شرکت</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۲٫۱ — بستن قرارداد</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۲٫۲ — اجرا و نصب تابلو با لوگو و رنگ سازمانی شرکت</span></li>
           </ul>
         </td>
         <td>
@@ -424,13 +491,21 @@
             <li><span class="checkbox"></span><span class="sub-text">۶٫۱ — تهیه اکسسوری مورد تأیید شرکت</span></li>
             <li><span class="checkbox"></span><span class="sub-text">۶٫۲ — تهیه نور مناسب</span></li>
             <li><span class="checkbox"></span><span class="sub-text">۶٫۳ — تأیید کف و سقف</span></li>
+            <li><span class="checkbox"></span><span class="sub-text">۶٫۴ — تهیه روتختی مناسب</span></li>
           </ul>
           <div class="note">
             <strong>توجه:</strong> اجرای هر کدام از موارد فوق مشروط بر تأیید شرکت می‌باشد.
           </div>
         </td>
         <td>
-          <div class="date-block"><div class="date-line"></div></div>
+          <div class="date-block">
+            <span class="date-label">تاریخ اعلام شرکت</span>
+            <div class="date-line"></div>
+          </div>
+          <div class="date-block">
+            <span class="date-label">تاریخ تهیه‌ی فروشگاه</span>
+            <div class="date-line"></div>
+          </div>
         </td>
         <td>
           <div class="status-cell">
@@ -451,11 +526,11 @@
         </td>
         <td>
           <div class="date-block">
-            <span class="date-label">تاریخ خرید</span>
+            <span class="date-label">تاریخ واریز هزینه</span>
             <div class="date-line"></div>
           </div>
           <div class="date-block">
-            <span class="date-label">تاریخ دریافت</span>
+            <span class="date-label">تاریخ خرید</span>
             <div class="date-line"></div>
           </div>
         </td>
@@ -491,7 +566,7 @@
       <tr>
         <td class="col-num">۱</td>
         <td>
-          <div class="main-task">شروع اجرای نصب دکور و تاریخ پایان آن</div>
+          <div class="main-task">شروع اجرای نصب دکور و <span class="ltr-num">MDF</span> و تاریخ پایان آن</div>
         </td>
         <td>
           <div class="date-block">
@@ -513,7 +588,7 @@
       <tr>
         <td class="col-num">۲</td>
         <td>
-          <div class="main-task">تاریخ شروع و پایان رنگ‌کاری</div>
+          <div class="main-task">شروع اجرای پارکت و تاریخ پایان آن</div>
         </td>
         <td>
           <div class="date-block">
@@ -535,6 +610,50 @@
       <tr>
         <td class="col-num">۳</td>
         <td>
+          <div class="main-task">تاریخ شروع و پایان رنگ‌کاری</div>
+        </td>
+        <td>
+          <div class="date-block">
+            <span class="date-label">تاریخ شروع</span>
+            <div class="date-line"></div>
+          </div>
+          <div class="date-block">
+            <span class="date-label">تاریخ پایان</span>
+            <div class="date-line"></div>
+          </div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۴</td>
+        <td>
+          <div class="main-task">شروع اجرای برق‌کاری و نور سقف و تاریخ پایان آن</div>
+        </td>
+        <td>
+          <div class="date-block">
+            <span class="date-label">تاریخ شروع</span>
+            <div class="date-line"></div>
+          </div>
+          <div class="date-block">
+            <span class="date-label">تاریخ پایان</span>
+            <div class="date-line"></div>
+          </div>
+        </td>
+        <td>
+          <div class="status-cell">
+            <div class="status-row"><span class="checkbox"></span><span>انجام شد</span></div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="col-num">۵</td>
+        <td>
           <div class="main-task">نظارت بر اجرای صحیح کار</div>
         </td>
         <td>
@@ -548,7 +667,7 @@
       </tr>
 
       <tr>
-        <td class="col-num">۴</td>
+        <td class="col-num">۶</td>
         <td>
           <div class="main-task">چیدمان سرویس‌ها و اکسسوری‌ها</div>
         </td>
@@ -563,7 +682,7 @@
       </tr>
 
       <tr>
-        <td class="col-num">۵</td>
+        <td class="col-num">۷</td>
         <td>
           <div class="main-task">تاریخ پایان اجرا و تأیید نهایی دکور</div>
         </td>
