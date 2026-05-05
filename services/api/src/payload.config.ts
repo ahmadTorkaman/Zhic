@@ -51,7 +51,7 @@ export default buildConfig({
   },
 
   collections: [
-    // Users,  // temp disabled — debugging admin crash
+    Users,
     Designs,
     Products,
     Showrooms,
