@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import { slugify } from '../lib/slugify'
-import { publishedContentAccess } from '../lib/access'
-import { seoFields } from '../fields/seoFields'
+import { slugify } from '../lib/slugify.js'
+import { publishedContentAccess } from '../lib/access.js'
+import { seoFields } from '../fields/seoFields.js'
 
 export const JournalCategories: CollectionConfig = {
   slug: 'journal-categories',

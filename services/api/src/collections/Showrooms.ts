@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { slugify } from '../lib/slugify'
-import { publishedContentAccess } from '../lib/access'
+import { slugify } from '../lib/slugify.js'
+import { publishedContentAccess } from '../lib/access.js'
 
 const PERSIAN_DAY_OPTIONS = [
   { label: 'شنبه', value: 'sat' },

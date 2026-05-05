@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { publishedContentAccess } from '../lib/access'
+import { publishedContentAccess } from '../lib/access.js'
 
 export const Atelier: GlobalConfig = {
   slug: 'atelier',

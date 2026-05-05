@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import { slugify } from '../lib/slugify'
-import { publishedContentAccess, isEditorField } from '../lib/access'
-import { seoFields } from '../fields/seoFields'
+import { slugify } from '../lib/slugify.js'
+import { publishedContentAccess, isEditorField } from '../lib/access.js'
+import { seoFields } from '../fields/seoFields.js'
 
 const SKU_PATTERN = /^[A-Z]{2,4}-\d{3,5}$/
 

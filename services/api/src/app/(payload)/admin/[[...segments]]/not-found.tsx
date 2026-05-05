@@ -1,7 +1,7 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY. */
 import config from '@payload-config'
 import { NotFoundPage, generatePageMetadata } from '@payloadcms/next/views'
-import { importMap } from '../importMap'
+import { importMap } from '../importMap.js'
 
 type Args = {
   params: Promise<{ segments: string[] }>

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin } from '../lib/access'
+import { isAdmin } from '../lib/access.js'
 
 /**
  * Users collection — the auth source for the Payload admin.

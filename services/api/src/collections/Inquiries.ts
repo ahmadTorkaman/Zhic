@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isAuthenticated, isMarketingOrAbove, isPublic } from '../lib/access'
+import { isAdmin, isAuthenticated, isMarketingOrAbove, isPublic } from '../lib/access.js'
 
 export const Inquiries: CollectionConfig = {
   slug: 'inquiries',
