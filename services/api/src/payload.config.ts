@@ -86,6 +86,10 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI,
     },
+    // Auto-sync schema. Default is true in dev / false in production NODE_ENV;
+    // pm2 sets NODE_ENV=production on this staging box but the box is iterated
+    // on like dev. Switch to `prodMigrations:` when zhicwood.com is real prod.
+    push: true,
   }),
 
   plugins: [
