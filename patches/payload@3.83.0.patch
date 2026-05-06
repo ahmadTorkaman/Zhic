@@ -1,0 +1,45 @@
+diff --git a/dist/auth/cookies.js b/dist/auth/cookies.js
+index 9748cf87c460dcb1738cfeb01b44428a223e3792..d17818edc49bade9a51a0a8a07be486e51fe8a47 100644
+--- a/dist/auth/cookies.js
++++ b/dist/auth/cookies.js
+@@ -38,14 +38,14 @@ export const generateCookie = (args)=>{
+         if (returnCookieAsObject) {
+             cookieObject.secure = secure;
+         } else {
+-            cookieString += `; Secure=${secure}`;
++            cookieString += `; Secure`;
+         }
+     }
+     if (httpOnly) {
+         if (returnCookieAsObject) {
+             cookieObject.httpOnly = httpOnly;
+         } else {
+-            cookieString += `; HttpOnly=${httpOnly}`;
++            cookieString += `; HttpOnly`;
+         }
+     }
+     if (sameSite) {
+diff --git a/dist/auth/extractJWT.js b/dist/auth/extractJWT.js
+index b32e9a7b5b80661e576286c8f055e9a8beab8889..9f887d44b333e19a07ed4fb2f3b0da3b759fe778 100644
+--- a/dist/auth/extractJWT.js
++++ b/dist/auth/extractJWT.js
+@@ -27,13 +27,15 @@ const extractionMethods = {
+         if (payload.config.csrf.length === 0) {
+             return cookieToken;
+         }
+-        // No Origin with csrf configured — fall back to Sec-Fetch-Site
++        // No Origin with csrf configured — fall back to Sec-Fetch-Site.
++        // Patch: also accept when Sec-Fetch-Site is missing (proxy/ISP can
++        // strip these headers; Iranian ISPs in particular). Same-origin
++        // navigations without either header would otherwise fail auth.
+         const secFetchSite = headers.get('Sec-Fetch-Site');
+-        // Allow same-origin, same-site, and direct navigations (none)
+-        if (secFetchSite === 'same-origin' || secFetchSite === 'same-site' || secFetchSite === 'none') {
++        if (!secFetchSite || secFetchSite === 'same-origin' || secFetchSite === 'same-site' || secFetchSite === 'none') {
+             return cookieToken;
+         }
+-        // Reject cross-site requests and missing header (non-browser clients)
++        // Reject explicit cross-site requests
+         return null;
+     },
+     JWT: ({ headers })=>{

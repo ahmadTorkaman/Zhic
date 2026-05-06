@@ -1,5 +1,5 @@
 import { getPayload } from 'payload'
-import config from './payload.config.js'
+import config from './payload.config'
 
 // --- Lexical helpers (shared from 3.1) ---------------------------------------
 
@@ -383,13 +383,13 @@ async function seed() {
   ] as const
 
   // First pass: create products without related/pairs (to know IDs).
-  const productIdBySlug = new Map<string, string | number>()
+  const productIdBySlug = new Map<string, number>()
   for (const p of productSpecs) {
     const created = await upsertBySlug('products', p.slug, {
       ...p,
       inquiry_enabled: true,
     })
-    productIdBySlug.set(p.slug, created.id)
+    productIdBySlug.set(p.slug, created.id as number)
     console.log(`  Product: ${p.name}`)
   }
 

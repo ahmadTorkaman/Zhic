@@ -15,7 +15,7 @@ import '@payloadcms/next/css'
 import type { ReactNode } from 'react'
 
 import { importMap } from './admin/importMap.js'
-import { serverFunction } from './serverFunction.js'
+import { serverFunction } from './serverFunction'
 
 export const metadata = {
   title: 'ژیک ادمین',

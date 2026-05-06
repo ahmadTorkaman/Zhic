@@ -1,0 +1,27 @@
+diff --git a/dist/layouts/Root/index.js b/dist/layouts/Root/index.js
+index b8fbbe1d34b425e76268855478a9556590edb9e5..0192e2cc32fab24249f53a9767cfb2fa38d0d0ba 100644
+--- a/dist/layouts/Root/index.js
++++ b/dist/layouts/Root/index.js
+@@ -98,17 +98,21 @@ const RootLayoutContent = async ({
+     config,
+     req
+   });
++  const __suppressHydration = config?.admin?.suppressHydrationWarning ?? false;
+   return /*#__PURE__*/_jsxs("html", {
+     "data-theme": theme,
+     dir: dir,
+     lang: languageCode,
+-    suppressHydrationWarning: config?.admin?.suppressHydrationWarning ?? false,
++    suppressHydrationWarning: __suppressHydration,
+     ...htmlProps,
+     children: [/*#__PURE__*/_jsx("head", {
++      suppressHydrationWarning: __suppressHydration,
+       children: /*#__PURE__*/_jsx("style", {
++        suppressHydrationWarning: __suppressHydration,
+         children: `@layer payload-default, payload;`
+       })
+     }), /*#__PURE__*/_jsxs("body", {
++      suppressHydrationWarning: __suppressHydration,
+       children: [/*#__PURE__*/_jsxs(RootProvider, {
+         config: clientConfig,
+         dateFNSKey: req.i18n.dateFNSKey,

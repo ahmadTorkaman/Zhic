@@ -48,3 +48,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Payload local-disk media fallback (used when S3 isn't configured)
+services/api/media/

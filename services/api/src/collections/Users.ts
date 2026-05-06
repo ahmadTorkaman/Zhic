@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin } from '../lib/access.js'
+import { isAdmin } from '../lib/access'
 
 /**
  * Users collection — the auth source for the Payload admin.
@@ -24,6 +24,13 @@ export const Users: CollectionConfig = {
     cookies: {
       sameSite: 'Lax',
     },
+    // Token-only auth. useSessions:true was failing on this stack because
+    // findByID at JWT-verify time didn't populate the user.sessions array,
+    // so every authed request hit the "no matching session" branch and
+    // returned user:null — which is why login appeared to succeed but the
+    // very next request bounced back to /admin/login. Multi-device session
+    // revocation isn't a Package 1 requirement; revisit when CRM lands.
+    useSessions: false,
   },
   admin: {
     useAsTitle: 'email',

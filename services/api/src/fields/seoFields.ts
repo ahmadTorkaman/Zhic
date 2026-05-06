@@ -10,7 +10,7 @@ import type { Field } from 'payload'
  * that hasn't been touched yet.
  *
  * Usage in a collection:
- *   import { seoFields } from '../fields/seoFields.js'
+ *   import { seoFields } from '../fields/seoFields'
  *   fields: [
  *     // ... primary fields
  *     seoFields,

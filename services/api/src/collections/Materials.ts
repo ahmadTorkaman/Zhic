@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { slugify } from '../lib/slugify.js'
-import { publishedContentAccess } from '../lib/access.js'
+import { slugify } from '../lib/slugify'
+import { publishedContentAccess } from '../lib/access'
 
 export const Materials: CollectionConfig = {
   slug: 'materials',

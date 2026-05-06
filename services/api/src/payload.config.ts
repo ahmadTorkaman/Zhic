@@ -7,32 +7,32 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 
 // Collections
-import { Users } from './collections/Users.js'
-import { Designs } from './collections/Designs.js'
-import { Products } from './collections/Products.js'
-import { Showrooms } from './collections/Showrooms.js'
-import { Articles } from './collections/Articles.js'
-import { Authors } from './collections/Authors.js'
-import { JournalCategories } from './collections/JournalCategories.js'
-import { Categories } from './collections/Categories.js'
-import { Tags } from './collections/Tags.js'
-import { Materials } from './collections/Materials.js'
-import { Collections } from './collections/Collections.js'
-import { Media } from './collections/Media.js'
-import { Inquiries } from './collections/Inquiries.js'
+import { Users } from './collections/Users'
+import { Designs } from './collections/Designs'
+import { Products } from './collections/Products'
+import { Showrooms } from './collections/Showrooms'
+import { Articles } from './collections/Articles'
+import { Authors } from './collections/Authors'
+import { JournalCategories } from './collections/JournalCategories'
+import { Categories } from './collections/Categories'
+import { Tags } from './collections/Tags'
+import { Materials } from './collections/Materials'
+import { Collections } from './collections/Collections'
+import { Media } from './collections/Media'
+import { Inquiries } from './collections/Inquiries'
 
 // Globals
-import { Home } from './globals/Home.js'
-import { About } from './globals/About.js'
-import { Atelier } from './globals/Atelier.js'
-import { Contact } from './globals/Contact.js'
-import { Faq } from './globals/Faq.js'
-import { Care } from './globals/Care.js'
-import { Events } from './globals/Events.js'
-import { Privacy } from './globals/Privacy.js'
-import { Terms } from './globals/Terms.js'
-import { Returns } from './globals/Returns.js'
-import { Shipping } from './globals/Shipping.js'
+import { Home } from './globals/Home'
+import { About } from './globals/About'
+import { Atelier } from './globals/Atelier'
+import { Contact } from './globals/Contact'
+import { Faq } from './globals/Faq'
+import { Care } from './globals/Care'
+import { Events } from './globals/Events'
+import { Privacy } from './globals/Privacy'
+import { Terms } from './globals/Terms'
+import { Returns } from './globals/Returns'
+import { Shipping } from './globals/Shipping'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -42,6 +42,11 @@ export default buildConfig({
     // Pin theme to a deterministic value. Default 'all' uses Sec-CH-Prefers-Color-Scheme
     // which is unreliable across VPN/proxy paths and causes React #418 hydration mismatch.
     theme: 'light',
+    // Browser extensions that inject FOUC-prevention <style> tags into <head>
+    // shift Payload's `@layer` style by one slot, breaking React's text-node
+    // hydration check on the <style>. We extend the suppression (via a pnpm
+    // patch on @payloadcms/next) to <head>, <body>, and the <style> itself.
+    suppressHydrationWarning: true,
     meta: {
       titleSuffix: ' — ژیک ادمین',
     },

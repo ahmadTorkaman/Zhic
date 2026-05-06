@@ -14,7 +14,15 @@
     "format": "prettier --write ."
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp", "unrs-resolver"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ],
+    "patchedDependencies": {
+      "@payloadcms/next@3.83.0": "patches/@payloadcms__next@3.83.0.patch",
+      "payload@3.83.0": "patches/payload@3.83.0.patch"
+    }
   },
   "devDependencies": {
     "@zhic/config": "workspace:*",

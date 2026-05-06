@@ -18,9 +18,9 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-04-20 |
+| Last updated | 2026-05-06 |
 | Current phase | Package 1, Month 1 |
-| Current session | v2 redesign **shipped** end-to-end (tokens → primitives → composables → heroes → chrome → forms → page components → 20+ routes); next: 7.1 (infra — manual VPS/CI work) |
+| Current session | Payload admin **fully working** on staging — first user logged in, dashboard renders. Next: 7.1 remainder (auto-deploy, real prod build script). NOT YET WIRED: Caddy, Abr Arvan, DNS — staging is direct HTTP on `80.240.31.146:3001`, all client-facing decisions are still test-mode. |
 | Active branch | `claude/redesign-v2` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
@@ -105,7 +105,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 
 | Session | Status | Commit | Notes |
 | --- | --- | --- | --- |
-| 7.1 VPS + CI/CD | ⬜ | — | Can start after Phase 1 (manual SSH work) |
+| 7.1 VPS + CI/CD | 🟡 | `0189767..pending` | **Staging Payload admin live, first admin logged in.** Pars Pack VPS `80.240.31.146` running pm2 `zhic-api` on `:3001` in `NODE_ENV=production` against docker `zhic-pg` (db `zhic`, user `zhic`). Reachable directly over HTTP — no Caddy, no DNS, no Abr Arvan yet (everything still test-mode). **Migrations**: `pnpm migrate:create initial` + `pnpm migrate` → 42 tables. **Migration tooling** (this session): `tsx scripts/migrate.mts` wrapper + `migrate*` package scripts work around tsx 4.21 + Node 24 + Payload's `tsImport` API not redirecting transitive `.js`→`.ts`; tsx CLI as entry point handles it. Reverted commit `2accdd2` (the `.js`-extension experiment) since Turbopack also won't resolve those literally. `seed.ts` + `scripts/` + `migrations/` excluded from build typecheck (pre-existing `string \| number` id narrowing in seed; not blocking). **Bug chain found this session, all real, all under `patches/`**: (a) **Payload `<head>` `<style>` mid-stream injection from a proxy/extension** (the user's request layer rewrites HTTP — saw injected Polymer-style `body[unresolved]` rules) → React 19 `#418` text mismatch on `<style>` content. Fix: pnpm patch on `@payloadcms/next` propagates `admin.suppressHydrationWarning` from `<html>` to `<head>`, `<body>`, and the `<style>`. Set `admin.suppressHydrationWarning: true`. (b) **Payload's `Set-Cookie` emits `HttpOnly=true` and `Secure=${secure}`** instead of the bare flags per RFC 6265. Strict cookie parsers drop the cookie; the actual bug in `payload/dist/auth/cookies.js:41,48`. Fix: pnpm patch on `payload`. (c) **`extractJWT.js` rejects the cookie when both `Origin` and `Sec-Fetch-Site` are absent** while `csrf` allowlist is non-empty (auto-populated from `serverURL`). The user's request layer strips both headers — same culprit as (a). Fix: pnpm patch extends acceptance to include missing `Sec-Fetch-Site`. (d) `Users.auth.useSessions: false` set as a precaution while diagnosing — open question whether `useSessions: true` works after (c) is fixed (FU below). **Remaining 7.1**: Caddy + auto-TLS once domain is decided; Gitea Actions self-hosted runner; production `payload migrate && next build` script; `push: true` → `prodMigrations:` swap when real prod arrives. |
 | 7.5 FAQ / Events / Editorial / Legal page components | ✅ | `0f8e43f` | Four server components: `FaqAccordion` (native `<details>` list, `+`→`×` on open, `group-open:rotate-45`), `EventCard` (Jalali date block via `@zhic/locale` PERSIAN_MONTHS + Intl, 80px date column grid), `EditorialPage` (EditorialHero + `max-w-[680px]` centered prose, optional lead paragraph), `LegalPage` (Breadcrumbs + header with آخرین به‌روزرسانی + arbitrary-selector legal body typography). Lab `id=ancillary-components` section added after showroom-components with 4 FAQ items, 2 EventCards (ISO 2026-05-15 → اردیبهشت, 2026-06-01 → خرداد), EditorialPage, and LegalPage. Typecheck: 0 errors. Build: clean. /lab 200. 14/15 markers present (missing only empty-state "پرسشی پیدا نشد" — correct, lab has non-empty FAQ). |
 
 ---
@@ -246,6 +246,9 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-6.2-e | 6.2 | Mobile overlay choreography (stagger, mask reveal) — carries forward FU-2.2-h. 6.3 polish |
 | FU-6.2-f | 6.2 | Motion on non-home pages (PDP, showroom detail, article) — block reveals on secondary pages. 6.3 or post-launch |
 | FU-6.2-g | 6.2 | Back-to-top button + scroll progress bar — carries forward FU-2.2-g remainder |
+| FU-7.1-a | 7.1 | Test whether `Users.auth.useSessions: true` works now that the `extractJWT` CSRF patch is in place. We set `useSessions: false` as a precaution while debugging and never confirmed the underlying issue (whether `findByID` populates `user.sessions` for Postgres). If `true` works, revert; if it doesn't, re-evaluate (probably want session-based revocation when CRM lands in Pkg 3 anyway). |
+| FU-7.1-b | 7.1 | Re-evaluate the three pnpm patches (`patches/payload@3.83.0.patch`, `patches/@payloadcms__next@3.83.0.patch`) on every Payload upgrade. (a) `cookies.js` `HttpOnly=true`/`Secure=${secure}` is a real Payload bug — likely fixed upstream eventually; check before keeping. (b) `extractJWT.js` Sec-Fetch-Site leniency is a workaround for our deployment's header-stripping proxy; if we land HTTPS via Caddy and the proxy is gone, the patch becomes unnecessary. (c) `RootLayout` `suppressHydrationWarning` propagation may also become unnecessary once HTTPS removes the style-injection issue. |
+| FU-7.1-c | 7.1 | Investigate WHY the user's HTTP requests have neither `Origin` nor `Sec-Fetch-Site`, AND why `<head>` gets a Polymer-style `body[unresolved]` `<style>` injected (saw via React-DOM patched-bundle hydration log). Both fingerprints point to a transparent HTTP proxy/middlebox between the user and `80.240.31.146:3001`. Once HTTPS is on (FU-7.1 remainder), this should self-resolve since proxies can't tamper with TLS. |
 
 ---
 

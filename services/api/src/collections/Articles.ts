@@ -1,9 +1,9 @@
 import type { Block, CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { BlocksFeature } from '@payloadcms/richtext-lexical'
-import { slugify } from '../lib/slugify.js'
-import { publishedContentAccess, isEditorField } from '../lib/access.js'
-import { seoFields } from '../fields/seoFields.js'
+import { slugify } from '../lib/slugify'
+import { publishedContentAccess, isEditorField } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 // --- Custom Lexical blocks for article body --------------------------------
 
