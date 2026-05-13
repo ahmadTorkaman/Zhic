@@ -1018,6 +1018,38 @@ Expected: ends with `Done in N.Ns` and no installation errors.
 
 ---
 
+### Task 13.5: Re-run `provision.sh`'s systemd-install block now that the repo is cloned
+
+**Why:** The first `provision.sh` run (Task 11) ran before the repo was at `/var/zhic/app`, so its systemd-install block skipped (per the `c3d75e8` guard). Now that the repo is present, the unit files need to be copied and enabled.
+
+- [ ] **Step 1: Re-run the systemd-install block via SSH**
+
+```bash
+ssh root@<TIER2_IP> 'bash /var/zhic/app/ops/provision.sh' 2>&1 | grep -E "systemd|Installing|Symlinked|Reloading|Units" | tail -10
+```
+
+The provision.sh script is idempotent — re-running it on an already-bootstrapped box is safe. The systemd-install block this time will find `/var/zhic/app/ops/systemd/zhic-web.service` and `zhic-api.service` and copy them to `/etc/systemd/system/`.
+
+Expected output (subset):
+```
+→ Installing systemd units
+✓ Systemd unit files installed
+→ Creating /var/zhic/bin/node symlink (so systemd doesn't need nvm in PATH)
+✓ Symlinked /home/zhic/.nvm/versions/node/vX.Y.Z/bin/node
+→ Reloading systemd
+✓ Units installed and enabled (not yet started — run deploy.sh first)
+```
+
+- [ ] **Step 2: Verify units are loaded**
+
+```bash
+ssh root@<TIER2_IP> 'systemctl list-unit-files zhic-*.service'
+```
+
+Expected: both `zhic-web.service` and `zhic-api.service` listed as `enabled`.
+
+---
+
 ### Task 14: Build `apps/web` + `services/api` on Tier 2
 
 - [ ] **Step 1: Build apps/web**

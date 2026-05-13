@@ -1,7 +1,7 @@
 # ops/ — Zhic deployment
 
 Scripts + configs that take a fresh Ubuntu 22.04/24.04 VPS and turn it into
-a running Zhic host. Works for **staging** (`staging.zhicwood.com`) and
+a running Zhic host. Works for **review** (`zhic.ir`) and
 **production** (`zhicwood.com`) — the difference is in `.env` values, not
 the scripts.
 
@@ -29,7 +29,7 @@ the scripts.
  ┌─────────────────────────┐
  │  Caddy (host network)   │ ◄── auto-TLS via Let's Encrypt
  │   zhicwood.com          │
- │   staging.zhicwood.com  │ ◄── basic auth
+ │   zhic.ir               │ ◄── site-wide noindex
  │   git.zhicwood.com      │ ◄── prod only
  │   api.zhicwood.com      │
  └─────────────────────────┘
@@ -77,7 +77,7 @@ containers. Reasons:
 | Gitea | **no** (one source of truth) | **yes** at `git.zhicwood.com` |
 | Payload media | Abr Arvan S3 (`review/` prefix) | Abr Arvan S3 (`prod/` prefix) |
 | SMS.ir | `SMS_DRY_RUN=true` (no real SMS) | real credits |
-| `NEXT_PUBLIC_SERVER_URL` | `https://staging.zhicwood.com` | `https://zhicwood.com` |
+| `NEXT_PUBLIC_SERVER_URL` | `https://zhic.ir` | `https://zhicwood.com` |
 | Resource envelope | 2 vCPU / 4 GB OK | 4 vCPU / 8 GB recommended |
 
 All flags are driven by `.env` in this directory. No code changes needed

@@ -1,3 +1,17 @@
+> # ⚠ OUTDATED — see the active bringup plan
+>
+> This document describes the previous **two-tier** topology (`staging.zhicwood.com` / `zhicwood.com` on one VPS, gated by Caddy basic_auth) and is no longer the operator's guide.
+>
+> The **active plan** for the new three-tier topology (Pars Pack workspace + Net Afraz tier 2 `zhic.ir` review + Net Afraz tier 3 `zhicwood.com`/`.co` production) is at:
+>
+> **`docs/superpowers/plans/2026-05-10-tier2-zhicir-bringup.md`**
+>
+> The design spec is at `docs/superpowers/specs/2026-05-10-infra-tier2-tier3-bringup-design.md`.
+>
+> The sections below are preserved as historical reference until they are rewritten. Do not follow them.
+
+---
+
 # Zhic deploy playbook
 
 Step-by-step from "I just bought a VPS" to "staging.zhicwood.com is live."

@@ -18,10 +18,10 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-05-06 |
+| Last updated | 2026-05-10 |
 | Current phase | Package 1, Month 1 |
-| Current session | Payload admin **fully working** on staging — first user logged in, dashboard renders. Next: 7.1 remainder (auto-deploy, real prod build script). NOT YET WIRED: Caddy, Abr Arvan, DNS — staging is direct HTTP on `80.240.31.146:3001`, all client-facing decisions are still test-mode. |
-| Active branch | `claude/redesign-v2` |
+| Current session | Tier-2 bringup Part A shipped (Tasks 1-10 + cleanups). Code prepared for zhic.ir deploy. Waiting on operator-side Net Afraz provisioning before Part B. |
+| Active branch | `staging` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
 ---
@@ -249,6 +249,16 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-7.1-a | 7.1 | Test whether `Users.auth.useSessions: true` works now that the `extractJWT` CSRF patch is in place. We set `useSessions: false` as a precaution while debugging and never confirmed the underlying issue (whether `findByID` populates `user.sessions` for Postgres). If `true` works, revert; if it doesn't, re-evaluate (probably want session-based revocation when CRM lands in Pkg 3 anyway). |
 | FU-7.1-b | 7.1 | Re-evaluate the three pnpm patches (`patches/payload@3.83.0.patch`, `patches/@payloadcms__next@3.83.0.patch`) on every Payload upgrade. (a) `cookies.js` `HttpOnly=true`/`Secure=${secure}` is a real Payload bug — likely fixed upstream eventually; check before keeping. (b) `extractJWT.js` Sec-Fetch-Site leniency is a workaround for our deployment's header-stripping proxy; if we land HTTPS via Caddy and the proxy is gone, the patch becomes unnecessary. (c) `RootLayout` `suppressHydrationWarning` propagation may also become unnecessary once HTTPS removes the style-injection issue. |
 | FU-7.1-c | 7.1 | Investigate WHY the user's HTTP requests have neither `Origin` nor `Sec-Fetch-Site`, AND why `<head>` gets a Polymer-style `body[unresolved]` `<style>` injected (saw via React-DOM patched-bundle hydration log). Both fingerprints point to a transparent HTTP proxy/middlebox between the user and `80.240.31.146:3001`. Once HTTPS is on (FU-7.1 remainder), this should self-resolve since proxies can't tamper with TLS. |
+| FU-7.1-d | 7.1 | ✅ Resolved — SMS_DRY_RUN gate landed in @zhic/sms (commit 091304a). Review tier no longer texts real showroom managers when set in env. |
+| FU-2A-1 | 2A | `ops/deploy.md` is stale for 3-tier topology (still describes staging.zhicwood.com + basic_auth). Banner-added 2026-05-10 marking it outdated; full rewrite when Part B is complete. |
+| FU-2A-2 | 2A | ~~`ops/README.md` lines 4/32/80 had stale `staging.zhicwood.com` refs~~ — **resolved 2026-05-10** in scrub commit |
+| FU-2A-3 | 2A | ~~Plan flow gap: provision.sh first-run skip needed a re-run step after repo clone~~ — **resolved 2026-05-10** via Task 13.5 in plan |
+| FU-2A-4 | 2A | Caddy `expression {$ZHIC_ENV} == "review"` matcher may need quoted substitution (`"{$ZHIC_ENV}"`) — verify on Tier 2 with `caddy validate` (plan Task 19 step 1). 5-minute fix if needed. |
+| FU-2A-5 | 2A | `/admin` route ambiguity: today Caddyfile routes `zhic.ir` → :3000 (storefront, no admin) and `api.zhic.ir` → :3001 (Payload admin). Plan Task 18 marks `api.zhic.ir` DNS as optional but says "admin reachable at zhic.ir/admin via same reverse-proxy" — those contradict. Either add `/admin*` path-route to :3001 in Caddyfile, or make `api.zhic.ir` DNS mandatory. |
+| FU-2A-6 | 2A | `apps/web/src/lib/env.ts` exports `NOINDEX` constant but it's unused (robots.ts and layout.tsx read process.env inline due to vitest module caching). Either consume the constant or drop the export. |
+| FU-9-a | 9 | systemd units have `After=postgres.service` / `Wants=postgres.service` but postgres runs in docker-compose, not as a host systemd unit. Targets silently ignored. Apps' `Restart=on-failure` + `RestartSec=5` converges eventually. Consider a `wait-for-postgres` script in the unit or accept the eventual-consistency. |
+| FU-9-b | 9 | systemd hardening missing on zhic-web/zhic-api units: `NoNewPrivileges=yes`, `PrivateTmp=yes`, `ProtectSystem=strict`, etc. Add as a small follow-up after Tier 2 is healthy. |
+| FU-9-c | 9 | `/var/zhic/bin/node` is a symlink to `/home/zhic/.nvm/versions/node/v*/bin/node`. Robust today but: (a) `ProtectHome=yes` (FU-9-b) would break it, (b) nvm uninstall could dangle the symlink. Consider copying the node binary into `/var/zhic/bin` or installing from NodeSource. |
 
 ---
 
