@@ -3,11 +3,9 @@
 # branches pick behavior from env vars.
 #
 # Env vars loaded by Caddy (via systemd EnvironmentFile or caddy adapt):
-#   ZHIC_ENV            staging | production
+#   ZHIC_ENV            review | production
 #   ZHIC_DOMAIN         staging.zhicwood.com | zhicwood.com
 #   ZHIC_ACME_EMAIL     Let's Encrypt notification address
-#   ZHIC_STAGING_USER   basic-auth user (staging only)
-#   ZHIC_STAGING_PASS_HASH  bcrypt hash (staging only)
 #
 # Usage:
 #   sudo cp /var/zhic/app/ops/Caddyfile /etc/caddy/Caddyfile
@@ -26,13 +24,6 @@
 {$ZHIC_DOMAIN} {
     encode zstd gzip
 
-    # Staging: basic auth. Production: {$ZHIC_STAGING_PASS_HASH} is empty
-    # → this block is a no-op and the site is public.
-    @staging_gate expression {$ZHIC_STAGING_PASS_HASH} != ""
-    basic_auth @staging_gate {
-        {$ZHIC_STAGING_USER} {$ZHIC_STAGING_PASS_HASH}
-    }
-
     # Static assets cache headers
     @static {
         path *.css *.js *.jpg *.jpeg *.png *.webp *.avif *.svg *.woff2 *.ttf *.ico
@@ -48,6 +39,11 @@
         Permissions-Policy "geolocation=(), camera=(), microphone=()"
         -Server
     }
+
+    # Tier-2-only: site-wide noindex header. Layer 3 of the three-layer
+    # noindex (the others are robots.txt and <meta name="robots">).
+    @review_tier expression {$ZHIC_ENV} == "review"
+    header @review_tier X-Robots-Tag "noindex, nofollow, noarchive"
 
     reverse_proxy 127.0.0.1:3000 {
         header_up Host {upstream_hostport}
@@ -76,6 +72,11 @@ api.{$ZHIC_DOMAIN} {
         X-Content-Type-Options "nosniff"
         -Server
     }
+
+    # Tier-2-only: site-wide noindex header. Layer 3 of the three-layer
+    # noindex (the others are robots.txt and <meta name="robots">).
+    @review_tier expression {$ZHIC_ENV} == "review"
+    header @review_tier X-Robots-Tag "noindex, nofollow, noarchive"
 
     reverse_proxy 127.0.0.1:3001 {
         header_up Host {upstream_hostport}
