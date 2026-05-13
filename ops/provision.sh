@@ -156,8 +156,13 @@ install -d -m 0755 -o zhic -g zhic /var/log/zhic
 ok "Logrotate config installed"
 
 log "Installing systemd units"
-cp /var/zhic/app/ops/systemd/zhic-web.service /etc/systemd/system/zhic-web.service
-cp /var/zhic/app/ops/systemd/zhic-api.service /etc/systemd/system/zhic-api.service
+if [[ -f /var/zhic/app/ops/systemd/zhic-web.service && -f /var/zhic/app/ops/systemd/zhic-api.service ]]; then
+  cp /var/zhic/app/ops/systemd/zhic-web.service /etc/systemd/system/zhic-web.service
+  cp /var/zhic/app/ops/systemd/zhic-api.service /etc/systemd/system/zhic-api.service
+  ok "Systemd unit files installed"
+else
+  echo "  (Skipping — repo not yet cloned at /var/zhic/app. Re-run provision.sh after clone, or it will run on first deploy.sh)" >&2
+fi
 
 log "Creating /var/zhic/bin/node symlink (so systemd doesn't need nvm in PATH)"
 mkdir -p /var/zhic/bin
@@ -172,8 +177,12 @@ fi
 
 log "Reloading systemd"
 systemctl daemon-reload
-systemctl enable zhic-web zhic-api
-ok "Units installed (not yet started — run deploy.sh first)"
+if [[ -f /etc/systemd/system/zhic-web.service && -f /etc/systemd/system/zhic-api.service ]]; then
+  systemctl enable zhic-web zhic-api
+  ok "Units installed and enabled (not yet started — run deploy.sh first)"
+else
+  echo "  (Skipping enable — units not yet copied. Will be enabled on first re-run after repo clone.)" >&2
+fi
 
 echo
 echo "──────────────────────────────────────────────────────────────"
