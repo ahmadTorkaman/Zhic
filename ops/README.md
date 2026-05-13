@@ -68,15 +68,15 @@ containers. Reasons:
 
 ## staging vs production
 
-| Concern | staging | production |
+| Concern | review (tier 2) | production (tier 3) |
 |---|---|---|
-| Domain | `staging.zhicwood.com` | `zhicwood.com` |
-| Basic auth | **yes** (`ZHIC_STAGING_AUTH`) | no |
+| Domain | `zhic.ir` | `zhicwood.com` (+ `zhicwood.co` 301) |
+| Discovery gate | site-wide `noindex` (3-layer: robots.txt + meta + Caddy header) | indexed |
 | Postgres | Docker, same box | Docker, same box (or managed later) |
-| Plausible | optional (low retention) | **yes** |
+| Plausible | no | **yes** |
 | Gitea | **no** (one source of truth) | **yes** at `git.zhicwood.com` |
-| Payload media | local disk (`/var/zhic/media`) | Abr Arvan S3 |
-| SMS.ir | test credits | real credits |
+| Payload media | Abr Arvan S3 (`review/` prefix) | Abr Arvan S3 (`prod/` prefix) |
+| SMS.ir | `SMS_DRY_RUN=true` (no real SMS) | real credits |
 | `NEXT_PUBLIC_SERVER_URL` | `https://staging.zhicwood.com` | `https://zhicwood.com` |
 | Resource envelope | 2 vCPU / 4 GB OK | 4 vCPU / 8 GB recommended |
 
