@@ -103,12 +103,15 @@ export default buildConfig({
       ? [
           s3Storage({
             collections: {
-              media: { prefix: 'media' },
+              media: {
+                // Tier-aware prefix — review/, prod/, or empty for workspace.
+                prefix: process.env.S3_PREFIX || '',
+              },
             },
             bucket: process.env.S3_BUCKET!,
             config: {
               credentials: {
-                accessKeyId: process.env.S3_ACCESS_KEY,
+                accessKeyId: process.env.S3_ACCESS_KEY!,
                 secretAccessKey: process.env.S3_SECRET_KEY!,
               },
               region: process.env.S3_REGION!,
