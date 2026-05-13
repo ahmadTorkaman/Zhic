@@ -6,6 +6,13 @@ export async function sendSms(args: {
   to: string
   text: string
 }): Promise<SmsResult> {
+  // Dry-run gate — Tier 2 (zhic.ir) sets SMS_DRY_RUN=true so owner-review
+  // submissions don't text real showroom managers.
+  if (process.env.SMS_DRY_RUN === 'true') {
+    console.info('[@zhic/sms] DRY_RUN — would have sent:', { to: args.to, text: args.text })
+    return { ok: true }
+  }
+
   const apiKey = process.env.SMS_IR_API_KEY
   const lineNumber = process.env.SMS_IR_LINE_NUMBER
 
