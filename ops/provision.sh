@@ -155,53 +155,25 @@ EOF
 install -d -m 0755 -o zhic -g zhic /var/log/zhic
 ok "Logrotate config installed"
 
-log "Writing systemd unit stubs"
-cat > /etc/systemd/system/zhic-web.service <<'EOF'
-[Unit]
-Description=Zhic storefront (apps/web)
-After=network.target docker.service
-Requires=docker.service
+log "Installing systemd units"
+cp /var/zhic/app/ops/systemd/zhic-web.service /etc/systemd/system/zhic-web.service
+cp /var/zhic/app/ops/systemd/zhic-api.service /etc/systemd/system/zhic-api.service
 
-[Service]
-Type=simple
-User=zhic
-Group=zhic
-WorkingDirectory=/var/zhic/app/apps/web
-EnvironmentFile=/var/zhic/secrets/.env
-ExecStart=/home/zhic/.nvm/versions/node/v24.14.1/bin/node node_modules/.bin/next start -p 3000 -H 127.0.0.1
-Restart=on-failure
-RestartSec=5
-StandardOutput=append:/var/log/zhic/web.log
-StandardError=append:/var/log/zhic/web-error.log
+log "Creating /var/zhic/bin/node symlink (so systemd doesn't need nvm in PATH)"
+mkdir -p /var/zhic/bin
+# Pick the most recent installed nvm node and symlink it
+NODE_BIN=$(ls -d /home/zhic/.nvm/versions/node/v* 2>/dev/null | sort -V | tail -1)/bin/node
+if [[ -x "$NODE_BIN" ]]; then
+  ln -sf "$NODE_BIN" /var/zhic/bin/node
+  ok "Symlinked $(readlink /var/zhic/bin/node)"
+else
+  echo "Warning: no nvm node found at /home/zhic/.nvm — install Node before deploy.sh runs" >&2
+fi
 
-[Install]
-WantedBy=multi-user.target
-EOF
-
-cat > /etc/systemd/system/zhic-api.service <<'EOF'
-[Unit]
-Description=Zhic Payload CMS (services/api)
-After=network.target docker.service
-Requires=docker.service
-
-[Service]
-Type=simple
-User=zhic
-Group=zhic
-WorkingDirectory=/var/zhic/app/services/api
-EnvironmentFile=/var/zhic/secrets/.env
-ExecStart=/home/zhic/.nvm/versions/node/v24.14.1/bin/node node_modules/.bin/next start -p 3001 -H 127.0.0.1
-Restart=on-failure
-RestartSec=5
-StandardOutput=append:/var/log/zhic/api.log
-StandardError=append:/var/log/zhic/api-error.log
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
+log "Reloading systemd"
 systemctl daemon-reload
-ok "systemd units installed (zhic-web, zhic-api — not yet started)"
+systemctl enable zhic-web zhic-api
+ok "Units installed (not yet started — run deploy.sh first)"
 
 echo
 echo "──────────────────────────────────────────────────────────────"

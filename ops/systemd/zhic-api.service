@@ -1,0 +1,23 @@
+[Unit]
+Description=Zhic Payload CMS (services/api — Next.js on :3001)
+After=network.target postgres.service
+Wants=postgres.service
+
+[Service]
+Type=simple
+User=zhic
+WorkingDirectory=/var/zhic/app/services/api
+EnvironmentFile=/var/zhic/secrets/.env
+Environment=NODE_ENV=production
+ExecStart=/var/zhic/bin/node node_modules/next/dist/bin/next start -p 3001 -H 127.0.0.1
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=zhic-api
+
+MemoryMax=1500M
+TasksMax=512
+
+[Install]
+WantedBy=multi-user.target
