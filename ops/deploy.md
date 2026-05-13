@@ -19,12 +19,6 @@ Assumes:
   openssl rand -hex 24   # for POSTGRES_PASSWORD
   openssl rand -hex 32   # for PAYLOAD_SECRET
   ```
-- [ ] Decide basic-auth password for staging. Generate bcrypt hash:
-  ```bash
-  # On any machine with Caddy available, or via docker:
-  docker run --rm caddy:2 caddy hash-password --plaintext 'your-password'
-  # Copy output for ZHIC_STAGING_PASS_HASH
-  ```
 - [ ] If using `SMS.ir`: register business account, get API key +
       line number + template ID. Keep them for step 3.
 
@@ -94,8 +88,6 @@ Fill in (see env.example for all vars):
 - [ ] `ZHIC_ENV=staging` (or `production`)
 - [ ] `ZHIC_DOMAIN=staging.zhicwood.com`
 - [ ] `ZHIC_ACME_EMAIL=newton.ahmadreza@gmail.com`
-- [ ] `ZHIC_STAGING_USER=zhic` + `ZHIC_STAGING_PASS_HASH=$2a$14...`
-      (staging only; blank in production)
 - [ ] `POSTGRES_PASSWORD=<generated in Phase 0>`
 - [ ] `DATABASE_URI` matches the POSTGRES_PASSWORD above
 - [ ] `PAYLOAD_SECRET=<generated in Phase 0>`
@@ -252,7 +244,6 @@ When you're ready to flip the switch:
 3. Clone repo, copy `.env` and change:
    - `ZHIC_ENV=production`
    - `ZHIC_DOMAIN=zhicwood.com`
-   - `ZHIC_STAGING_PASS_HASH=` (empty, no basic auth)
    - Fill in S3_* for real media
    - Fill in SMS_IR_* for real SMS
 4. `deploy.sh`

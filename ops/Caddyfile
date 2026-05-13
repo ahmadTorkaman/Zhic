@@ -4,7 +4,7 @@
 #
 # Env vars loaded by Caddy (via systemd EnvironmentFile or caddy adapt):
 #   ZHIC_ENV            review | production
-#   ZHIC_DOMAIN         staging.zhicwood.com | zhicwood.com
+#   ZHIC_DOMAIN         zhic.ir (tier 2) | zhicwood.com (tier 3)
 #   ZHIC_ACME_EMAIL     Let's Encrypt notification address
 #
 # Usage:
@@ -19,7 +19,7 @@
 }
 
 # ─────────────────────────────────────────────────────────────────
-# Main storefront — zhicwood.com OR staging.zhicwood.com
+# Main storefront — zhicwood.com (tier 3) OR zhic.ir (tier 2)
 # ─────────────────────────────────────────────────────────────────
 {$ZHIC_DOMAIN} {
     encode zstd gzip
@@ -61,7 +61,7 @@
 }
 
 # ─────────────────────────────────────────────────────────────────
-# Payload CMS — api.zhicwood.com / api.staging.zhicwood.com
+# Payload CMS — api.zhicwood.com / api.zhic.ir
 # Always public (has its own auth layer in Payload admin)
 # ─────────────────────────────────────────────────────────────────
 api.{$ZHIC_DOMAIN} {
