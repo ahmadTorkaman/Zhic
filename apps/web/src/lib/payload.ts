@@ -276,7 +276,7 @@ export type NavCollection = {
   id: string | number;
   name: string;
   slug: string;
-  /** First plain-text line of description (≤60 chars); null if empty. */
+  /** Plain-text extract of description (≤60 chars, paragraph boundaries collapsed); null if empty. */
   subtitle: string | null;
   productCount: number;
 };
@@ -296,6 +296,96 @@ export type NavMeta = {
   collections: NavCollection[];
   featuredProduct: NavFeaturedProduct | null;
 };
+
+// --- Nav meta pure helpers --------------------------------------------------
+
+const AGE_GROUP_PERSIAN: Record<NonNullable<PayloadDesign['age_group']>, string> = {
+  infant: 'نوزاد',
+  child: 'کودک',
+  teen: 'نوجوان',
+  adult: 'بزرگسال',
+};
+
+export function designSubtitle(design: PayloadDesign): string | null {
+  if (!design.age_group) return null;
+  return AGE_GROUP_PERSIAN[design.age_group] ?? null;
+}
+
+function lexicalPlainText(root: LexicalRoot | null | undefined): string {
+  if (!root) return '';
+  const out: string[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const walk = (node: any): void => {
+    if (!node) return;
+    if (typeof node.text === 'string') {
+      out.push(node.text);
+    }
+    if (Array.isArray(node.children)) {
+      node.children.forEach(walk);
+    }
+  };
+  walk(root.root);
+  return out.join('').trim();
+}
+
+const COLLECTION_SUBTITLE_MAX_LENGTH = 60;
+
+export function collectionSubtitle(collection: PayloadCollection): string | null {
+  const text = lexicalPlainText(collection.description ?? null);
+  if (!text) return null;
+  if (text.length <= COLLECTION_SUBTITLE_MAX_LENGTH) return text;
+  return text.slice(0, COLLECTION_SUBTITLE_MAX_LENGTH).trimEnd() + '…';
+}
+
+export function bucketNavCounts(
+  categories: PayloadCategory[],
+  designs: PayloadDesign[],
+  collections: PayloadCollection[],
+  products: Pick<PayloadProduct, 'categoryIds' | 'design'>[],
+): {
+  categories: NavCategory[];
+  designs: NavDesign[];
+  collections: NavCollection[];
+} {
+  const categoryCount = new Map<string, number>();
+  const designCount = new Map<string, number>();
+
+  for (const product of products) {
+    for (const cat of product.categoryIds ?? []) {
+      if (!cat?.slug) continue;
+      categoryCount.set(cat.slug, (categoryCount.get(cat.slug) ?? 0) + 1);
+    }
+    if (product.design?.slug) {
+      designCount.set(
+        product.design.slug,
+        (designCount.get(product.design.slug) ?? 0) + 1,
+      );
+    }
+  }
+
+  return {
+    categories: categories.map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      productCount: categoryCount.get(c.slug) ?? 0,
+    })),
+    designs: designs.map((d) => ({
+      id: d.id,
+      name: d.name,
+      slug: d.slug,
+      subtitle: designSubtitle(d),
+      productCount: designCount.get(d.slug) ?? 0,
+    })),
+    collections: collections.map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      subtitle: collectionSubtitle(c),
+      productCount: (c.products ?? []).length,
+    })),
+  };
+}
 
 export type PayloadStaticPage = {
   title?: string | null;
