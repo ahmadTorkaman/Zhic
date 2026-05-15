@@ -254,6 +254,49 @@ export type PayloadCollection = {
   seo?: PayloadSeo | null;
 };
 
+// --- Nav meta (mega-menu data bundle) ---------------------------------------
+
+export type NavCategory = {
+  id: string | number;
+  name: string;
+  slug: string;
+  productCount: number;
+};
+
+export type NavDesign = {
+  id: string | number;
+  name: string;
+  slug: string;
+  /** Persian label derived from age_group; null if unset. */
+  subtitle: string | null;
+  productCount: number;
+};
+
+export type NavCollection = {
+  id: string | number;
+  name: string;
+  slug: string;
+  /** First plain-text line of description (≤60 chars); null if empty. */
+  subtitle: string | null;
+  productCount: number;
+};
+
+export type NavFeaturedProduct = {
+  id: string | number;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  basePriceRials: number;
+  coverImageUrl: string | null;
+};
+
+export type NavMeta = {
+  categories: NavCategory[];
+  designs: NavDesign[];
+  collections: NavCollection[];
+  featuredProduct: NavFeaturedProduct | null;
+};
+
 export type PayloadStaticPage = {
   title?: string | null;
   body?: LexicalRoot | null;
