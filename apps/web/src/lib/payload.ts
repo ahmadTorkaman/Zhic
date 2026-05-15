@@ -266,6 +266,10 @@ export type ProductsQuery = {
   size?: 'small' | 'medium' | 'large';
   sort?: 'newest' | 'name' | 'priceAsc' | 'priceDesc';
   page?: number;
+  /** Title/tagline/shortDescription substring search. */
+  q?: string;
+  /** Filter to a single design by slug. */
+  design?: string;
 };
 
 export const PRODUCTS_PER_PAGE = 12;

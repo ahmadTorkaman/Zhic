@@ -29,6 +29,8 @@ export function parseSearchParams(sp: SearchParamsRecord): ProductsQuery {
 
   const category = pickFirst(sp.category);
   const materials = pickAll(sp.material);
+  const qRaw = pickFirst(sp.q);
+  const designRaw = pickFirst(sp.design);
 
   const sort: Sort = (SORTS as readonly string[]).includes(sortRaw ?? '')
     ? (sortRaw as Sort)
@@ -46,6 +48,9 @@ export function parseSearchParams(sp: SearchParamsRecord): ProductsQuery {
     if (Number.isFinite(parsed) && parsed > 0) page = parsed;
   }
 
+  const qTrimmed = qRaw?.trim() ?? '';
+  const designTrimmed = designRaw?.trim() ?? '';
+
   return {
     category: category && category.length > 0 ? category : undefined,
     materials: materials.length > 0 ? materials : undefined,
@@ -53,6 +58,8 @@ export function parseSearchParams(sp: SearchParamsRecord): ProductsQuery {
     size,
     sort,
     page,
+    q: qTrimmed.length > 0 ? qTrimmed : undefined,
+    design: designTrimmed.length > 0 ? designTrimmed : undefined,
   };
 }
 

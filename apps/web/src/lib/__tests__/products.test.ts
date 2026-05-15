@@ -26,6 +26,8 @@ describe('parseSearchParams', () => {
       size: undefined,
       sort: 'newest',
       page: 1,
+      q: undefined,
+      design: undefined,
     });
   });
 
@@ -81,6 +83,26 @@ describe('parseSearchParams', () => {
     expect(parseSearchParams({ material: ['', 'walnut'] }).materials).toEqual([
       'walnut',
     ]);
+  });
+
+  it('reads q as a single trimmed string', () => {
+    expect(parseSearchParams({ q: '  تخت  ' }).q).toBe('تخت');
+  });
+
+  it('drops an empty q', () => {
+    expect(parseSearchParams({ q: '   ' }).q).toBeUndefined();
+    expect(parseSearchParams({ q: '' }).q).toBeUndefined();
+    expect(parseSearchParams({}).q).toBeUndefined();
+  });
+
+  it('reads design slug as a single string', () => {
+    expect(parseSearchParams({ design: 'aramesh' }).design).toBe('aramesh');
+  });
+
+  it('drops an empty design slug', () => {
+    expect(parseSearchParams({ design: '   ' }).design).toBeUndefined();
+    expect(parseSearchParams({ design: '' }).design).toBeUndefined();
+    expect(parseSearchParams({}).design).toBeUndefined();
   });
 });
 
