@@ -761,6 +761,100 @@ export async function fetchMaterials(): Promise<PayloadMaterial[]> {
   return res?.docs ?? [];
 }
 
+// --- fetchNavMeta sub-fetchers (§3.3) ----------------------------------------
+
+async function fetchNavCategories(): Promise<PayloadCategory[]> {
+  const res = await payloadFetch<PayloadList<PayloadCategory>>(
+    '/api/categories?limit=50&sort=name',
+    'nav-categories',
+  );
+  if (!res) console.error('[fetchNavMeta] nav-categories: payloadFetch returned null');
+  return res?.docs ?? [];
+}
+
+async function fetchNavDesigns(): Promise<PayloadDesign[]> {
+  const featured = await payloadFetch<PayloadList<PayloadDesign>>(
+    '/api/designs?limit=20&where[featured][equals]=true&sort=name',
+    'nav-designs',
+  );
+  // NOTE: if no featured designs exist, this falls back to a second sequential call.
+  // In Package 1 with a sparse catalog this may be the common path. If measured p99
+  // latency becomes a concern, flip to default-all-and-filter-client-side.
+  if (featured?.docs?.length) return featured.docs;
+  // Fallback: an empty featured set is worse than showing all designs in the menu.
+  const all = await payloadFetch<PayloadList<PayloadDesign>>(
+    '/api/designs?limit=20&sort=name',
+    'nav-designs',
+  );
+  if (!all) console.error('[fetchNavMeta] nav-designs: payloadFetch returned null (fallback)');
+  return all?.docs ?? [];
+}
+
+async function fetchNavCollections(): Promise<PayloadCollection[]> {
+  const res = await payloadFetch<PayloadList<PayloadCollection>>(
+    '/api/collections?limit=20&where[featured][equals]=true&sort=name&depth=0',
+    'nav-collections',
+  );
+  if (!res) console.error('[fetchNavMeta] nav-collections: payloadFetch returned null');
+  return res?.docs ?? [];
+}
+
+async function fetchNavCountingProducts(): Promise<
+  Pick<PayloadProduct, 'categoryIds' | 'design'>[]
+> {
+  // depth=1 inflates categoryIds and design into objects so we can read .slug.
+  // No `select` — Payload 3 REST `select` syntax is finicky and the 100-product
+  // payload is small enough at depth=1 (~200-500KB) for a 5-min cached call.
+  // Switch to denormalized productCount fields if this gets heavy (FU-MM-f).
+  const res = await payloadFetch<PayloadList<PayloadProduct>>(
+    '/api/products?limit=100&depth=1&where[status][equals]=published',
+    'nav-products',
+  );
+  if (!res) console.error('[fetchNavMeta] nav-products: payloadFetch returned null');
+  return (res?.docs ?? []).map((p) => ({
+    categoryIds: p.categoryIds ?? null,
+    design: p.design ?? null,
+  }));
+}
+
+async function fetchNavFeaturedProduct(): Promise<NavFeaturedProduct | null> {
+  const res = await payloadFetch<PayloadList<PayloadProduct>>(
+    '/api/products?limit=1&depth=1&where[featured][equals]=true&where[status][equals]=published&sort=featuredOrder',
+    'nav-featured-product',
+  );
+  if (!res) console.error('[fetchNavMeta] nav-featured-product: payloadFetch returned null');
+  const product = res?.docs[0];
+  if (!product) return null;
+  return {
+    id: product.id,
+    slug: product.slug,
+    name: product.name,
+    tagline: product.tagline ?? null,
+    basePriceRials: product.basePriceRials ?? 0,
+    coverImageUrl: product.gallery?.[0]?.url ?? null,
+  };
+}
+
+export async function fetchNavMeta(): Promise<NavMeta> {
+  const [categories, designs, collections, countingProducts, featuredProduct] =
+    await Promise.all([
+      fetchNavCategories(),
+      fetchNavDesigns(),
+      fetchNavCollections(),
+      fetchNavCountingProducts(),
+      fetchNavFeaturedProduct(),
+    ]);
+
+  const counts = bucketNavCounts(categories, designs, collections, countingProducts);
+
+  return {
+    categories: counts.categories,
+    designs: counts.designs,
+    collections: counts.collections,
+    featuredProduct,
+  };
+}
+
 export function productPath(slug: string): string {
   return `/products/${slug}`;
 }
