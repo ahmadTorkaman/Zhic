@@ -37,13 +37,23 @@ export default async function ProductsIndexPage({ searchParams }: PageProps) {
   const page = Number(sp.page) > 0 ? Number(sp.page) : 1;
   const category = typeof sp.cat === 'string' ? sp.cat : undefined;
   const material = typeof sp.mat === 'string' ? sp.mat : undefined;
+  const qParam = typeof sp.q === 'string' ? sp.q.trim() : '';
+  const q = qParam.length > 0 ? qParam : undefined;
+  const design = typeof sp.design === 'string' && sp.design.length > 0 ? sp.design : undefined;
   const sort = (typeof sp.sort === 'string' &&
     ['newest', 'name', 'priceAsc', 'priceDesc'].includes(sp.sort))
     ? (sp.sort as NonNullable<ProductsQuery['sort']>)
     : 'newest';
 
   const [productsPage, categories, materials] = await Promise.all([
-    fetchProducts({ page, category, materials: material ? [material] : undefined, sort }),
+    fetchProducts({
+      page,
+      category,
+      materials: material ? [material] : undefined,
+      sort,
+      q,
+      design,
+    }),
     fetchCategories(),
     fetchMaterials(),
   ]);
@@ -62,6 +72,8 @@ export default async function ProductsIndexPage({ searchParams }: PageProps) {
     if (nextCat) params.set('cat', nextCat);
     if (nextMat) params.set('mat', nextMat);
     if (nextSort !== 'newest') params.set('sort', nextSort);
+    if (q) params.set('q', q);
+    if (design) params.set('design', design);
     if (nextPage > 1) params.set('page', String(nextPage));
     const qs = params.toString();
     return qs ? `/products?${qs}` : '/products';

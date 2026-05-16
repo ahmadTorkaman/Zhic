@@ -699,6 +699,16 @@ export async function fetchProducts(
     if (gte !== null) params.set('where[basePriceRials][greater_than_equal]', String(gte));
     if (lt !== null) params.set('where[basePriceRials][less_than]', String(lt));
   }
+  if (query.q) {
+    // Substring search across name / tagline / shortDescription.
+    // Payload's Postgres adapter compiles `contains` to ILIKE %…%.
+    params.append('where[or][0][name][contains]', query.q);
+    params.append('where[or][1][tagline][contains]', query.q);
+    params.append('where[or][2][shortDescription][contains]', query.q);
+  }
+  if (query.design) {
+    params.set('where[design.slug][equals]', query.design);
+  }
   // Size band is RSC-side post-fetch — handled by applyClientSizeBand in lib/products.
   const fallback: PayloadPage<PayloadProduct> = {
     docs: [],
