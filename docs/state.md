@@ -20,7 +20,7 @@ Related:
 | --- | --- |
 | Last updated | 2026-05-16 |
 | Current phase | Package 1, Month 1 |
-| Current session | Mobile products menu shipped on `feat/products-mega-menu`. Closes FU-MM-c. Branch now has: products mega-menu (FU-2.2-a/FU-3.2-u closed), mobile floating-island chrome, two-state mobile menu with search + catalog hierarchy. |
+| Current session | Design detail page (`/designs/<slug>`) shipped on `feat/products-mega-menu`. Designs collection now carries editorial fields. Mega-menu + mobile menu route to the new lookbook URL. Branch now has: products mega-menu (FU-2.2-a/FU-3.2-u closed), mobile floating-island chrome, mobile two-state menu (FU-MM-c closed), design detail pages. |
 | Active branch | `staging` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
@@ -108,6 +108,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | ProductsMegaMenu | ✅ | (PR HEAD) | Top-tab + pinned featured layout per v2 mockup. Closes FU-2.2-a (محصولات half) + FU-3.2-u. New fetchNavMeta bundles categories/designs/collections/featured-product from Payload; new ProductsMegaMenu client component in `apps/web/src/components/layout/`. Mobile stays a flat link. Spec: `docs/superpowers/specs/2026-05-16-products-dropdown-mega-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-products-dropdown-mega-menu.md`. |
 | Mobile header floating pill | ✅ | `3fe2125` | Mobile site header becomes a 12px-inset, rounded-full floating pill ≈42px tall with full-border chrome when scrolled. Desktop unchanged. --header-height bumped to 3.5rem on mobile to track the pill's bottom edge so breadcrumbs and StickyBreadcrumb clear it. HomeHero gets pt-[var(--header-height)] md:pt-0 so the cream image-half starts below the pill instead of being overlapped. |
 | Mobile products menu | ✅ | (PR HEAD) | Two-state MobileMenu — main view + products view with cross-fade between. Closes FU-MM-c. Search input + categories + designs + collections + "تمامی محصولات" CTA inside products view. Hierarchical Esc, reset-on-close. Spec: `docs/superpowers/specs/2026-05-16-mobile-products-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-mobile-products-menu.md`. |
+| Design detail page | ✅ | (PR HEAD) | New `/designs/[slug]` lookbook route. Designs collection extended with `tagline` + `heroMedia` + `storyBlocks` (richText with 4 embedded block types — pull-quote, image-grid, video-embed, material-ref — extracted from Articles into shared `services/api/src/lib/richTextBlocks.ts`). Mega-menu + mobile menu now route DesignsPanel/Section items to `/designs/<slug>` instead of `/products?design=`. The filtered-list URL stays alive as an alternate. Sets up but doesn't close FU-MM-a (the `/designs` index page is logged as FU-DDP-d). Spec: `docs/superpowers/specs/2026-05-16-design-detail-page-design.md`. Plan: `docs/superpowers/plans/2026-05-16-design-detail-page.md`. |
 
 ### Phase 7 — Infrastructure & Deployment
 
@@ -282,6 +283,12 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-MM-c4 | MM | Swipe-back gesture (right-edge swipe on RTL) for the products → main transition. Native-app feel, optional polish. |
 | FU-MM-c5 | MM | Companion expansion for «درباره‌ی ما» mirroring `FU-MM-g`. |
 | FU-MM-c6 | MM | Push-style horizontal slide animation as alternative to cross-fade. User study would gate it. |
+| FU-DDP-a | DDP | Materials section on the design page (derived from product materialIds OR manual `materialCallouts` relation). Add when editor research signals a need. |
+| FU-DDP-b | DDP | "Pair with" related designs cross-links — schema relation + section at bottom of the page. |
+| FU-DDP-c | DDP | Structured data — explore if any schema.org type fits ("CollectionPage", "CreativeWork"?). |
+| FU-DDP-d | DDP | `/designs` index listing all designs as a lookbook grid. Carries forward FU-MM-a. |
+| FU-DDP-e | DDP | Hero treatment alternates — option to switch a specific design to full-bleed or split layout via a `heroLayout` enum. Per-design design control. |
+| FU-DDP-f | DDP | Editorial blocks unique to designs that don't fit the article block set — e.g., a "scale chart" or "fabric callout" block. |
 
 ---
 
