@@ -1,4 +1,5 @@
 import { API_URL } from './env';
+import { unstable_cache } from 'next/cache';
 
 export type PayloadMedia = {
   id: string | number;
@@ -845,25 +846,29 @@ async function fetchNavFeaturedProduct(): Promise<NavFeaturedProduct | null> {
   };
 }
 
-export async function fetchNavMeta(): Promise<NavMeta> {
-  const [categories, designs, collections, countingProducts, featuredProduct] =
-    await Promise.all([
-      fetchNavCategories(),
-      fetchNavDesigns(),
-      fetchNavCollections(),
-      fetchNavCountingProducts(),
-      fetchNavFeaturedProduct(),
-    ]);
+export const fetchNavMeta = unstable_cache(
+  async (): Promise<NavMeta> => {
+    const [categories, designs, collections, countingProducts, featuredProduct] =
+      await Promise.all([
+        fetchNavCategories(),
+        fetchNavDesigns(),
+        fetchNavCollections(),
+        fetchNavCountingProducts(),
+        fetchNavFeaturedProduct(),
+      ]);
 
-  const counts = bucketNavCounts(categories, designs, collections, countingProducts);
+    const counts = bucketNavCounts(categories, designs, collections, countingProducts);
 
-  return {
-    categories: counts.categories,
-    designs: counts.designs,
-    collections: counts.collections,
-    featuredProduct,
-  };
-}
+    return {
+      categories: counts.categories,
+      designs: counts.designs,
+      collections: counts.collections,
+      featuredProduct,
+    };
+  },
+  ['nav-meta'],
+  { revalidate: 300, tags: ['nav', 'nav-categories', 'nav-designs', 'nav-collections', 'nav-products-featured'] },
+);
 
 export function productPath(slug: string): string {
   return `/products/${slug}`;

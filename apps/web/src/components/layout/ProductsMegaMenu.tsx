@@ -142,6 +142,7 @@ function TabButton({
     <button
       type="button"
       role="tab"
+      id={`tab-${tab}`}
       data-tab={tab}
       className="zh-mega-tab"
       aria-selected={activeTab === tab}
@@ -155,7 +156,7 @@ function TabButton({
 
 function CategoriesPanel({ items }: { items: NavMeta['categories'] }) {
   return (
-    <div className="zh-mega-panel" data-panel="categories" role="tabpanel" id="panel-categories" aria-label="دسته‌بندی‌ها">
+    <div className="zh-mega-panel" data-panel="categories" role="tabpanel" id="panel-categories" aria-labelledby="tab-categories">
       {items.length === 0 ? (
         <p className="zh-mega-empty">هیچ دسته‌بندی پیدا نشد.</p>
       ) : (
@@ -181,7 +182,7 @@ function CategoriesPanel({ items }: { items: NavMeta['categories'] }) {
 
 function DesignsPanel({ items }: { items: NavMeta['designs'] }) {
   return (
-    <div className="zh-mega-panel" data-panel="designs" role="tabpanel" id="panel-designs" aria-label="طرح‌ها">
+    <div className="zh-mega-panel" data-panel="designs" role="tabpanel" id="panel-designs" aria-labelledby="tab-designs">
       {items.length === 0 ? (
         <p className="zh-mega-empty">هیچ طرحی پیدا نشد.</p>
       ) : (
@@ -203,7 +204,7 @@ function DesignsPanel({ items }: { items: NavMeta['designs'] }) {
 
 function CollectionsPanel({ items }: { items: NavMeta['collections'] }) {
   return (
-    <div className="zh-mega-panel" data-panel="collections" role="tabpanel" id="panel-collections" aria-label="مجموعه‌ها">
+    <div className="zh-mega-panel" data-panel="collections" role="tabpanel" id="panel-collections" aria-labelledby="tab-collections">
       {items.length === 0 ? (
         <p className="zh-mega-empty">هیچ مجموعه‌ای پیدا نشد.</p>
       ) : (

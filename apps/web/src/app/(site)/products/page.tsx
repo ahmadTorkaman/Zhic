@@ -89,7 +89,7 @@ export default async function ProductsIndexPage({ searchParams }: PageProps) {
           <h1 className="text-h1 font-black text-ink">محصولات</h1>
         </div>
 
-        {page === 1 && !category && !material ? (
+        {page === 1 && !category && !material && !q && !design ? (
           <div className="mb-8">
             <ProductIndexHero products={productsPage.docs.slice(0, 4)} />
           </div>
@@ -117,7 +117,7 @@ export default async function ProductsIndexPage({ searchParams }: PageProps) {
 
         <ProductGrid
           products={
-            page === 1 && !category && !material
+            page === 1 && !category && !material && !q && !design
               ? productsPage.docs.slice(4)
               : productsPage.docs
           }
