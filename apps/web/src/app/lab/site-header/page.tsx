@@ -1,9 +1,17 @@
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import type { NavMeta } from '@/lib/payload';
+
+const EMPTY_NAV_META: NavMeta = {
+  categories: [],
+  designs: [],
+  collections: [],
+  featuredProduct: null,
+};
 
 export default function SiteHeaderDemoPage() {
   return (
     <>
-      <SiteHeader />
+      <SiteHeader navMeta={EMPTY_NAV_META} />
       <main>
         {/* Dark hero band so you can SEE the header transparent-vs-scrolled contrast.
             Mimics how the header sits over a photo hero on the real homepage. */}
