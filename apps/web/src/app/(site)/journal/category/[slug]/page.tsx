@@ -65,7 +65,9 @@ export default async function JournalCategoryPage({ params, searchParams }: Page
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const category = await fetchJournalCategory(slug);
   return { title: category?.name ?? 'دسته‌بندی' };
 }

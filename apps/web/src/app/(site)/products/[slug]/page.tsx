@@ -14,7 +14,9 @@ import { buildMetadata } from '@/lib/seo';
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const product = await fetchProduct(slug);
   return buildMetadata({
     seo: product?.seo,
@@ -25,7 +27,9 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function ProductPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const product = await fetchProduct(slug);
   if (!product) notFound();
 

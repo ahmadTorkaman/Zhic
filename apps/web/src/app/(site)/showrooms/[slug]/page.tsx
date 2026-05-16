@@ -8,7 +8,9 @@ import { PayloadImage } from '@/components/PayloadImage';
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const showroom = await fetchShowroom(slug);
   return {
     title: showroom?.name ?? 'شوروم',
@@ -17,7 +19,9 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function ShowroomDetailPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const showroom = await fetchShowroom(slug);
   if (!showroom) notFound();
 

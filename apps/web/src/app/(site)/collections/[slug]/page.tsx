@@ -10,7 +10,9 @@ import { buildMetadata } from '@/lib/seo';
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const collection = await fetchCollection(slug);
   return buildMetadata({
     seo: collection?.seo,
@@ -20,7 +22,9 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function CollectionPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const collection = await fetchCollection(slug);
   if (!collection) notFound();
 

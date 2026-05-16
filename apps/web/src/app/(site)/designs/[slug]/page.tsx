@@ -11,7 +11,8 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeURIComponent(rawSlug);
   const design = await fetchDesign(slug);
   if (!design) return { title: 'یافت نشد' };
   return {
@@ -27,7 +28,10 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function DesignDetailPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Next.js leaves the dynamic segment URL-encoded for non-ASCII characters
+  // (e.g. Persian). Decode so Payload lookups match the stored slug bytes.
+  const slug = decodeURIComponent(rawSlug);
   const [design, productsPage] = await Promise.all([
     fetchDesign(slug),
     fetchProducts({ design: slug, page: 1 }),

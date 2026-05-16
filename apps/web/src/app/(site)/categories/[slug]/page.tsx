@@ -11,7 +11,9 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
+  const slug = decodeURIComponent(rawSlug);
   const category = await fetchCategory(slug);
   return buildMetadata({
     seo: category?.seo,
