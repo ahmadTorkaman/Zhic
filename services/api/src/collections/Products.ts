@@ -3,8 +3,6 @@ import { slugify } from '../lib/slugify'
 import { publishedContentAccess, isEditorField } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
 
-const SKU_PATTERN = /^[A-Z]{2,4}-\d{3,5}$/
-
 export const Products: CollectionConfig = {
   slug: 'products',
   labels: { singular: 'محصول', plural: 'محصولات' },
@@ -84,6 +82,12 @@ export const Products: CollectionConfig = {
         { label: 'میز تحریر', value: 'desk' },
         { label: 'کتابخانه', value: 'bookcase' },
         { label: 'ویترین', value: 'display_cabinet' },
+        { label: 'میز آرایش', value: 'vanity' },
+        { label: 'صندلی', value: 'chair' },
+        { label: 'کنسول', value: 'console' },
+        { label: 'میز تعویض', value: 'changing_table' },
+        { label: 'براکت', value: 'bracket' },
+        { label: 'لاوست', value: 'sofa' },
       ],
     },
     {
@@ -105,7 +109,6 @@ export const Products: CollectionConfig = {
       type: 'relationship',
       relationTo: 'materials',
       hasMany: true,
-      required: true,
       label: 'متریال‌ها',
     },
     {
@@ -115,13 +118,10 @@ export const Products: CollectionConfig = {
       unique: true,
       label: 'SKU',
       admin: {
-        description: 'الگو: AAA-NNN (مثال: BED-001)',
+        description: 'شناسه‌ی یکتای محصول (می‌تواند الگوی AAA-NNN یا عددی باشد).',
       },
       validate: (val: unknown) => {
         if (typeof val !== 'string' || !val.length) return 'SKU الزامی است'
-        if (!SKU_PATTERN.test(val)) {
-          return 'SKU باید با الگوی AAA-NNN باشد (مثال: BED-001)'
-        }
         return true
       },
     },
