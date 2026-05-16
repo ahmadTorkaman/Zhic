@@ -89,15 +89,19 @@ export function MobileMenu({ open, onClose, pathname, navMeta }: MobileMenuProps
       </button>
 
       <div className="relative min-h-screen pt-16">
+        {/* `active` is gated on `open` so the absolute-positioned, invisible views
+            don't capture pointer events across the viewport when the dialog is
+            closed (pointer-events is NOT a CSS-inherited property, so the outer
+            dialog's pointer-events:none doesn't propagate to inline-styled children). */}
         <MainView
-          active={view === 'main'}
+          active={open && view === 'main'}
           pathname={pathname}
           productsViewId={productsViewId}
           onProductsClick={() => setView('products')}
           onLinkClick={onClose}
         />
         <ProductsView
-          active={view === 'products'}
+          active={open && view === 'products'}
           id={productsViewId}
           navMeta={navMeta}
           onLinkClick={onClose}
