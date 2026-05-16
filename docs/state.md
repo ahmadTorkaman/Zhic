@@ -18,9 +18,9 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-05-10 |
+| Last updated | 2026-05-16 |
 | Current phase | Package 1, Month 1 |
-| Current session | Tier-2 bringup Part A shipped (Tasks 1-10 + cleanups). Code prepared for zhic.ir deploy. Waiting on operator-side Net Afraz provisioning before Part B. |
+| Current session | ProductsMegaMenu shipped on `feat/products-mega-menu`. Closes FU-2.2-a (محصولات half) + FU-3.2-u. Tier 2 Part B still waiting on operator Net Afraz provisioning. |
 | Active branch | `staging` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
@@ -101,6 +101,12 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | D2 Products redesign | ✅ | `7b18f2b..32a59b4` | D2 implementation. Product Index restructured to A1 Option C "Asymmetric Hero": new ProductIndexHero (1 featured 3/4 + 3 mini-cards 120px+body, mobile horizontal scroll), new ProductFilterPills (category + sand divider + material pills with aria-current; sort/size/price preserved across clicks), 4-col grid (was 3-col), single-column composition (sidebar dropped, drawer keeps full ProductFilters for size/price). PDP restructured to A2 Option C "Immersive + Side Panel": new ProductHeroImage (full-bleed 21:9 with bottom gradient fade, eager+fetchPriority=high LCP) + ProductThumbnails (decorative 80×80 strip, drops the prior tab+lightbox), content/sticky-cream-sidebar split (1fr_380px), specs accordion inline within content column, ProductPurchasePanel restyled as cream rounded-lg sticky surface (drops embedded h1/tagline; price LTR h3 → badge → forest+ghost CTAs → sand-bordered lead-time → SKU), ProductRelatedRow restyled as 4-col compact tiles (square image + body title + price). Plan: `docs/superpowers/plans/2026-04-18-d2-products.md`. |
 | **Redesign v2 (end-to-end)** | ✅ | `4c226a7..e901faf` on `claude/redesign-v2` | Wholesale rebuild from the `.superpowers/` mockups after Phase D deploy didn't match spec. Decision: wipe the design layer (tokens/theme/base + all UI primitives + all page components + all routes) and rebuild top-down with per-component `/lab` verification. **Tokens** drop `--color-accent`, add `--tracking-eyebrow`/`-wide` + `--glass-bg-dark`/`-border-dark`. **@zhic/ui (15 primitives)**: Container, Section, SkipLink, Button (5 variants × 3 sizes), Pill, Badge, Input/Textarea/Select/FormField, Breadcrumbs, Pagination, Aspect, PhoneLink, MoneyDisplay, DateDisplay. **Composables**: GlassCard, PayloadImage, Tile (8 mockup variants covered via props), HorizontalTile (100/120/160). **Heroes (8)**: HomeHero (split + ژ watermark), CinematicHero (21:9), ArticleHero (full-bleed), CollectionHero (35vh), EditorialHero (sm/md/lg/xl), GlassOverlayHero, DarkSplitHero (page/section), plus helpers (HeroOverlayText, PageHeader, StickyBreadcrumb). **Chrome**: SiteHeader scroll-activates at 60px (fixed → ivory/85% + 24px blur + sand border + subtle shadow) + full-screen MobileMenu dialog; SiteFooter 4-col on charcoal. **Forms**: InquiryForm (full 5-field + conditional preferred_date) + InquiryFormSlim (3-field) wrapping the preserved `submitInquiry` server action via `useActionState`. **Page components (~25)** grouped by section (home/product/journal/showroom/ancillary). **Routes**: `(site)/` layout wrapper + 20+ pages — `/`, `/products` + `/[slug]`, `/journal` + `/[slug]` + `/category/[slug]` + `/tag/[slug]`, `/showrooms` + `/[slug]`, `/contact`, `/about`, `/atelier`, `/care`, `/faq`, `/events`, `/privacy`, `/terms`, `/returns`, `/shipping-and-delivery`, `/thank-you`, `/collections/[slug]`, `/categories/[slug]`. Motion: CSS-only (no GSAP), `.fade-in` keyframe + dialog `data-state` lifecycle. Font: Ayandeh applied as direct `.className` on both `<html>` and `<body>` after `var(--font-sans)` indirection rendered unreliably (fix `5c9d1bf`). Cross-route smoke: 22 paths, all expected codes. Spec: `docs/superpowers/specs/2026-04-19-redesign-v2-design.md`. Plan: `docs/superpowers/plans/2026-04-19-redesign-v2.md`. Branch cut from `claude/plan-session-2-1-bUd75`; prior UI Elevation work preserved on that branch. |
 
+### Post-Phase enhancements
+
+| Item | Status | Commit | Notes |
+| --- | --- | --- | --- |
+| ProductsMegaMenu | ✅ | (PR HEAD) | Top-tab + pinned featured layout per v2 mockup. Closes FU-2.2-a (محصولات half) + FU-3.2-u. New fetchNavMeta bundles categories/designs/collections/featured-product from Payload; new ProductsMegaMenu client component in `apps/web/src/components/layout/`. Mobile stays a flat link. Spec: `docs/superpowers/specs/2026-05-16-products-dropdown-mega-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-products-dropdown-mega-menu.md`. |
+
 ### Phase 7 — Infrastructure & Deployment
 
 | Session | Status | Commit | Notes |
@@ -134,7 +140,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-2.1-e | 2.1 | Searchable `Combobox` built on the native `Select` API shape, when Package 2 checkout city/province picker needs it |
 | FU-2.1-f | 2.1 | Promote `cn.ts` to `packages/design-system` if a second workspace needs it (e.g. operator apps in Package 3) |
 | FU-2.1-g | 2.1 | `<MoneyDisplay>` / `<DateDisplay>` atoms — naturally land with Session 2.3 (cards) where prices first appear. Carries forward FU-1.4-a |
-| FU-2.2-a | 2.2 | Mega-menu on `محصولات` and `درباره‌ی ما` — needs categories data (3.2) + showroom list (3.3) |
+| ~~FU-2.2-a~~ | 2.2 | ~~Mega-menu on «محصولات» and «درباره‌ی ما»~~ — **«محصولات» half resolved 2026-05-16** via ProductsMegaMenu (top-tab layout + pinned featured product + q search wire). «درباره‌ی ما» half carries forward as FU-MM-g. |
 | FU-2.2-b | 2.2 | Search icon + widget — Package 2+ (`/search` is post-Package-2 per sitemap §2) |
 | FU-2.2-c | 2.2 | Account icon + dropdown → `/account` — Package 2 |
 | FU-2.2-d | 2.2 | Cart icon with item-count badge + cart drawer — Package 2 |
@@ -199,7 +205,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-3.2-r | 3.2 | Materials data fully populated per spec §14 (`description`, `imageMediaId`, `careNotes`, `relatedArticleIds`). Today seed populates `name` + `slug` + `origin`; richer fields when client provides material content for material-detail pages (Pkg 2+ surface) |
 | FU-3.2-s | 3.2 | `generateStaticParams` on `/products/[slug]` + `/collections/[slug]` — requires `services/api` running during `pnpm build`. CI / infra concern; lands with 7.1. Today both routes render `ƒ (Dynamic)` |
 | FU-3.2-t | 3.2 | Filter UI live-update (`onChange` autosubmit on filter form, debounced) + URL-only browser-history transitions. Today is explicit Apply button + autosubmit on sort only. Live-update on filters is a 6.2 polish concern |
-| FU-3.2-u | 3.2 | Mega-menu on «محصولات» wired to `categories` + `collections.featured` collections. Carries forward FU-2.2-a |
+| ~~FU-3.2-u~~ | 3.2 | ~~Mega-menu on «محصولات» wired to `categories` + `collections.featured` collections~~ — **resolved 2026-05-16** in ProductsMegaMenu via fetchNavMeta() (categories + featured collections + featured designs + featured product, all from Payload). |
 | FU-3.2-v | 3.2 | Pre-existing `slugify.ts` lint regression (no-misleading-character-class on `\u200C\u200D` adjacency in a char class) was fixed in 3.2 because @zhic/api lint was a 3.2 exit gate. The fix is behavior-preserving (alternation outside the class). Documenting here so the diff isn't a surprise |
 | FU-3.3-a | 3.3 | All-pins map on `/showrooms` (Neshan/OSM SDK embed). JS-heavy. Session 6.x or post-Pkg-2 |
 | ~~FU-3.3-b~~ | 3.3 | ~~Form integration on `/contact` + `/showrooms/[slug]`~~ — **resolved in 5.1** (InquiryForm replaces ContactFormSlot on both pages; query-param contracts `?product=&reason=` and `?showroom=&reason=` fully wired) |
@@ -259,6 +265,15 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-9-a | 9 | systemd units have `After=postgres.service` / `Wants=postgres.service` but postgres runs in docker-compose, not as a host systemd unit. Targets silently ignored. Apps' `Restart=on-failure` + `RestartSec=5` converges eventually. Consider a `wait-for-postgres` script in the unit or accept the eventual-consistency. |
 | FU-9-b | 9 | systemd hardening missing on zhic-web/zhic-api units: `NoNewPrivileges=yes`, `PrivateTmp=yes`, `ProtectSystem=strict`, etc. Add as a small follow-up after Tier 2 is healthy. |
 | FU-9-c | 9 | `/var/zhic/bin/node` is a symlink to `/home/zhic/.nvm/versions/node/v*/bin/node`. Robust today but: (a) `ProtectHome=yes` (FU-9-b) would break it, (b) nvm uninstall could dangle the symlink. Consider copying the node binary into `/var/zhic/bin` or installing from NodeSource. |
+| FU-MM-a | MM | `/designs` index page — wire "See all" CTA for designs panel of the mega-menu. |
+| FU-MM-b | MM | `/collections` index page — wire "See all" CTA for collections panel of the mega-menu. |
+| FU-MM-c | MM | Mobile mega-menu expansion in `MobileMenu.tsx` — currently «محصولات» is a flat link to `/products` on mobile. Trigger by user research signal. |
+| FU-MM-d | MM | Arrow-key navigation between tabs in the mega-menu + roving tabindex. |
+| FU-MM-e | MM | Live autocomplete in the mega-menu search input (server-side suggest endpoint). |
+| FU-MM-f | MM | Denormalized `productCount` field on `Categories` / `Designs` / `Collections` with `afterChange` Payload hooks. Promote when catalog crosses 100 products. |
+| FU-MM-g | MM | Companion mega-menu on «درباره‌ی ما» — the other half of FU-2.2-a. |
+| FU-MM-h | MM | Search chip on `/products` header showing active `q` and `✕` clear button. |
+| FU-MM-i | MM | Converge `/products` page URL params (currently `cat`/`mat`) with `parseSearchParams` (which reads `category`/`material`). Today both are extended for `q`+`design`; future PR aligns the naming. |
 
 ---
 
