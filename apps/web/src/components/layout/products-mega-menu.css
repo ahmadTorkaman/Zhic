@@ -159,6 +159,13 @@
 .zh-mega-panels {
   position: relative;
   min-height: 280px;
+  /* Cap panel height so it never extends below the viewport when the catalog
+     has many items. Scrollbar appears only when content exceeds this. */
+  max-height: calc(100vh - 13rem);
+  overflow-y: auto;
+  /* Slim scrollbar so it doesn't compete visually with the menu chrome */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sand) transparent;
 }
 
 .zh-mega-panel {

@@ -805,21 +805,16 @@ async function fetchNavCategories(): Promise<PayloadCategory[]> {
 }
 
 async function fetchNavDesigns(): Promise<PayloadDesign[]> {
-  const featured = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?limit=20&where[featured][equals]=true&sort=name',
+  // Show all designs in the mega-menu's طرح‌ها panel (sorted alphabetically).
+  // The `featured` flag on designs is a soft hint for other surfaces but no
+  // longer gates inclusion here — operator feedback was that filtering hid
+  // the bulk of the catalog when only a couple of designs are flagged.
+  const res = await payloadFetch<PayloadList<PayloadDesign>>(
+    '/api/designs?limit=30&sort=name',
     'nav-designs',
   );
-  // NOTE: if no featured designs exist, this falls back to a second sequential call.
-  // In Package 1 with a sparse catalog this may be the common path. If measured p99
-  // latency becomes a concern, flip to default-all-and-filter-client-side.
-  if (featured?.docs?.length) return featured.docs;
-  // Fallback: an empty featured set is worse than showing all designs in the menu.
-  const all = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?limit=20&sort=name',
-    'nav-designs',
-  );
-  if (!all) console.error('[fetchNavMeta] nav-designs: payloadFetch returned null (fallback)');
-  return all?.docs ?? [];
+  if (!res) console.error('[fetchNavMeta] nav-designs: payloadFetch returned null');
+  return res?.docs ?? [];
 }
 
 async function fetchNavCollections(): Promise<PayloadCollection[]> {

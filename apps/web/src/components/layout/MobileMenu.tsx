@@ -275,13 +275,13 @@ function DesignsSection({
       <h3 id="mob-designs-h" className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
         طرح‌ها
       </h3>
-      <ul className="flex flex-col gap-2">
+      <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
         {items.map((d) => (
           <li key={d.id}>
             <Link
               href={`/designs/${encodeURIComponent(d.slug)}`}
               onClick={onLinkClick}
-              className="block text-h4 font-bold text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-forest"
+              className="block text-body font-bold text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-forest"
             >
               {d.name}
             </Link>

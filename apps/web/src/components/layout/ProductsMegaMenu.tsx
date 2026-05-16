@@ -186,13 +186,12 @@ function DesignsPanel({ items }: { items: NavMeta['designs'] }) {
       {items.length === 0 ? (
         <p className="zh-mega-empty">هیچ طرحی پیدا نشد.</p>
       ) : (
-        <ul className="zh-mega-grid zh-mega-grid--rich">
+        <ul className="zh-mega-grid">
           {items.map((d) => (
             <li key={d.id}>
               <Link href={`/designs/${encodeURIComponent(d.slug)}`}>
-                <span className="zh-mega-grid__title">{d.name}</span>
-                {d.subtitle ? <span className="zh-mega-grid__sub">{d.subtitle}</span> : null}
-                <span className="zh-count">{toPersianDigits(d.productCount)} محصول</span>
+                <span>{d.name}</span>
+                <span className="zh-count">{toPersianDigits(d.productCount)}</span>
               </Link>
             </li>
           ))}
