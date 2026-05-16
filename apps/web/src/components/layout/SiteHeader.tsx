@@ -6,8 +6,16 @@ import { usePathname } from 'next/navigation';
 import { Container } from '@zhic/ui';
 import { NAV_LINKS, isNavActive } from './navLinks';
 import { MobileMenu } from './MobileMenu';
+import { ProductsMegaMenu } from './ProductsMegaMenu';
+import type { NavMeta } from '@/lib/payload';
 
-export function SiteHeader() {
+export type SiteHeaderProps = {
+  navMeta: NavMeta;
+};
+
+const PRODUCTS_HREF = '/products';
+
+export function SiteHeader({ navMeta }: SiteHeaderProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,6 +30,9 @@ export function SiteHeader() {
   const chromeClass = scrolled
     ? 'site-header-chrome'
     : 'bg-transparent border-b border-transparent';
+
+  // Desktop nav excludes محصولات because ProductsMegaMenu owns that entry.
+  const desktopNavLinks = NAV_LINKS.filter((item) => item.href !== PRODUCTS_HREF);
 
   return (
     <>
@@ -51,7 +62,8 @@ export function SiteHeader() {
             </Link>
 
             <nav aria-label="اصلی" className="hidden items-center gap-7 text-small text-stone md:flex">
-              {NAV_LINKS.map((item) => {
+              <ProductsMegaMenu data={navMeta} pathname={pathname} />
+              {desktopNavLinks.map((item) => {
                 const active = isNavActive(pathname, item.href);
                 return (
                   <Link
@@ -70,7 +82,6 @@ export function SiteHeader() {
               })}
             </nav>
 
-            {/* Mobile: empty 3rd column to balance the grid. Desktop: hidden. */}
             <span aria-hidden className="md:hidden" />
           </div>
         </Container>
