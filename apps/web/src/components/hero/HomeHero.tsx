@@ -24,7 +24,7 @@ export function HomeHero({
   image,
 }: HomeHeroProps) {
   return (
-    <section className="grid min-h-screen grid-cols-1 overflow-hidden md:grid-cols-2">
+    <section className="grid min-h-screen grid-cols-1 overflow-hidden pt-[var(--header-height)] md:grid-cols-2 md:pt-0">
       {/* Text half — bg-ivory, RTL-start (right) on md+, second child on mobile (below image) */}
       <div className="order-2 flex flex-col justify-center bg-ivory px-4 py-9 md:order-1 md:py-11 md:ps-8 md:pe-6">
         <div className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">

@@ -99,6 +99,15 @@
   /* Container */
   --container-storefront: 1440px;
 
-  /* Chrome */
+  /* Chrome
+     Tracks the bottom edge of the fixed site header (used for pt offsets +
+     sticky tops below the header). Desktop bar sits at top:0 with height 56px.
+     Mobile floating island sits 12px from top with ~58px pill height = 70px bottom. */
   --header-height: 3.5rem;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-height: 3.5rem; /* 56px — clears the 42px floating pill on mobile (12px top + ~42px pill + breathing buffer) */
+  }
 }
