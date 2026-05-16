@@ -208,12 +208,14 @@ async function seed() {
     slug: 'aramesh',
     age_group: 'adult',
     featured: true,
+    tagline: 'سکونی برای بازگشت به خانه',
   })
   const designBahar = await upsertBySlug('designs', 'bahar', {
     name: 'طرح بهار',
     slug: 'bahar',
     age_group: 'child',
     featured: true,
+    tagline: 'گرم، برای رؤیاهای کودکانه',
   })
   console.log(`  Designs: 2`)
 
