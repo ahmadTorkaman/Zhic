@@ -189,7 +189,7 @@ function DesignsPanel({ items }: { items: NavMeta['designs'] }) {
         <ul className="zh-mega-grid zh-mega-grid--rich">
           {items.map((d) => (
             <li key={d.id}>
-              <Link href={`/products?design=${encodeURIComponent(d.slug)}`}>
+              <Link href={`/designs/${encodeURIComponent(d.slug)}`}>
                 <span className="zh-mega-grid__title">{d.name}</span>
                 {d.subtitle ? <span className="zh-mega-grid__sub">{d.subtitle}</span> : null}
                 <span className="zh-count">{toPersianDigits(d.productCount)} محصول</span>

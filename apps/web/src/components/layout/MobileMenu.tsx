@@ -279,7 +279,7 @@ function DesignsSection({
         {items.map((d) => (
           <li key={d.id}>
             <Link
-              href={`/products?design=${encodeURIComponent(d.slug)}`}
+              href={`/designs/${encodeURIComponent(d.slug)}`}
               onClick={onLinkClick}
               className="block text-h4 font-bold text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-forest"
             >
