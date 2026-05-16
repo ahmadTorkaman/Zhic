@@ -20,11 +20,12 @@ async function fetchSlugs(collection: string, query = ''): Promise<PayloadDoc[]>
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, collections, categories, showrooms, articles, journalCategories, tags] =
+  const [products, collections, categories, designs, showrooms, articles, journalCategories, tags] =
     await Promise.all([
       fetchSlugs('products'),
       fetchSlugs('collections'),
       fetchSlugs('categories'),
+      fetchSlugs('designs'),
       fetchSlugs('showrooms'),
       fetchSlugs('articles', '&where[status][equals]=published'),
       fetchSlugs('journal-categories'),
@@ -61,6 +62,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entries.push({
       url: `${SITE_URL}/collections/${c.slug}`,
       lastModified: c.updatedAt,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    });
+  }
+
+  for (const d of designs) {
+    entries.push({
+      url: `${SITE_URL}/designs/${d.slug}`,
+      lastModified: d.updatedAt,
       changeFrequency: 'monthly',
       priority: 0.7,
     });
