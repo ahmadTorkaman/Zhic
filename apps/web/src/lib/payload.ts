@@ -18,6 +18,12 @@ export type PayloadDesign = {
   gallery?: PayloadMedia[] | null;
   featured?: boolean | null;
   basePriceRials?: number | null;
+  /** Short lead sentence shown under the design name on /designs/<slug>. */
+  tagline?: string | null;
+  /** Hero image for /designs/<slug>. Falls back to gallery[0] if null. */
+  heroMedia?: PayloadMedia | null;
+  /** Long-form editorial story with embedded media blocks. */
+  storyBlocks?: LexicalRoot | null;
 };
 
 export type PayloadAddress = {
@@ -737,6 +743,21 @@ export async function fetchProduct(
   const res = await payloadFetch<PayloadList<PayloadProduct>>(
     `/api/products?${params.toString()}`,
     'products',
+  );
+  return res?.docs[0] ?? null;
+}
+
+export async function fetchDesign(
+  slug: string,
+): Promise<PayloadDesign | null> {
+  const params = new URLSearchParams({
+    'where[slug][equals]': slug,
+    depth: '2',
+    limit: '1',
+  });
+  const res = await payloadFetch<PayloadList<PayloadDesign>>(
+    `/api/designs?${params.toString()}`,
+    'design',
   );
   return res?.docs[0] ?? null;
 }
