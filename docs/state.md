@@ -20,7 +20,7 @@ Related:
 | --- | --- |
 | Last updated | 2026-05-16 |
 | Current phase | Package 1, Month 1 |
-| Current session | ProductsMegaMenu shipped on `feat/products-mega-menu`. Closes FU-2.2-a (محصولات half) + FU-3.2-u. Tier 2 Part B still waiting on operator Net Afraz provisioning. |
+| Current session | Mobile products menu shipped on `feat/products-mega-menu`. Closes FU-MM-c. Branch now has: products mega-menu (FU-2.2-a/FU-3.2-u closed), mobile floating-island chrome, two-state mobile menu with search + catalog hierarchy. |
 | Active branch | `staging` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
@@ -106,6 +106,8 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | Item | Status | Commit | Notes |
 | --- | --- | --- | --- |
 | ProductsMegaMenu | ✅ | (PR HEAD) | Top-tab + pinned featured layout per v2 mockup. Closes FU-2.2-a (محصولات half) + FU-3.2-u. New fetchNavMeta bundles categories/designs/collections/featured-product from Payload; new ProductsMegaMenu client component in `apps/web/src/components/layout/`. Mobile stays a flat link. Spec: `docs/superpowers/specs/2026-05-16-products-dropdown-mega-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-products-dropdown-mega-menu.md`. |
+| Mobile header floating pill | ✅ | `3fe2125` | Mobile site header becomes a 12px-inset, rounded-full floating pill ≈42px tall with full-border chrome when scrolled. Desktop unchanged. --header-height bumped to 3.5rem on mobile to track the pill's bottom edge so breadcrumbs and StickyBreadcrumb clear it. HomeHero gets pt-[var(--header-height)] md:pt-0 so the cream image-half starts below the pill instead of being overlapped. |
+| Mobile products menu | ✅ | (PR HEAD) | Two-state MobileMenu — main view + products view with cross-fade between. Closes FU-MM-c. Search input + categories + designs + collections + "تمامی محصولات" CTA inside products view. Hierarchical Esc, reset-on-close. Spec: `docs/superpowers/specs/2026-05-16-mobile-products-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-mobile-products-menu.md`. |
 
 ### Phase 7 — Infrastructure & Deployment
 
@@ -267,13 +269,19 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-9-c | 9 | `/var/zhic/bin/node` is a symlink to `/home/zhic/.nvm/versions/node/v*/bin/node`. Robust today but: (a) `ProtectHome=yes` (FU-9-b) would break it, (b) nvm uninstall could dangle the symlink. Consider copying the node binary into `/var/zhic/bin` or installing from NodeSource. |
 | FU-MM-a | MM | `/designs` index page — wire "See all" CTA for designs panel of the mega-menu. |
 | FU-MM-b | MM | `/collections` index page — wire "See all" CTA for collections panel of the mega-menu. |
-| FU-MM-c | MM | Mobile mega-menu expansion in `MobileMenu.tsx` — currently «محصولات» is a flat link to `/products` on mobile. Trigger by user research signal. |
+| ~~FU-MM-c~~ | MM | ~~Mobile mega-menu expansion in `MobileMenu.tsx` — currently «محصولات» is a flat link to `/products` on mobile. Trigger by user research signal.~~ — **resolved 2026-05-16** via two-state MobileMenu (main view + products view, cross-fade transition, corner button morphs ×→←). Hierarchical Esc, reset-on-close, inert-driven a11y. Spec: `docs/superpowers/specs/2026-05-16-mobile-products-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-mobile-products-menu.md`. |
 | FU-MM-d | MM | Arrow-key navigation between tabs in the mega-menu + roving tabindex. |
 | FU-MM-e | MM | Live autocomplete in the mega-menu search input (server-side suggest endpoint). |
 | FU-MM-f | MM | Denormalized `productCount` field on `Categories` / `Designs` / `Collections` with `afterChange` Payload hooks. Promote when catalog crosses 100 products. |
 | FU-MM-g | MM | Companion mega-menu on «درباره‌ی ما» — the other half of FU-2.2-a. |
 | FU-MM-h | MM | Search chip on `/products` header showing active `q` and `✕` clear button. |
 | FU-MM-i | MM | Converge `/products` page URL params (currently `cat`/`mat`) with `parseSearchParams` (which reads `category`/`material`). Today both are extended for `q`+`design`; future PR aligns the naming. |
+| FU-MM-c1 | MM | Featured product card on mobile menu. Currently desktop-only. Add when there's a clear customer signal that mobile users want it. |
+| FU-MM-c2 | MM | Sub-item counts and subtitles on mobile menu. Reintroduce per category/design/collection if user research shows them missed. |
+| FU-MM-c3 | MM | Live autocomplete in mobile search input (carries forward `FU-MM-e`). |
+| FU-MM-c4 | MM | Swipe-back gesture (right-edge swipe on RTL) for the products → main transition. Native-app feel, optional polish. |
+| FU-MM-c5 | MM | Companion expansion for «درباره‌ی ما» mirroring `FU-MM-g`. |
+| FU-MM-c6 | MM | Push-style horizontal slide animation as alternative to cross-fade. User study would gate it. |
 
 ---
 
