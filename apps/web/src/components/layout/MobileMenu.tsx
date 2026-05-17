@@ -288,6 +288,13 @@ function DesignsSection({
           </li>
         ))}
       </ul>
+      <Link
+        href="/designs"
+        onClick={onLinkClick}
+        className="mt-3 self-start text-body font-bold text-charcoal underline underline-offset-4 transition-colors duration-[var(--dur-hover)] hover:text-forest"
+      >
+        ← همه‌ی طرح‌ها
+      </Link>
     </section>
   );
 }
