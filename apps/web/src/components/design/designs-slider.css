@@ -1,0 +1,223 @@
+/* Designs slider — see docs/superpowers/specs/2026-05-17-designs-index-page-design.md §5.8 */
+
+.zh-slider-section {
+  position: relative;
+  padding-block: 24px 16px;
+  user-select: none;
+}
+
+.zh-slider-viewport {
+  position: relative;
+  overflow: hidden;
+  margin-inline: clamp(36px, 8vw, 100px);
+}
+
+.zh-slider-track {
+  display: flex;
+  gap: clamp(12px, 2.5vw, 32px);
+  transition: transform var(--dur-mega) var(--ease-out-soft);
+  will-change: transform;
+}
+
+/* Default = dim tile: no chrome, just the naked media surface */
+.zh-slider-tile {
+  flex: 0 0 calc((100% - 2 * clamp(12px, 2.5vw, 32px)) / 3);
+  aspect-ratio: 4 / 3;
+  position: relative;
+  cursor: pointer;
+  opacity: 0.4;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  transition: opacity var(--dur-mega) var(--ease-out-soft);
+}
+
+/* The GIF surface lives on a child div so its size/shape can change
+   independently of the tile box (which carries the card chrome when focused). */
+.zh-tile-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+  transition: inset var(--dur-mega) var(--ease-out-soft),
+              border-radius var(--dur-mega) var(--ease-out-soft);
+}
+
+.zh-tile-bg :is(img, video) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Watermark placeholder when no media is uploaded */
+.zh-tile-watermark {
+  position: absolute;
+  inset-inline-end: 8%;
+  inset-block-end: 8%;
+  font-size: clamp(60px, 10vw, 140px);
+  line-height: 1;
+  color: var(--color-ivory);
+  opacity: 0.7;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+/* Eyebrow + name overlays (visible on all tiles for identification) */
+.zh-tile-eyebrow {
+  position: absolute;
+  inset-inline-start: 20px;
+  inset-block-start: 18px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow-wide, 0.12em);
+  color: var(--color-forest);
+  font-weight: 700;
+  z-index: 1;
+}
+
+.zh-tile-name {
+  position: absolute;
+  inset-inline-start: 20px;
+  inset-block-end: 18px;
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 900;
+  color: var(--color-charcoal);
+  z-index: 1;
+}
+
+/* Focused tile: gain chrome + right-spill */
+.zh-slider-tile[data-focused] {
+  opacity: 1;
+  z-index: 5;
+  border: 1px solid var(--color-sand);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(20, 17, 15, 0.10);
+}
+
+.zh-slider-tile[data-focused] .zh-tile-bg {
+  right: -22%;
+  border-radius: 8px 0 0 8px;
+}
+
+/* Slider arrows */
+.zh-slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(40px, 5vw, 56px);
+  height: clamp(40px, 5vw, 56px);
+  border-radius: 50%;
+  background: var(--color-ivory);
+  border: 1px solid var(--color-sand);
+  box-shadow: 0 4px 14px rgba(20, 17, 15, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--dur-hover) var(--ease-out-soft),
+              border-color var(--dur-hover) var(--ease-out-soft),
+              box-shadow var(--dur-hover);
+  z-index: 10;
+  color: var(--color-charcoal);
+}
+
+.zh-slider-arrow:hover {
+  background: var(--color-cream);
+  border-color: var(--color-stone);
+  box-shadow: 0 6px 18px rgba(20, 17, 15, 0.12);
+}
+
+.zh-slider-arrow.zh-prev { right: clamp(4px, 1.5vw, 16px); }
+.zh-slider-arrow.zh-next { left:  clamp(4px, 1.5vw, 16px); }
+.zh-slider-arrow svg { width: 50%; height: 50%; }
+
+/* Caption */
+.zh-slider-caption {
+  text-align: center;
+  padding-block: 32px 20px;
+  min-height: 110px;
+}
+
+.zh-caption-name {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 900;
+  color: var(--color-ink);
+  line-height: 1.15;
+  margin-bottom: 8px;
+  transition: opacity var(--dur-mega) var(--ease-out-soft);
+}
+
+.zh-caption-tagline {
+  font-size: clamp(14px, 1.3vw, 17px);
+  color: var(--color-stone);
+  font-weight: 300;
+  line-height: 1.6;
+  transition: opacity var(--dur-mega) var(--ease-out-soft);
+}
+
+.zh-slider-caption[data-changing] .zh-caption-name,
+.zh-slider-caption[data-changing] .zh-caption-tagline {
+  opacity: 0.3;
+}
+
+/* Indicator (dots + counter) */
+.zh-slider-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-block: 16px 32px;
+}
+
+.zh-slider-dots {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: 480px;
+  justify-content: center;
+}
+
+.zh-slider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-sand);
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  transition: background-color var(--dur-hover) var(--ease-out-soft),
+              transform var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-slider-dot:hover { background: var(--color-stone); }
+
+.zh-slider-dot[aria-selected="true"] {
+  background: var(--color-charcoal);
+  transform: scale(1.5);
+}
+
+.zh-slider-counter {
+  font-size: 12px;
+  color: var(--color-stone);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+/* Empty / 1-design / 2-design fallback layouts */
+.zh-slider-empty {
+  text-align: center;
+  padding-block: 80px;
+  color: var(--color-stone);
+  font-size: clamp(15px, 1.4vw, 18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zh-slider-track,
+  .zh-slider-tile,
+  .zh-tile-bg,
+  .zh-caption-name,
+  .zh-caption-tagline { transition: none; }
+}
