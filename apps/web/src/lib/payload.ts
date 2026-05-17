@@ -24,6 +24,8 @@ export type PayloadDesign = {
   heroMedia?: PayloadMedia | null;
   /** Long-form editorial story with embedded media blocks. */
   storyBlocks?: LexicalRoot | null;
+  /** Slider tile media on /designs (ideally a GIF). Falls back to heroMedia / gallery[0]. */
+  sliderMedia?: PayloadMedia | null;
 };
 
 export type PayloadAddress = {
@@ -760,6 +762,14 @@ export async function fetchDesign(
     'design',
   );
   return res?.docs[0] ?? null;
+}
+
+export async function fetchAllDesigns(): Promise<PayloadDesign[]> {
+  const res = await payloadFetch<PayloadList<PayloadDesign>>(
+    '/api/designs?limit=100&sort=name&depth=2',
+    'designs',
+  );
+  return res?.docs ?? [];
 }
 
 export async function fetchCollection(
