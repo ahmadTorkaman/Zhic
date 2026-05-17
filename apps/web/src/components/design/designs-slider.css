@@ -9,7 +9,7 @@
 .zh-slider-viewport {
   position: relative;
   overflow: hidden;
-  margin-inline: clamp(36px, 8vw, 100px);
+  margin-inline: clamp(16px, 3vw, 40px);
 }
 
 .zh-slider-track {
@@ -24,7 +24,7 @@
    full scale, creating a depth-of-field effect. */
 .zh-slider-tile {
   flex: 0 0 calc((100% - 2 * clamp(12px, 2.5vw, 32px)) / 3);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   position: relative;
   cursor: pointer;
   opacity: 0.45;
