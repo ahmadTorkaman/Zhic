@@ -15,22 +15,32 @@
 .zh-slider-track {
   display: flex;
   gap: clamp(12px, 2.5vw, 32px);
-  transition: transform var(--dur-mega) var(--ease-out-soft);
+  transition: transform 750ms var(--ease-out-soft);
   will-change: transform;
 }
 
-/* Default = dim tile: no chrome, just the naked media surface */
+/* Default = dim tile: "Settle" mode — physically smaller + softly blurred,
+   like an out-of-focus magazine spread. The focused tile then pops sharp at
+   full scale, creating a depth-of-field effect. */
 .zh-slider-tile {
   flex: 0 0 calc((100% - 2 * clamp(12px, 2.5vw, 32px)) / 3);
   aspect-ratio: 4 / 3;
   position: relative;
   cursor: pointer;
-  opacity: 0.4;
+  opacity: 0.45;
   background: transparent;
   border: 0;
   border-radius: 0;
   overflow: visible;
-  transition: opacity var(--dur-mega) var(--ease-out-soft);
+  transform: scale(0.88);
+  filter: blur(2px);
+  transition:
+    opacity       650ms var(--ease-out-soft),
+    transform     650ms var(--ease-out-soft),
+    filter        650ms var(--ease-out-soft),
+    border-color  650ms var(--ease-out-soft),
+    border-radius 650ms var(--ease-out-soft),
+    box-shadow    650ms var(--ease-out-soft);
 }
 
 /* The GIF surface lives on a child div so its size/shape can change
@@ -41,8 +51,8 @@
   overflow: hidden;
   z-index: 0;
   background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
-  transition: inset var(--dur-mega) var(--ease-out-soft),
-              border-radius var(--dur-mega) var(--ease-out-soft);
+  transition: inset 750ms var(--ease-out-soft),
+              border-radius 750ms var(--ease-out-soft);
 }
 
 .zh-tile-bg :is(img, video) {
@@ -88,13 +98,15 @@
   z-index: 1;
 }
 
-/* Focused tile: gain chrome + right-spill */
+/* Focused tile: gain chrome + right-spill, sharp + full scale */
 .zh-slider-tile[data-focused] {
   opacity: 1;
   z-index: 5;
   border: 1px solid var(--color-sand);
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(20, 17, 15, 0.10);
+  transform: scale(1);
+  filter: blur(0);
 }
 
 .zh-slider-tile[data-focused] .zh-tile-bg {
@@ -147,7 +159,7 @@
   color: var(--color-ink);
   line-height: 1.15;
   margin-bottom: 8px;
-  transition: opacity var(--dur-mega) var(--ease-out-soft);
+  transition: opacity 750ms var(--ease-out-soft);
 }
 
 .zh-caption-tagline {
@@ -155,7 +167,7 @@
   color: var(--color-stone);
   font-weight: 300;
   line-height: 1.6;
-  transition: opacity var(--dur-mega) var(--ease-out-soft);
+  transition: opacity 750ms var(--ease-out-soft);
 }
 
 .zh-slider-caption[data-changing] .zh-caption-name,
@@ -220,4 +232,10 @@
   .zh-tile-bg,
   .zh-caption-name,
   .zh-caption-tagline { transition: none; }
+
+  /* Skip the depth-of-field effect entirely — opacity-only dim */
+  .zh-slider-tile {
+    transform: none;
+    filter: none;
+  }
 }

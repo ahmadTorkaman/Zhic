@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/designs — transition mockups</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eyebrow-wide: 0.12em;
+    --dur-hover: 240ms;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Mode-tuned variables — overridden per [data-mode] on body */
+    --dur-track:   900ms;
+    --dur-chrome:  900ms;
+    --dur-spill:   900ms;
+    --delay-track: 0ms;
+    --delay-chrome: 0ms;
+    --delay-spill: 0ms;
+    --ease-mode:   var(--ease-out-quint);
+    --dim-scale:   1;
+    --dim-blur:    0px;
+    --dim-opacity: 0.4;
+    --focus-scale: 1;
+  }
+
+  /* ────────── Mode A — Glide (refined current) ──────────
+     Slower, smoother. Everything happens together, but the focused tile
+     gets a hairline scale that "settles" into place. */
+  body[data-mode="glide"] {
+    --dur-track:    900ms;
+    --dur-chrome:   900ms;
+    --dur-spill:    900ms;
+    --delay-track:  0ms;
+    --delay-chrome: 0ms;
+    --delay-spill:  0ms;
+    --ease-mode:    var(--ease-out-quint);
+    --dim-scale:    1;
+    --dim-blur:     0px;
+    --dim-opacity:  0.4;
+    --focus-scale:  1;
+  }
+
+  /* ────────── Mode B — Settle (depth) ──────────
+     Dim tiles physically smaller + softly blurred. Focused tile is sharp
+     and at full scale. Adds depth-of-field — the focused tile is "closer". */
+  body[data-mode="settle"] {
+    --dur-track:    750ms;
+    --dur-chrome:   650ms;
+    --dur-spill:    750ms;
+    --delay-track:  0ms;
+    --delay-chrome: 0ms;
+    --delay-spill:  0ms;
+    --ease-mode:    var(--ease-out-soft);
+    --dim-scale:    0.88;
+    --dim-blur:     2px;
+    --dim-opacity:  0.45;
+    --focus-scale:  1;
+  }
+
+  /* ────────── Mode C — Cascade (staged) ──────────
+     Track slides first. Then chrome materializes. Then the spill grows.
+     Three distinct moments, ~1.1s total. More theatrical. */
+  body[data-mode="cascade"] {
+    --dur-track:    450ms;
+    --dur-chrome:   400ms;
+    --dur-spill:    450ms;
+    --delay-track:  0ms;
+    --delay-chrome: 300ms;
+    --delay-spill:  650ms;
+    --ease-mode:    var(--ease-out-soft);
+    --dim-scale:    1;
+    --dim-blur:     0px;
+    --dim-opacity:  0.4;
+    --focus-scale:  1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Floating-pill header (visual reference only) ──────────────────────── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-weight: 900;
+    color: var(--color-charcoal);
+    font-size: 14px;
+  }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: 64px; border-inline: 0; border-top: 0; }
+  }
+
+  /* ── Page ─────────────────────────────────────────────────────────────── */
+  .page { padding-top: 72px; }
+  @media (min-width: 768px) { .page { padding-top: 88px; } }
+  .container {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3vw, 32px);
+  }
+
+  /* ── Mode switcher panel ──────────────────────────────────────────────── */
+  .mode-panel {
+    position: sticky;
+    top: 88px;
+    z-index: 50;
+    background: rgba(250, 250, 247, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--color-sand);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-block: 12px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .mode-panel-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow-wide);
+    color: var(--color-forest);
+    font-weight: 700;
+  }
+  .mode-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .mode-btn {
+    border: 1px solid var(--color-sand);
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    padding: 8px 18px;
+    border-radius: 9999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color var(--dur-hover), border-color var(--dur-hover), color var(--dur-hover);
+  }
+  .mode-btn:hover { background: var(--color-cream); }
+  .mode-btn[aria-pressed="true"] {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    border-color: var(--color-charcoal);
+  }
+  .mode-btn small {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    margin-top: 2px;
+    opacity: 0.7;
+  }
+
+  .mode-blurb {
+    background: var(--color-cream);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-block: 4px 24px;
+    font-size: 14px;
+    color: var(--color-charcoal);
+    line-height: 1.6;
+  }
+  .mode-blurb b { color: var(--color-forest); font-weight: 700; }
+  .mode-blurb code {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    background: var(--color-sand);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── Title block ──────────────────────────────────────────────────────── */
+  .title-block { text-align: center; padding-block: 8px 28px; }
+  .title-block h1 {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .title-block p {
+    font-size: clamp(13px, 1.2vw, 15px);
+    font-weight: 300;
+    color: var(--color-stone);
+    max-width: 560px;
+    margin-inline: auto;
+    line-height: 1.65;
+  }
+
+  /* ── Slider section ───────────────────────────────────────────────────── */
+  .slider-section {
+    position: relative;
+    padding-block: 16px 12px;
+    user-select: none;
+  }
+  .slider-viewport {
+    position: relative;
+    overflow: hidden;
+    margin-inline: clamp(36px, 8vw, 100px);
+  }
+  .slider-track {
+    display: flex;
+    gap: clamp(12px, 2.5vw, 32px);
+    transition: transform var(--dur-track) var(--ease-mode) var(--delay-track);
+    will-change: transform;
+  }
+
+  /* Dim tile — depends on mode for the dim-state look */
+  .slider-tile {
+    flex: 0 0 calc((100% - 2 * clamp(12px, 2.5vw, 32px)) / 3);
+    aspect-ratio: 4 / 3;
+    position: relative;
+    cursor: pointer;
+    opacity: var(--dim-opacity);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    transform: scale(var(--dim-scale));
+    filter: blur(var(--dim-blur));
+    transition:
+      opacity   var(--dur-chrome) var(--ease-mode) var(--delay-chrome),
+      transform var(--dur-chrome) var(--ease-mode) var(--delay-chrome),
+      filter    var(--dur-chrome) var(--ease-mode) var(--delay-chrome),
+      border-color var(--dur-chrome) var(--ease-mode) var(--delay-chrome),
+      border-radius var(--dur-chrome) var(--ease-mode) var(--delay-chrome),
+      box-shadow var(--dur-chrome) var(--ease-mode) var(--delay-chrome);
+  }
+
+  /* GIF surface (::before) — animates inset + radius for the right-spill */
+  .slider-tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    border-radius: 0;
+    z-index: -1;
+    transition:
+      inset         var(--dur-spill) var(--ease-mode) var(--delay-spill),
+      border-radius var(--dur-spill) var(--ease-mode) var(--delay-spill);
+  }
+
+  /* Focused tile — full opacity, chrome, scale */
+  .slider-tile.is-focused {
+    opacity: 1;
+    z-index: 5;
+    border: 1px solid var(--color-sand);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(20, 17, 15, 0.10);
+    transform: scale(var(--focus-scale));
+    filter: blur(0);
+  }
+  .slider-tile.is-focused::before {
+    right: -22%;
+    border-radius: 8px 0 0 8px;
+  }
+
+  /* Tile content overlays */
+  .tile-eyebrow {
+    position: absolute;
+    inset-inline-start: 20px;
+    inset-block-start: 18px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow-wide);
+    color: var(--color-forest);
+    font-weight: 700;
+  }
+  .tile-name {
+    position: absolute;
+    inset-inline-start: 20px;
+    inset-block-end: 18px;
+    font-size: clamp(16px, 1.8vw, 22px);
+    font-weight: 900;
+    color: var(--color-charcoal);
+  }
+  .tile-watermark {
+    position: absolute;
+    inset-inline-end: 8%;
+    inset-block-end: 8%;
+    font-size: clamp(60px, 10vw, 140px);
+    line-height: 1;
+    color: var(--color-ivory);
+    opacity: 0.7;
+    font-weight: 900;
+    pointer-events: none;
+  }
+  .tile-gif-pulse {
+    position: absolute;
+    inset-block-start: 16px;
+    inset-inline-end: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-forest);
+    box-shadow: 0 0 0 0 rgba(95, 119, 96, 0.5);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(95, 119, 96, 0); }
+    50%      { box-shadow: 0 0 0 6px rgba(95, 119, 96, 0.25); }
+  }
+
+  /* ── Slider arrows ────────────────────────────────────────────────────── */
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(40px, 5vw, 56px);
+    height: clamp(40px, 5vw, 56px);
+    border-radius: 50%;
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 4px 14px rgba(20, 17, 15, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover);
+    z-index: 10;
+    color: var(--color-charcoal);
+  }
+  .slider-arrow:hover {
+    background: var(--color-cream);
+    border-color: var(--color-stone);
+    box-shadow: 0 6px 18px rgba(20, 17, 15, 0.12);
+  }
+  .slider-arrow.prev { right: clamp(4px, 1.5vw, 16px); }
+  .slider-arrow.next { left:  clamp(4px, 1.5vw, 16px); }
+  .slider-arrow svg { width: 50%; height: 50%; }
+
+  /* ── Caption ──────────────────────────────────────────────────────────── */
+  .caption {
+    text-align: center;
+    padding-block: 32px 20px;
+    min-height: 110px;
+  }
+  .caption-name {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 1.15;
+    margin-bottom: 8px;
+    transition: opacity var(--dur-track) var(--ease-mode);
+  }
+  .caption-tagline {
+    font-size: clamp(14px, 1.3vw, 17px);
+    color: var(--color-stone);
+    font-weight: 300;
+    line-height: 1.6;
+    transition: opacity var(--dur-track) var(--ease-mode);
+  }
+  .caption.is-changing .caption-name,
+  .caption.is-changing .caption-tagline { opacity: 0.3; }
+
+  /* ── Indicator (dots + counter) ──────────────────────────────────────── */
+  .indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding-block: 16px 32px;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 480px;
+    justify-content: center;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-sand);
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    transition: background-color var(--dur-hover), transform var(--dur-hover);
+  }
+  .dot:hover { background: var(--color-stone); }
+  .dot.is-focused {
+    background: var(--color-charcoal);
+    transform: scale(1.5);
+  }
+  .counter {
+    font-size: 12px;
+    color: var(--color-stone);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Stage tag ────────────────────────────────────────────────────────── */
+  .stage-tag {
+    position: fixed;
+    bottom: 16px;
+    inset-inline-end: 16px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+
+  /* Honor reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .slider-track,
+    .slider-tile,
+    .slider-tile::before,
+    .caption-name,
+    .caption-tagline { transition: none !important; }
+  }
+</style>
+</head>
+<body data-mode="glide">
+
+<div class="pill-header">ژیک</div>
+
+<main class="page">
+  <div class="container">
+    <div class="title-block">
+      <h1>اسلایدر — حالت‌های انتقال</h1>
+      <p>سه شیوه‌ی متفاوت برای جابه‌جایی بین کارت‌ها. یک حالت را انتخاب کنید، فلش‌ها را بزنید تا تفاوت را حس کنید.</p>
+    </div>
+
+    <div class="mode-panel" role="radiogroup" aria-label="حالت انتقال">
+      <div>
+        <div class="mode-panel-label">حالت انتقال</div>
+        <div style="font-size: 12px; color: var(--color-stone); margin-top: 4px;">روی هر گزینه کلیک کنید</div>
+      </div>
+      <div class="mode-buttons">
+        <button class="mode-btn" type="button" data-mode="glide" aria-pressed="true">
+          Glide
+          <small>پولیش شده‌ی کنونی</small>
+        </button>
+        <button class="mode-btn" type="button" data-mode="settle" aria-pressed="false">
+          Settle
+          <small>عمق + تار شدن کناری‌ها</small>
+        </button>
+        <button class="mode-btn" type="button" data-mode="cascade" aria-pressed="false">
+          Cascade
+          <small>مرحله‌ای / تئاتری</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-blurb" id="modeBlurb"></div>
+  </div>
+
+  <section class="slider-section" aria-label="گالری طرح‌ها">
+    <button class="slider-arrow prev" type="button" aria-label="طرح قبلی" id="prevBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="slider-arrow next" type="button" aria-label="طرح بعدی" id="nextBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="slider-viewport">
+      <div class="slider-track" id="track"></div>
+    </div>
+
+    <div class="caption" id="caption" aria-live="polite">
+      <div class="caption-name" id="captionName">گندم</div>
+      <div class="caption-tagline" id="captionTagline">گرم، برای خواب کودکانه</div>
+    </div>
+
+    <div class="indicator">
+      <div class="dots" id="dots" role="tablist"></div>
+      <div class="counter" id="counter">۱ از ۸</div>
+    </div>
+  </section>
+</main>
+
+<div class="stage-tag">مقایسه‌ی <span>حالت‌های انتقال</span></div>
+
+<script>
+  const DESIGNS = [
+    { slug: 'gandom',     name: 'گندم',    tagline: 'گرم، برای خواب کودکانه' },
+    { slug: 'parla',      name: 'پارلا',    tagline: 'سادگی پایدار' },
+    { slug: 'jacqueline', name: 'ژاکلین',  tagline: 'ظرافت کلاسیک' },
+    { slug: 'caroline',   name: 'کارولین',  tagline: 'فضای آرام' },
+    { slug: 'lotus',      name: 'لوتوس',    tagline: 'آرامش گیاهی' },
+    { slug: 'luka',       name: 'لوکا',     tagline: 'هندسه‌ی دقیق' },
+    { slug: 'sento',      name: 'سنتو',     tagline: 'سکوت ژاپنی' },
+    { slug: 'elegans',    name: 'الگانس',   tagline: 'شکوه کم‌حرف' }
+  ];
+
+  const BLURBS = {
+    glide:   '<b>Glide</b> — همان رفتار فعلی، فقط نرم‌تر و آهسته‌تر. زمان: <code>900ms</code>. منحنی: <code>ease-out-quint</code>. همه چیز همزمان حرکت می‌کند: ترک، تار شدن، شفافیت، حاشیه، و سرریز ۲۲٪. ساده، یکپارچه.',
+    settle:  '<b>Settle</b> — کناری‌ها <code>scale(0.88)</code> و <code>blur(2px)</code> دارند، انگار از دور دیده می‌شوند. کارت مرکزی شارپ و در ۱۰۰٪. حس عمق میدان (depth-of-field). نزدیک‌ترین به مجله‌ی طراحی.',
+    cascade: '<b>Cascade</b> — انتقال در سه مرحله انجام می‌شود: (۱) ترک می‌لغزد، (۲) ۳۰۰ms بعد حاشیه و سایه ظاهر می‌شود، (۳) ۶۵۰ms بعد سرریز ۲۲٪ رشد می‌کند. تئاتری‌تر، هر مرحله لحظه‌ای از آنِ خودش دارد.'
+  };
+
+  const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+  function toPersian(n) {
+    return String(n).replace(/[0-9]/g, d => PERSIAN_DIGITS[+d]);
+  }
+
+  const track = document.getElementById('track');
+  const dots = document.getElementById('dots');
+  const caption = document.getElementById('caption');
+  const captionName = document.getElementById('captionName');
+  const captionTagline = document.getElementById('captionTagline');
+  const counter = document.getElementById('counter');
+  const blurb = document.getElementById('modeBlurb');
+
+  // Render tiles + dots
+  DESIGNS.forEach((d, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'slider-tile';
+    tile.dataset.index = i;
+    tile.setAttribute('role', 'group');
+    tile.setAttribute('aria-label', d.name);
+    tile.innerHTML = `
+      <span class="tile-eyebrow">طرح</span>
+      <span class="tile-gif-pulse" aria-hidden></span>
+      <span class="tile-watermark" aria-hidden>ژ</span>
+      <span class="tile-name">${d.name}</span>
+    `;
+    tile.addEventListener('click', () => {
+      if (i !== focused) { focused = i; render(); }
+    });
+    track.appendChild(tile);
+
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot';
+    dot.dataset.index = i;
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', `طرح ${d.name}`);
+    dot.addEventListener('click', () => { focused = i; render(); });
+    dots.appendChild(dot);
+  });
+
+  let focused = 1;
+
+  function render() {
+    const tile0 = track.children[0];
+    const tile1 = track.children[1];
+    const tileWidth = tile0.getBoundingClientRect().width;
+    const gap = tile1.offsetLeft - tile0.offsetLeft - tileWidth;
+    const slot = tileWidth + Math.abs(gap);
+
+    const shift = (focused - 1) * slot;
+    track.style.transform = `translateX(${shift}px)`;
+
+    Array.from(track.children).forEach((el, i) => {
+      el.classList.toggle('is-focused', i === focused);
+    });
+    Array.from(dots.children).forEach((el, i) => {
+      el.classList.toggle('is-focused', i === focused);
+    });
+
+    caption.classList.add('is-changing');
+    setTimeout(() => {
+      const d = DESIGNS[focused];
+      captionName.textContent = d.name;
+      captionTagline.textContent = d.tagline;
+      counter.textContent = `${toPersian(focused + 1)} از ${toPersian(DESIGNS.length)}`;
+      caption.classList.remove('is-changing');
+    }, 200);
+  }
+
+  function go(delta) {
+    const n = DESIGNS.length;
+    focused = (focused + delta + n) % n;
+    render();
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => go(+1));
+
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft')  go(+1);
+    if (e.key === 'ArrowRight') go(-1);
+  });
+
+  let touchStartX = 0;
+  const viewport = document.querySelector('.slider-viewport');
+  viewport.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  viewport.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 40) return;
+    if (dx < 0) go(+1); else go(-1);
+  });
+
+  // ── Mode switcher ────────────────────────────────────────────────────────
+  function setMode(mode) {
+    document.body.dataset.mode = mode;
+    blurb.innerHTML = BLURBS[mode];
+    document.querySelectorAll('.mode-btn').forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.mode === mode));
+    });
+  }
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => setMode(btn.dataset.mode));
+  });
+  // Quick keyboard shortcuts: 1/2/3 to switch modes
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === '1') setMode('glide');
+    if (e.key === '2') setMode('settle');
+    if (e.key === '3') setMode('cascade');
+  });
+
+  // Initial paint
+  setMode('glide');
+  window.addEventListener('load', render);
+  setTimeout(render, 0);
+</script>
+
+</body>
+</html>
