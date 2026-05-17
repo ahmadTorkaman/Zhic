@@ -1,0 +1,414 @@
+# Designs Index Page — Design Spec
+
+**Date:** 2026-05-17
+**Branch:** `feat/products-mega-menu` (continues — same series)
+**Status:** spec — implementation plan to follow via `superpowers:writing-plans`
+**Closes:** `FU-MM-a` («/designs» index), `FU-DDP-d` (lookbook grid follow-up from design detail spec)
+
+---
+
+## 0. Why this spec
+
+The `/designs/<slug>` detail page shipped earlier in this series ([spec](2026-05-16-design-detail-page-design.md)) gives each design a proper editorial home. But there's no surface yet for browsing the catalog of designs — the only entry points are the mega-menu's «طرح‌ها» panel (a flat list) and the mobile menu's equivalent (a 2-column name grid). Users who want to discover designs visually have nowhere to land.
+
+This spec adds the missing `/designs` index page. Per operator direction, the page is **not a grid** — it's a **single-focus carousel** that shows three design tiles at a time, with the center tile in full focus and the side tiles dimmed to 40% opacity. Each tile is a GIF showing the design's complete furniture package (the bed + nightstand + wardrobe + dresser in motion). Manual navigation only (arrows + swipe + keyboard); no auto-play. The slider IS the page — no grid below.
+
+Visual reference: `apps/web/public/docs/designs-index-mockup.html` (interactive mockup, served at `http://80.240.31.146:3000/docs/designs-index-mockup.html`).
+
+It deliberately **does not** cover:
+
+- Filter controls (by age_group, etc.) — operator chose theatrical single-focus over filtered browsing
+- A separate `/designs/grid` view — the mega-menu's «طرح‌ها» panel already serves the "list all" use case
+- Auto-play / pause-on-hover behaviors — explicitly out per design choice
+- A "see all" CTA pointing somewhere from the slider — the slider already IS the full catalog
+- GIF-to-video transcoding (still tracked as `FU-2.3-a`) — slider plays whatever media is uploaded
+
+---
+
+## 1. Visual reference
+
+See the live mockup. ASCII summary:
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│ [floating-pill header]                                                 │
+│                                                                        │
+│ خانه / طرح‌ها  (breadcrumb)                                           │
+│                                                                        │
+│              طرح‌ها  (h1, centered)                                   │
+│       هر طرح یک زبان طراحی است.  (subtitle, centered)                 │
+│                                                                        │
+│   ←       ┌──────┐  ┌──────────┐  ┌──────┐       →                    │
+│  prev     │      │  │          │  │      │      next                  │
+│           │  GIF │  │   GIF    │  │ GIF  │                            │
+│           │ 40%  │  │   100%   │  │ 40%  │                            │
+│           │      │  │ (FOCUS)  │  │      │                            │
+│           └──────┘  └──────────┘  └──────┘                            │
+│                                                                        │
+│                          گندم                                          │
+│                  گرم، برای خواب کودکانه                                 │
+│                                                                        │
+│                · · · ● · · · · · · · · · · · · ·                       │
+│                       ۱ از ۱۸                                          │
+└──────────────────────────────────────────────────────────────────────┘
+                              [footer]
+```
+
+### 1.1 Slider behavior
+
+| Interaction | Behavior |
+|---|---|
+| Click ← (right arrow in RTL) | Previous design — focused index decrements |
+| Click → (left arrow in RTL) | Next design — focused index increments |
+| Click a dim edge tile | That tile slides into center (becomes focused) |
+| Click the focused (center) tile | Navigates to `/designs/<slug>` |
+| Click a dot | Jumps to that index |
+| Keyboard ArrowLeft | Next (RTL: left = forward reading direction) |
+| Keyboard ArrowRight | Previous |
+| Touch swipe left | Next |
+| Touch swipe right | Previous |
+| Past last → next | Wraps to first (infinite loop) |
+| Past first → previous | Wraps to last (infinite loop) |
+
+### 1.2 Caption + indicator
+
+- Caption sits below the slider: focused design's name (h2-ish, large) + tagline (one-line lead). On focus change, the caption cross-fades (opacity 1 → 0.3 → 1) over ~600ms.
+- Dots strip: one dot per design (max 30 wraps onto two rows visually). Focused dot is charcoal + scaled 1.5×. Click a dot to jump.
+- Counter: «N از M» with Persian digits.
+
+### 1.3 Mobile
+
+On viewports `< 768px`, the slider switches from "3 visible" to **"1 centered with peeking edges"** — the focused tile takes ~75% of the viewport width; the left and right neighbors peek ~10% off each edge (still at 40% opacity). Same arrows, same swipe, same dots. The reduction is purely for legibility — 3 tiles at 375px wide would be ~100px each, too small for the GIF content to read.
+
+---
+
+## 2. Schema changes — `services/api/src/collections/Designs.ts`
+
+Add ONE new field to the `Designs` collection. Position it after the existing `heroMedia` field (logical grouping — both are single-media uploads, both render at the top of design surfaces).
+
+```ts
+{
+  name: 'sliderMedia',
+  type: 'upload',
+  relationTo: 'media',
+  label: 'تصویر اسلایدر صفحه‌ی طرح‌ها',
+  admin: {
+    description: 'مدیای کارت این طرح در اسلایدر صفحه‌ی /designs (ترجیحاً GIF یا ویدیوی کوتاه که کل ست را نشان می‌دهد). اگر خالی باشد، از heroMedia یا گالری استفاده می‌شود.',
+  },
+},
+```
+
+### 2.1 Migration
+
+A new migration file: `services/api/src/migrations/<timestamp>_add_design_slider_media.ts`. Adds a `slider_media_id` integer FK on the `designs` table. Pattern mirrors the editorial-fields migration (`20260516_224611_add_design_editorial_fields.ts`):
+
+```sql
+ALTER TABLE "designs" ADD COLUMN IF NOT EXISTS "slider_media_id" integer;
+
+DO $$ BEGIN
+  ALTER TABLE "designs"
+    ADD CONSTRAINT "designs_slider_media_id_media_id_fk"
+    FOREIGN KEY ("slider_media_id")
+    REFERENCES "media"("id")
+    ON DELETE SET NULL ON UPDATE NO ACTION;
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+```
+
+`down()` drops the constraint and column.
+
+Migration must be hand-written + registered in `migrations/index.ts` + applied via direct pg + inserted into `payload_migrations` table — same workaround used for prior migrations because `pnpm migrate:create` is still broken (FU-7.1-c). The implementation plan will spell this out.
+
+### 2.2 Fallback chain for slider media
+
+In the page renderer: per-design tile media resolves as
+
+```
+design.sliderMedia ?? design.heroMedia ?? design.gallery?.[0] ?? null
+```
+
+If `null` for a given design, the tile renders the cream→sand gradient + «ژ» watermark placeholder (already used in the mockup). The design still appears in the slider — we never hide a design for missing media. The operator sees the placeholder as a "you should upload media here" cue.
+
+---
+
+## 3. Architecture
+
+### 3.1 Files added
+
+| Path | Responsibility |
+|---|---|
+| `apps/web/src/app/(site)/designs/page.tsx` | The new route. Server component, fetches all designs, renders the page chrome + the slider client component. |
+| `apps/web/src/components/design/DesignsSlider.tsx` | Client component owning the slider state (focused index), navigation handlers (arrow / dot / swipe / keyboard), and the cross-fade caption animation. Accepts `designs: PayloadDesign[]` as a prop. |
+| `apps/web/src/components/design/designs-slider.css` | Component-scoped CSS. Includes the 3-visible desktop layout, 1-with-peeking mobile layout, dim-edge styling, arrow buttons, dots strip, caption animation. |
+| `services/api/src/migrations/<timestamp>_add_design_slider_media.ts` | Payload-style migration adding the `slider_media_id` column. |
+
+### 3.2 Files modified
+
+| Path | Change |
+|---|---|
+| `services/api/src/collections/Designs.ts` | Add the `sliderMedia` field. |
+| `services/api/src/migrations/index.ts` | Register the new migration. |
+| `apps/web/src/lib/payload.ts` | Extend `PayloadDesign` with `sliderMedia?: PayloadMedia | null`. Restore `fetchAllDesigns()` (was removed when sitemap got its own helper — now needed for the index page). |
+| `apps/web/src/components/layout/ProductsMegaMenu.tsx` | `DesignsPanel` gets a «همه‌ی طرح‌ها →» CTA at the bottom pointing at `/designs` (parity with the categories panel which already has one). |
+| `apps/web/src/components/layout/MobileMenu.tsx` | `DesignsSection` gets a «همه‌ی طرح‌ها →» link below the grid pointing at `/designs`. |
+| `apps/web/src/app/sitemap.ts` | Add the static `/designs` entry (now that the route exists — earlier we explicitly cut this because the route didn't exist yet). |
+| `docs/state.md` | Strike-through `FU-MM-a` + `FU-DDP-d`, append `FU-DIX-*` follow-ups, add Post-Phase row. |
+
+### 3.3 Data flow
+
+```
+/designs request
+  └── fetchAllDesigns()  ── single call to GET /api/designs?limit=100&sort=name&depth=2
+        │                                                                  ↑ depth=2 so sliderMedia/heroMedia/gallery resolve to media objects
+        ▼
+  <DesignsSlider designs={designs} />  ── client component
+        │
+        ▼
+   slider state + handlers; renders 3 tiles at a time
+```
+
+Single Payload call. Cache via `payloadFetch`'s `next: { revalidate: 300, tags: ['designs'] }` — same as other fetchers.
+
+---
+
+## 4. Page composition — `apps/web/src/app/(site)/designs/page.tsx`
+
+```tsx
+import { Container, Breadcrumbs } from '@zhic/ui';
+import { DesignsSlider } from '@/components/design/DesignsSlider';
+import { fetchAllDesigns } from '@/lib/payload';
+
+export const metadata = {
+  title: 'طرح‌ها',
+  description: 'گالری طرح‌های ژیک — هر طرح یک زبان طراحی برای فضای زندگی شما.',
+  alternates: { canonical: '/designs' },
+};
+
+export default async function DesignsIndexPage() {
+  const designs = await fetchAllDesigns();
+  return (
+    <>
+      <Container>
+        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
+          <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'طرح‌ها' }]} />
+        </div>
+        <header className="py-9 text-center">
+          <h1 className="text-h1 font-black text-ink">طرح‌ها</h1>
+          <p className="mx-auto mt-3 max-w-[560px] text-lead font-light text-stone">
+            هر طرح یک زبان طراحی است. کارت‌ها را کنار بزنید تا کل مجموعه را ببینید.
+          </p>
+        </header>
+      </Container>
+
+      <DesignsSlider designs={designs} />
+    </>
+  );
+}
+```
+
+### 4.1 Empty / sparse state
+
+- **0 designs**: instead of rendering the slider, show a centered message «به‌زودی طرح‌های ژیک به این صفحه اضافه می‌شوند.» under the title block. No slider, no controls.
+- **1 design**: render a single centered tile at full opacity, no arrows, no dots, no counter. Caption shows the one design. Single tile is clickable to its detail page.
+- **2 designs**: render both tiles side-by-side, both at full opacity, no dim. Arrows + dots still wired (just toggles which of the two is "focused" for caption purposes). Less theatrical but better than awkward 3-slot logic with one empty.
+- **≥3 designs**: the full slider as described.
+
+These thresholds are gates inside `DesignsSlider.tsx`. No separate components.
+
+---
+
+## 5. Component — `DesignsSlider.tsx` contract
+
+### 5.1 Props
+
+```ts
+type DesignsSliderProps = {
+  designs: PayloadDesign[]
+}
+```
+
+The component is responsible for ALL state and behavior; the parent page provides only the data.
+
+### 5.2 Internal state
+
+```ts
+const [focused, setFocused] = useState<number>(0)
+const [isAnimating, setIsAnimating] = useState<boolean>(false)
+const trackRef = useRef<HTMLDivElement>(null)
+const viewportRef = useRef<HTMLDivElement>(null)
+```
+
+### 5.3 Wrap behavior (production)
+
+The mockup leaves blank edges at indices 0 and `length-1`. Production uses **clone-tile wrapping**:
+
+- DOM contains `2 + N + 2` tiles total: the LAST two designs cloned to the start, then the N real designs, then the FIRST two cloned to the end.
+- On navigation past the last tile (e.g., focused crosses N→0), the track animates to the cloned position, then on transitionend snaps `transform` instantly to the equivalent non-cloned position. To the user: seamless infinite loop.
+- Clones are `aria-hidden="true"` so screen readers see only the N real designs.
+
+### 5.4 Navigation handler
+
+```ts
+function go(delta: number) {
+  if (isAnimating) return  // ignore mashing
+  const next = focused + delta
+  setIsAnimating(true)
+  setFocused((next + designs.length) % designs.length)
+  // Caption + transform animations fire via React state → CSS transitions
+}
+```
+
+Handlers wired to: prev/next buttons, dot clicks, keyboard arrow keys (with cleanup), touchstart/touchend on viewport (minimum swipe distance 40px), and click on dim tiles (sets `focused = tileIndex` directly).
+
+### 5.5 Caption cross-fade
+
+- When `focused` changes, the caption div gets a CSS class `is-changing` for 200ms.
+- `.is-changing .caption-name, .is-changing .caption-tagline { opacity: 0.3 }` (mid-fade dim).
+- Class removed after 200ms via `setTimeout`. Caption text updates in the same tick (React's `useEffect`/state-driven render).
+
+### 5.6 ARIA
+
+```html
+<section role="region" aria-roledescription="carousel" aria-label="گالری طرح‌ها">
+  <button aria-label="طرح قبلی">...</button>
+  <button aria-label="طرح بعدی">...</button>
+  <div ref={viewportRef} aria-live="polite" aria-atomic="false">
+    <div ref={trackRef} role="list">
+      {tiles.map((tile, i) => (
+        <div role="listitem" aria-hidden={tile.isClone || undefined}>
+          ...
+        </div>
+      ))}
+    </div>
+  </div>
+  <div role="status" aria-live="polite">{captionName} {captionTagline}</div>
+  <div role="tablist" aria-label="گزینش طرح">
+    {designs.map((d, i) => (
+      <button role="tab" aria-selected={focused === i} aria-label={`طرح ${d.name}`}>...</button>
+    ))}
+  </div>
+</section>
+```
+
+### 5.7 Performance
+
+- All 18 (or however many) GIFs render at page load.
+- For ≤30 designs this is acceptable on broadband (~10-30MB total GIF payload assuming 500KB-1.5MB per GIF).
+- If catalog exceeds 30: add `loading="lazy"` on the `<img>` tags for tiles outside the 5-tile visible window (focused ± 2). Mark as `FU-DIX-c`.
+- `<video>` (for non-GIF media) gets `preload="metadata"` instead of `auto` to avoid prefetching all videos.
+
+---
+
+## 6. Tile media rendering
+
+```tsx
+function TileMedia({ design }: { design: PayloadDesign }) {
+  const media = design.sliderMedia ?? design.heroMedia ?? design.gallery?.[0] ?? null;
+  if (!media?.url) return <TilePlaceholder name={design.name} />;
+  if (media.mimeType?.startsWith('video/')) {
+    return (
+      <video
+        src={media.url}
+        autoPlay loop muted playsInline
+        preload="metadata"
+        className="tile-media"
+      />
+    );
+  }
+  // image/* including image/gif — GIFs animate naturally in <img>
+  return <img src={media.url} alt="" className="tile-media" />;
+}
+```
+
+`<TilePlaceholder>` renders the cream→sand gradient + «ژ» watermark (matches mockup styling exactly).
+
+---
+
+## 7. Mega-menu + mobile menu — «See all designs» CTA
+
+Now that `/designs` exists, restore the "See all" CTA we cut from the mega-menu work.
+
+### 7.1 `apps/web/src/components/layout/ProductsMegaMenu.tsx`
+
+In `DesignsPanel`, after the `<ul>` of design links, add:
+
+```tsx
+<Link href="/designs" className="zh-mega-cta">
+  همه‌ی طرح‌ها <Arrow />
+</Link>
+```
+
+Mirrors the existing «همه‌ی محصولات» CTA on `CategoriesPanel`.
+
+### 7.2 `apps/web/src/components/layout/MobileMenu.tsx`
+
+In `DesignsSection`, after the `<ul>` grid of names, add:
+
+```tsx
+<Link
+  href="/designs"
+  onClick={onLinkClick}
+  className="mt-3 self-start text-body font-bold text-charcoal underline underline-offset-4 transition-colors duration-[var(--dur-hover)] hover:text-forest"
+>
+  ← همه‌ی طرح‌ها
+</Link>
+```
+
+(Mobile uses an in-line text link with arrow, consistent with «← تمامی محصولات» in the same view.)
+
+---
+
+## 8. SEO
+
+- `<title>`: «طرح‌ها» (template will append « — ژیک» via root layout)
+- Meta description: brand-statement copy («گالری طرح‌های ژیک ...»)
+- `alternates.canonical: /designs`
+- Sitemap: add a STATIC `/designs` entry alongside per-slug `/designs/<slug>` (the per-slug ones already exist). Priority `0.8`, changefreq `weekly`.
+- OG image: the first design's `sliderMedia` or `heroMedia` (whichever is non-null). If both null, inherits the root OG image.
+
+---
+
+## 9. Acceptance criteria
+
+The PR is done when **all** of the following are true:
+
+1. `/designs` renders 200 on a fresh build.
+2. With 18 designs in DB, the slider shows 3 tiles at desktop (≥768px) and 1-with-peeking on mobile.
+3. Side tiles are at 40% opacity; center is at 100%.
+4. Arrow buttons + keyboard arrow keys + touch swipe + dot clicks all navigate.
+5. Past-last and before-first wrap continuously (no dead edges).
+6. Click on dim tile slides it to center; click on center tile navigates to `/designs/<slug>`.
+7. Tile media: GIF (uploaded as `sliderMedia` on a design) plays naturally; `<video>` mimeTypes render via `<video>` with autoplay+loop+muted+playsInline.
+8. Designs without `sliderMedia` (and no fallback) render the placeholder gradient + «ژ» watermark.
+9. Caption + counter update on each focus change with the cross-fade.
+10. Mega-menu `DesignsPanel` has a «همه‌ی طرح‌ها →» CTA that lands on `/designs`.
+11. Mobile `DesignsSection` has a «← همه‌ی طرح‌ها» link that lands on `/designs`.
+12. Sitemap includes `/designs`.
+13. Typecheck, lint, build all clean.
+14. Empty / 1-design / 2-design edge cases render without breaking.
+15. `docs/state.md` updated; `FU-MM-a` + `FU-DDP-d` struck through.
+
+---
+
+## 10. Follow-ups (out of scope, captured for `state.md`)
+
+| Id (proposed) | Item |
+|---|---|
+| `FU-DIX-a` | GIF → video transcode pipeline on Payload upload (carries forward `FU-2.3-a`). Reduces media payload significantly; better preview controls. |
+| `FU-DIX-b` | Filter pills above the slider — by `age_group` (نوزاد/کودک/نوجوان/بزرگسال). Useful when catalog grows past 25-30 designs. |
+| `FU-DIX-c` | Lazy-load tile media beyond focused ± 2. Triggers when catalog exceeds 30 designs. |
+| `FU-DIX-d` | Optional auto-play with pause-on-hover (operator was given the choice and picked manual; revisit if engagement metrics suggest passive browsing). |
+| `FU-DIX-e` | Mini-grid alternate view — a button toggles slider ↔ grid (the discarded option B from brainstorming). For users who prefer scan-and-jump. |
+| `FU-DIX-f` | Slider analytics — track which designs get clicked-to-detail. Surface findings to operator. |
+
+---
+
+## 11. References
+
+- Visual mockup: `apps/web/public/docs/designs-index-mockup.html` (served at `/docs/designs-index-mockup.html`)
+- Parent spec: `docs/superpowers/specs/2026-05-16-design-detail-page-design.md` (per-design lookbook page)
+- Mega-menu spec: `docs/superpowers/specs/2026-05-16-products-dropdown-mega-menu-design.md` (originally cut the «See all» CTA we now restore)
+- State board: `docs/state.md` — `FU-MM-a` + `FU-DDP-d` rows
+- Designs schema today: `services/api/src/collections/Designs.ts`
+- Existing client-slider patterns to study: `apps/web/src/components/showroom/ShowroomGallery.tsx` (if any), `apps/web/src/components/product/ProductGrid.tsx` (no slider, but RTL grid reference)

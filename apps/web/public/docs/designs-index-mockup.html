@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/designs — mockup</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eyebrow-wide: 0.12em;
+    --dur-hover: 240ms;
+    --dur-slide: 600ms;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Fake floating-pill header (visual reference only) ──────────────────── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-weight: 900;
+    color: var(--color-charcoal);
+    font-size: 14px;
+  }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: 64px; border-inline: 0; border-top: 0; }
+  }
+
+  /* ── Page ─────────────────────────────────────────────────────────────── */
+  .page { padding-top: 72px; }
+  @media (min-width: 768px) { .page { padding-top: 88px; } }
+  .container {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3vw, 32px);
+  }
+
+  /* ── Breadcrumb ────────────────────────────────────────────────────────── */
+  .breadcrumb {
+    color: var(--color-stone);
+    font-size: 14px;
+    padding-block: 16px 12px;
+  }
+  .breadcrumb a:hover { color: var(--color-charcoal); }
+  .breadcrumb-sep { margin-inline: 6px; opacity: 0.5; }
+
+  /* ── Title block ──────────────────────────────────────────────────────── */
+  .title-block { text-align: center; padding-block: 24px 36px; }
+  .title-block h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+  .title-block p {
+    font-size: clamp(15px, 1.4vw, 18px);
+    font-weight: 300;
+    color: var(--color-stone);
+    max-width: 560px;
+    margin-inline: auto;
+    line-height: 1.65;
+  }
+
+  /* ── Slider section ───────────────────────────────────────────────────── */
+  .slider-section {
+    position: relative;
+    padding-block: 24px 16px;
+    user-select: none;
+  }
+  .slider-viewport {
+    position: relative;
+    overflow: hidden;
+    margin-inline: clamp(36px, 8vw, 100px);
+  }
+  .slider-track {
+    display: flex;
+    gap: clamp(12px, 2.5vw, 32px);
+    transition: transform var(--dur-slide) var(--ease-out-soft);
+    will-change: transform;
+  }
+  .slider-tile {
+    flex: 0 0 calc((100% - 2 * var(--gap, 32px)) / 3);
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity var(--dur-slide) var(--ease-out-soft),
+                transform var(--dur-slide) var(--ease-out-soft);
+    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+  }
+  .slider-tile.is-focused {
+    opacity: 1;
+  }
+  /* GIF placeholder: watermark + faux product blocks */
+  .tile-eyebrow {
+    position: absolute;
+    inset-inline-start: 20px;
+    inset-block-start: 18px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow-wide);
+    color: var(--color-forest);
+    font-weight: 700;
+  }
+  .tile-name {
+    position: absolute;
+    inset-inline-start: 20px;
+    inset-block-end: 18px;
+    font-size: clamp(16px, 1.8vw, 22px);
+    font-weight: 900;
+    color: var(--color-charcoal);
+  }
+  .tile-watermark {
+    position: absolute;
+    inset-inline-end: 8%;
+    inset-block-end: 8%;
+    font-size: clamp(60px, 10vw, 140px);
+    line-height: 1;
+    color: var(--color-ivory);
+    opacity: 0.7;
+    font-weight: 900;
+    pointer-events: none;
+  }
+  /* Subtle "GIF loop" indicator (just visual hint that media animates) */
+  .tile-gif-pulse {
+    position: absolute;
+    inset-block-start: 16px;
+    inset-inline-end: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-forest);
+    box-shadow: 0 0 0 0 rgba(95, 119, 96, 0.5);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(95, 119, 96, 0); }
+    50%      { box-shadow: 0 0 0 6px rgba(95, 119, 96, 0.25); }
+  }
+
+  /* ── Slider arrows ────────────────────────────────────────────────────── */
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(40px, 5vw, 56px);
+    height: clamp(40px, 5vw, 56px);
+    border-radius: 50%;
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 4px 14px rgba(20, 17, 15, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--dur-hover) var(--ease-out-soft),
+                border-color var(--dur-hover) var(--ease-out-soft),
+                box-shadow var(--dur-hover);
+    z-index: 5;
+    color: var(--color-charcoal);
+  }
+  .slider-arrow:hover {
+    background: var(--color-cream);
+    border-color: var(--color-stone);
+    box-shadow: 0 6px 18px rgba(20, 17, 15, 0.12);
+  }
+  /* In RTL: "back/previous" feels like pointing right (toward start); "forward/next" points left */
+  .slider-arrow.prev { right: clamp(4px, 1.5vw, 16px); }
+  .slider-arrow.next { left:  clamp(4px, 1.5vw, 16px); }
+  .slider-arrow svg { width: 50%; height: 50%; }
+
+  /* ── Caption (focused name + tagline) ──────────────────────────────────── */
+  .caption {
+    text-align: center;
+    padding-block: 32px 20px;
+    min-height: 110px;
+  }
+  .caption-name {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 1.15;
+    margin-bottom: 8px;
+    transition: opacity var(--dur-slide) var(--ease-out-soft);
+  }
+  .caption-tagline {
+    font-size: clamp(14px, 1.3vw, 17px);
+    color: var(--color-stone);
+    font-weight: 300;
+    line-height: 1.6;
+    transition: opacity var(--dur-slide) var(--ease-out-soft);
+  }
+  .caption.is-changing .caption-name,
+  .caption.is-changing .caption-tagline { opacity: 0.3; }
+
+  /* ── Indicator (dots + counter) ──────────────────────────────────────── */
+  .indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding-block: 16px 32px;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 480px;
+    justify-content: center;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-sand);
+    cursor: pointer;
+    transition: background-color var(--dur-hover) var(--ease-out-soft),
+                transform var(--dur-hover) var(--ease-out-soft);
+  }
+  .dot:hover { background: var(--color-stone); }
+  .dot.is-focused {
+    background: var(--color-charcoal);
+    transform: scale(1.5);
+  }
+  .counter {
+    font-size: 12px;
+    color: var(--color-stone);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Stage tag (mockup marker, off in prod) ──────────────────────────── */
+  .stage-tag {
+    position: fixed;
+    bottom: 16px;
+    inset-inline-end: 16px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+</style>
+</head>
+<body>
+
+<div class="pill-header">ژیک</div>
+
+<main class="page">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="مسیر">
+      <a href="#">خانه</a><span class="breadcrumb-sep">/</span>طرح‌ها
+    </nav>
+
+    <div class="title-block">
+      <h1>طرح‌ها</h1>
+      <p>هر طرح یک زبان طراحی است. کارت‌ها را کنار بزنید تا کل مجموعه را ببینید.</p>
+    </div>
+  </div>
+
+  <section class="slider-section" aria-label="گالری طرح‌ها">
+    <button class="slider-arrow prev" type="button" aria-label="طرح قبلی" id="prevBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="slider-arrow next" type="button" aria-label="طرح بعدی" id="nextBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="slider-viewport">
+      <div class="slider-track" id="track"></div>
+    </div>
+
+    <div class="caption" id="caption" aria-live="polite">
+      <div class="caption-name" id="captionName">گندم</div>
+      <div class="caption-tagline" id="captionTagline">گرم، برای خواب کودکانه</div>
+    </div>
+
+    <div class="indicator">
+      <div class="dots" id="dots" role="tablist"></div>
+      <div class="counter" id="counter">۱ از ۱۸</div>
+    </div>
+  </section>
+</main>
+
+<div class="stage-tag">پیش‌نمایش — صفحه‌ی <span>طرح‌ها</span> با اسلایدر</div>
+
+<script>
+  const DESIGNS = [
+    { slug: 'gandom',      name: 'گندم',         tagline: 'گرم، برای خواب کودکانه' },
+    { slug: 'parla',       name: 'پارلا',         tagline: 'سادگی پایدار' },
+    { slug: 'jacqueline',  name: 'ژاکلین',       tagline: 'ظرافت کلاسیک' },
+    { slug: 'elizabeth',   name: 'الیزابت',       tagline: 'متانت اشرافی' },
+    { slug: 'caroline',    name: 'کارولین',       tagline: 'فضای آرام' },
+    { slug: 'iron',        name: 'آیرون',         tagline: 'استحکام مدرن' },
+    { slug: 'loof',        name: 'لوف',           tagline: 'صمیمیت دست‌ساز' },
+    { slug: 'lorena',      name: 'لورنا',         tagline: 'گرمی نوازشگر' },
+    { slug: 'lotus',       name: 'لوتوس',         tagline: 'آرامش گیاهی' },
+    { slug: 'luka',        name: 'لوکا',          tagline: 'هندسه‌ی دقیق' },
+    { slug: 'luka-plus',   name: 'لوکا پلاس',     tagline: 'فراتر از لوکا' },
+    { slug: 'mucha',       name: 'موکا',          tagline: 'گرمی شکلاتی' },
+    { slug: 'sento',       name: 'سنتو',          tagline: 'سکوت ژاپنی' },
+    { slug: 'verna',       name: 'ورنا',          tagline: 'تازگی بهاری' },
+    { slug: 'skate',       name: 'اسکیت',         tagline: 'انرژی نوجوانانه' },
+    { slug: 'elegans',     name: 'الگانس',        tagline: 'شکوه کم‌حرف' },
+    { slug: 'black-white', name: 'بلک اند وایت',  tagline: 'تضاد خالص' },
+    { slug: 'parla-kerem', name: 'پارلا کرم',     tagline: 'گرمی کرمی' }
+  ];
+
+  const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+  function toPersian(n) {
+    return String(n).replace(/[0-9]/g, d => PERSIAN_DIGITS[+d]);
+  }
+
+  const track = document.getElementById('track');
+  const dots = document.getElementById('dots');
+  const caption = document.getElementById('caption');
+  const captionName = document.getElementById('captionName');
+  const captionTagline = document.getElementById('captionTagline');
+  const counter = document.getElementById('counter');
+
+  // Render tiles + dots
+  DESIGNS.forEach((d, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'slider-tile';
+    tile.dataset.index = i;
+    tile.setAttribute('role', 'group');
+    tile.setAttribute('aria-label', d.name);
+    tile.innerHTML = `
+      <span class="tile-eyebrow">طرح</span>
+      <span class="tile-gif-pulse" aria-hidden></span>
+      <span class="tile-watermark" aria-hidden>ژ</span>
+      <span class="tile-name">${d.name}</span>
+    `;
+    tile.addEventListener('click', () => {
+      if (i === focused) {
+        // Center tap → navigate
+        window.alert(`Would navigate to /designs/${d.slug}`);
+      } else {
+        focused = i;
+        render();
+      }
+    });
+    track.appendChild(tile);
+
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot';
+    dot.dataset.index = i;
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', `طرح ${d.name}`);
+    dot.addEventListener('click', () => { focused = i; render(); });
+    dots.appendChild(dot);
+  });
+
+  // Focused state — start at index 1 so the first impression has a peeking tile on each side.
+  let focused = 1;
+
+  function render() {
+    // Compute shift so the focused tile sits in the center slot.
+    // Each slot = tile width + gap. In RTL flex, positive translateX moves track toward
+    // the right (revealing later items via the left side as they slide into view).
+    const tile0 = track.children[0];
+    const tile1 = track.children[1];
+    const tileWidth = tile0.getBoundingClientRect().width;
+    const gap = tile1.offsetLeft - tile0.offsetLeft - tileWidth;
+    const slot = tileWidth + Math.abs(gap);
+
+    const shift = (focused - 1) * slot;
+    track.style.transform = `translateX(${shift}px)`;
+
+    // Focused class on tile + dot
+    Array.from(track.children).forEach((el, i) => {
+      el.classList.toggle('is-focused', i === focused);
+    });
+    Array.from(dots.children).forEach((el, i) => {
+      el.classList.toggle('is-focused', i === focused);
+    });
+
+    // Cross-fade caption
+    caption.classList.add('is-changing');
+    setTimeout(() => {
+      const d = DESIGNS[focused];
+      captionName.textContent = d.name;
+      captionTagline.textContent = d.tagline;
+      counter.textContent = `${toPersian(focused + 1)} از ${toPersian(DESIGNS.length)}`;
+      caption.classList.remove('is-changing');
+    }, 200);
+  }
+
+  // Navigation
+  function go(delta) {
+    const n = DESIGNS.length;
+    focused = (focused + delta + n) % n;  // wrap
+    render();
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => go(+1));
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    // In RTL: ArrowLeft is the "next" direction (forward in reading), ArrowRight is "prev"
+    if (e.key === 'ArrowLeft')  go(+1);
+    if (e.key === 'ArrowRight') go(-1);
+  });
+
+  // Touch swipe
+  let touchStartX = 0, touchEndX = 0;
+  const viewport = document.querySelector('.slider-viewport');
+  viewport.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  viewport.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].clientX;
+    const dx = touchEndX - touchStartX;
+    if (Math.abs(dx) < 40) return;
+    // In RTL: swipe LEFT (negative dx visually) = next; swipe RIGHT = prev
+    if (dx < 0) go(+1); else go(-1);
+  });
+
+  // Initial paint (after layout settles)
+  window.addEventListener('load', render);
+  setTimeout(render, 0);
+</script>
+
+</body>
+</html>
