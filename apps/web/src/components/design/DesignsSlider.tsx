@@ -122,8 +122,11 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       const endX = e.changedTouches[0]?.clientX ?? 0;
       const dx = endX - startX;
       if (Math.abs(dx) < SWIPE_THRESHOLD_PX) return;
-      // RTL: swipe LEFT (negative dx) = next; swipe RIGHT (positive dx) = prev
-      go(dx < 0 ? +1 : -1);
+      // Cards follow the finger. In our RTL layout the focused tile is centered
+      // and the track translates rightward as focused increases (next tiles
+      // sit to the left). So swiping LEFT (dx < 0) drags the track left, which
+      // brings the RIGHT-side neighbour (lower index) into center = previous.
+      go(dx < 0 ? -1 : +1);
     };
     vp.addEventListener('touchstart', onStart, { passive: true });
     vp.addEventListener('touchend', onEnd);
