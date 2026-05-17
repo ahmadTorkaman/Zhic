@@ -82,6 +82,15 @@ export const Designs: CollectionConfig = {
       },
     },
     {
+      name: 'sliderMedia',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'تصویر اسلایدر صفحه‌ی طرح‌ها',
+      admin: {
+        description: 'مدیای کارت این طرح در اسلایدر صفحه‌ی /designs (ترجیحاً GIF یا ویدیوی کوتاه که کل ست را نشان می‌دهد). اگر خالی باشد، از heroMedia یا گالری استفاده می‌شود.',
+      },
+    },
+    {
       name: 'storyBlocks',
       type: 'richText',
       label: 'داستان طرح',
