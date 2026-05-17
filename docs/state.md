@@ -18,9 +18,9 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-05-16 |
+| Last updated | 2026-05-17 |
 | Current phase | Package 1, Month 1 |
-| Current session | Design detail page (`/designs/<slug>`) shipped on `feat/products-mega-menu`. Designs collection now carries editorial fields. Mega-menu + mobile menu route to the new lookbook URL. Branch now has: products mega-menu (FU-2.2-a/FU-3.2-u closed), mobile floating-island chrome, mobile two-state menu (FU-MM-c closed), design detail pages. |
+| Current session | Designs index page (`/designs` single-focus carousel) shipped on `feat/products-mega-menu`. Designs schema extended with sliderMedia. Closes FU-MM-a + FU-DDP-d. Branch now has: products mega-menu, mobile floating-island chrome, mobile two-state menu, design detail pages, bulk product import, and designs index. |
 | Active branch | `staging` |
 | Main branch | `main` (not yet updated — PRs still open) |
 
@@ -109,6 +109,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | Mobile header floating pill | ✅ | `3fe2125` | Mobile site header becomes a 12px-inset, rounded-full floating pill ≈42px tall with full-border chrome when scrolled. Desktop unchanged. --header-height bumped to 3.5rem on mobile to track the pill's bottom edge so breadcrumbs and StickyBreadcrumb clear it. HomeHero gets pt-[var(--header-height)] md:pt-0 so the cream image-half starts below the pill instead of being overlapped. |
 | Mobile products menu | ✅ | (PR HEAD) | Two-state MobileMenu — main view + products view with cross-fade between. Closes FU-MM-c. Search input + categories + designs + collections + "تمامی محصولات" CTA inside products view. Hierarchical Esc, reset-on-close. Spec: `docs/superpowers/specs/2026-05-16-mobile-products-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-mobile-products-menu.md`. |
 | Design detail page | ✅ | (PR HEAD) | New `/designs/[slug]` lookbook route. Designs collection extended with `tagline` + `heroMedia` + `storyBlocks` (richText with 4 embedded block types — pull-quote, image-grid, video-embed, material-ref — extracted from Articles into shared `services/api/src/lib/richTextBlocks.ts`). Mega-menu + mobile menu now route DesignsPanel/Section items to `/designs/<slug>` instead of `/products?design=`. The filtered-list URL stays alive as an alternate. Sets up but doesn't close FU-MM-a (the `/designs` index page is logged as FU-DDP-d). Spec: `docs/superpowers/specs/2026-05-16-design-detail-page-design.md`. Plan: `docs/superpowers/plans/2026-05-16-design-detail-page.md`. |
+| Designs index page | ✅ | (PR HEAD) | New `/designs` carousel route. Designs collection extended with `sliderMedia` field. DesignsSlider client component with dim/focused chrome differentiation (focused tile gets card + 22% right-edge GIF spill). Manual nav (arrows + swipe + keyboard + dots). Mega-menu + mobile menu CTAs restored. Sitemap entry added. Closes FU-MM-a + FU-DDP-d. Spec: `docs/superpowers/specs/2026-05-17-designs-index-page-design.md`. Plan: `docs/superpowers/plans/2026-05-17-designs-index-page.md`. |
 
 ### Phase 7 — Infrastructure & Deployment
 
@@ -268,7 +269,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-9-a | 9 | systemd units have `After=postgres.service` / `Wants=postgres.service` but postgres runs in docker-compose, not as a host systemd unit. Targets silently ignored. Apps' `Restart=on-failure` + `RestartSec=5` converges eventually. Consider a `wait-for-postgres` script in the unit or accept the eventual-consistency. |
 | FU-9-b | 9 | systemd hardening missing on zhic-web/zhic-api units: `NoNewPrivileges=yes`, `PrivateTmp=yes`, `ProtectSystem=strict`, etc. Add as a small follow-up after Tier 2 is healthy. |
 | FU-9-c | 9 | `/var/zhic/bin/node` is a symlink to `/home/zhic/.nvm/versions/node/v*/bin/node`. Robust today but: (a) `ProtectHome=yes` (FU-9-b) would break it, (b) nvm uninstall could dangle the symlink. Consider copying the node binary into `/var/zhic/bin` or installing from NodeSource. |
-| FU-MM-a | MM | `/designs` index page — wire "See all" CTA for designs panel of the mega-menu. |
+| ~~FU-MM-a~~ | MM | ~~`/designs` index page — wire "See all" CTA for designs panel of the mega-menu.~~ — **resolved 2026-05-17** via single-focus carousel page at `/designs` (dim sides without chrome, focused with card + 22% right-spill, manual nav). CTA restored on mega-menu DesignsPanel + mobile menu DesignsSection. |
 | FU-MM-b | MM | `/collections` index page — wire "See all" CTA for collections panel of the mega-menu. |
 | ~~FU-MM-c~~ | MM | ~~Mobile mega-menu expansion in `MobileMenu.tsx` — currently «محصولات» is a flat link to `/products` on mobile. Trigger by user research signal.~~ — **resolved 2026-05-16** via two-state MobileMenu (main view + products view, cross-fade transition, corner button morphs ×→←). Hierarchical Esc, reset-on-close, inert-driven a11y. Spec: `docs/superpowers/specs/2026-05-16-mobile-products-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-mobile-products-menu.md`. |
 | FU-MM-d | MM | Arrow-key navigation between tabs in the mega-menu + roving tabindex. |
@@ -286,9 +287,16 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-DDP-a | DDP | Materials section on the design page (derived from product materialIds OR manual `materialCallouts` relation). Add when editor research signals a need. |
 | FU-DDP-b | DDP | "Pair with" related designs cross-links — schema relation + section at bottom of the page. |
 | FU-DDP-c | DDP | Structured data — explore if any schema.org type fits ("CollectionPage", "CreativeWork"?). |
-| FU-DDP-d | DDP | `/designs` index listing all designs as a lookbook grid. Carries forward FU-MM-a. |
+| ~~FU-DDP-d~~ | DDP | ~~`/designs` index listing all designs as a lookbook grid. Carries forward FU-MM-a.~~ — **resolved 2026-05-17** (not a grid; the index ships as a single-focus carousel per operator direction). |
 | FU-DDP-e | DDP | Hero treatment alternates — option to switch a specific design to full-bleed or split layout via a `heroLayout` enum. Per-design design control. |
 | FU-DDP-f | DDP | Editorial blocks unique to designs that don't fit the article block set — e.g., a "scale chart" or "fabric callout" block. |
+| FU-DIX-a | DIX | GIF → video transcode pipeline on Payload upload (carries forward `FU-2.3-a`). Reduces media payload significantly; better preview controls. |
+| FU-DIX-b | DIX | Filter pills above the slider — by `age_group` (نوزاد/کودک/نوجوان/بزرگسال). Useful when catalog grows past 25-30 designs. |
+| FU-DIX-c | DIX | Lazy-load tile media beyond focused ± 2. Triggers when catalog exceeds 30 designs. |
+| FU-DIX-d | DIX | Optional auto-play with pause-on-hover (operator picked manual; revisit if engagement metrics suggest passive browsing). |
+| FU-DIX-e | DIX | Mini-grid alternate view — a button toggles slider ↔ grid (the discarded option B from brainstorming). For users who prefer scan-and-jump. |
+| FU-DIX-f | DIX | Slider analytics — track which designs get clicked-to-detail. Surface findings to operator. |
+| FU-DIX-g | DIX | Clone-tile wrap not in v1 — the wrap uses simple modulo, so at indices 0 / N-1 the focused tile sits at an edge instead of center. Production polish would clone the last 2 / first 2 tiles for seamless infinite loop per spec §5.3. Skipped in v1 for code simplicity. |
 
 ---
 
