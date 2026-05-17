@@ -16,9 +16,9 @@ export default async function DesignsIndexPage() {
         <div className="pt-[calc(var(--header-height)+var(--space-5))]">
           <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'طرح‌ها' }]} />
         </div>
-        <header className="py-9 text-center">
-          <h1 className="text-h1 font-black text-ink">طرح‌ها</h1>
-          <p className="mx-auto mt-3 max-w-[560px] text-lead font-light text-stone">
+        <header className="py-4 text-center md:py-9">
+          <h1 className="text-[26px] font-black leading-tight text-ink md:text-h1">طرح‌ها</h1>
+          <p className="mx-auto mt-2 max-w-[560px] text-[13px] font-light leading-relaxed text-stone md:mt-3 md:text-lead">
             هر طرح یک زبان طراحی است. کارت‌ها را کنار بزنید تا کل مجموعه را ببینید.
           </p>
         </header>

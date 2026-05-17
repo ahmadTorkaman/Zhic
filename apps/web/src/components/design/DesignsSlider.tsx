@@ -59,20 +59,29 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  // Center the focused tile in the viewport by transforming the track.
-  // In RTL flex, positive translateX moves the track right, revealing items further along.
+  // Center the focused tile in the viewport. The formula generalizes the
+  // 3-visible desktop math: when viewport == 3*tile + 2*gap it reduces to
+  // (focused-1)*slot. On mobile (tile ≈ 50% of viewport) it places each side
+  // tile's center on the viewport edge, leaving them exactly half visible.
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track || track.children.length === 0) return;
-    const firstTile = track.children[0] as HTMLElement;
-    const secondTile = track.children[1] as HTMLElement | undefined;
-    const tileWidth = firstTile.getBoundingClientRect().width;
-    const gap = secondTile
-      ? Math.abs(secondTile.offsetLeft - firstTile.offsetLeft) - tileWidth
-      : 0;
-    const slot = tileWidth + gap;
-    const shift = (focused - 1) * slot;
-    track.style.transform = `translateX(${shift}px)`;
+    const recenter = () => {
+      const track = trackRef.current;
+      const viewport = viewportRef.current;
+      if (!track || !viewport || track.children.length === 0) return;
+      const firstTile = track.children[0] as HTMLElement;
+      const secondTile = track.children[1] as HTMLElement | undefined;
+      const tileWidth = firstTile.getBoundingClientRect().width;
+      const gap = secondTile
+        ? Math.abs(secondTile.offsetLeft - firstTile.offsetLeft) - tileWidth
+        : 0;
+      const slot = tileWidth + gap;
+      const viewportWidth = viewport.getBoundingClientRect().width;
+      const shift = focused * slot - (viewportWidth - tileWidth) / 2;
+      track.style.transform = `translateX(${shift}px)`;
+    };
+    recenter();
+    window.addEventListener('resize', recenter);
+    return () => window.removeEventListener('resize', recenter);
   }, [focused, designs.length]);
 
   // Cross-fade the caption when focused changes

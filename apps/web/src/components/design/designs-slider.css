@@ -226,6 +226,60 @@
   font-size: clamp(15px, 1.4vw, 18px);
 }
 
+/* ── Mobile: focused tile dominates, side tiles peek ~half off the viewport ─
+   Desktop keeps the 3-visible model. On mobile each tile becomes 50% of the
+   viewport (minus the gap) so the slot equals exactly V/2 — that puts each
+   side tile's center on the viewport edge, leaving them half visible. Arrows
+   are hidden (swipe + dots cover navigation). Overlays + caption shrink so
+   the bigger focused card has more room to breathe. */
+@media (max-width: 768px) {
+  .zh-slider-section {
+    padding-block: 8px 12px;
+  }
+  .zh-slider-viewport {
+    margin-inline: 0;
+  }
+  .zh-slider-track {
+    gap: 12px;
+  }
+  .zh-slider-tile {
+    flex: 0 0 calc(50% - 12px);
+  }
+  .zh-slider-arrow {
+    display: none;
+  }
+  .zh-tile-eyebrow {
+    font-size: 9px;
+    inset-inline-start: 12px;
+    inset-block-start: 10px;
+  }
+  .zh-tile-name {
+    font-size: 14px;
+    inset-inline-start: 12px;
+    inset-block-end: 10px;
+  }
+  .zh-tile-watermark {
+    font-size: 70px;
+    inset-inline-end: 10%;
+    inset-block-end: 10%;
+  }
+  .zh-slider-caption {
+    padding-block: 18px 8px;
+    min-height: 70px;
+  }
+  .zh-caption-name {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .zh-caption-tagline {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .zh-slider-indicator {
+    padding-block: 8px 20px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .zh-slider-track,
   .zh-slider-tile,
