@@ -122,7 +122,7 @@
   }
   .slider-viewport {
     position: relative;
-    overflow: hidden;
+    overflow: hidden;          /* clip the focused tile's right-spill at the viewport edge */
     margin-inline: clamp(36px, 8vw, 100px);
   }
   .slider-track {
@@ -131,20 +131,43 @@
     transition: transform var(--dur-slide) var(--ease-out-soft);
     will-change: transform;
   }
+  /* Dim tiles: NO card chrome — they're just floating GIF surfaces.
+     The gradient + watermark sit naked, no border, no rounding. */
   .slider-tile {
     flex: 0 0 calc((100% - 2 * var(--gap, 32px)) / 3);
     aspect-ratio: 4 / 3;
-    border-radius: 8px;
-    overflow: hidden;
     position: relative;
     cursor: pointer;
     opacity: 0.4;
-    transition: opacity var(--dur-slide) var(--ease-out-soft),
-                transform var(--dur-slide) var(--ease-out-soft);
-    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    background: transparent;
+    border-radius: 0;
+    overflow: visible;         /* allow focused tile's bg to spill */
+    transition: opacity var(--dur-slide) var(--ease-out-soft);
   }
+  /* The "GIF surface" lives on a ::before so its size/shape can change
+     independently of the tile box (which carries the card chrome when focused). */
+  .slider-tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    border-radius: 0;
+    z-index: -1;               /* sit behind text content (eyebrow, name, watermark) */
+    transition: inset var(--dur-slide) var(--ease-out-soft),
+                border-radius var(--dur-slide) var(--ease-out-soft);
+  }
+  /* Focused tile: opacity full, card chrome appears, GIF spills 22% past right.
+     z-index lift so the spill sits above the right-neighbor's dim surface. */
   .slider-tile.is-focused {
     opacity: 1;
+    z-index: 5;
+    border: 1px solid var(--color-sand);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(20, 17, 15, 0.10);
+  }
+  .slider-tile.is-focused::before {
+    right: -22%;               /* extend 22% past the card's physical right edge */
+    border-radius: 8px 0 0 8px;/* round only the inside (left in viewport) corners */
   }
   /* GIF placeholder: watermark + faux product blocks */
   .tile-eyebrow {
@@ -211,7 +234,7 @@
     transition: background-color var(--dur-hover) var(--ease-out-soft),
                 border-color var(--dur-hover) var(--ease-out-soft),
                 box-shadow var(--dur-hover);
-    z-index: 5;
+    z-index: 10;  /* sit above focused-tile spill (which is at z-index: 5) */
     color: var(--color-charcoal);
   }
   .slider-arrow:hover {

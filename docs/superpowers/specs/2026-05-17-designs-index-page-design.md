@@ -38,12 +38,14 @@ See the live mockup. ASCII summary:
 │              طرح‌ها  (h1, centered)                                   │
 │       هر طرح یک زبان طراحی است.  (subtitle, centered)                 │
 │                                                                        │
-│   ←       ┌──────┐  ┌──────────┐  ┌──────┐       →                    │
-│  prev     │      │  │          │  │      │      next                  │
-│           │  GIF │  │   GIF    │  │ GIF  │                            │
-│           │ 40%  │  │   100%   │  │ 40%  │                            │
-│           │      │  │ (FOCUS)  │  │      │                            │
-│           └──────┘  └──────────┘  └──────┘                            │
+│   ←        ┌───┐    ┌─────────────╗   ┌───┐       →                    │
+│  prev      │GIF│    │             ║GIF│   │      next                  │
+│            │40%│    │   GIF 100%  ║40%│   │                            │
+│            │   │    │  (FOCUSED)  ║   │   │                            │
+│            └───┘    │   in card   ║   │   │                            │
+│           naked     └─────────────╝   └───┘                            │
+│           gif        ↑ card chrome   ↑ naked gif                        │
+│                      ↑ GIF spills 22% past the right edge ──▶          │
 │                                                                        │
 │                          گندم                                          │
 │                  گرم، برای خواب کودکانه                                 │
@@ -54,7 +56,19 @@ See the live mockup. ASCII summary:
                               [footer]
 ```
 
-### 1.1 Slider behavior
+### 1.1 Tile chrome — focused vs dim
+
+**Dim tiles** (the two side tiles): **no card chrome**. No border, no rounded corners, no shadow. Just the raw GIF surface at 40% opacity, sitting naked on the page background. The eyebrow, name, and watermark («ژ») still render on top as identification, but there's no container.
+
+**Focused tile** (the center one): gains card chrome — a 1px sand border, 8px rounded corners, soft drop shadow (`0 10px 30px rgba(20,17,15,0.10)`), and 100% opacity. The GIF surface inside extends **22% past the card's physical right edge**, with the inside (left) corners rounded but the right side flowing past where the card frame would end. The right edge of the card border is visually replaced by the spilling GIF.
+
+**Stacking**: focused tile sits at `z-index: 5` so its spilling GIF visually overlaps the right-neighbor dim tile (intentional — the focused design dominates). Slider arrows sit at `z-index: 10` so they're never covered by the spill.
+
+**On focus change**: the chrome smoothly transitions in/out via the same `var(--dur-slide) var(--ease-out-soft)` curve as the opacity. Old focused tile loses chrome (border fades, corners flatten, spill retracts); new focused tile gains chrome (border appears, corners round, GIF extends).
+
+**Mobile**: same chrome rules apply unchanged. Tiles are smaller (~95px wide at 375px viewport) but the 22% spill proportion is preserved. Arrows shrink to 44×44px and tuck closer to the viewport edges. No "1-with-peeking" reflow — kept 3-visible per operator choice (mockup-validated).
+
+### 1.2 Slider behavior
 
 | Interaction | Behavior |
 |---|---|
@@ -70,15 +84,11 @@ See the live mockup. ASCII summary:
 | Past last → next | Wraps to first (infinite loop) |
 | Past first → previous | Wraps to last (infinite loop) |
 
-### 1.2 Caption + indicator
+### 1.3 Caption + indicator
 
 - Caption sits below the slider: focused design's name (h2-ish, large) + tagline (one-line lead). On focus change, the caption cross-fades (opacity 1 → 0.3 → 1) over ~600ms.
 - Dots strip: one dot per design (max 30 wraps onto two rows visually). Focused dot is charcoal + scaled 1.5×. Click a dot to jump.
 - Counter: «N از M» with Persian digits.
-
-### 1.3 Mobile
-
-On viewports `< 768px`, the slider switches from "3 visible" to **"1 centered with peeking edges"** — the focused tile takes ~75% of the viewport width; the left and right neighbors peek ~10% off each edge (still at 40% opacity). Same arrows, same swipe, same dots. The reduction is purely for legibility — 3 tiles at 375px wide would be ~100px each, too small for the GIF content to read.
 
 ---
 
@@ -298,9 +308,81 @@ Handlers wired to: prev/next buttons, dot clicks, keyboard arrow keys (with clea
 - If catalog exceeds 30: add `loading="lazy"` on the `<img>` tags for tiles outside the 5-tile visible window (focused ± 2). Mark as `FU-DIX-c`.
 - `<video>` (for non-GIF media) gets `preload="metadata"` instead of `auto` to avoid prefetching all videos.
 
+### 5.8 Tile structure & chrome CSS
+
+Each tile is a `.slider-tile` with a `.tile-bg` child that holds the actual media. The chrome (border, radius, shadow) lives on `.slider-tile`; the spill geometry lives on `.tile-bg`. Splitting them lets the media surface change shape independently of the tile box.
+
+```html
+<div class="slider-tile" data-focused={i === focused || undefined}>
+  <div class="tile-bg">
+    <TileMedia design={design} />
+  </div>
+  <span class="tile-eyebrow">طرح</span>
+  <span class="tile-name">{design.name}</span>
+</div>
+```
+
+Key CSS rules (the full ruleset goes in `designs-slider.css`):
+
+```css
+/* Default = dim tile: no chrome, just the naked media surface */
+.slider-tile {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  opacity: 0.4;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  cursor: pointer;
+  transition: opacity var(--dur-slide) var(--ease-out-soft);
+}
+
+.tile-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;            /* clip the GIF to the tile-bg's box */
+  z-index: 0;                  /* sit under text labels */
+  transition: inset var(--dur-slide) var(--ease-out-soft),
+              border-radius var(--dur-slide) var(--ease-out-soft);
+}
+
+.slider-tile .tile-bg :is(img, video) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Focused = card chrome + GIF spills 22% past the right edge */
+.slider-tile[data-focused] {
+  opacity: 1;
+  z-index: 5;                  /* sit above dim tiles when spill overlaps */
+  border: 1px solid var(--color-sand);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(20, 17, 15, 0.10);
+}
+
+.slider-tile[data-focused] .tile-bg {
+  right: -22%;                  /* physical right — extend past the card's right border */
+  border-radius: 8px 0 0 8px;   /* round only the inside (left) corners */
+}
+
+/* Arrows always above the spill */
+.slider-arrow {
+  z-index: 10;
+}
+```
+
+**Why the spill is on the right edge specifically**: in RTL the right is the start side (where reading begins), so spilling there suggests "this design is coming forward to be discovered" rather than "advancing toward the next" (which would be a left-spill, going with reading direction). Operator choice — locked. If a future reversal is wanted, only the two `right` / `border-radius` declarations change.
+
+**Mobile**: the same rules apply unchanged. At a 375px viewport, the focused tile is ~95px wide and the 22% spill is ~21px (still ~22% relative). Arrows shrink via the `@media (max-width: 768px)` block but stay at z-index 10. No layout reflow.
+
 ---
 
 ## 6. Tile media rendering
+
+`TileMedia` returns just the `<img>` / `<video>` element. The wrapping `.tile-bg` (see §5.8) handles size, clip, and the spill geometry; the styles in `designs-slider.css` target `:is(img, video)` inside `.tile-bg` to fill the surface.
 
 ```tsx
 function TileMedia({ design }: { design: PayloadDesign }) {
@@ -312,16 +394,15 @@ function TileMedia({ design }: { design: PayloadDesign }) {
         src={media.url}
         autoPlay loop muted playsInline
         preload="metadata"
-        className="tile-media"
       />
     );
   }
   // image/* including image/gif — GIFs animate naturally in <img>
-  return <img src={media.url} alt="" className="tile-media" />;
+  return <img src={media.url} alt="" />;
 }
 ```
 
-`<TilePlaceholder>` renders the cream→sand gradient + «ژ» watermark (matches mockup styling exactly).
+`<TilePlaceholder>` renders the cream→sand linear gradient + a positioned «ژ» watermark — same look as the mockup's dim-tile background. Used when a design has no `sliderMedia` / `heroMedia` / `gallery` at all (rare; operator sees the placeholder as a cue to upload media).
 
 ---
 
@@ -374,20 +455,24 @@ In `DesignsSection`, after the `<ul>` grid of names, add:
 The PR is done when **all** of the following are true:
 
 1. `/designs` renders 200 on a fresh build.
-2. With 18 designs in DB, the slider shows 3 tiles at desktop (≥768px) and 1-with-peeking on mobile.
-3. Side tiles are at 40% opacity; center is at 100%.
-4. Arrow buttons + keyboard arrow keys + touch swipe + dot clicks all navigate.
-5. Past-last and before-first wrap continuously (no dead edges).
-6. Click on dim tile slides it to center; click on center tile navigates to `/designs/<slug>`.
-7. Tile media: GIF (uploaded as `sliderMedia` on a design) plays naturally; `<video>` mimeTypes render via `<video>` with autoplay+loop+muted+playsInline.
-8. Designs without `sliderMedia` (and no fallback) render the placeholder gradient + «ژ» watermark.
-9. Caption + counter update on each focus change with the cross-fade.
-10. Mega-menu `DesignsPanel` has a «همه‌ی طرح‌ها →» CTA that lands on `/designs`.
-11. Mobile `DesignsSection` has a «← همه‌ی طرح‌ها» link that lands on `/designs`.
-12. Sitemap includes `/designs`.
-13. Typecheck, lint, build all clean.
-14. Empty / 1-design / 2-design edge cases render without breaking.
-15. `docs/state.md` updated; `FU-MM-a` + `FU-DDP-d` struck through.
+2. With 18 designs in DB, the slider shows 3 tiles on both desktop AND mobile (no layout reflow at the 768px breakpoint — same 3-visible model, smaller tiles).
+3. **Dim tiles have NO card chrome** — no border, no rounded corners, no shadow. Just the GIF surface at 40% opacity sitting naked on the page background.
+4. **Focused tile has card chrome** — 1px sand border, 8px rounded corners, soft drop shadow, 100% opacity.
+5. **Focused tile's GIF spills 22% past its physical right edge**, with the inside (left) corners rounded only.
+6. Focused tile sits at `z-index: 5`; arrows at `z-index: 10` (arrows always above the spill).
+7. Chrome smoothly transitions in/out when focus changes (same duration/easing as the opacity transition).
+8. Arrow buttons + keyboard arrow keys + touch swipe + dot clicks all navigate.
+9. Past-last and before-first wrap continuously (no dead edges).
+10. Click on dim tile slides it to center; click on center tile navigates to `/designs/<slug>`.
+11. Tile media: GIF (uploaded as `sliderMedia` on a design) plays naturally; `<video>` mimeTypes render via `<video>` with autoplay+loop+muted+playsInline.
+12. Designs without `sliderMedia` (and no fallback) render the placeholder gradient + «ژ» watermark inside `.tile-bg`.
+13. Caption + counter update on each focus change with the cross-fade.
+14. Mega-menu `DesignsPanel` has a «همه‌ی طرح‌ها →» CTA that lands on `/designs`.
+15. Mobile `DesignsSection` has a «← همه‌ی طرح‌ها» link that lands on `/designs`.
+16. Sitemap includes `/designs`.
+17. Typecheck, lint, build all clean.
+18. Empty / 1-design / 2-design edge cases render without breaking.
+19. `docs/state.md` updated; `FU-MM-a` + `FU-DDP-d` struck through.
 
 ---
 
