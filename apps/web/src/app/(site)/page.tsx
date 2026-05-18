@@ -1,4 +1,4 @@
-import { HomeHero } from '@/components/hero/HomeHero';
+import { HomeHeroCarousel, type HeroSlide } from '@/components/hero/HomeHeroCarousel';
 import { HomeBrandStatement } from '@/components/home/HomeBrandStatement';
 import { HomeFeaturedDesigns } from '@/components/home/HomeFeaturedDesigns';
 import { HomeShowroomsStrip } from '@/components/home/HomeShowroomsStrip';
@@ -13,23 +13,30 @@ export default async function HomePage() {
     fetchLatestArticles(3),
   ]);
 
+  // Prefer curated heroSlides[] from the home global. Fall back to the
+  // legacy hero_media if no slides have been seeded yet, then to a static
+  // placeholder so the page never breaks during the operator's migration.
+  const seededSlides: HeroSlide[] = (home?.heroSlides ?? [])
+    .map<HeroSlide>((s) => ({
+      src: s.image?.url ?? '',
+      alt: s.alt ?? '',
+      link: s.link ?? undefined,
+    }))
+    .filter((s) => s.src.length > 0);
+
+  const slides: HeroSlide[] =
+    seededSlides.length > 0
+      ? seededSlides
+      : home?.hero_media?.url
+        ? [{ src: home.hero_media.url, alt: home?.hero_heading ?? '' }]
+        : [{ src: '/hero/IMG_0889.jpeg', alt: '' }];
+
   return (
     <>
-      <HomeHero
-        eyebrow={home?.hero_heading ? undefined : undefined}
+      <HomeHeroCarousel
         heading={home?.hero_heading ?? undefined}
         subheading={home?.hero_subheading ?? undefined}
-        image={
-          <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10">
-            <img
-              src="/hero/IMG_0889.jpeg"
-              alt="هموطن گرامی — پیشنهاد بازسازی رایگان سرویس خواب از ژیک"
-              className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-              loading="eager"
-              fetchPriority="high"
-            />
-          </div>
-        }
+        slides={slides}
       />
       <HomeBrandStatement statement={home?.brand_statement ?? null} />
       <HomeFeaturedDesigns designs={home?.featured_designs ?? []} />

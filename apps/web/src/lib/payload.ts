@@ -156,10 +156,18 @@ export type PayloadArticle = {
   seo?: PayloadSeo | null;
 };
 
+export type PayloadHomeSlide = {
+  id?: string | number;
+  image?: PayloadMedia | null;
+  alt?: string | null;
+  link?: string | null;
+};
+
 export type PayloadHome = {
   hero_heading?: string | null;
   hero_subheading?: string | null;
   hero_media?: PayloadMedia | null;
+  heroSlides?: PayloadHomeSlide[] | null;
   brand_statement?: LexicalRoot | null;
   featured_designs?: PayloadDesign[] | null;
   journal_teaser_heading?: string | null;
