@@ -65,21 +65,34 @@ await client.connect()
 
 console.log('Seeding rooms...')
 
-for (const seed of ROOM_SEEDS) {
-  const existing = await client.query(
-    'SELECT id FROM rooms WHERE slug = $1',
-    [seed.slug],
-  )
-  if (existing.rows.length > 0) {
-    console.log(`  Room: ${seed.name} — already exists, skipping`)
-    continue
+let errors = 0
+try {
+  for (const seed of ROOM_SEEDS) {
+    try {
+      const existing = await client.query(
+        'SELECT id FROM rooms WHERE slug = $1',
+        [seed.slug],
+      )
+      if (existing.rows.length > 0) {
+        console.log(`  Room: ${seed.name} — skipped (already exists)`)
+        continue
+      }
+      await client.query(
+        'INSERT INTO rooms (name, slug, tagline, status, updated_at, created_at) VALUES ($1, $2, $3, $4, NOW(), NOW())',
+        [seed.name, seed.slug, seed.tagline, 'draft'],
+      )
+      console.log(`  Room: ${seed.name} — created`)
+    } catch (e: any) {
+      errors++
+      console.error(`  ✗ Room ${seed.slug}: ${e.message ?? e}`)
+    }
   }
-  await client.query(
-    'INSERT INTO rooms (name, slug, tagline, status, updated_at, created_at) VALUES ($1, $2, $3, $4, NOW(), NOW())',
-    [seed.name, seed.slug, seed.tagline, 'draft'],
-  )
-  console.log(`  Room: ${seed.name} — created`)
+} finally {
+  await client.end()
 }
 
-await client.end()
+if (errors > 0) {
+  console.error(`Rooms seed finished with ${errors} error(s).`)
+  process.exit(1)
+}
 console.log('\nRooms seed complete!')
