@@ -409,6 +409,15 @@ export type PayloadStaticPage = {
   body?: LexicalRoot | null;
 };
 
+export type PayloadRoom = {
+  id: string | number;
+  name: string;
+  slug: string;
+  cover?: PayloadMedia | null;
+  tagline?: string | null;
+  longDescription?: LexicalRoot | null;
+};
+
 export type ProductsQuery = {
   category?: string;
   materials?: string[];
@@ -482,6 +491,14 @@ export async function fetchShowroom(
 
 export async function fetchContact(): Promise<PayloadContact | null> {
   return payloadFetch<PayloadContact>('/api/globals/contact?depth=1', 'contact');
+}
+
+export async function fetchRoom(slug: string): Promise<PayloadRoom | null> {
+  const list = await payloadFetch<PayloadList<PayloadRoom>>(
+    `/api/rooms?where[slug][equals]=${encodeURIComponent(slug)}&limit=1&depth=2`,
+    `room:${slug}`,
+  );
+  return list?.docs?.[0] ?? null;
 }
 
 export function showroomPath(slug: string): string {
