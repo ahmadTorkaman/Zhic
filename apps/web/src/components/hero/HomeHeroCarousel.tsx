@@ -74,7 +74,7 @@ export function HomeHeroCarousel({
         <div className="zh-hhc__viewport">
           <div
             className="zh-hhc__track"
-            style={{ transform: `translateX(${idx * 100}%)` }}
+            style={{ transform: `translateX(${-idx * 100}%)` }}
           >
             {slides.map((s, i) => {
               const inner = (
