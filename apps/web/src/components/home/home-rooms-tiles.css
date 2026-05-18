@@ -1,0 +1,24 @@
+/* apps/web/src/components/home/home-rooms-tiles.css */
+.zh-rooms { background: var(--color-ivory); padding-block: var(--space-7); }
+@media (min-width: 768px) {
+  .zh-rooms { padding-block: var(--space-9); padding-inline: var(--space-7); }
+}
+.zh-rooms__grid { display: grid; grid-template-columns: 1fr; gap: var(--space-4); max-width: var(--width-container-storefront); margin-inline: auto; }
+@media (min-width: 768px) {
+  .zh-rooms__grid { grid-template-columns: 1fr 1fr 1fr; gap: var(--space-5); }
+}
+.zh-rooms__tile { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform var(--dur-hover) var(--ease-out-soft); }
+.zh-rooms__tile:hover { transform: translateY(-2px); }
+.zh-rooms__media { aspect-ratio: 4 / 5; margin-bottom: var(--space-4); }
+@media (max-width: 767px) {
+  .zh-rooms__media { aspect-ratio: 5 / 3; }
+  /* Phone: tighter corner */
+  .zh-rooms__tile :where(.zh-rooms__media) > div { border-top-right-radius: 28px !important; }
+}
+.zh-rooms__label { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: 6px; }
+.zh-rooms__title { font-size: 1.5rem; font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-2); }
+.zh-rooms__sub { font-size: var(--text-small); color: var(--color-stone); line-height: 1.7; max-width: 36ch; margin-bottom: var(--space-4); }
+.zh-rooms__cta { display: inline-flex; align-items: center; gap: 0.5rem; align-self: flex-start; font-weight: 700; color: var(--color-charcoal); border-bottom: 1px solid var(--color-charcoal); padding-bottom: 2px; transition: color var(--dur-hover) var(--ease-out-soft), border-color var(--dur-hover) var(--ease-out-soft); }
+.zh-rooms__tile:hover .zh-rooms__cta { color: var(--color-forest); border-bottom-color: var(--color-forest); }
+.zh-rooms__arrow { display: inline-block; width: 1rem; height: 1px; background: currentColor; position: relative; }
+.zh-rooms__arrow::before { content: ''; position: absolute; inset-inline-start: -2px; top: -3px; width: 7px; height: 7px; border-inline-start: 1.5px solid currentColor; border-block-end: 1.5px solid currentColor; transform: rotate(45deg); }
