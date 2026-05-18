@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "generate:types": "payload generate:types",
     "seed": "tsx src/seed.ts",
+    "seed:rooms": "tsx scripts/seed-rooms.mts",
     "migrate": "tsx scripts/migrate.mts migrate",
     "migrate:create": "tsx scripts/migrate.mts migrate:create",
     "migrate:status": "tsx scripts/migrate.mts migrate:status",

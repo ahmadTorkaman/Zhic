@@ -36,8 +36,12 @@ export const Rooms: CollectionConfig = {
       name: 'cover',
       type: 'upload',
       relationTo: 'media',
-      required: true,
+      required: false,
       label: 'تصویر کاور',
+      admin: {
+        description:
+          'اپراتور باید تصویر کاور را پیش از انتشار آپلود کند. اتاق‌های بدون کاور در صفحه‌ی اصلی نمایش داده نمی‌شوند.',
+      },
     },
     {
       name: 'tagline',

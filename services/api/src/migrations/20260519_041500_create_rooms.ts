@@ -8,7 +8,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       "id" serial PRIMARY KEY NOT NULL,
       "name" varchar NOT NULL,
       "slug" varchar NOT NULL UNIQUE,
-      "cover_id" integer NOT NULL,
+      "cover_id" integer,
       "tagline" varchar,
       "long_description" jsonb,
       "status" "enum_rooms_status" DEFAULT 'draft' NOT NULL,

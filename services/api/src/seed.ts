@@ -114,7 +114,7 @@ async function seed() {
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   async function upsertBySlug<T extends WithId>(
-    collection: 'categories' | 'tags' | 'materials' | 'designs' | 'products' | 'collections' | 'showrooms' | 'articles' | 'authors' | 'journal-categories',
+    collection: 'categories' | 'tags' | 'materials' | 'designs' | 'products' | 'collections' | 'showrooms' | 'articles' | 'authors' | 'journal-categories' | 'rooms',
     slug: string,
     // payload's create signature is heavily generic; loose typing is intentional in seed.
     data: Record<string, unknown>,
@@ -816,6 +816,31 @@ async function seed() {
     },
   })
   console.log('  Events global: populated')
+
+  // --- Rooms (age-category landing pages) ------------------------------------
+
+  const ROOM_SEEDS = [
+    {
+      slug: 'kid',
+      name: 'اتاق کودک',
+      tagline: 'سرویس‌ها و قطعات ایمن، با رنگ‌های آرام و قابل‌رشد همراه با کودک.',
+    },
+    {
+      slug: 'teen',
+      name: 'اتاق نوجوان',
+      tagline: 'طراحی‌های منعطف برای سال‌های پر‌تغییر؛ از میز تحریر تا کتابخانه.',
+    },
+    {
+      slug: 'adult',
+      name: 'اتاق بزرگسال',
+      tagline: 'سرویس‌های هماهنگ از گردوی ایرانی، برای آرامش بلندمدت.',
+    },
+  ]
+
+  for (const seed of ROOM_SEEDS) {
+    await upsertBySlug('rooms', seed.slug, seed)
+    console.log(`  Room: ${seed.name}`)
+  }
 
   console.log('\nSeed complete!')
   process.exit(0)
