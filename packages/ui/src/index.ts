@@ -33,3 +33,5 @@ export { DateDisplay } from './DateDisplay';
 export type { DateDisplayProps } from './DateDisplay';
 export { ParallaxImage } from './ParallaxImage';
 export type { ParallaxImageProps } from './ParallaxImage';
+export { CountUp } from './CountUp';
+export type { CountUpProps } from './CountUp';
