@@ -501,6 +501,14 @@ export async function fetchRoom(slug: string): Promise<PayloadRoom | null> {
   return list?.docs?.[0] ?? null;
 }
 
+export async function fetchRooms(): Promise<PayloadRoom[]> {
+  const list = await payloadFetch<PayloadList<PayloadRoom>>(
+    `/api/rooms?limit=10&depth=2&sort=slug`,
+    'rooms',
+  );
+  return list?.docs ?? [];
+}
+
 export function showroomPath(slug: string): string {
   return `/showrooms/${slug}`;
 }
