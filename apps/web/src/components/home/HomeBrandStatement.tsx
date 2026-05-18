@@ -3,7 +3,11 @@ import { StatBlock } from './StatBlock';
 import { RichText } from '@/lib/richtext';
 import type { LexicalRoot } from '@/lib/payload';
 
-export type BrandStat = { value: string; label: string };
+export type BrandStat = {
+  value: number;
+  suffix?: string;
+  label: string;
+};
 
 export type HomeBrandStatementProps = {
   statement?: LexicalRoot | null;
@@ -14,9 +18,9 @@ export type HomeBrandStatementProps = {
 };
 
 const DEFAULT_STATS: BrandStat[] = [
-  { value: '۲۵+', label: 'سال تجربه در صنایع چوب' },
-  { value: '۱۲۰۰+', label: 'قطعه مبلمان تولیدشده' },
-  { value: '۳', label: 'شوروم در سراسر ایران' },
+  { value: 25, suffix: '+', label: 'سال تجربه در صنایع چوب' },
+  { value: 1200, suffix: '+', label: 'قطعه مبلمان تولیدشده' },
+  { value: 3, label: 'شوروم در سراسر ایران' },
 ];
 
 export function HomeBrandStatement({
@@ -27,7 +31,7 @@ export function HomeBrandStatement({
   aboutHref = '/about',
 }: HomeBrandStatementProps) {
   return (
-    <section className="relative overflow-hidden bg-ink py-9 text-ivory md:py-11">
+    <section className="relative overflow-hidden bg-forest-dark py-9 text-ivory md:py-11">
       {/* Caramel radial glow in bottom-start corner (RTL: start = right visually) */}
       <div
         aria-hidden
@@ -40,7 +44,7 @@ export function HomeBrandStatement({
           <div className="flex flex-row gap-[var(--space-5)] overflow-x-auto pb-[var(--space-4)] [scrollbar-width:none] md:flex-col md:gap-[var(--space-7)] md:overflow-visible md:pb-0">
             {stats.map((s, i) => (
               <div key={i} className="min-w-[140px] shrink-0 md:min-w-0 md:shrink">
-                <StatBlock value={s.value} label={s.label} />
+                <StatBlock value={s.value} suffix={s.suffix} label={s.label} />
               </div>
             ))}
           </div>
