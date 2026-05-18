@@ -1,10 +1,8 @@
 import { HomeHeroCarousel, type HeroSlide } from '@/components/hero/HomeHeroCarousel';
 import { HomeRoomsTiles, type HomeRoomTile } from '@/components/home/HomeRoomsTiles';
 import { HomeBrandStatement } from '@/components/home/HomeBrandStatement';
-import { HomeFeaturedDesigns } from '@/components/home/HomeFeaturedDesigns';
-import { HomeShowroomsStrip } from '@/components/home/HomeShowroomsStrip';
 import { HomeJournalRows, type HomeJournalArticle } from '@/components/home/HomeJournalRows';
-import { HomeInquiryCta } from '@/components/home/HomeInquiryCta';
+import { HomeShowroomsTeaser, type HomeShowroomCard } from '@/components/home/HomeShowroomsTeaser';
 import { fetchHome, fetchShowrooms, fetchLatestArticles, fetchRooms } from '@/lib/payload';
 
 export default async function HomePage() {
@@ -55,6 +53,21 @@ export default async function HomePage() {
       coverUrl: a.cover!.url!,
     }));
 
+  // Build showroom cards: only showrooms with a cover image, max 3.
+  const showroomCards: HomeShowroomCard[] = showrooms
+    .filter((s) => !!s.cover?.url)
+    .slice(0, 3)
+    .map((s) => ({
+      slug: s.slug,
+      city: s.address?.city ?? s.name,
+      addressLine: [s.address?.district, s.address?.street, s.address?.plaque]
+        .filter((p): p is string => typeof p === 'string' && p.length > 0)
+        .join('، '),
+      phone: s.phone ?? undefined,
+      coverUrl: s.cover!.url!,
+      isCentral: s.is_central ?? undefined,
+    }));
+
   return (
     <>
       <HomeHeroCarousel
@@ -64,10 +77,8 @@ export default async function HomePage() {
       />
       <HomeRoomsTiles rooms={roomTiles} />
       <HomeBrandStatement statement={home?.brand_statement ?? null} />
-      <HomeFeaturedDesigns designs={home?.featured_designs ?? []} />
-      <HomeShowroomsStrip showrooms={showrooms} />
       <HomeJournalRows articles={journalArticles} />
-      <HomeInquiryCta heading={home?.inquiry_cta_heading ?? undefined} />
+      <HomeShowroomsTeaser showrooms={showroomCards} />
     </>
   );
 }
