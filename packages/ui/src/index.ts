@@ -35,3 +35,5 @@ export { ParallaxImage } from './ParallaxImage';
 export type { ParallaxImageProps } from './ParallaxImage';
 export { CountUp } from './CountUp';
 export type { CountUpProps } from './CountUp';
+export { BlurInText } from './BlurInText';
+export type { BlurInTextProps } from './BlurInText';
