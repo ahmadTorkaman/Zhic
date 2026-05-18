@@ -10,7 +10,9 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@zhic/design-system": "workspace:*",
@@ -31,6 +33,7 @@
     "eslint": "^9",
     "react": "^19",
     "react-dom": "^19",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
   }
 }
