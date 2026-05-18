@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Container } from '@zhic/ui';
+import { BlurInText, Container } from '@zhic/ui';
 import './home-showrooms-teaser.css';
 
 export type HomeShowroomCard = {
@@ -22,11 +22,11 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
       <Container>
         <div className="zh-st__head">
           <div className="zh-st__head-left">
-            <div className="zh-st__eyebrow">شوروم‌ها</div>
-            <div className="zh-st__title">ما را در شهر خودتان ببینید</div>
+            <BlurInText as="div" className="zh-st__eyebrow">شوروم‌ها</BlurInText>
+            <BlurInText as="div" className="zh-st__title">ما را در شهر خودتان ببینید</BlurInText>
           </div>
           <Link href="/showrooms" className="zh-st__cta">
-            فهرست کامل
+            <BlurInText as="span">فهرست کامل</BlurInText>
             <span aria-hidden className="zh-st__arrow" />
           </Link>
         </div>

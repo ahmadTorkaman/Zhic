@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@zhic/ui';
+import { Button, BlurInText } from '@zhic/ui';
 import './home-hero-carousel.css';
 
 export type HeroSlide = {
@@ -55,9 +55,9 @@ export function HomeHeroCarousel({
     >
       {/* Text half — order-2 on mobile, order-1 on desktop (RTL-start) */}
       <div className="zh-hhc__text">
-        <div className="zh-hhc__eyebrow">{eyebrow}</div>
-        <h1 className="zh-hhc__heading">{heading}</h1>
-        <p className="zh-hhc__sub">{subheading}</p>
+        <BlurInText as="div" className="zh-hhc__eyebrow">{eyebrow}</BlurInText>
+        <BlurInText as="h1" className="zh-hhc__heading">{heading}</BlurInText>
+        <BlurInText as="p" className="zh-hhc__sub">{subheading}</BlurInText>
         <div className="zh-hhc__cta-row">
           <Button as="a" href="/products" variant="primary" size="lg">
             مشاهده‌ی محصولات

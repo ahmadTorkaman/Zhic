@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Container, ParallaxImage } from '@zhic/ui';
+import { BlurInText, Container, ParallaxImage } from '@zhic/ui';
 import './home-rooms-tiles.css';
 
 export type HomeRoomTile = {
@@ -28,11 +28,11 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
                 topRightRadius={48}
                 className="zh-rooms__media"
               />
-              <div className="zh-rooms__label">دسته‌ی سنی</div>
-              <div className="zh-rooms__title">{r.name}</div>
-              {r.tagline && <p className="zh-rooms__sub">{r.tagline}</p>}
+              <BlurInText as="div" className="zh-rooms__label">دسته‌ی سنی</BlurInText>
+              <BlurInText as="div" className="zh-rooms__title">{r.name}</BlurInText>
+              {r.tagline && <BlurInText as="p" className="zh-rooms__sub">{r.tagline}</BlurInText>}
               <span className="zh-rooms__cta">
-                مشاهده
+                <BlurInText as="span">مشاهده</BlurInText>
                 <span aria-hidden className="zh-rooms__arrow" />
               </span>
             </Link>

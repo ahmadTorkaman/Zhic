@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Container, computeRowOffset } from '@zhic/ui';
+import { BlurInText, Container, computeRowOffset } from '@zhic/ui';
 import './home-journal-rows.css';
 
 export type HomeJournalArticle = {
@@ -82,9 +82,9 @@ export function HomeJournalRows({
     <section ref={sectionRef} className="zh-jrows" aria-label="ژورنال">
       <Container>
         <div className="zh-jrows__head">
-          <div className="zh-jrows__eyebrow">{eyebrow}</div>
-          <h2 className="zh-jrows__heading">{heading}</h2>
-          <p className="zh-jrows__lead">{lead}</p>
+          <BlurInText as="div" className="zh-jrows__eyebrow">{eyebrow}</BlurInText>
+          <BlurInText as="h2" className="zh-jrows__heading">{heading}</BlurInText>
+          <BlurInText as="p" className="zh-jrows__lead">{lead}</BlurInText>
         </div>
       </Container>
 
@@ -114,7 +114,7 @@ export function HomeJournalRows({
       <Container>
         <div className="zh-jrows__cta-row">
           <Link href="/journal" className="zh-jrows__cta">
-            همه‌ی مقالات
+            <BlurInText as="span">همه‌ی مقالات</BlurInText>
             <span aria-hidden className="zh-jrows__arrow" />
           </Link>
         </div>

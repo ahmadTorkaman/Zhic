@@ -1,4 +1,4 @@
-import { Button, Container } from '@zhic/ui';
+import { BlurInText, Button, Container } from '@zhic/ui';
 import { StatBlock } from './StatBlock';
 import { RichText } from '@/lib/richtext';
 import type { LexicalRoot } from '@/lib/payload';
@@ -49,21 +49,21 @@ export function HomeBrandStatement({
             ))}
           </div>
           <div>
-            <div className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-gold">
+            <BlurInText as="div" className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-gold">
               {eyebrow}
-            </div>
-            <h2 className="mb-5 text-h2 font-black leading-[var(--leading-h2)] text-ivory">
+            </BlurInText>
+            <BlurInText as="h2" className="mb-5 text-h2 font-black leading-[var(--leading-h2)] text-ivory">
               {heading}
-            </h2>
+            </BlurInText>
             <div className="mb-6">
               {statement ? (
                 <div className="text-body font-light leading-[1.85] text-sand">
                   <RichText value={statement} />
                 </div>
               ) : (
-                <p className="text-body font-light leading-[1.85] text-sand">
+                <BlurInText as="p" className="text-body font-light leading-[1.85] text-sand">
                   ژیک در کارگاهی در همدان متولد شد — جایی که سنت کار با چوب ریشه در قرن‌ها دارد. ما چوب گردو را از جنگل‌های شمال تهیه می‌کنیم و با روش‌هایی می‌سازیم که عجله‌ای در آن‌ها نیست. هر قطعه یک سرمایه‌گذاری در آرامش است.
-                </p>
+                </BlurInText>
               )}
             </div>
             <Button as="a" href={aboutHref} variant="on-dark" size="md">
