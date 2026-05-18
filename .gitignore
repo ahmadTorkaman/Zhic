@@ -51,3 +51,7 @@ next-env.d.ts
 
 # Payload local-disk media fallback (used when S3 isn't configured)
 services/api/media/
+
+
+# superpowers
+.superpowers/
