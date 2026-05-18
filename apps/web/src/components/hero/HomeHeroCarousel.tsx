@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Button, Container } from '@zhic/ui';
+import { Button } from '@zhic/ui';
 import './home-hero-carousel.css';
 
 export type HeroSlide = {
@@ -47,7 +47,12 @@ export function HomeHeroCarousel({
   }, [intervalMs, total]);
 
   return (
-    <section className="zh-hhc">
+    <section
+      className="zh-hhc"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="کارویسل هیرو"
+    >
       {/* Text half — order-2 on mobile, order-1 on desktop (RTL-start) */}
       <div className="zh-hhc__text">
         <div className="zh-hhc__eyebrow">{eyebrow}</div>
