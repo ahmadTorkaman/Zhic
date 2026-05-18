@@ -7,7 +7,13 @@ import { cn } from './cn';
 export type ParallaxImageProps = {
   src: string;
   alt: string;
-  /** 0-100. 80 = inner image is 80% taller than the container. Default 80. */
+  /**
+   * Vertical parallax strength as a percentage. 80 = inner image is 80%
+   * taller than the container, drifting ±40% of the container height at
+   * full progress. Practical range 0-150; values above 100 produce a more
+   * dramatic effect at the cost of more cropped image visible area.
+   * Default 80.
+   */
   verticalAmount?: number;
   /** Container border-radius in px (applied to the visual container only). */
   borderRadius?: number;

@@ -1,6 +1,6 @@
 'use client';
 
-import { createElement, useEffect, useRef, useState, type CSSProperties, type ElementType } from 'react';
+import { createElement, useEffect, useMemo, useRef, useState, type CSSProperties, type ElementType } from 'react';
 import { splitIntoWords } from './text-split';
 
 export type BlurInTextProps = {
@@ -40,7 +40,7 @@ export function BlurInText({
 }: BlurInTextProps) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  const pieces = splitIntoWords(children);
+  const pieces = useMemo(() => splitIntoWords(children), [children]);
 
   useEffect(() => {
     const el = ref.current;
@@ -76,7 +76,7 @@ export function BlurInText({
       filter: visible ? 'blur(0)' : 'blur(18px)',
       transition: `opacity ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), filter ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`,
       transitionDelay: `${idx * stagger}ms`,
-      willChange: 'opacity, filter',
+      willChange: visible ? 'auto' : 'opacity, filter',
     };
     return (
       <span key={i} style={style}>
