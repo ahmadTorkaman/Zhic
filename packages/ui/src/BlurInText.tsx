@@ -16,6 +16,21 @@ export type BlurInTextProps = {
   className?: string;
 };
 
+/**
+ * Word-by-word blur-in reveal triggered on first scroll-into-view.
+ *
+ * The text is split once on mount and each word is wrapped in an inline-block
+ * span with a transition-delay derived from its word index. Whitespace is
+ * preserved as plain text nodes between word spans, so Persian glyph shaping
+ * stays intact within each word.
+ *
+ * @remarks
+ * The component assumes `children` is static — the wrapped pieces are keyed
+ * by array index. If `children` changes after mount, the existing word spans
+ * will be reused under the same keys and the per-word animation state may
+ * become stale. For dynamic text, remount the component (e.g. via a `key`
+ * prop on the parent) instead of mutating `children`.
+ */
 export function BlurInText({
   children,
   stagger = 90,
