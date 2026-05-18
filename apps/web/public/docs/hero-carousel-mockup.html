@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="fa-IR" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Homepage hero — sliding media · clean</title>
+
+<style>
+  /* ─── Ayandeh ─────────────────────────────────────────── */
+  @font-face { font-family:'Ayandeh'; font-weight:300; src:url('/fonts/ayandeh-light.ttf')   format('truetype'); font-display:swap; }
+  @font-face { font-family:'Ayandeh'; font-weight:400; src:url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Ayandeh'; font-weight:700; src:url('/fonts/ayandeh-bold.ttf')    format('truetype'); font-display:swap; }
+  @font-face { font-family:'Ayandeh'; font-weight:900; src:url('/fonts/ayandeh-black.ttf')   format('truetype'); font-display:swap; }
+
+  :root {
+    --color-ivory:#FAFAF7; --color-cream:#F5F0EB; --color-sand:#E8E0D8;
+    --color-stone:#8C8279; --color-charcoal:#2C2825; --color-ink:#14110F;
+    --color-forest:#5F7760; --color-forest-dark:#2D3A2E; --color-gold:#C49A6C;
+    --text-h1: clamp(2.5rem, 4vw + 1rem, 4rem);
+    --text-h4: 1.5rem; --text-body:1rem; --text-small:0.875rem; --text-eyebrow:0.75rem;
+    --text-lead:1.25rem;
+    --leading-lead:1.7;
+    --tracking-eyebrow-wide:0.12em;
+    --font-sans:'Ayandeh','Tahoma',sans-serif;
+    --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.5rem; --space-6:2rem; --space-7:3rem;
+    --radius-md:4px; --radius-lg:8px; --radius-pill:999px;
+    --shadow-subtle:0 2px 8px rgba(20,17,15,0.03);
+    --shadow-card:0 8px 32px rgba(20,17,15,0.04);
+    --dur-hover:240ms;
+    --ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+    --ease-out-quint:cubic-bezier(0.16,1,0.3,1);
+    --container-storefront:1440px;
+
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    background:var(--color-ivory);
+    color:var(--color-charcoal);
+    font-family:var(--font-sans);
+    line-height:1.6;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  .container{max-width:var(--container-storefront);margin-inline:auto;padding-inline:var(--space-5);}
+
+  /* ─── Doc explainer chrome ─────────────────────────────── */
+  .doc-head{background:var(--color-ivory);border-bottom:1px solid var(--color-sand);padding-block:var(--space-7) var(--space-5);}
+  .doc-head .eye{display:inline-block;font-size:var(--text-eyebrow);color:var(--color-forest);text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);font-weight:700;margin-bottom:var(--space-3);}
+  .doc-head h1{font-size:1.875rem;font-weight:900;color:var(--color-ink);line-height:1.25;}
+  .doc-head p{margin-top:var(--space-3);color:var(--color-stone);max-width:760px;font-size:1.05rem;}
+
+  .doc-section{padding-block:var(--space-7);}
+  .doc-section + .doc-section{border-top:1px solid var(--color-sand);}
+  .doc-section .label{font-size:var(--text-eyebrow);color:var(--color-stone);text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);font-weight:700;margin-bottom:var(--space-3);}
+  .doc-section h2{font-size:1.35rem;font-weight:700;color:var(--color-ink);margin-bottom:var(--space-5);}
+
+  .stage{
+    background:var(--color-ivory);
+    border:1px solid var(--color-sand);
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+    box-shadow:var(--shadow-subtle);
+  }
+
+  /* ─── Site header (desktop bar only, for context) ─────── */
+  .zh-header{background:var(--color-ivory);border-bottom:1px solid var(--color-sand);padding-block:var(--space-4);}
+  .zh-header .row{display:flex;justify-content:space-between;align-items:center;}
+  .zh-brand{font-size:var(--text-h4);font-weight:900;color:var(--color-charcoal);text-decoration:none;}
+  .zh-nav{display:flex;align-items:center;gap:1.75rem;font-size:var(--text-small);color:var(--color-stone);}
+  .zh-nav a{color:var(--color-stone);text-decoration:none;}
+  .zh-nav a:hover{color:var(--color-charcoal);}
+  .zh-nav .zh-trigger{
+    color:var(--color-stone);background:transparent;border:0;padding:0;cursor:pointer;
+    display:inline-flex;align-items:center;gap:0.35rem;font:inherit;
+  }
+  .zh-chev{display:inline-block;width:8px;height:8px;
+    border-inline-start:1.5px solid currentColor;border-block-end:1.5px solid currentColor;
+    transform:rotate(-45deg) translateY(-1px);}
+
+  /* ─── HERO ────────────────────────────────────────────── */
+  .hero{
+    display:grid;grid-template-columns:1fr;
+    background:var(--color-ivory);
+  }
+  @media (min-width:768px){
+    .hero{
+      grid-template-columns:1fr 1fr;
+      aspect-ratio: 16/9;
+    }
+  }
+
+  .hero-text{
+    background:var(--color-ivory);
+    display:flex;flex-direction:column;justify-content:center;
+    padding:var(--space-6) var(--space-5);
+    order:2;
+  }
+  @media (min-width:768px){
+    .hero-text{order:1;padding-block:var(--space-7);padding-inline-start:var(--space-7);padding-inline-end:var(--space-6);}
+  }
+  .hero-eyebrow{
+    font-size:var(--text-eyebrow);font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-forest);
+    margin-bottom:var(--space-5);
+  }
+  .hero-heading{
+    font-size:var(--text-h1);font-weight:900;line-height:1.1;color:var(--color-ink);
+    white-space:pre-line;text-wrap:balance;margin-bottom:var(--space-5);
+  }
+  .hero-sub{
+    font-size:var(--text-lead);font-weight:300;line-height:var(--leading-lead);
+    color:var(--color-stone);max-width:420px;margin-bottom:var(--space-7);
+  }
+  .hero-cta-row{display:flex;flex-direction:column;gap:var(--space-4);}
+  @media (min-width:768px){.hero-cta-row{flex-direction:row;flex-wrap:wrap;}}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:0.9rem 1.6rem;border-radius:var(--radius-md);
+    font-weight:700;font-size:var(--text-body);text-decoration:none;
+    transition:background-color var(--dur-hover) var(--ease-out-soft),
+               border-color var(--dur-hover) var(--ease-out-soft),
+               color var(--dur-hover) var(--ease-out-soft);
+  }
+  .btn-primary{background:var(--color-charcoal);color:var(--color-ivory);}
+  .btn-primary:hover{background:var(--color-ink);}
+  .btn-accent{background:transparent;color:var(--color-charcoal);border:1px solid var(--color-charcoal);}
+  .btn-accent:hover{background:var(--color-charcoal);color:var(--color-ivory);}
+  .scroll-hint{display:none;margin-top:auto;padding-top:var(--space-6);
+    align-items:center;gap:var(--space-3);font-size:var(--text-eyebrow);
+    font-weight:300;color:var(--color-stone);}
+  @media (min-width:768px){.scroll-hint{display:flex;}}
+  .scroll-hint .rule{display:block;width:40px;height:1px;background:var(--color-sand);}
+
+  .hero-media{
+    background:var(--color-ivory);
+    order:1;position:relative;
+    display:flex;align-items:center;justify-content:center;
+    aspect-ratio: 16/9;        /* mobile: 16:9 landscape on top */
+    overflow:hidden;
+    border-top-right-radius: 96px;  /* visual top-right (physical, RTL-agnostic) */
+  }
+  @media (min-width:768px){
+    .hero-media{
+      order:2;
+      aspect-ratio: auto;     /* desktop: filled by .hero's 16:9 split */
+      height: 100%;
+      border-top-right-radius: 140px;
+    }
+  }
+
+  /* ─── Carousel — single full image, no peeks ──────────── */
+  .slider{position:relative;width:100%;height:100%;user-select:none;display:flex;flex-direction:column;}
+  .slider-viewport{
+    position:relative;
+    flex:1;
+    overflow:hidden;
+    width:100%;
+    min-height:50vh;
+  }
+  @media (min-width:768px){.slider-viewport{min-height:0;height:100%;}}
+  .slider-track{
+    display:flex;
+    width:100%;height:100%;
+    transition:transform 850ms var(--ease-out-quint);
+    will-change:transform;
+  }
+  .slider-slide{
+    flex:0 0 100%;
+    width:100%;height:100%;
+    position:relative;
+  }
+  .slide-bg{
+    position:absolute;inset:0;
+    background-size:cover;background-position:center;
+    background-image:url('/docs/test-media/hero-1.jpg');
+  }
+  .slide-bg.v2{background-image:url('/docs/test-media/hero-2.jpg');}
+  .slide-bg.v3{background-image:url('/docs/test-media/hero-3.jpg');}
+  .slide-bg.v4{background-image:url('/docs/test-media/hero-4.jpg');}
+  .slide-bg.v5{background-image:url('/docs/test-media/hero-5.jpg');}
+
+  /* Arrows — overlayed on the image, inset from edges */
+  .slider-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:clamp(40px, 4vw, 52px);height:clamp(40px, 4vw, 52px);
+    border-radius:50%;background:rgba(250,250,247,0.82);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(232,224,216,0.6);
+    box-shadow:0 6px 18px rgba(20,17,15,0.08);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:10;color:var(--color-charcoal);
+    transition:background-color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover);
+  }
+  .slider-arrow:hover{background:var(--color-ivory);border-color:var(--color-stone);box-shadow:0 8px 22px rgba(20,17,15,0.12);}
+  .slider-arrow.prev{right:16px;}
+  .slider-arrow.next{left:16px;}
+  .slider-arrow svg{width:42%;height:42%;}
+
+  /* Dots — overlayed at the bottom of the image */
+  .slider-dots{
+    position:absolute;left:50%;bottom:16px;transform:translateX(-50%);
+    display:flex;gap:8px;z-index:10;
+  }
+  .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:rgba(140,130,121,0.5);
+    transition:background-color var(--dur-hover) var(--ease-out-soft), width var(--dur-hover);
+  }
+  .dot.active{background:var(--color-charcoal);width:18px;border-radius:3px;}
+
+  /* ─── Age categories — three editorial tiles ───────────── */
+  .ages{
+    background:var(--color-ivory);
+    padding:var(--space-7) var(--space-5);
+    border-top:1px solid var(--color-sand);
+  }
+  .ages-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:var(--space-4);
+    max-width:var(--container-storefront);
+    margin-inline:auto;
+  }
+  @media (min-width:768px){
+    .ages{padding-inline:var(--space-7);}
+    .ages-grid{grid-template-columns:1fr 1fr 1fr;gap:var(--space-5);}
+  }
+  .age-tile{
+    display:flex;flex-direction:column;
+    text-decoration:none;color:inherit;
+    transition:transform var(--dur-hover) var(--ease-out-soft);
+  }
+  .age-tile:hover{transform:translateY(-2px);}
+  .age-media{
+    aspect-ratio:4/5;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:var(--space-4);
+    border-top-right-radius: 48px;
+  }
+  /* Parallax inner — image lives in a larger box than the container.
+     vertical amount = 80% means inner is 80% taller (top:-40%, bottom:-40%). */
+  .parallax-inner{
+    position:absolute;
+    top:-40%; left:0; right:0; bottom:-40%;
+    background-size:cover;background-position:center;
+    background-image:url('/docs/test-media/kid.jpg');
+    will-change:transform;
+    backface-visibility:hidden;
+  }
+  .age-media.v2 .parallax-inner{background-image:url('/docs/test-media/teen.jpg');}
+  .age-media.v3 .parallax-inner{background-image:url('/docs/test-media/adult.jpg');}
+  .age-media::after{
+    content:'';position:absolute;inset:0;z-index:1;
+    background:linear-gradient(to top, rgba(20,17,15,0.18), transparent 55%);
+    pointer-events:none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .parallax-inner{top:0;bottom:0;transform:none !important;}
+  }
+  .age-label{
+    font-size:var(--text-eyebrow);font-weight:700;
+    text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);
+    color:var(--color-forest);margin-bottom:6px;
+  }
+  .age-title{
+    font-size:1.5rem;font-weight:700;color:var(--color-ink);
+    margin-bottom:var(--space-2);
+  }
+  .age-sub{font-size:var(--text-small);color:var(--color-stone);line-height:1.7;max-width:36ch;}
+  .age-arrow{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    margin-top:var(--space-4);
+    font-weight:700;color:var(--color-charcoal);
+    border-bottom:1px solid var(--color-charcoal);padding-bottom:2px;
+    align-self:flex-start;
+    transition:color var(--dur-hover) var(--ease-out-soft), border-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .age-tile:hover .age-arrow{color:var(--color-forest);border-bottom-color:var(--color-forest);}
+  .age-arrow .arrow-line{
+    display:inline-block;width:1rem;height:1px;background:currentColor;position:relative;
+  }
+  .age-arrow .arrow-line::before{
+    content:'';position:absolute;
+    inset-inline-start:-2px;top:-3px;
+    width:7px;height:7px;
+    border-inline-start:1.5px solid currentColor;
+    border-block-end:1.5px solid currentColor;
+    transform:rotate(45deg);
+  }
+
+  /* ─── HomeBrandStatement (dark stats + about) ─────────── */
+  .brand-statement{
+    position:relative;overflow:hidden;
+    background:var(--color-forest-dark);
+    color:var(--color-ivory);
+    padding-block:4rem;
+  }
+  @media (min-width:768px){.brand-statement{padding-block:6rem;}}
+  .brand-statement::before{
+    content:'';position:absolute;
+    bottom:-120px;inset-inline-end:-120px;
+    width:500px;height:500px;pointer-events:none;
+    background:radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%);
+  }
+  .brand-grid{
+    display:grid;grid-template-columns:1fr;gap:4rem;align-items:center;
+    position:relative;
+  }
+  @media (min-width:768px){.brand-grid{grid-template-columns:2fr 3fr;}}
+  .stats-col{
+    display:flex;flex-direction:row;gap:var(--space-5);
+    overflow-x:auto;padding-bottom:var(--space-4);scrollbar-width:none;
+  }
+  .stats-col::-webkit-scrollbar{display:none;}
+  @media (min-width:768px){
+    .stats-col{flex-direction:column;gap:var(--space-7);overflow:visible;padding-bottom:0;}
+  }
+  .stat{
+    min-width:140px;flex-shrink:0;
+    border-inline-start:2px solid var(--color-gold);
+    padding-inline-start:var(--space-5);
+  }
+  @media (min-width:768px){.stat{min-width:0;flex-shrink:1;}}
+  .stat-value{
+    font-size:clamp(1.5rem, 2vw + 0.5rem, 2rem);
+    font-weight:900;line-height:1.25;color:var(--color-ivory);
+    font-variant-numeric:tabular-nums;
+  }
+  @media (min-width:768px){
+    .stat-value{font-size:clamp(2rem, 3vw + 0.75rem, 3rem);}
+  }
+  .stat-label{margin-top:.25rem;font-size:var(--text-small);font-weight:300;color:var(--color-sand);}
+
+  .brand-text .eyebrow{
+    font-size:var(--text-eyebrow);font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-gold);
+    margin-bottom:var(--space-5);
+  }
+  .brand-text h2{
+    font-size:clamp(2rem, 3vw + 0.75rem, 3rem);
+    font-weight:900;line-height:1.25;color:var(--color-ivory);margin-bottom:var(--space-5);
+  }
+  .brand-text p{
+    font-size:var(--text-body);font-weight:300;line-height:1.85;
+    color:var(--color-sand);margin-bottom:var(--space-6);
+  }
+  .btn-on-dark{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:0.9rem 1.6rem;border-radius:var(--radius-md);
+    font-weight:700;font-size:var(--text-body);text-decoration:none;
+    background:var(--color-ivory);color:var(--color-ink);
+    transition:background-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .btn-on-dark:hover{background:var(--color-cream);}
+
+  /* Phone version — narrower padding, same dark chrome */
+  .phone-brand-statement{
+    background:var(--color-forest-dark);color:var(--color-ivory);
+    padding:var(--space-6) 18px;position:relative;overflow:hidden;
+  }
+  .phone-brand-statement::before{
+    content:'';position:absolute;bottom:-80px;inset-inline-end:-80px;
+    width:280px;height:280px;pointer-events:none;
+    background:radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%);
+  }
+  .phone-stats{
+    display:flex;flex-direction:row;gap:14px;
+    overflow-x:auto;padding-bottom:var(--space-4);
+    scrollbar-width:none;position:relative;
+  }
+  .phone-stats::-webkit-scrollbar{display:none;}
+  .phone-stat{
+    min-width:120px;flex-shrink:0;
+    border-inline-start:2px solid var(--color-gold);
+    padding-inline-start:12px;
+  }
+  .phone-stat .stat-value{font-size:1.4rem;}
+  .phone-stat .stat-label{font-size:0.75rem;line-height:1.5;}
+  .phone-brand-text{margin-top:var(--space-5);position:relative;}
+  .phone-brand-text .eyebrow{
+    font-size:10px;font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-gold);
+    margin-bottom:10px;
+  }
+  .phone-brand-text h2{
+    font-size:1.4rem;font-weight:900;line-height:1.25;color:var(--color-ivory);margin-bottom:10px;
+  }
+  .phone-brand-text p{
+    font-size:13px;font-weight:300;line-height:1.85;color:var(--color-sand);margin-bottom:16px;
+  }
+  .phone-brand-text .btn-on-dark{padding:10px 16px;font-size:13px;}
+
+  /* Phone age stack */
+  .phone-ages{
+    padding:var(--space-5) 18px var(--space-6);
+    background:var(--color-ivory);
+    border-top:1px solid var(--color-sand);
+  }
+  .phone-age-tile{
+    display:flex;flex-direction:column;
+    text-decoration:none;color:inherit;
+    margin-bottom:var(--space-5);
+  }
+  .phone-age-tile:last-child{margin-bottom:0;}
+  .phone-age-media{
+    aspect-ratio:5/3;
+    margin-bottom:10px;position:relative;overflow:hidden;
+    border-top-right-radius: 28px;
+  }
+  .phone-age-media .parallax-inner{
+    background-image:url('/docs/test-media/kid.jpg');
+  }
+  .phone-age-media.v2 .parallax-inner{background-image:url('/docs/test-media/teen.jpg');}
+  .phone-age-media.v3 .parallax-inner{background-image:url('/docs/test-media/adult.jpg');}
+  .phone-age-media::after{
+    content:'';position:absolute;inset:0;z-index:1;
+    background:linear-gradient(to top, rgba(20,17,15,0.18), transparent 55%);
+    pointer-events:none;
+  }
+  .phone-age-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-forest);margin-bottom:4px;}
+  .phone-age-title{font-size:1.1rem;font-weight:700;color:var(--color-ink);}
+
+  /* ─── Mobile preview panel ─────────────────────────────── */
+  .phone-stage{
+    background:var(--color-cream);
+    border:1px solid var(--color-sand);
+    border-radius:32px;
+    padding:48px 12px 24px;
+    width:min(380px, 100%);
+    margin-inline:auto;
+    box-shadow:var(--shadow-card);
+    position:relative;
+  }
+  .phone-stage::before{
+    /* Notch hint */
+    content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:110px;height:22px;background:var(--color-ink);border-radius:14px;
+  }
+  .phone-screen{
+    background:var(--color-ivory);
+    border-radius:20px;
+    overflow:hidden;
+    min-height:600px;
+  }
+
+  /* Phone pill header (floating, same as production mobile) */
+  .phone-pill{
+    margin:12px;
+    height:42px;
+    background:rgba(250,250,247,0.88);
+    backdrop-filter:blur(12px);
+    border:1px solid var(--color-sand);
+    border-radius:var(--radius-pill);
+    display:grid;grid-template-columns:1fr auto 1fr;
+    align-items:center;padding-inline:16px;
+  }
+  .phone-pill .burger{width:18px;height:18px;color:var(--color-charcoal);justify-self:start;}
+  .phone-pill .brand{font-size:var(--text-body);font-weight:900;color:var(--color-charcoal);justify-self:center;}
+  .phone-pill .spacer{justify-self:end;width:18px;}
+
+  /* Phone hero — image above text, single-tile carousel */
+  .phone-hero-media{
+    position:relative;
+    padding:24px 16px 12px;
+    background:var(--color-ivory);
+  }
+  .phone-slider-viewport{
+    position:relative;
+    overflow:hidden;
+    aspect-ratio:16/9;
+    width:100%;
+    border-top-right-radius: 28px;
+  }
+  .phone-slider-track{
+    display:flex;width:100%;height:100%;
+  }
+  .phone-slide{
+    flex:0 0 100%;
+    position:relative;
+  }
+  .phone-slide .pb{position:absolute;inset:0;background-size:cover;background-position:center;background-image:url('/docs/test-media/hero-2.jpg');}
+  .phone-slide.v2 .pb{background-image:url('/docs/test-media/hero-3.jpg');}
+  .phone-slide.v3 .pb{background-image:url('/docs/test-media/hero-4.jpg');}
+
+  .phone-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:30px;height:30px;border-radius:50%;
+    background:rgba(250,250,247,0.85);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(232,224,216,0.6);
+    box-shadow:0 4px 12px rgba(20,17,15,0.06);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--color-charcoal);z-index:10;
+  }
+  .phone-arrow.prev{right:10px;}
+  .phone-arrow.next{left:10px;}
+  .phone-arrow svg{width:42%;height:42%;}
+  .phone-dots{
+    position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+    display:flex;gap:5px;z-index:10;
+  }
+  .phone-dots .dot{width:5px;height:5px;border-radius:50%;background:rgba(140,130,121,0.5);}
+  .phone-dots .dot.active{background:var(--color-charcoal);width:14px;border-radius:3px;}
+
+  /* Phone hero text */
+  .phone-hero-text{padding:16px 18px 24px;}
+  .phone-hero-text .eye{
+    font-size:10px;font-weight:700;color:var(--color-forest);
+    text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);
+    margin-bottom:10px;
+  }
+  .phone-hero-text h1{
+    font-size:28px;font-weight:900;line-height:1.15;color:var(--color-ink);
+    white-space:pre-line;margin-bottom:10px;
+  }
+  .phone-hero-text p{
+    font-size:14px;font-weight:300;line-height:1.65;color:var(--color-stone);
+    margin-bottom:20px;
+  }
+  .phone-hero-text .ctas{display:flex;flex-direction:column;gap:10px;}
+  .phone-hero-text .btn-phone{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:12px 18px;border-radius:var(--radius-md);
+    font-weight:700;font-size:14px;text-decoration:none;
+  }
+  .phone-hero-text .btn-phone.p{background:var(--color-charcoal);color:var(--color-ivory);}
+  .phone-hero-text .btn-phone.a{background:transparent;color:var(--color-charcoal);border:1px solid var(--color-charcoal);}
+
+  /* ─── Stacked: desktop then phone ──────────────────────── */
+  .stack-views{
+    display:flex;flex-direction:column;
+    gap:var(--space-7);
+    align-items:stretch;
+  }
+  .view-label{
+    font-size:var(--text-eyebrow);color:var(--color-stone);
+    text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);
+    font-weight:700;margin-bottom:var(--space-3);
+  }
+  .phone-wrap{align-self:center;max-width:420px;width:100%;}
+
+  /* ─── Mapping panel ───────────────────────────────────── */
+  .mapping{background:var(--color-ivory);border:1px solid var(--color-sand);
+    border-radius:var(--radius-lg);padding:var(--space-6) var(--space-7);
+    line-height:2;box-shadow:var(--shadow-subtle);}
+  .mapping .row{padding-block:var(--space-2);}
+  .mapping .row + .row{border-top:1px dashed var(--color-sand);margin-top:var(--space-2);}
+  .mapping strong{color:var(--color-ink);}
+  .mapping code{background:var(--color-cream);padding:2px 8px;border-radius:3px;
+    font-family:'Menlo',monospace;font-size:var(--text-small);direction:ltr;display:inline-block;color:var(--color-charcoal);}
+  .mapping em{font-style:normal;color:var(--color-stone);}
+  .footer-note{color:var(--color-stone);font-size:var(--text-small);
+    margin-top:var(--space-7);padding-top:var(--space-5);border-top:1px solid var(--color-sand);}
+
+  /* ─── Home journal — three-row scroll parallax ───────── */
+  /* Ports framer.university's "Row 1/Row 2/Row 3" Illustration:
+     each row pans horizontally as the user scrolls vertically through the
+     section, with different speeds and alternating directions. */
+  .journal{
+    background:var(--color-ivory);
+    padding-block:5rem;
+    overflow:hidden;
+  }
+  .journal-head{
+    max-width:560px;margin-bottom:3rem;
+  }
+  .journal-head .eyebrow{
+    font-size:var(--text-eyebrow);font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-forest);
+    margin-bottom:var(--space-3);
+  }
+  .journal-head h2{
+    font-size:clamp(2rem, 3vw + 0.75rem, 3rem);
+    font-weight:900;line-height:1.2;color:var(--color-ink);margin-bottom:var(--space-4);
+  }
+  .journal-head p{
+    font-size:var(--text-body);color:var(--color-stone);font-weight:300;line-height:1.85;
+  }
+
+  .journal-rows{
+    display:flex;flex-direction:column;gap:1.25rem;margin-bottom:2.5rem;
+  }
+  .j-row{
+    display:flex;flex-direction:row;gap:1.25rem;
+    will-change:transform;
+    transform:translateX(0);
+    /* Each row extends past container so panning has somewhere to go */
+    padding-inline:max(0px, calc((100vw - var(--container-storefront, 1440px)) / -2));
+  }
+  /* Card */
+  .j-card{
+    flex:0 0 auto;width:340px;
+    display:flex;flex-direction:column;
+    text-decoration:none;color:inherit;
+  }
+  .j-cover{
+    aspect-ratio:16/9;
+    background:linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    background-size:cover;background-position:center;
+    margin-bottom:0.7rem;overflow:hidden;
+    border-top-right-radius:20px;position:relative;
+  }
+  .j-cover::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(to top, rgba(20,17,15,0.18), transparent 60%);
+    pointer-events:none;
+  }
+  .j-cover.v1{background-image:url('/docs/test-media/hero-1.jpg');}
+  .j-cover.v2{background-image:url('/docs/test-media/hero-2.jpg');}
+  .j-cover.v3{background-image:url('/docs/test-media/hero-3.jpg');}
+  .j-cover.v4{background-image:url('/docs/test-media/hero-4.jpg');}
+  .j-cover.v5{background-image:url('/docs/test-media/hero-5.jpg');}
+  .j-cat{
+    font-size:10px;font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-forest);
+    margin-bottom:0.3rem;
+  }
+  .j-title{
+    font-size:0.9rem;font-weight:700;line-height:1.4;color:var(--color-ink);
+    display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .journal-cta-row{display:flex;justify-content:flex-end;}
+  .journal-cta{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    font-weight:700;color:var(--color-charcoal);
+    border-bottom:1px solid var(--color-charcoal);
+    padding-bottom:2px;text-decoration:none;
+    transition:color var(--dur-hover) var(--ease-out-soft), border-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .journal-cta:hover{color:var(--color-forest);border-bottom-color:var(--color-forest);}
+  @media (prefers-reduced-motion: reduce){
+    .j-row{transform:none !important;}
+  }
+
+  /* Phone journal — same 3-row parallax, smaller cards */
+  .phone-journal{
+    background:var(--color-ivory);padding:24px 0;
+    border-top:1px solid var(--color-sand);
+    overflow:hidden;
+  }
+  .phone-journal .pj-head{padding-inline:18px;margin-bottom:1.25rem;}
+  .phone-journal .pj-head .eye{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-forest);margin-bottom:8px;}
+  .phone-journal .pj-head h2{font-size:1.4rem;font-weight:900;line-height:1.25;color:var(--color-ink);margin-bottom:8px;}
+  .phone-journal .pj-head p{font-size:13px;color:var(--color-stone);font-weight:300;line-height:1.85;}
+  /* Phone-specific row + card overrides */
+  .phone-journal .journal-rows{padding-inline:18px;gap:10px;margin-bottom:1.25rem;}
+  .phone-journal .j-row{gap:10px;padding-inline:0;}
+  .phone-journal .j-card{width:200px;}
+  .phone-journal .j-cover{margin-bottom:0.5rem;border-top-right-radius:14px;}
+  .phone-journal .j-cat{font-size:9px;margin-bottom:0.2rem;}
+  .phone-journal .j-title{font-size:0.78rem;line-height:1.4;}
+  .phone-journal-cta{display:block;text-align:center;padding-inline:18px;font-size:0.9rem;font-weight:700;color:var(--color-charcoal);text-decoration:none;}
+  .phone-journal-cta span{border-bottom:1px solid var(--color-charcoal);padding-bottom:2px;}
+
+  /* ─── Showrooms teaser — compact 3-up card grid ───────── */
+  .showrooms-teaser{
+    background:var(--color-ivory);
+    border-top:1px solid var(--color-sand);
+    padding-block:3.5rem;
+  }
+  .st-head{
+    display:flex;flex-direction:column;gap:0.4rem;margin-bottom:2rem;
+  }
+  @media (min-width:768px){
+    .st-head{flex-direction:row;align-items:baseline;justify-content:space-between;gap:1rem;}
+  }
+  .st-head-left{display:flex;flex-direction:column;gap:0.4rem;}
+  .st-eyebrow{
+    font-size:var(--text-eyebrow);font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-forest);
+  }
+  .st-title{
+    font-size:1.5rem;font-weight:900;color:var(--color-ink);line-height:1.3;
+  }
+  .st-cta{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    font-weight:700;color:var(--color-charcoal);
+    border-bottom:1px solid var(--color-charcoal);
+    padding-bottom:2px;text-decoration:none;font-size:0.95rem;
+    align-self:flex-start;
+    transition:color var(--dur-hover) var(--ease-out-soft), border-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .st-cta:hover{color:var(--color-forest);border-bottom-color:var(--color-forest);}
+
+  .st-grid{
+    display:grid;grid-template-columns:1fr;gap:1.5rem;
+  }
+  @media (min-width:768px){
+    .st-grid{grid-template-columns:1fr 1fr 1fr;gap:1.5rem;}
+  }
+  .st-card{
+    display:flex;flex-direction:column;
+    text-decoration:none;color:inherit;
+    transition:transform var(--dur-hover) var(--ease-out-soft);
+  }
+  .st-card:hover{transform:translateY(-2px);}
+  .st-card-cover{
+    aspect-ratio:3/2;
+    background:linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    background-size:cover;background-position:center;
+    margin-bottom:0.85rem;overflow:hidden;
+    border-top-right-radius:20px;position:relative;
+  }
+  .st-card-cover::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(to top, rgba(20,17,15,0.18), transparent 60%);
+    pointer-events:none;
+  }
+  .st-card-cover.v1{background-image:url('/docs/test-media/hero-1.jpg');}
+  .st-card-cover.v2{background-image:url('/docs/test-media/hero-2.jpg');}
+  .st-card-cover.v3{background-image:url('/docs/test-media/hero-3.jpg');}
+  .st-card .city{
+    font-size:1.05rem;font-weight:700;color:var(--color-ink);
+    margin-bottom:0.25rem;
+  }
+  .st-card .addr{
+    font-size:0.85rem;color:var(--color-stone);font-weight:300;line-height:1.7;
+  }
+  .st-card .phone{
+    font-size:var(--text-eyebrow);color:var(--color-stone);
+    margin-top:0.3rem;direction:ltr;text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* Phone showrooms — compact card stack */
+  .phone-showrooms{
+    background:var(--color-ivory);border-top:1px solid var(--color-sand);
+    padding:24px 18px;
+  }
+  .phone-showrooms .head{margin-bottom:1.25rem;}
+  .phone-showrooms .eye{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-forest);margin-bottom:6px;}
+  .phone-showrooms .t{font-size:1.2rem;font-weight:900;color:var(--color-ink);}
+  .phone-st-card{
+    display:flex;gap:12px;
+    text-decoration:none;color:inherit;
+    padding-block:0.9rem;
+    border-bottom:1px solid var(--color-sand);
+  }
+  .phone-st-card:last-of-type{border-bottom:none;}
+  .phone-st-card .cover{
+    flex-shrink:0;width:96px;aspect-ratio:1/1;
+    background-size:cover;background-position:center;
+    border-top-right-radius:14px;
+  }
+  .phone-st-card .cover.v1{background-image:url('/docs/test-media/hero-1.jpg');}
+  .phone-st-card .cover.v2{background-image:url('/docs/test-media/hero-2.jpg');}
+  .phone-st-card .cover.v3{background-image:url('/docs/test-media/hero-3.jpg');}
+  .phone-st-card .meta{flex:1;display:flex;flex-direction:column;justify-content:center;}
+  .phone-st-card .city{font-size:0.95rem;font-weight:700;color:var(--color-ink);margin-bottom:2px;}
+  .phone-st-card .addr{font-size:0.8rem;color:var(--color-stone);line-height:1.55;}
+  .phone-showrooms .cta{display:inline-block;margin-top:1rem;font-size:0.9rem;font-weight:700;color:var(--color-charcoal);text-decoration:none;border-bottom:1px solid var(--color-charcoal);padding-bottom:2px;}
+
+  /* ─── Site footer ─────────────────────────────────────── */
+  .site-footer{
+    background:var(--color-forest-dark);
+    color:var(--color-ivory);
+    padding-top:4rem;padding-bottom:1.5rem;
+    position:relative;
+  }
+  /* Contact hero strip — sits above the link columns */
+  .footer-contact-strip{
+    padding-bottom:3rem;
+    border-bottom:1px solid rgba(250,250,247,0.08);
+    margin-bottom:3rem;
+  }
+  .fc-head{margin-bottom:2.5rem;max-width:560px;}
+  .fc-head .eyebrow{
+    font-size:var(--text-eyebrow);font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-gold);
+    margin-bottom:var(--space-3);
+  }
+  .fc-head h2{
+    font-size:clamp(2rem, 3vw + 0.75rem, 3rem);
+    font-weight:900;line-height:1.2;color:var(--color-ivory);margin-bottom:var(--space-4);
+  }
+  .fc-head p{
+    font-size:var(--text-body);color:var(--color-sand);font-weight:300;line-height:1.85;
+  }
+
+  .fc-grid{
+    display:grid;grid-template-columns:1fr;gap:2.5rem;
+  }
+  @media (min-width:900px){
+    .fc-grid{grid-template-columns:1.2fr 1fr 1fr;gap:3rem;}
+  }
+  .fc-card{
+    display:flex;flex-direction:column;gap:1rem;
+  }
+  .fc-card .label{
+    font-size:var(--text-eyebrow);font-weight:700;text-transform:uppercase;
+    letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-gold);
+    margin-bottom:0;
+  }
+  .fc-card h3{
+    font-size:1.1rem;font-weight:700;color:var(--color-ivory);
+  }
+
+  /* Inline form */
+  .fc-form{display:flex;flex-direction:column;gap:0.75rem;}
+  .fc-input, .fc-textarea{
+    font-family:inherit;font-size:0.95rem;
+    background:rgba(250,250,247,0.04);
+    border:1px solid rgba(250,250,247,0.12);
+    color:var(--color-ivory);
+    padding:0.9rem 1rem;border-radius:var(--radius-md);
+    transition:border-color var(--dur-hover) var(--ease-out-soft),
+               background-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .fc-input::placeholder, .fc-textarea::placeholder{color:rgba(232,224,216,0.5);}
+  .fc-input:focus, .fc-textarea:focus{
+    outline:none;
+    border-color:var(--color-gold);
+    background:rgba(250,250,247,0.06);
+  }
+  .fc-textarea{min-height:84px;resize:vertical;}
+  .fc-submit{
+    align-self:flex-start;
+    margin-top:0.25rem;
+    padding:0.85rem 1.4rem;border-radius:var(--radius-md);
+    font-family:inherit;font-weight:700;font-size:0.95rem;
+    background:var(--color-ivory);color:var(--color-charcoal);
+    border:0;cursor:pointer;
+    transition:background-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .fc-submit:hover{background:var(--color-cream);}
+
+  /* Info block */
+  .fc-info ul{list-style:none;padding:0;margin:0;}
+  .fc-info li{
+    padding:0.6rem 0;display:flex;gap:0.8rem;align-items:flex-start;
+    color:var(--color-sand);font-size:0.95rem;line-height:1.7;
+    border-bottom:1px solid rgba(250,250,247,0.06);
+  }
+  .fc-info li:last-child{border-bottom:none;}
+  .fc-info .ico{
+    flex-shrink:0;width:18px;height:18px;color:var(--color-gold);
+    margin-top:3px;
+  }
+  .fc-info a{color:var(--color-sand);text-decoration:none;font-variant-numeric:tabular-nums;}
+  .fc-info a:hover{color:var(--color-ivory);}
+
+  /* Newsletter + socials */
+  .fc-news-form{display:flex;gap:0;border:1px solid rgba(250,250,247,0.12);
+    border-radius:var(--radius-md);overflow:hidden;
+    transition:border-color var(--dur-hover) var(--ease-out-soft);}
+  .fc-news-form:focus-within{border-color:var(--color-gold);}
+  .fc-news-form input{
+    flex:1;background:rgba(250,250,247,0.04);border:0;outline:0;
+    color:var(--color-ivory);font-family:inherit;font-size:0.95rem;
+    padding:0.85rem 1rem;
+  }
+  .fc-news-form input::placeholder{color:rgba(232,224,216,0.5);}
+  .fc-news-form button{
+    background:var(--color-gold);color:var(--color-ink);
+    border:0;padding:0 1.2rem;font-family:inherit;font-weight:700;cursor:pointer;
+    font-size:0.95rem;
+    transition:background-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .fc-news-form button:hover{background:#b08c5e;}
+  .fc-news-disclaimer{font-size:11px;color:rgba(232,224,216,0.5);line-height:1.6;}
+
+  .fc-socials{display:flex;gap:0.6rem;margin-top:0.5rem;}
+  .fc-social{
+    width:38px;height:38px;border-radius:50%;
+    border:1px solid rgba(250,250,247,0.14);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--color-sand);text-decoration:none;
+    transition:background-color var(--dur-hover) var(--ease-out-soft),
+               color var(--dur-hover) var(--ease-out-soft),
+               border-color var(--dur-hover) var(--ease-out-soft);
+  }
+  .fc-social:hover{background:var(--color-ivory);color:var(--color-charcoal);border-color:var(--color-ivory);}
+  .fc-social svg{width:16px;height:16px;}
+
+  /* Footer link columns — same as production */
+  .footer-cols{
+    display:grid;grid-template-columns:1fr;gap:2rem;
+    margin-bottom:2rem;
+  }
+  @media (min-width:600px){.footer-cols{grid-template-columns:1fr 1fr;}}
+  @media (min-width:900px){.footer-cols{grid-template-columns:repeat(4, 1fr);}}
+  .footer-col h4{
+    font-size:var(--text-small);font-weight:700;color:var(--color-ivory);
+    margin-bottom:var(--space-4);
+  }
+  .footer-col ul{list-style:none;padding:0;margin:0;}
+  .footer-col li{margin-bottom:0.75rem;}
+  .footer-col a{
+    color:var(--color-sand);text-decoration:none;font-size:var(--text-small);
+    font-weight:300;
+    transition:color var(--dur-hover) var(--ease-out-soft);
+  }
+  .footer-col a:hover{color:var(--color-ivory);}
+
+  /* Legal line */
+  .footer-legal{
+    display:flex;flex-direction:column;gap:0.75rem;
+    border-top:1px solid rgba(250,250,247,0.06);
+    padding-top:1.25rem;font-size:11px;color:rgba(250,250,247,0.35);
+    text-align:center;
+  }
+  @media (min-width:768px){
+    .footer-legal{flex-direction:row;justify-content:space-between;text-align:start;}
+  }
+  .footer-legal a{color:rgba(250,250,247,0.35);text-decoration:none;
+    transition:color var(--dur-hover) var(--ease-out-soft);}
+  .footer-legal a:hover{color:var(--color-ivory);}
+  .footer-legal-links{display:flex;gap:0.75rem;}
+  .footer-legal-links .sep{opacity:0.5;}
+
+  /* Phone footer — same chrome, tighter spacing */
+  .phone-footer{
+    background:var(--color-forest-dark);color:var(--color-ivory);
+    padding:24px 18px 20px;
+  }
+  .phone-footer .pf-contact{padding-bottom:24px;border-bottom:1px solid rgba(250,250,247,0.08);margin-bottom:24px;}
+  .phone-footer .pf-contact .eye{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-gold);margin-bottom:8px;}
+  .phone-footer .pf-contact h2{font-size:1.4rem;font-weight:900;line-height:1.25;color:var(--color-ivory);margin-bottom:14px;}
+  .phone-footer .pf-contact p{font-size:13px;color:var(--color-sand);font-weight:300;line-height:1.85;margin-bottom:18px;}
+  .phone-footer .pf-block{margin-bottom:18px;}
+  .phone-footer .pf-block .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:var(--tracking-eyebrow-wide);color:var(--color-gold);margin-bottom:8px;}
+  .phone-footer .pf-block h3{font-size:0.95rem;font-weight:700;color:var(--color-ivory);margin-bottom:10px;}
+  .phone-footer .fc-input, .phone-footer .fc-textarea{padding:0.7rem 0.85rem;font-size:0.9rem;}
+  .phone-footer .fc-submit{padding:0.7rem 1.1rem;font-size:0.9rem;}
+  .phone-footer .fc-info li{padding:0.45rem 0;font-size:0.9rem;}
+  .phone-footer .fc-socials{margin-top:0.25rem;}
+  .phone-footer .pf-cols{
+    display:grid;grid-template-columns:1fr 1fr;gap:1.25rem 1rem;
+    padding-bottom:18px;border-bottom:1px solid rgba(250,250,247,0.06);margin-bottom:14px;
+  }
+  .phone-footer .pf-cols h4{font-size:0.85rem;font-weight:700;color:var(--color-ivory);margin-bottom:10px;}
+  .phone-footer .pf-cols ul{list-style:none;padding:0;margin:0;}
+  .phone-footer .pf-cols li{margin-bottom:8px;}
+  .phone-footer .pf-cols a{color:var(--color-sand);text-decoration:none;font-size:0.85rem;font-weight:300;}
+  .phone-footer .pf-legal{
+    text-align:center;font-size:10px;color:rgba(250,250,247,0.35);line-height:1.7;
+  }
+  .phone-footer .pf-legal-links{margin-top:6px;}
+  .phone-footer .pf-legal a{color:rgba(250,250,247,0.35);text-decoration:none;}
+  .phone-footer .pf-legal .sep{opacity:0.5;margin-inline:6px;}
+
+  /* ─── Blur-in text reveal ────────────────────────────── */
+  /* Ported from split-text-mockup.html @keyframes blur-in. Word-by-word:
+     each word of a text element is wrapped in .blur-piece and staggered
+     by --bi (word index within the element). Whitespace stays as text nodes
+     so natural word spacing is preserved. Persian glyph shaping is preserved
+     because each word is a single text run. */
+  .blur-init{
+    opacity:0;
+    filter:blur(18px);
+    transition:
+      opacity 700ms var(--ease-out-soft),
+      filter  700ms var(--ease-out-soft);
+    transition-delay: calc(var(--bi, 0) * 90ms);
+    will-change: opacity, filter;
+  }
+  .blur-piece{
+    display:inline-block;
+  }
+  .blur-init.is-visible{
+    opacity:1;
+    filter:blur(0);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .blur-init{opacity:1;filter:blur(0);transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-head">
+  <div class="container">
+    <div class="eye">Schema reorg · brainstorm · 2026-05-18</div>
+    <h1>Homepage hero + three age categories</h1>
+    <p>Hero = single full-image carousel on the ivory page surface (no panel, no chrome, no text overlay). Secondary CTA «ثبت استعلام» removed — only «مشاهده‌ی محصولات» remains. Underneath the hero, three editorial age tiles: <strong>کودک · نوجوان · بزرگسال</strong>, each linking to a new <code style="background:var(--color-cream);padding:1px 6px;border-radius:3px;font-family:monospace;direction:ltr;">/rooms/[slug]</code> landing page.</p>
+  </div>
+</header>
+
+<!-- ─── Desktop + phone side by side ─────────────────────── -->
+<section class="doc-section">
+  <div class="container">
+    <div class="label">layouts</div>
+    <h2>Desktop then phone (stacked, so each gets full width)</h2>
+
+    <div class="stack-views">
+      <!-- Desktop stage -->
+      <div>
+      <div class="view-label">desktop</div>
+      <div class="stage">
+        <div class="zh-header">
+          <div class="container">
+            <div class="row">
+              <a class="zh-brand" href="/">ژیک</a>
+              <nav class="zh-nav" aria-label="اصلی">
+                <button class="zh-trigger">سرویس خواب <span class="zh-chev" aria-hidden></span></button>
+                <button class="zh-trigger">تخت و وسایل اتاق خواب <span class="zh-chev" aria-hidden></span></button>
+                <a href="/journal">ژورنال</a>
+                <a href="/showrooms">نمایشگاه‌ها</a>
+                <a href="/about">درباره‌ی ما</a>
+                <a href="/contact">تماس</a>
+              </nav>
+            </div>
+          </div>
+        </div>
+
+        <section class="hero">
+          <div class="hero-text">
+            <div class="hero-eyebrow">کلکسیون بهار ۱۴۰۵</div>
+            <h1 class="hero-heading">ساخته‌شده
+برای ماندن</h1>
+            <p class="hero-sub">مبلمان دست‌ساز از چوب گردوی ایرانی، برای خانه‌هایی که آرامش را می‌فهمند.</p>
+            <div class="hero-cta-row">
+              <a href="/products" class="btn btn-primary">مشاهده‌ی محصولات</a>
+            </div>
+            <div class="scroll-hint"><span class="rule" aria-hidden></span>اسکرول کنید</div>
+          </div>
+
+          <div class="hero-media">
+            <div class="slider" role="region" aria-label="گالری اسلایدر">
+              <div class="slider-viewport">
+                <div class="slider-track">
+                  <div class="slider-slide"><div class="slide-bg"></div></div>
+                </div>
+                <div class="slider-dots" role="tablist" aria-label="انتخاب اسلاید">
+                  <span class="dot"></span>
+                  <span class="dot active"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Three age categories underneath the hero -->
+        <section class="ages" aria-label="دسته‌بندی سنی">
+          <div class="ages-grid">
+            <a class="age-tile" href="/rooms/kid">
+              <div class="age-media" data-parallax="80"><div class="parallax-inner"></div></div>
+              <div class="age-label">دسته‌ی سنی</div>
+              <div class="age-title">اتاق کودک</div>
+              <p class="age-sub">سرویس‌ها و قطعات ایمن، با رنگ‌های آرام و قابل‌رشد همراه با کودک.</p>
+              <span class="age-arrow">مشاهده <span class="arrow-line" aria-hidden></span></span>
+            </a>
+            <a class="age-tile" href="/rooms/teen">
+              <div class="age-media v2" data-parallax="80"><div class="parallax-inner"></div></div>
+              <div class="age-label">دسته‌ی سنی</div>
+              <div class="age-title">اتاق نوجوان</div>
+              <p class="age-sub">طراحی‌های منعطف برای سال‌های پر‌تغییر؛ از میز تحریر تا کتابخانه.</p>
+              <span class="age-arrow">مشاهده <span class="arrow-line" aria-hidden></span></span>
+            </a>
+            <a class="age-tile" href="/rooms/adult">
+              <div class="age-media v3" data-parallax="80"><div class="parallax-inner"></div></div>
+              <div class="age-label">دسته‌ی سنی</div>
+              <div class="age-title">اتاق بزرگسال</div>
+              <p class="age-sub">سرویس‌های هماهنگ از گردوی ایرانی، برای آرامش بلندمدت.</p>
+              <span class="age-arrow">مشاهده <span class="arrow-line" aria-hidden></span></span>
+            </a>
+          </div>
+        </section>
+
+        <!-- HomeBrandStatement — dark stats + about block -->
+        <section class="brand-statement" aria-label="درباره ژیک">
+          <div class="container">
+            <div class="brand-grid">
+              <div class="stats-col">
+                <div class="stat">
+                  <div class="stat-value" data-count-up data-target="25" data-suffix="+"></div>
+                  <div class="stat-label">سال تجربه در صنایع چوب</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value" data-count-up data-target="1200" data-suffix="+"></div>
+                  <div class="stat-label">قطعه مبلمان تولیدشده</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value" data-count-up data-target="3" data-suffix=""></div>
+                  <div class="stat-label">شوروم در سراسر ایران</div>
+                </div>
+              </div>
+              <div class="brand-text">
+                <div class="eyebrow">درباره‌ی ژیک</div>
+                <h2>از همدان، برای ایران</h2>
+                <p>ژیک در کارگاهی در همدان متولد شد — جایی که سنت کار با چوب ریشه در قرن‌ها دارد. ما چوب گردو را از جنگل‌های شمال تهیه می‌کنیم و با روش‌هایی می‌سازیم که عجله‌ای در آن‌ها نیست. هر قطعه یک سرمایه‌گذاری در آرامش است.</p>
+                <a href="/about" class="btn-on-dark">بیش‌تر درباره‌ی ما</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Journal teaser -->
+        <section class="journal" aria-label="ژورنال">
+          <div class="container">
+            <div class="journal-head">
+              <div class="eyebrow">ژورنال ژیک</div>
+              <h2>از کارگاه، از همدان</h2>
+              <p>یادداشت‌هایی از پشت‌صحنه‌ی ساخت، انتخاب چوب، و طرح‌هایی که از سنت بلند ایران الهام گرفته‌اند.</p>
+            </div>
+
+            <div class="journal-rows">
+              <!-- Row 1 — drifts to the right slowly -->
+              <div class="j-row" data-journal-row="1">
+                <a class="j-card" href="/journal/zhic-design-language">
+                  <div class="j-cover v1"></div>
+                  <div class="j-cat">طراحی</div>
+                  <div class="j-title">زبان طراحی ژیک — چرا صبر مهم‌ترین ابزار ماست</div>
+                </a>
+                <a class="j-card" href="/journal/walnut-from-north">
+                  <div class="j-cover v2"></div>
+                  <div class="j-cat">مواد</div>
+                  <div class="j-title">گردوی شمال — چوب اصلی از جنگل‌های هیرکانی</div>
+                </a>
+                <a class="j-card" href="/journal/atelier-tour">
+                  <div class="j-cover v3"></div>
+                  <div class="j-cat">کارگاه</div>
+                  <div class="j-title">سفری به کارگاه ژیک — جایی که هر قطعه ساخته می‌شود</div>
+                </a>
+                <a class="j-card" href="/journal/care-guide">
+                  <div class="j-cover v4"></div>
+                  <div class="j-cat">مراقبت</div>
+                  <div class="j-title">مراقبت از مبلمان چوبی — اصول روزانه و فصلی</div>
+                </a>
+                <a class="j-card" href="/journal/oil-finish">
+                  <div class="j-cover v5"></div>
+                  <div class="j-cat">پرداخت</div>
+                  <div class="j-title">روغن یا لاک؟ — انتخاب پایان‌بندی متناسب با خانه</div>
+                </a>
+              </div>
+
+              <!-- Row 2 — drifts to the left (opposite direction) -->
+              <div class="j-row" data-journal-row="2">
+                <a class="j-card" href="/journal/inlay-traditions">
+                  <div class="j-cover v3"></div>
+                  <div class="j-cat">سنت</div>
+                  <div class="j-title">منبت‌کاری — زبان مشترک خوشه‌ی صنعت چوب ایران</div>
+                </a>
+                <a class="j-card" href="/journal/showroom-tehran">
+                  <div class="j-cover v5"></div>
+                  <div class="j-cat">شوروم</div>
+                  <div class="j-title">افتتاح شوروم تهران — سعادت‌آباد، بلوار فرحزادی</div>
+                </a>
+                <a class="j-card" href="/journal/material-choice">
+                  <div class="j-cover v1"></div>
+                  <div class="j-cat">مواد</div>
+                  <div class="j-title">از کجا بدانیم چوب خوب چیست؟</div>
+                </a>
+                <a class="j-card" href="/journal/seasonal-collection">
+                  <div class="j-cover v2"></div>
+                  <div class="j-cat">کلکسیون</div>
+                  <div class="j-title">کلکسیون بهار ۱۴۰۵ — رنگ‌ها و خطوط جدید</div>
+                </a>
+                <a class="j-card" href="/journal/sustainability">
+                  <div class="j-cover v4"></div>
+                  <div class="j-cat">پایداری</div>
+                  <div class="j-title">از جنگل تا کارگاه — مسیر پایدار چوب گردو</div>
+                </a>
+              </div>
+
+              <!-- Row 3 — drifts to the right faster -->
+              <div class="j-row" data-journal-row="3">
+                <a class="j-card" href="/journal/joinery-techniques">
+                  <div class="j-cover v2"></div>
+                  <div class="j-cat">تکنیک</div>
+                  <div class="j-title">اتصالات سنتی چوب — راز ماندگاری</div>
+                </a>
+                <a class="j-card" href="/journal/customer-stories">
+                  <div class="j-cover v4"></div>
+                  <div class="j-cat">داستان مشتری</div>
+                  <div class="j-title">سرویس سلطنتی در خانه‌ای در شیراز</div>
+                </a>
+                <a class="j-card" href="/journal/wood-drying">
+                  <div class="j-cover v5"></div>
+                  <div class="j-cat">فرآیند</div>
+                  <div class="j-title">خشک‌کن طبیعی — چرا ۲ سال صبر را لازم می‌دانیم</div>
+                </a>
+                <a class="j-card" href="/journal/spring-launch">
+                  <div class="j-cover v1"></div>
+                  <div class="j-cat">رویداد</div>
+                  <div class="j-title">رونمایی کلکسیون بهار در نمایشگاه همدان</div>
+                </a>
+                <a class="j-card" href="/journal/atelier-tour">
+                  <div class="j-cover v3"></div>
+                  <div class="j-cat">کارگاه</div>
+                  <div class="j-title">پشت‌صحنه‌ی ساخت — استادکاران ژیک</div>
+                </a>
+              </div>
+            </div>
+
+            <div class="journal-cta-row">
+              <a class="journal-cta" href="/journal">همه‌ی مقالات <span class="arrow-line" aria-hidden></span></a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Showrooms teaser — compact 3-up cards -->
+        <section class="showrooms-teaser" aria-label="شوروم‌ها">
+          <div class="container">
+            <div class="st-head">
+              <div class="st-head-left">
+                <div class="st-eyebrow">شوروم‌ها</div>
+                <div class="st-title">ما را در شهر خودتان ببینید</div>
+              </div>
+              <a class="st-cta" href="/showrooms">فهرست کامل <span class="arrow-line" aria-hidden></span></a>
+            </div>
+
+            <div class="st-grid">
+              <a class="st-card" href="/showrooms/hamedan">
+                <div class="st-card-cover v1"></div>
+                <div class="city">همدان · شوروم مرکزی</div>
+                <div class="addr">شهرک صنعتی بوعلی، خیابان فناوران ۴</div>
+                <div class="phone">۰۸۱-۳۴۲۵ ۶۷۸۹</div>
+              </a>
+              <a class="st-card" href="/showrooms/tehran">
+                <div class="st-card-cover v2"></div>
+                <div class="city">تهران</div>
+                <div class="addr">سعادت‌آباد، بلوار فرحزادی، پلاک ۸۴</div>
+                <div class="phone">۰۲۱-۸۸۷۵ ۳۲۱۰</div>
+              </a>
+              <a class="st-card" href="/showrooms/shiraz">
+                <div class="st-card-cover v3"></div>
+                <div class="city">شیراز</div>
+                <div class="addr">بلوار ارم، خیابان زند، پلاک ۱۲</div>
+                <div class="phone">۰۷۱-۳۶۲۷ ۹۸۴۱</div>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Site footer with contact hero strip -->
+        <footer class="site-footer" aria-label="پاورقی سایت">
+          <div class="container">
+
+            <!-- Contact hero strip -->
+            <div class="footer-contact-strip">
+              <div class="fc-head">
+                <div class="eyebrow">در تماس باشیم</div>
+                <h2>هر سؤال، هر سفارش — یک پیام فاصله</h2>
+                <p>اگر درباره‌ی محصول، تحویل یا سفارش‌سازی پرسشی دارید، فرم را پر کنید یا مستقیم از طریق راه‌های ارتباطی زیر با ما تماس بگیرید.</p>
+              </div>
+
+              <div class="fc-grid">
+
+                <!-- Inline form -->
+                <div class="fc-card">
+                  <div class="label">پیام مستقیم</div>
+                  <form class="fc-form" action="/contact" method="post" novalidate>
+                    <input class="fc-input" type="text" name="name" placeholder="نام شما" required>
+                    <input class="fc-input" type="tel" name="phone" placeholder="شماره تماس (۰۹۱۲...)" required>
+                    <textarea class="fc-textarea" name="message" placeholder="درباره‌ی چه چیزی می‌خواهید صحبت کنیم؟" required></textarea>
+                    <button class="fc-submit" type="submit">ارسال پیام</button>
+                  </form>
+                </div>
+
+                <!-- Contact info -->
+                <div class="fc-card fc-info">
+                  <div class="label">راه‌های ارتباطی</div>
+                  <ul>
+                    <li>
+                      <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h4l1.5 3.5L6 8a8 8 0 003 3l1.5-2.5L14 10v3a1 1 0 01-1 1A11 11 0 012 3a1 1 0 011-1z" stroke-linejoin="round"/></svg>
+                      <div>
+                        <a href="tel:+988134256789" dir="ltr">۰۸۱-۳۴۲۵ ۶۷۸۹</a>
+                        <div style="font-size:11px;opacity:0.6;margin-top:2px;">شنبه تا چهارشنبه، ۹ تا ۱۸</div>
+                      </div>
+                    </li>
+                    <li>
+                      <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3" width="13" height="10" rx="1"/><path d="M2 4l6 5 6-5" stroke-linejoin="round"/></svg>
+                      <a href="mailto:info@zhicwood.com" dir="ltr">info@zhicwood.com</a>
+                    </li>
+                    <li>
+                      <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 14s5-4.5 5-8a5 5 0 10-10 0c0 3.5 5 8 5 8z" stroke-linejoin="round"/><circle cx="8" cy="6" r="2"/></svg>
+                      <div>همدان، شهرک صنعتی بوعلی،<br>خیابان فناوران ۴</div>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Newsletter + socials -->
+                <div class="fc-card">
+                  <div class="label">خبرنامه</div>
+                  <h3>تازه‌ها و کلکسیون‌های جدید</h3>
+                  <form class="fc-news-form" action="/api/newsletter" method="post" novalidate>
+                    <input type="email" name="email" placeholder="ایمیل شما" required>
+                    <button type="submit">عضویت</button>
+                  </form>
+                  <p class="fc-news-disclaimer">ماهی یک ایمیل، بدون اسپم. هر زمان می‌توانید لغو کنید.</p>
+
+                  <div class="label" style="margin-top:1.25rem;">شبکه‌های اجتماعی</div>
+                  <div class="fc-socials">
+                    <a class="fc-social" href="https://instagram.com/zhicwood" aria-label="اینستاگرام">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+                    </a>
+                    <a class="fc-social" href="https://t.me/zhicwood" aria-label="تلگرام">
+                      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 4.5L2.5 11.5l5.5 2 2 6 3-3.5 5 4 3-15.5z" stroke="none"/></svg>
+                    </a>
+                    <a class="fc-social" href="https://wa.me/989120000000" aria-label="واتس‌اپ">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.5-5A9 9 0 1112 21H7l-4 .5z" stroke-linejoin="round"/></svg>
+                    </a>
+                    <a class="fc-social" href="https://aparat.com/zhicwood" aria-label="آپارات">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 3-6 3z" fill="currentColor"/></svg>
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Existing 4 link columns -->
+            <div class="footer-cols">
+              <div class="footer-col">
+                <h4>محصولات</h4>
+                <ul>
+                  <li><a href="/products">همه‌ی محصولات</a></li>
+                  <li><a href="/designs">سرویس‌های خواب</a></li>
+                  <li><a href="/products">دسته‌بندی‌ها</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h4>درباره‌ی ما</h4>
+                <ul>
+                  <li><a href="/about">داستان ما</a></li>
+                  <li><a href="/atelier">کارگاه</a></li>
+                  <li><a href="/journal">ژورنال</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h4>شوروم‌ها</h4>
+                <ul>
+                  <li><a href="/showrooms">فهرست شوروم‌ها</a></li>
+                  <li><a href="/events">رویدادها</a></li>
+                </ul>
+              </div>
+              <div class="footer-col">
+                <h4>خدمات</h4>
+                <ul>
+                  <li><a href="/faq">پرسش‌های متداول</a></li>
+                  <li><a href="/care">مراقبت و گارانتی</a></li>
+                  <li><a href="/shipping-and-delivery">ارسال و تحویل</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Legal -->
+            <div class="footer-legal">
+              <span>© ۱۴۰۵ شرکت ژیک — تمام حقوق محفوظ است.</span>
+              <span class="footer-legal-links">
+                <a href="/privacy">حریم خصوصی</a>
+                <span class="sep">·</span>
+                <a href="/terms">شرایط استفاده</a>
+              </span>
+            </div>
+
+          </div>
+        </footer>
+      </div>
+
+      </div>
+
+      <!-- Phone stage -->
+      <div class="phone-wrap">
+        <div class="view-label" style="text-align:center;">phone</div>
+        <div class="phone-stage">
+          <div class="phone-screen">
+            <!-- floating pill -->
+            <div class="phone-pill">
+              <svg class="burger" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4H14M2 8H14M2 12H14" stroke-linecap="round"/></svg>
+              <span class="brand">ژیک</span>
+              <span class="spacer"></span>
+            </div>
+
+            <!-- media on top -->
+            <div class="phone-hero-media">
+              <div class="phone-slider-viewport">
+                <div class="phone-slider-track">
+                  <div class="phone-slide"><div class="pb"></div></div>
+                </div>
+                <div class="phone-dots">
+                  <span class="dot"></span>
+                  <span class="dot active"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- text below -->
+            <div class="phone-hero-text">
+              <div class="eye">کلکسیون بهار ۱۴۰۵</div>
+              <h1>ساخته‌شده
+برای ماندن</h1>
+              <p>مبلمان دست‌ساز از چوب گردوی ایرانی، برای خانه‌هایی که آرامش را می‌فهمند.</p>
+              <div class="ctas">
+                <a class="btn-phone p" href="/products">مشاهده‌ی محصولات</a>
+              </div>
+            </div>
+
+            <!-- Age stack -->
+            <div class="phone-ages">
+              <a class="phone-age-tile" href="/rooms/kid">
+                <div class="phone-age-media" data-parallax="80"><div class="parallax-inner"></div></div>
+                <div class="phone-age-label">دسته‌ی سنی</div>
+                <div class="phone-age-title">اتاق کودک</div>
+              </a>
+              <a class="phone-age-tile" href="/rooms/teen">
+                <div class="phone-age-media v2" data-parallax="80"><div class="parallax-inner"></div></div>
+                <div class="phone-age-label">دسته‌ی سنی</div>
+                <div class="phone-age-title">اتاق نوجوان</div>
+              </a>
+              <a class="phone-age-tile" href="/rooms/adult">
+                <div class="phone-age-media v3" data-parallax="80"><div class="parallax-inner"></div></div>
+                <div class="phone-age-label">دسته‌ی سنی</div>
+                <div class="phone-age-title">اتاق بزرگسال</div>
+              </a>
+            </div>
+
+            <!-- Phone HomeBrandStatement -->
+            <section class="phone-brand-statement" aria-label="درباره ژیک">
+              <div class="phone-stats">
+                <div class="phone-stat">
+                  <div class="stat-value" data-count-up data-target="25" data-suffix="+"></div>
+                  <div class="stat-label">سال تجربه در صنایع چوب</div>
+                </div>
+                <div class="phone-stat">
+                  <div class="stat-value" data-count-up data-target="1200" data-suffix="+"></div>
+                  <div class="stat-label">قطعه مبلمان تولیدشده</div>
+                </div>
+                <div class="phone-stat">
+                  <div class="stat-value" data-count-up data-target="3" data-suffix=""></div>
+                  <div class="stat-label">شوروم</div>
+                </div>
+              </div>
+              <div class="phone-brand-text">
+                <div class="eyebrow">درباره‌ی ژیک</div>
+                <h2>از همدان، برای ایران</h2>
+                <p>ژیک در کارگاهی در همدان متولد شد — جایی که سنت کار با چوب ریشه در قرن‌ها دارد.</p>
+                <a href="/about" class="btn-on-dark">بیش‌تر درباره‌ی ما</a>
+              </div>
+            </section>
+
+            <!-- Phone journal — three-row scroll parallax -->
+            <section class="phone-journal" aria-label="ژورنال">
+              <div class="pj-head">
+                <div class="eye">ژورنال ژیک</div>
+                <h2>از کارگاه، از همدان</h2>
+                <p>یادداشت‌هایی از پشت‌صحنه‌ی ساخت و طرح‌هایی که از سنت ایرانی الهام گرفته‌اند.</p>
+              </div>
+
+              <div class="journal-rows">
+                <div class="j-row" data-journal-row="1">
+                  <a class="j-card" href="/journal/zhic-design-language">
+                    <div class="j-cover v1"></div>
+                    <div class="j-cat">طراحی</div>
+                    <div class="j-title">زبان طراحی ژیک — چرا صبر مهم‌ترین ابزار ماست</div>
+                  </a>
+                  <a class="j-card" href="/journal/walnut-from-north">
+                    <div class="j-cover v2"></div>
+                    <div class="j-cat">مواد</div>
+                    <div class="j-title">گردوی شمال — چوب اصلی از جنگل هیرکانی</div>
+                  </a>
+                  <a class="j-card" href="/journal/atelier-tour">
+                    <div class="j-cover v3"></div>
+                    <div class="j-cat">کارگاه</div>
+                    <div class="j-title">سفری به کارگاه ژیک</div>
+                  </a>
+                  <a class="j-card" href="/journal/care-guide">
+                    <div class="j-cover v4"></div>
+                    <div class="j-cat">مراقبت</div>
+                    <div class="j-title">مراقبت از مبلمان چوبی</div>
+                  </a>
+                  <a class="j-card" href="/journal/oil-finish">
+                    <div class="j-cover v5"></div>
+                    <div class="j-cat">پرداخت</div>
+                    <div class="j-title">روغن یا لاک؟</div>
+                  </a>
+                </div>
+
+                <div class="j-row" data-journal-row="2">
+                  <a class="j-card" href="/journal/inlay-traditions">
+                    <div class="j-cover v3"></div>
+                    <div class="j-cat">سنت</div>
+                    <div class="j-title">منبت‌کاری — زبان مشترک خوشه‌ی صنعت چوب</div>
+                  </a>
+                  <a class="j-card" href="/journal/showroom-tehran">
+                    <div class="j-cover v5"></div>
+                    <div class="j-cat">شوروم</div>
+                    <div class="j-title">افتتاح شوروم تهران</div>
+                  </a>
+                  <a class="j-card" href="/journal/material-choice">
+                    <div class="j-cover v1"></div>
+                    <div class="j-cat">مواد</div>
+                    <div class="j-title">از کجا بدانیم چوب خوب چیست؟</div>
+                  </a>
+                  <a class="j-card" href="/journal/seasonal-collection">
+                    <div class="j-cover v2"></div>
+                    <div class="j-cat">کلکسیون</div>
+                    <div class="j-title">کلکسیون بهار ۱۴۰۵</div>
+                  </a>
+                  <a class="j-card" href="/journal/sustainability">
+                    <div class="j-cover v4"></div>
+                    <div class="j-cat">پایداری</div>
+                    <div class="j-title">از جنگل تا کارگاه</div>
+                  </a>
+                </div>
+
+                <div class="j-row" data-journal-row="3">
+                  <a class="j-card" href="/journal/joinery-techniques">
+                    <div class="j-cover v2"></div>
+                    <div class="j-cat">تکنیک</div>
+                    <div class="j-title">اتصالات سنتی چوب — راز ماندگاری</div>
+                  </a>
+                  <a class="j-card" href="/journal/customer-stories">
+                    <div class="j-cover v4"></div>
+                    <div class="j-cat">داستان مشتری</div>
+                    <div class="j-title">سرویس سلطنتی در خانه‌ای در شیراز</div>
+                  </a>
+                  <a class="j-card" href="/journal/wood-drying">
+                    <div class="j-cover v5"></div>
+                    <div class="j-cat">فرآیند</div>
+                    <div class="j-title">خشک‌کن طبیعی</div>
+                  </a>
+                  <a class="j-card" href="/journal/spring-launch">
+                    <div class="j-cover v1"></div>
+                    <div class="j-cat">رویداد</div>
+                    <div class="j-title">رونمایی کلکسیون بهار</div>
+                  </a>
+                  <a class="j-card" href="/journal/atelier-tour">
+                    <div class="j-cover v3"></div>
+                    <div class="j-cat">کارگاه</div>
+                    <div class="j-title">پشت‌صحنه‌ی ساخت</div>
+                  </a>
+                </div>
+              </div>
+
+              <a class="phone-journal-cta" href="/journal"><span>همه‌ی مقالات</span></a>
+            </section>
+
+            <!-- Phone showrooms teaser -->
+            <section class="phone-showrooms" aria-label="شوروم‌ها">
+              <div class="head">
+                <div class="eye">شوروم‌ها</div>
+                <div class="t">ما را در شهر خودتان ببینید</div>
+              </div>
+              <a class="phone-st-card" href="/showrooms/hamedan">
+                <div class="cover v1"></div>
+                <div class="meta">
+                  <div class="city">همدان · مرکزی</div>
+                  <div class="addr">شهرک صنعتی بوعلی، خیابان فناوران ۴</div>
+                </div>
+              </a>
+              <a class="phone-st-card" href="/showrooms/tehran">
+                <div class="cover v2"></div>
+                <div class="meta">
+                  <div class="city">تهران</div>
+                  <div class="addr">سعادت‌آباد، بلوار فرحزادی</div>
+                </div>
+              </a>
+              <a class="phone-st-card" href="/showrooms/shiraz">
+                <div class="cover v3"></div>
+                <div class="meta">
+                  <div class="city">شیراز</div>
+                  <div class="addr">بلوار ارم، خیابان زند</div>
+                </div>
+              </a>
+              <a class="cta" href="/showrooms">فهرست کامل</a>
+            </section>
+
+            <!-- Phone footer -->
+            <footer class="phone-footer">
+              <div class="pf-contact">
+                <div class="eye">در تماس باشیم</div>
+                <h2>هر سؤال، یک پیام فاصله</h2>
+                <p>فرم را پر کنید یا از راه‌های ارتباطی زیر تماس بگیرید.</p>
+                <form class="fc-form" action="/contact" method="post" novalidate>
+                  <input class="fc-input" type="text" name="name" placeholder="نام شما">
+                  <input class="fc-input" type="tel" name="phone" placeholder="شماره تماس">
+                  <textarea class="fc-textarea" name="message" placeholder="پیام شما"></textarea>
+                  <button class="fc-submit" type="submit">ارسال پیام</button>
+                </form>
+              </div>
+
+              <div class="pf-block fc-info">
+                <div class="label">راه‌های ارتباطی</div>
+                <ul>
+                  <li><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h4l1.5 3.5L6 8a8 8 0 003 3l1.5-2.5L14 10v3a1 1 0 01-1 1A11 11 0 012 3a1 1 0 011-1z" stroke-linejoin="round"/></svg><a href="tel:+988134256789" dir="ltr">۰۸۱-۳۴۲۵ ۶۷۸۹</a></li>
+                  <li><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3" width="13" height="10" rx="1"/><path d="M2 4l6 5 6-5" stroke-linejoin="round"/></svg><a href="mailto:info@zhicwood.com" dir="ltr">info@zhicwood.com</a></li>
+                  <li><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 14s5-4.5 5-8a5 5 0 10-10 0c0 3.5 5 8 5 8z" stroke-linejoin="round"/><circle cx="8" cy="6" r="2"/></svg><span>همدان، شهرک صنعتی بوعلی</span></li>
+                </ul>
+              </div>
+
+              <div class="pf-block">
+                <div class="label">خبرنامه</div>
+                <form class="fc-news-form" action="/api/newsletter" method="post" novalidate>
+                  <input type="email" name="email" placeholder="ایمیل شما">
+                  <button type="submit">عضویت</button>
+                </form>
+                <div class="fc-socials">
+                  <a class="fc-social" href="https://instagram.com/zhicwood" aria-label="اینستاگرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+                  <a class="fc-social" href="https://t.me/zhicwood" aria-label="تلگرام"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 4.5L2.5 11.5l5.5 2 2 6 3-3.5 5 4 3-15.5z" stroke="none"/></svg></a>
+                  <a class="fc-social" href="https://wa.me/989120000000" aria-label="واتس‌اپ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l1.5-5A9 9 0 1112 21H7l-4 .5z" stroke-linejoin="round"/></svg></a>
+                </div>
+              </div>
+
+              <div class="pf-cols">
+                <div>
+                  <h4>محصولات</h4>
+                  <ul>
+                    <li><a href="/products">همه‌ی محصولات</a></li>
+                    <li><a href="/designs">سرویس‌ها</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4>درباره‌ی ما</h4>
+                  <ul>
+                    <li><a href="/about">داستان ما</a></li>
+                    <li><a href="/journal">ژورنال</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4>شوروم‌ها</h4>
+                  <ul>
+                    <li><a href="/showrooms">فهرست</a></li>
+                    <li><a href="/events">رویدادها</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4>خدمات</h4>
+                  <ul>
+                    <li><a href="/faq">پرسش‌های متداول</a></li>
+                    <li><a href="/care">گارانتی</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="pf-legal">
+                <span>© ۱۴۰۵ شرکت ژیک — تمام حقوق محفوظ است.</span>
+                <div class="pf-legal-links"><a href="/privacy">حریم خصوصی</a><span class="sep">·</span><a href="/terms">شرایط استفاده</a></div>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Schema ─────────────────────────────────────────── -->
+<section class="doc-section">
+  <div class="container">
+    <div class="label">data model</div>
+    <h2>New field on the <code style="background:var(--color-cream);padding:1px 6px;border-radius:3px;font-family:monospace;direction:ltr;">home</code> global</h2>
+
+    <div class="mapping">
+      <div class="row">
+        <strong>home.heroSlides[]</strong> — array on the existing <code>home</code> global. Each entry: <code>image</code> (upload→media, required) · <code>alt</code> (text) · <code>link</code> (optional URL or relation).
+      </div>
+      <div class="row">
+        <strong>New collection <code>rooms</code></strong> — three seeded entries for the age categories. Fields: <code>name</code> (e.g. «اتاق کودک»), <code>slug</code> (kid/teen/adult), <code>cover</code> (upload→media), <code>tagline</code> (the line under the title), <code>longDescription</code> (richText for the landing page), plus the standard <code>seoFields</code>.
+      </div>
+      <div class="row">
+        <strong>New route <code>/rooms/[slug]</code></strong> — landing page per age. Initially renders cover + tagline + longDescription; later iterations can surface relevant products / designs (likely via an <code>age</code> field on <code>products</code>, but that's a v2 — flag it in the spec).
+      </div>
+      <div class="row">
+        <strong>New component <code>packages/ui/ParallaxImage</code></strong> — porting <code>framer.com/m/ParallaxImage-prod-3M0qB4.js</code>. Scroll-driven vertical parallax, ~40 lines. Props: <code>src</code>, <code>alt</code>, <code>verticalAmount</code> (default 80), <code>borderRadius</code>. Applied to the three age-category media tiles. Honors <code>prefers-reduced-motion</code>. The mockup above runs the ported logic inline so you can scroll the page and feel the effect.
+      </div>
+      <div class="row">
+        <strong>Home showrooms teaser</strong> — compact 3-up card grid between journal and footer. Smaller scale than the journal cards (3:2 cover with top-right curve, condensed type, no excerpt — just city, address, phone). Header row: eyebrow + heading + «فهرست کامل» CTA. Phone version: stacked rows with 96×96 thumbnail + city + address. Auto-populates from the existing <code>showrooms</code> collection, ordered by <code>is_central</code> first then <code>name</code>, limit 3. No schema changes needed; new component <code>packages/ui/HomeShowroomsTeaser</code>.
+      </div>
+      <div class="row">
+        <strong>Home journal teaser — three-row scroll parallax</strong> (ported from framer.university). Replaces the 3-up static grid. Three horizontal rows of compact article cards (cover 3:2 + category + 2-line title, no excerpt), each row drifting at a different rate as the user scrolls: Row 1 right @ 0.35×, Row 2 <em>left</em> @ 0.55× (opposite), Row 3 right @ 0.75×. JS listens to vertical scroll, maps section progress to <code>translateX</code> per row via requestAnimationFrame. Honors <code>prefers-reduced-motion</code>. New component <code>packages/ui/HomeJournalRows</code>. Home query shifts from <code>featured:true limit 3</code> to <code>published limit 15</code>, distributed round-robin into 3 rows of 5 cards. No collection schema changes. <strong>Mobile:</strong> same 3-row parallax with narrower cards (200px vs 340px) and dampened displacement (max 140px vs 300px) so cards don't run off-screen at small viewport widths.
+      </div>
+      <div class="row">
+        <strong>Footer redesign</strong> — bg = <code>--color-forest-dark</code> (shared with about-us). Add a «در تماس باشیم» hero strip above the existing 4 link columns:
+        <br>· <strong>Inline form</strong> (name + phone + message) submits via the existing <code>submitInquiry</code> server action — reuse <code>InquiryFormSlim</code> styled for dark bg.
+        <br>· <strong>Contact info</strong> block: phone, email, Hamedan address. Add to a <code>siteConfig</code> Payload global (or extend the existing one) with <code>contactPhone</code>, <code>contactEmail</code>, <code>address</code> (richText), <code>hours</code> (text).
+        <br>· <strong>Newsletter signup</strong> — new <code>subscribers</code> collection (<code>email</code>, <code>subscribedAt</code>, <code>source</code>) + a <code>POST /api/newsletter</code> route. Mail provider integration deferred (Package 2).
+        <br>· <strong>Socials</strong> — array on <code>siteConfig.socials[]</code>: <code>{ platform: 'instagram'|'telegram'|'whatsapp'|'aparat', url: string }</code>.
+        <br>The 4 existing link columns + legal line stay below the strip.
+      </div>
+      <div class="row">
+        <strong>New utility <code>packages/ui/BlurInText</code></strong> — <strong>word-by-word</strong> blur reveal taken from <code>split-text-mockup.html</code>. JS splits each text element's text nodes into per-word <code>&lt;span class="blur-piece"&gt;</code> at runtime (whitespace preserved as text nodes; existing inline children kept as single pieces). Each word stays a single text run so Persian glyph shaping is intact. CSS: rest state <code>opacity:0; filter:blur(18px)</code>; visible state <code>opacity:1; filter:blur(0)</code>; transition 700ms ease-out-soft, delay = <code>--bi × 90ms</code> per word index. <code>IntersectionObserver</code> triggers once when each element enters viewport, then adds <code>is-visible</code> to all child word spans. <code>prefers-reduced-motion</code> honored. Elements containing <code>data-count-up</code> are skipped — they animate at the element level instead.
+      </div>
+      <div class="row">
+        <strong>New component <code>packages/ui/CountUp</code></strong> — animated number ticker, ~40 lines. Props: <code>value</code> (number), <code>suffix</code> (optional, e.g. «+»), <code>duration</code> (default 1500ms), <code>className</code>. <code>IntersectionObserver</code> fires once on first scroll-into-view (one-shot, then <code>io.unobserve(el)</code>); <code>requestAnimationFrame</code> animates with ease-out cubic; each frame formats through <code>toPersianDigits</code> from <code>@zhic/locale</code>. <code>prefers-reduced-motion</code> renders the final value immediately. Used in <code>HomeBrandStatement</code> — also requires shifting <code>BrandStat</code> from <code>{ value: string }</code> to <code>{ value: number; suffix?: string }</code>. <strong>Section bg = new <code>--color-forest-dark</code> (#2D3A2E)</strong> — dark tone of the system green, shared with the footer (about-us and contact-us match). Add to <code>packages/design-system/css/tokens.css</code> alongside <code>--color-forest</code>.
+      </div>
+      <div class="row">
+        <em>Auto-rotate cadence, hover-to-pause, swipe on phone, <code>prefers-reduced-motion</code> = implementation notes for the hero carousel.</em>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Brainstorm mockup · hero carousel (clean) · part 2 of the schema reorg
+    </div>
+  </div>
+</section>
+
+<script>
+// Port of framer.com/m/ParallaxImage-prod-3M0qB4.js — vertical-only.
+// Same math: scrollProgress 0→1 as element passes viewport, yOffset = (p - 0.5) * amount * containerHeight.
+(function () {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const items = Array.from(document.querySelectorAll('[data-parallax]')).map(function (el) {
+    const amount = parseFloat(el.getAttribute('data-parallax')) || 50;
+    const inner = el.querySelector('.parallax-inner');
+    return { el: el, inner: inner, amount: amount };
+  });
+  if (!items.length) return;
+
+  let ticking = false;
+  function update() {
+    const vh = window.innerHeight;
+    for (const it of items) {
+      const rect = it.el.getBoundingClientRect();
+      const h = it.el.offsetHeight;
+      if (h === 0) continue;
+      const progress = Math.max(0, Math.min(1, (vh - rect.top) / (vh + h)));
+      const y = (progress - 0.5) * (it.amount / 100) * h;
+      it.inner.style.transform = 'translate3d(0,' + y.toFixed(2) + 'px,0)';
+    }
+    ticking = false;
+  }
+  function onScroll() { if (!ticking) { requestAnimationFrame(update); ticking = true; } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+})();
+
+// Count-up — mirrors the API of packages/ui/CountUp.tsx
+// Triggers EVERY time the element scrolls into view (per user choice).
+(function () {
+  const fa = (n) => String(n).replace(/[0-9]/g, (d) => String.fromCharCode(0x06F0 + Number(d)));
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = Array.from(document.querySelectorAll('[data-count-up]'));
+  if (!targets.length) return;
+
+  function animate(el, to, suffix, duration) {
+    if (reduced) { el.textContent = fa(to) + suffix; return; }
+    const start = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const v = Math.round(to * ease(t));
+      el.textContent = fa(v) + suffix;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    el.textContent = fa(0) + suffix;
+    requestAnimationFrame(step);
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const to = parseInt(el.getAttribute('data-target') || '0', 10);
+        const suffix = el.getAttribute('data-suffix') || '';
+        animate(el, to, suffix, 1500);
+        io.unobserve(el);  // one-shot — fire only the first time it enters view
+      }
+    }
+  }, { threshold: 0.4 });
+
+  for (const el of targets) {
+    el.textContent = fa(0) + (el.getAttribute('data-suffix') || '');
+    io.observe(el);
+  }
+})();
+
+// Blur-in text reveal — word-by-word (mirrors split-text-mockup's `word` split).
+// Persian glyph shaping is preserved because each word stays a single text run.
+// Elements with [data-count-up] are NOT split (their RAF rewrites textContent);
+// they animate at the element level instead.
+(function () {
+  const sections = [
+    { root: '.zh-header',          items: ['.zh-brand', '.zh-trigger', '.zh-nav a'] },
+    { root: '.hero-text',          items: ['.hero-eyebrow', '.hero-heading', '.hero-sub', '.hero-cta-row .btn', '.scroll-hint'] },
+    { root: '.ages',               items: ['.age-tile .age-label', '.age-tile .age-title', '.age-tile .age-sub', '.age-tile .age-arrow'] },
+    { root: '.brand-statement',    items: ['.stat-value', '.stat-label', '.brand-text .eyebrow', '.brand-text h2', '.brand-text p', '.brand-text .btn-on-dark'] },
+    { root: '.journal',            items: ['.journal-head .eyebrow', '.journal-head h2', '.journal-head p', '.journal-cta'] },
+    { root: '.showrooms-teaser',   items: ['.st-eyebrow', '.st-title', '.st-cta', '.st-card .city', '.st-card .addr', '.st-card .phone'] },
+    { root: '.phone-hero-text',    items: ['.eye', 'h1', 'p', '.ctas .btn-phone'] },
+    { root: '.phone-ages',         items: ['.phone-age-tile .phone-age-label', '.phone-age-tile .phone-age-title'] },
+    { root: '.phone-brand-statement', items: ['.phone-stat .stat-value', '.phone-stat .stat-label', '.phone-brand-text .eyebrow', '.phone-brand-text h2', '.phone-brand-text p', '.phone-brand-text .btn-on-dark'] },
+  ];
+
+  // Split a text element into per-word spans. Whitespace stays as text nodes so
+  // natural word spacing is preserved. Existing element children (e.g. an arrow
+  // icon span) are preserved and treated as a single piece. Each word is a
+  // single text run, so Persian glyph shaping is intact.
+  function splitToWords(el) {
+    const children = Array.from(el.childNodes);
+    let i = 0;
+    for (const child of children) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        const text = child.textContent || '';
+        // Split keeping the whitespace runs so we can re-insert them as text nodes.
+        const parts = text.split(/(\s+)/);
+        const frag = document.createDocumentFragment();
+        for (const part of parts) {
+          if (!part) continue;
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(part));
+            continue;
+          }
+          const span = document.createElement('span');
+          span.className = 'blur-init blur-piece';
+          span.style.setProperty('--bi', i++);
+          span.textContent = part;
+          frag.appendChild(span);
+        }
+        el.replaceChild(frag, child);
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        child.classList.add('blur-init', 'blur-piece');
+        child.style.setProperty('--bi', i++);
+      }
+    }
+    return el;
+  }
+
+  const observed = [];
+  for (const s of sections) {
+    const roots = document.querySelectorAll(s.root);
+    for (const root of roots) {
+      const found = [];
+      for (const sel of s.items) {
+        root.querySelectorAll(sel).forEach((el) => found.push(el));
+      }
+      for (const el of found) {
+        const skipSplit = el.matches('[data-count-up]') || el.querySelector('[data-count-up]');
+        if (skipSplit) {
+          el.classList.add('blur-init');
+          observed.push({ el, isPieceContainer: false });
+        } else {
+          splitToWords(el);
+          observed.push({ el, isPieceContainer: true });
+        }
+      }
+    }
+  }
+  if (!observed.length) return;
+
+  const elMap = new WeakMap();
+  for (const o of observed) elMap.set(o.el, o);
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        const info = elMap.get(e.target);
+        if (info && info.isPieceContainer) {
+          e.target.querySelectorAll('.blur-init.blur-piece').forEach((ch) => ch.classList.add('is-visible'));
+        } else {
+          e.target.classList.add('is-visible');
+        }
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+
+  for (const o of observed) io.observe(o.el);
+})();
+
+// Journal three-row scroll parallax — ported from framer.university
+// Handles both desktop .journal and phone .phone-journal sections.
+(function () {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const sections = document.querySelectorAll('.journal, .phone-journal');
+  if (!sections.length) return;
+
+  // Speed × direction per row.
+  const speeds = { '1': 0.35, '2': -0.55, '3': 0.75 };
+
+  // Phone gets smaller displacement so the cards don't run off entirely.
+  function maxFor(section) {
+    return section.classList.contains('phone-journal') ? 140 : 300;
+  }
+
+  const groups = [];
+  for (const section of sections) {
+    const rows = section.querySelectorAll('.j-row');
+    if (rows.length) groups.push({ section, rows, max: maxFor(section) });
+  }
+  if (!groups.length) return;
+
+  let ticking = false;
+  function update() {
+    const vh = window.innerHeight;
+    for (const g of groups) {
+      const rect = g.section.getBoundingClientRect();
+      const total = vh + rect.height;
+      const progress = Math.max(0, Math.min(1, (vh - rect.top) / total));
+      const t = (progress - 0.5) * 2;
+      for (const row of g.rows) {
+        const key = row.getAttribute('data-journal-row');
+        const speed = speeds[key] || 0.5;
+        row.style.transform = `translateX(${(t * speed * g.max).toFixed(2)}px)`;
+      }
+    }
+    ticking = false;
+  }
+  function onScroll() { if (!ticking) { requestAnimationFrame(update); ticking = true; } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+})();
+</script>
+</body>
+</html>
