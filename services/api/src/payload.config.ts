@@ -15,6 +15,7 @@ import { Articles } from './collections/Articles'
 import { Authors } from './collections/Authors'
 import { JournalCategories } from './collections/JournalCategories'
 import { Categories } from './collections/Categories'
+import { Rooms } from './collections/Rooms'
 import { Tags } from './collections/Tags'
 import { Materials } from './collections/Materials'
 import { Collections } from './collections/Collections'
@@ -64,6 +65,7 @@ export default buildConfig({
     Authors,
     JournalCategories,
     Categories,
+    Rooms,
     Tags,
     Materials,
     Collections,
