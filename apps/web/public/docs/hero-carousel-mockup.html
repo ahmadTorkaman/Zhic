@@ -181,23 +181,6 @@
   .slide-bg.v4{background-image:url('/docs/test-media/hero-4.jpg');}
   .slide-bg.v5{background-image:url('/docs/test-media/hero-5.jpg');}
 
-  /* Arrows — overlayed on the image, inset from edges */
-  .slider-arrow{
-    position:absolute;top:50%;transform:translateY(-50%);
-    width:clamp(40px, 4vw, 52px);height:clamp(40px, 4vw, 52px);
-    border-radius:50%;background:rgba(250,250,247,0.82);
-    backdrop-filter:blur(8px);
-    border:1px solid rgba(232,224,216,0.6);
-    box-shadow:0 6px 18px rgba(20,17,15,0.08);
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;z-index:10;color:var(--color-charcoal);
-    transition:background-color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover);
-  }
-  .slider-arrow:hover{background:var(--color-ivory);border-color:var(--color-stone);box-shadow:0 8px 22px rgba(20,17,15,0.12);}
-  .slider-arrow.prev{right:16px;}
-  .slider-arrow.next{left:16px;}
-  .slider-arrow svg{width:42%;height:42%;}
-
   /* Dots — overlayed at the bottom of the image */
   .slider-dots{
     position:absolute;left:50%;bottom:16px;transform:translateX(-50%);

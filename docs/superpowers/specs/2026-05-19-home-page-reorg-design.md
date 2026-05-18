@@ -240,6 +240,8 @@ It re-renders the live site chrome (Ayandeh font from `/fonts/`, `tokens.css` pa
 
 Test media for the parallax/carousel placeholders is at `apps/web/public/docs/test-media/` (8 Unsplash interior shots, ~150-500 KB each).
 
+**Mockup-only scaffolding — not part of production:** the mockup file additionally contains a `<header class="doc-head">` block at the top («Schema reorg · brainstorm») and a `<section class="doc-section">` mapping panel at the bottom that documents the decisions inline. These are explainer chrome for the brainstorm — they do **not** correspond to any production page section and should be ignored by implementation. Likewise, the desktop and phone stages are wrapped in `.stage` and `.phone-stage` frames for side-by-side preview — production pages do not have these wrappers.
+
 ## 7. Out of scope
 
 - Mail provider for newsletter (deferred to Package 2).
