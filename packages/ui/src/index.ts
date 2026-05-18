@@ -31,3 +31,5 @@ export { MoneyDisplay } from './MoneyDisplay';
 export type { MoneyDisplayProps } from './MoneyDisplay';
 export { DateDisplay } from './DateDisplay';
 export type { DateDisplayProps } from './DateDisplay';
+export { ParallaxImage } from './ParallaxImage';
+export type { ParallaxImageProps } from './ParallaxImage';
