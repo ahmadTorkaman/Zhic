@@ -16,6 +16,7 @@ export const color = {
   gold: '#C49A6C',
   rust: '#8B4A2B',
   forest: '#5F7760',
+  forestDark: '#2D3A2E',
   overlay: 'rgba(20, 17, 15, 0.6)',
 } as const;
 

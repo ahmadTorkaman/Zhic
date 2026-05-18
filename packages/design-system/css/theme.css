@@ -13,16 +13,17 @@
 
 @theme inline {
   /* Color */
-  --color-ivory:    #FAFAF7;
-  --color-cream:    #F5F0EB;
-  --color-sand:     #E8E0D8;
-  --color-stone:    #8C8279;
-  --color-charcoal: #2C2825;
-  --color-ink:      #14110F;
-  --color-forest:   #5F7760;
-  --color-gold:     #C49A6C;
-  --color-rust:     #8B4A2B;
-  --color-overlay:  rgba(20, 17, 15, 0.6);
+  --color-ivory:      #FAFAF7;
+  --color-cream:      #F5F0EB;
+  --color-sand:       #E8E0D8;
+  --color-stone:      #8C8279;
+  --color-charcoal:   #2C2825;
+  --color-ink:        #14110F;
+  --color-forest:     #5F7760;
+  --color-forest-dark: #2D3A2E;
+  --color-gold:       #C49A6C;
+  --color-rust:       #8B4A2B;
+  --color-overlay:    rgba(20, 17, 15, 0.6);
 
   /* Font */
   --font-sans: var(--font-ayandeh), 'Tahoma', sans-serif;

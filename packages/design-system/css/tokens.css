@@ -8,9 +8,10 @@
   --color-ink:      #14110F;
 
   /* Accent colors */
-  --color-forest:   #5F7760;
-  --color-gold:     #C49A6C;
-  --color-overlay:  rgba(20, 17, 15, 0.6);
+  --color-forest:      #5F7760;
+  --color-forest-dark: #2D3A2E;
+  --color-gold:        #C49A6C;
+  --color-overlay:     rgba(20, 17, 15, 0.6);
 
   /* Functional (app infra) */
   --color-rust:     #8B4A2B;
