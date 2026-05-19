@@ -24,49 +24,76 @@ export default async function HomePage() {
     }))
     .filter((s) => s.src.length > 0);
 
+  // Static fallback media (interior shots from Plan A's brainstorm mockup).
+  // Used until the operator seeds real images in /admin. When real data is
+  // present, the fallbacks aren't touched.
+  const FALLBACK_HERO_SLIDES: HeroSlide[] = [
+    { src: '/docs/test-media/hero-1.jpg', alt: 'فضای کاری ژیک' },
+    { src: '/docs/test-media/hero-2.jpg', alt: 'سرویس خواب گردو' },
+    { src: '/docs/test-media/hero-3.jpg', alt: 'جزئیات حکاکی' },
+    { src: '/docs/test-media/hero-4.jpg', alt: 'بافت چوب گردو' },
+    { src: '/docs/test-media/hero-5.jpg', alt: 'صحنه‌ی اتاق خواب' },
+  ];
+  const FALLBACK_ROOM_COVERS: Record<'kid' | 'teen' | 'adult', string> = {
+    kid: '/docs/test-media/kid.jpg',
+    teen: '/docs/test-media/teen.jpg',
+    adult: '/docs/test-media/adult.jpg',
+  };
+  const FALLBACK_SHOWROOM_COVERS = [
+    '/docs/test-media/hero-1.jpg',
+    '/docs/test-media/hero-2.jpg',
+    '/docs/test-media/hero-3.jpg',
+  ];
+  const FALLBACK_JOURNAL_COVERS = [
+    '/docs/test-media/hero-3.jpg',
+    '/docs/test-media/hero-4.jpg',
+    '/docs/test-media/hero-5.jpg',
+    '/docs/test-media/hero-1.jpg',
+    '/docs/test-media/hero-2.jpg',
+  ];
+
   const slides: HeroSlide[] =
     seededSlides.length > 0
       ? seededSlides
       : home?.hero_media?.url
         ? [{ src: home.hero_media.url, alt: home?.hero_heading ?? '' }]
-        : [{ src: '/hero/IMG_0889.jpeg', alt: '' }];
+        : FALLBACK_HERO_SLIDES;
 
-  // Map and filter rooms: only include rooms with valid slugs and covers.
+  // Map and filter rooms: only include rooms with valid slugs. Use the room's
+  // own cover when set; otherwise fall back to a stock interior shot so the
+  // section is visible before the operator uploads media.
   const VALID_ROOM_SLUGS = new Set<'kid' | 'teen' | 'adult'>(['kid', 'teen', 'adult']);
   const roomTiles: HomeRoomTile[] = rooms
     .filter((r): r is typeof r & { slug: 'kid' | 'teen' | 'adult' } => VALID_ROOM_SLUGS.has(r.slug as 'kid' | 'teen' | 'adult'))
-    .filter((r) => !!r.cover?.url)
     .map((r) => ({
       slug: r.slug,
       name: r.name,
       tagline: r.tagline ?? undefined,
-      coverUrl: r.cover!.url!,
+      coverUrl: r.cover?.url ?? FALLBACK_ROOM_COVERS[r.slug],
     }));
 
-  // Map articles to journal row format: filter for valid covers.
-  const journalArticles: HomeJournalArticle[] = articles
-    .filter((a) => !!a.cover?.url)
-    .map((a) => ({
-      slug: a.slug,
-      title: a.title,
-      category: a.category?.name ?? '',
-      coverUrl: a.cover!.url!,
-    }));
+  // Map articles to journal row format. Fall back to stock covers if the
+  // article has none — so the parallax rows are visible before editorial
+  // content lands.
+  const journalArticles: HomeJournalArticle[] = articles.map((a, i) => ({
+    slug: a.slug,
+    title: a.title,
+    category: a.category?.name ?? '',
+    coverUrl: a.cover?.url ?? FALLBACK_JOURNAL_COVERS[i % FALLBACK_JOURNAL_COVERS.length]!,
+  }));
 
-  // Build showroom cards: only showrooms with a cover image, max 3.
-  const showroomCards: HomeShowroomCard[] = showrooms
-    .filter((s) => !!s.cover?.url)
-    .slice(0, 3)
-    .map((s) => ({
-      slug: s.slug,
-      city: s.address?.city ?? s.name,
-      addressLine: [s.address?.district, s.address?.street, s.address?.plaque]
-        .filter((p): p is string => typeof p === 'string' && p.length > 0)
-        .join('، '),
-      phone: s.phone ?? undefined,
-      coverUrl: s.cover!.url!,
-      isCentral: s.is_central ?? undefined,
-    }));
+  // Build showroom cards: max 3. Fall back to stock covers if the showroom
+  // has none.
+  const showroomCards: HomeShowroomCard[] = showrooms.slice(0, 3).map((s, i) => ({
+    slug: s.slug,
+    city: s.address?.city ?? s.name,
+    addressLine: [s.address?.district, s.address?.street, s.address?.plaque]
+      .filter((p): p is string => typeof p === 'string' && p.length > 0)
+      .join('، '),
+    phone: s.phone ?? undefined,
+    coverUrl: s.cover?.url ?? FALLBACK_SHOWROOM_COVERS[i % FALLBACK_SHOWROOM_COVERS.length]!,
+    isCentral: s.is_central ?? undefined,
+  }));
 
   return (
     <>
