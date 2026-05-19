@@ -520,6 +520,21 @@ export async function fetchContact(): Promise<PayloadContact | null> {
   return payloadFetch<PayloadContact>('/api/globals/contact?depth=1', 'contact');
 }
 
+export type PayloadSiteConfig = {
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  address?: LexicalRoot | null;
+  hours?: string | null;
+  socials?: Array<{
+    platform: 'instagram' | 'telegram' | 'whatsapp' | 'aparat' | 'youtube' | 'linkedin' | 'pinterest';
+    url: string;
+  }> | null;
+};
+
+export async function fetchSiteConfig(): Promise<PayloadSiteConfig | null> {
+  return payloadFetch<PayloadSiteConfig>('/api/globals/site-config?depth=2', 'site-config');
+}
+
 export async function fetchRoom(slug: string): Promise<PayloadRoom | null> {
   const list = await payloadFetch<PayloadList<PayloadRoom>>(
     `/api/rooms?where[slug][equals]=${encodeURIComponent(slug)}&limit=1&depth=2`,

@@ -32,9 +32,9 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
   {
     heading: 'خدمات',
     links: [
-      { label: 'تماس', href: '/contact' },
       { label: 'پرسش‌های متداول', href: '/faq' },
       { label: 'مراقبت و گارانتی', href: '/care' },
+      { label: 'ارسال و تحویل', href: '/shipping-and-delivery' },
     ],
   },
 ];

@@ -1,12 +1,36 @@
 import Link from 'next/link';
 import { Container } from '@zhic/ui';
 import { FOOTER_COLUMNS, FOOTER_LEGAL, FOOTER_COPYRIGHT_LINE } from './footerLinks';
+import { FooterContactStrip, type SocialLink } from './FooterContactStrip';
+import type { PayloadSiteConfig } from '@/lib/payload';
 
-export function SiteFooter() {
+const VALID_SOCIAL_PLATFORMS: ReadonlyArray<SocialLink['platform']> =
+  ['instagram', 'telegram', 'whatsapp', 'aparat', 'youtube', 'linkedin', 'pinterest'];
+
+export type SiteFooterProps = {
+  siteConfig?: PayloadSiteConfig | null;
+};
+
+export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
+  const socials = (siteConfig?.socials ?? []).filter((s): s is SocialLink =>
+    VALID_SOCIAL_PLATFORMS.includes(s.platform as SocialLink['platform']),
+  );
+
   return (
-    <footer className="bg-charcoal pb-6 pt-9 text-ivory">
+    <footer className="bg-forest-dark pb-6 pt-9 text-ivory">
       <Container>
-        <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4 md:gap-7">
+        <FooterContactStrip
+          contactPhone={siteConfig?.contactPhone ?? undefined}
+          contactEmail={siteConfig?.contactEmail ?? undefined}
+          address={siteConfig?.address ?? null}
+          hours={siteConfig?.hours ?? undefined}
+          socials={socials}
+        />
+
+        <div
+          className="mb-8 mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4 md:gap-7 border-t pt-9"
+          style={{ borderTopColor: 'rgba(250, 250, 247, 0.1)' }}
+        >
           {FOOTER_COLUMNS.map((col) => (
             <div key={col.heading}>
               <h4 className="mb-4 text-small font-bold text-ivory">{col.heading}</h4>
