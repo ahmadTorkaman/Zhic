@@ -13,10 +13,11 @@ const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
 const toPersianDigits = (n: number) =>
   String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[Number(d)] ?? d);
 
-const SWIPE_THRESHOLD_PX = 40;
 const CAPTION_FADE_MS = 220;
 const N_CLONES = 4;
 const TRANSITION_MS = 1000; // 850ms track translate + 150ms safety buffer
+const DRAG_DEAD_ZONE_PX = 8; // sub-threshold movement counts as a click, not a drag
+const VELOCITY_FLICK_THRESHOLD = 1.5; // px/ms — past this, snap one extra tile in velocity direction
 
 export function DesignsSlider({ designs }: DesignsSliderProps) {
   if (designs.length === 0) {
@@ -69,6 +70,17 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const jumpTimerRef = useRef<number | null>(null);
 
+  // Drag-to-scrub state. All refs (synchronous reads in pointer handlers,
+  // no React re-render needed during the gesture).
+  const dragStartXRef = useRef<number | null>(null);
+  const dragStartFocusedRef = useRef<number>(N_CLONES);
+  const dragOffsetRef = useRef<number>(0);
+  const lastMoveTimeRef = useRef<number>(0);
+  const lastMoveXRef = useRef<number>(0);
+  const velocityRef = useRef<number>(0);
+  const isDraggingRef = useRef(false);
+  const wasDragRef = useRef(false);
+
   const realIndex = ((focused - N_CLONES) % N + N) % N;
   const focusedDesign = designs[realIndex]!;
 
@@ -82,6 +94,9 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
   // offsetLeft give the un-scaled layout dims so the slot stays the same
   // regardless of which tile is currently focused.
   const recenter = useCallback(() => {
+    // Skip during active drag — pointermove is imperatively setting transform
+    // and recenter would yank the track back to the focused position mid-drag.
+    if (isDraggingRef.current) return;
     const track = trackRef.current;
     const viewport = viewportRef.current;
     if (!track || !viewport || track.children.length < 2) return;
@@ -184,9 +199,10 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
     (delta: number) => {
       setFocused((prev) => {
         let next = prev + delta;
-        // Hard-wrap if user mashes past the clone padding.
-        if (next < 0) next += N;
-        else if (next >= EXTENDED.length) next -= N;
+        // Hard-wrap. Uses while loops so multi-step deltas (from a drag that
+        // crossed several slot boundaries) normalize correctly.
+        while (next < 0) next += N;
+        while (next >= EXTENDED.length) next -= N;
         return next;
       });
     },
@@ -205,27 +221,127 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
     return () => document.removeEventListener('keydown', onKey);
   }, [go]);
 
-  // Touch swipe — cards follow finger
+  // Drag-to-scrub via Pointer Events — unified path for touch + mouse + pen.
+  // Track follows the pointer in real time during the drag (inline transform,
+  // transitions paused). On release, snap to the nearest slot, with a flick
+  // velocity bonus that advances one extra in the flick direction.
   useEffect(() => {
     const vp = viewportRef.current;
     if (!vp) return;
-    let startX = 0;
-    const onStart = (e: TouchEvent) => {
-      startX = e.changedTouches[0]?.clientX ?? 0;
+
+    const measureLayout = () => {
+      const track = trackRef.current;
+      if (!track || track.children.length < 2) return null;
+      const tile0 = track.children[0] as HTMLElement;
+      const tile1 = track.children[1] as HTMLElement;
+      return {
+        slot: Math.abs(tile1.offsetLeft - tile0.offsetLeft),
+        tileWidth: tile0.offsetWidth,
+        viewportWidth: vp.offsetWidth,
+      };
     };
-    const onEnd = (e: TouchEvent) => {
-      const endX = e.changedTouches[0]?.clientX ?? 0;
-      const dx = endX - startX;
-      if (Math.abs(dx) < SWIPE_THRESHOLD_PX) return;
-      go(dx < 0 ? -1 : +1);
+
+    const onPointerDown = (e: PointerEvent) => {
+      // Mouse right-click / middle-click: ignore.
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      // Pointer-down on an interactive control inside the viewport (e.g. a
+      // future inline button): ignore so the control handles its own click.
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('button')) return;
+
+      dragStartXRef.current = e.clientX;
+      dragStartFocusedRef.current = focused;
+      dragOffsetRef.current = 0;
+      lastMoveTimeRef.current = performance.now();
+      lastMoveXRef.current = e.clientX;
+      velocityRef.current = 0;
+      isDraggingRef.current = true;
+      wasDragRef.current = false;
+      vp.dataset.dragging = '';
+
+      const track = trackRef.current;
+      if (track) track.style.transition = 'none';
+      try {
+        vp.setPointerCapture(e.pointerId);
+      } catch {
+        // setPointerCapture may throw on some platforms; degrade gracefully.
+      }
     };
-    vp.addEventListener('touchstart', onStart, { passive: true });
-    vp.addEventListener('touchend', onEnd);
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!isDraggingRef.current || dragStartXRef.current === null) return;
+      const dx = e.clientX - dragStartXRef.current;
+      dragOffsetRef.current = dx;
+      if (Math.abs(dx) > DRAG_DEAD_ZONE_PX) {
+        wasDragRef.current = true;
+        e.preventDefault(); // suppress page scroll once the drag is committed
+      }
+
+      // Smoothed velocity (px/ms) from the most recent move delta.
+      const now = performance.now();
+      const dt = now - lastMoveTimeRef.current;
+      if (dt > 0) {
+        velocityRef.current = (e.clientX - lastMoveXRef.current) / dt;
+      }
+      lastMoveTimeRef.current = now;
+      lastMoveXRef.current = e.clientX;
+
+      const layout = measureLayout();
+      if (!layout) return;
+      const baseShift =
+        dragStartFocusedRef.current * layout.slot -
+        (layout.viewportWidth - layout.tileWidth) / 2;
+      const track = trackRef.current;
+      if (track) {
+        track.style.transform = `translateX(${baseShift + dx}px)`;
+      }
+    };
+
+    const onPointerEnd = (e: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      isDraggingRef.current = false;
+      try {
+        vp.releasePointerCapture(e.pointerId);
+      } catch {
+        // ignore
+      }
+      delete vp.dataset.dragging;
+
+      const dx = dragOffsetRef.current;
+      const v = velocityRef.current;
+      const track = trackRef.current;
+      if (track) track.style.transition = '';
+
+      const layout = measureLayout();
+      if (!layout) {
+        recenter();
+        return;
+      }
+
+      // Round dx to nearest whole slot, then add a velocity bonus for flicks.
+      const slotsDragged = Math.round(dx / layout.slot);
+      const velocityBonus =
+        Math.abs(v) > VELOCITY_FLICK_THRESHOLD ? Math.sign(v) : 0;
+      const totalAdvance = slotsDragged + velocityBonus;
+
+      if (totalAdvance !== 0) {
+        go(totalAdvance);
+      } else {
+        recenter(); // snap back to original position
+      }
+    };
+
+    vp.addEventListener('pointerdown', onPointerDown);
+    vp.addEventListener('pointermove', onPointerMove);
+    vp.addEventListener('pointerup', onPointerEnd);
+    vp.addEventListener('pointercancel', onPointerEnd);
     return () => {
-      vp.removeEventListener('touchstart', onStart);
-      vp.removeEventListener('touchend', onEnd);
+      vp.removeEventListener('pointerdown', onPointerDown);
+      vp.removeEventListener('pointermove', onPointerMove);
+      vp.removeEventListener('pointerup', onPointerEnd);
+      vp.removeEventListener('pointercancel', onPointerEnd);
     };
-  }, [go]);
+  }, [focused, go, recenter]);
 
   return (
     <section
@@ -262,9 +378,21 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
               design={d}
               isFocused={extIdx === focused}
               isClone={isCloneIndex(extIdx)}
-              onClick={() => {
+              onSelect={() => {
+                if (wasDragRef.current) {
+                  wasDragRef.current = false;
+                  return;
+                }
                 if (extIdx === focused) return;
                 setFocused(extIdx);
+              }}
+              onFocusedNavigate={(e) => {
+                // The focused tile is a <Link>. If a drag just ended on it,
+                // suppress the navigation that would otherwise fire on click.
+                if (wasDragRef.current) {
+                  wasDragRef.current = false;
+                  e.preventDefault();
+                }
               }}
             />
           ))}
@@ -308,12 +436,14 @@ function DesignTile({
   design,
   isFocused,
   isClone = false,
-  onClick,
+  onSelect,
+  onFocusedNavigate,
 }: {
   design: PayloadDesign;
   isFocused: boolean;
   isClone?: boolean;
-  onClick?: () => void;
+  onSelect?: () => void;
+  onFocusedNavigate?: React.MouseEventHandler<HTMLAnchorElement>;
 }) {
   const inner = (
     <>
@@ -328,6 +458,7 @@ function DesignTile({
     return (
       <Link
         href={`/designs/${encodeURIComponent(design.slug)}`}
+        onClick={onFocusedNavigate}
         className="zh-slider-tile"
         data-focused
         role="listitem"
@@ -341,13 +472,13 @@ function DesignTile({
     <div
       className="zh-slider-tile"
       role="listitem"
-      onClick={onClick}
+      onClick={onSelect}
       tabIndex={isClone ? -1 : 0}
       aria-hidden={isClone || undefined}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          onClick?.();
+          onSelect?.();
         }
       }}
       aria-label={isClone ? undefined : `طرح ${design.name} (انتخاب کنید برای دیدن)`}

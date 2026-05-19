@@ -23,6 +23,13 @@
   position: relative;
   overflow: visible;
   margin-inline: clamp(16px, 3vw, 40px);
+  cursor: grab;
+  /* Allow vertical page scroll, claim horizontal gestures for drag-to-scrub. */
+  touch-action: pan-y;
+}
+
+.zh-slider-viewport[data-dragging] {
+  cursor: grabbing;
 }
 
 .zh-slider-track {
