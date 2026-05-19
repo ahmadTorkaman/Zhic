@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { PayloadDesign, PayloadMedia } from '@/lib/payload';
 import './designs-slider.css';
@@ -14,10 +14,11 @@ const toPersianDigits = (n: number) =>
   String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[Number(d)] ?? d);
 
 const SWIPE_THRESHOLD_PX = 40;
-const CAPTION_FADE_MS = 200;
+const CAPTION_FADE_MS = 220;
+const N_CLONES = 4;
+const TRANSITION_MS = 1000; // 850ms track translate + 150ms safety buffer
 
 export function DesignsSlider({ designs }: DesignsSliderProps) {
-  // ── Empty / sparse fallbacks ────────────────────────────────────────────
   if (designs.length === 0) {
     return (
       <section className="zh-slider-section">
@@ -28,17 +29,16 @@ export function DesignsSlider({ designs }: DesignsSliderProps) {
   if (designs.length === 1) {
     return <SingleDesignFallback design={designs[0]!} />;
   }
-  // ≥ 2 designs use the full slider
-
   return <Slider designs={designs} />;
 }
-
-// ─────────────────────────── Single-design fallback ───────────────────────
 
 function SingleDesignFallback({ design }: { design: PayloadDesign }) {
   return (
     <section className="zh-slider-section" aria-label="گالری طرح‌ها">
-      <div className="zh-slider-viewport" style={{ marginInline: 'clamp(36px, 8vw, 100px)' }}>
+      <div
+        className="zh-slider-viewport"
+        style={{ marginInline: 'clamp(36px, 8vw, 100px)' }}
+      >
         <div className="zh-slider-track">
           <DesignTile design={design} isFocused />
         </div>
@@ -51,54 +51,149 @@ function SingleDesignFallback({ design }: { design: PayloadDesign }) {
   );
 }
 
-// ─────────────────────────── Main slider ─────────────────────────────────
-
 function Slider({ designs }: { designs: PayloadDesign[] }) {
-  const [focused, setFocused] = useState(0);
+  const N = designs.length;
+  const EXTENDED = useMemo(
+    () => [
+      ...designs.slice(N - N_CLONES),
+      ...designs,
+      ...designs.slice(0, N_CLONES),
+    ],
+    [designs, N],
+  );
+
+  const [focused, setFocused] = useState<number>(N_CLONES);
   const [captionChanging, setCaptionChanging] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const jumpTimerRef = useRef<number | null>(null);
 
-  // Center the focused tile in the viewport. The formula generalizes the
-  // 3-visible desktop math: when viewport == 3*tile + 2*gap it reduces to
-  // (focused-1)*slot. On mobile (tile ≈ 50% of viewport) it places each side
-  // tile's center on the viewport edge, leaving them exactly half visible.
+  const realIndex = ((focused - N_CLONES) % N + N) % N;
+  const focusedDesign = designs[realIndex]!;
+
+  const isCloneIndex = useCallback(
+    (ext: number) => ext < N_CLONES || ext >= N_CLONES + N,
+    [N],
+  );
+
+  // Center the focused tile in the viewport using LAYOUT dimensions, NOT
+  // getBoundingClientRect (which returns the scaled rect). offsetWidth /
+  // offsetLeft give the un-scaled layout dims so the slot stays the same
+  // regardless of which tile is currently focused.
+  const recenter = useCallback(() => {
+    const track = trackRef.current;
+    const viewport = viewportRef.current;
+    if (!track || !viewport || track.children.length < 2) return;
+    const tile0 = track.children[0] as HTMLElement;
+    const tile1 = track.children[1] as HTMLElement;
+    const tileWidth = tile0.offsetWidth;
+    const slot = Math.abs(tile1.offsetLeft - tile0.offsetLeft);
+    const viewportWidth = viewport.offsetWidth;
+    const shift = focused * slot - (viewportWidth - tileWidth) / 2;
+    track.style.transform = `translateX(${shift}px)`;
+  }, [focused]);
+
   useEffect(() => {
-    const recenter = () => {
-      const track = trackRef.current;
-      const viewport = viewportRef.current;
-      if (!track || !viewport || track.children.length === 0) return;
-      const firstTile = track.children[0] as HTMLElement;
-      const secondTile = track.children[1] as HTMLElement | undefined;
-      const tileWidth = firstTile.getBoundingClientRect().width;
-      const gap = secondTile
-        ? Math.abs(secondTile.offsetLeft - firstTile.offsetLeft) - tileWidth
-        : 0;
-      const slot = tileWidth + gap;
-      const viewportWidth = viewport.getBoundingClientRect().width;
-      const shift = focused * slot - (viewportWidth - tileWidth) / 2;
-      track.style.transform = `translateX(${shift}px)`;
-    };
     recenter();
     window.addEventListener('resize', recenter);
     return () => window.removeEventListener('resize', recenter);
-  }, [focused, designs.length]);
+  }, [recenter]);
 
-  // Cross-fade the caption when focused changes
+  // Caption cross-fade fires on REAL-INDEX change only. Silent jumps move
+  // `focused` between equivalent clone/real positions; realIndex doesn't
+  // change, so this effect doesn't re-run and the caption stays put.
   useEffect(() => {
     setCaptionChanging(true);
-    const t = setTimeout(() => setCaptionChanging(false), CAPTION_FADE_MS);
-    return () => clearTimeout(t);
-  }, [focused]);
+    const t = window.setTimeout(() => setCaptionChanging(false), CAPTION_FADE_MS);
+    return () => window.clearTimeout(t);
+  }, [realIndex]);
+
+  // Schedule silent jump when focused lands on a clone. Listen for the
+  // track's transform transitionend (most reliable) with a setTimeout
+  // fallback in case the event doesn't fire (interrupted by another click,
+  // slow tab, etc.).
+  useEffect(() => {
+    if (!isCloneIndex(focused)) return;
+    const track = trackRef.current;
+    if (!track) return;
+
+    let fired = false;
+    const fire = () => {
+      if (fired) return;
+      fired = true;
+      track.removeEventListener('transitionend', onEnd);
+      if (jumpTimerRef.current !== null) {
+        window.clearTimeout(jumpTimerRef.current);
+        jumpTimerRef.current = null;
+      }
+      performSilentJump();
+    };
+    const onEnd = (e: TransitionEvent) => {
+      if (e.target !== track) return;
+      if (e.propertyName !== 'transform') return;
+      fire();
+    };
+    track.addEventListener('transitionend', onEnd);
+    jumpTimerRef.current = window.setTimeout(fire, TRANSITION_MS);
+
+    return () => {
+      track.removeEventListener('transitionend', onEnd);
+      if (jumpTimerRef.current !== null) {
+        window.clearTimeout(jumpTimerRef.current);
+        jumpTimerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- performSilentJump
+    // is recreated each render and captures the current `focused` via closure;
+    // including it in deps would cause an infinite re-schedule loop.
+  }, [focused, isCloneIndex]);
+
+  function performSilentJump() {
+    const realFocused = (((focused - N_CLONES) % N) + N) % N + N_CLONES;
+    setIsJumping(true);
+    const track = trackRef.current;
+    if (track) {
+      track.style.transition = 'none';
+      track.querySelectorAll<HTMLElement>('.zh-slider-tile, .zh-tile-bg').forEach((el) => {
+        el.style.transition = 'none';
+      });
+    }
+    setFocused(realFocused);
+
+    // Force reflow so the no-transition state is committed before re-enabling.
+    if (track) void track.offsetWidth;
+
+    // Two animation frames before re-enabling — first paints the jumped state,
+    // second re-arms transitions.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsJumping(false);
+        const t = trackRef.current;
+        if (t) {
+          t.style.transition = '';
+          t.querySelectorAll<HTMLElement>('.zh-slider-tile, .zh-tile-bg').forEach((el) => {
+            el.style.transition = '';
+          });
+        }
+      });
+    });
+  }
 
   const go = useCallback(
     (delta: number) => {
-      setFocused((prev) => (prev + delta + designs.length) % designs.length);
+      setFocused((prev) => {
+        let next = prev + delta;
+        // Hard-wrap if user mashes past the clone padding.
+        if (next < 0) next += N;
+        else if (next >= EXTENDED.length) next -= N;
+        return next;
+      });
     },
-    [designs.length],
+    [N, EXTENDED.length],
   );
 
-  // Keyboard arrow keys (RTL: ArrowLeft = next, ArrowRight = prev)
+  // Keyboard arrows — RTL: ArrowLeft = next, ArrowRight = prev
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
@@ -110,7 +205,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
     return () => document.removeEventListener('keydown', onKey);
   }, [go]);
 
-  // Touch swipe
+  // Touch swipe — cards follow finger
   useEffect(() => {
     const vp = viewportRef.current;
     if (!vp) return;
@@ -122,10 +217,6 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       const endX = e.changedTouches[0]?.clientX ?? 0;
       const dx = endX - startX;
       if (Math.abs(dx) < SWIPE_THRESHOLD_PX) return;
-      // Cards follow the finger. In our RTL layout the focused tile is centered
-      // and the track translates rightward as focused increases (next tiles
-      // sit to the left). So swiping LEFT (dx < 0) drags the track left, which
-      // brings the RIGHT-side neighbour (lower index) into center = previous.
       go(dx < 0 ? -1 : +1);
     };
     vp.addEventListener('touchstart', onStart, { passive: true });
@@ -136,10 +227,12 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
     };
   }, [go]);
 
-  const focusedDesign = designs[focused]!;
-
   return (
-    <section className="zh-slider-section" aria-roledescription="carousel" aria-label="گالری طرح‌ها">
+    <section
+      className={`zh-slider-section${isJumping ? ' is-jumping' : ''}`}
+      aria-roledescription="carousel"
+      aria-label="گالری طرح‌ها"
+    >
       <button
         type="button"
         className="zh-slider-arrow zh-prev"
@@ -163,21 +256,25 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
 
       <div ref={viewportRef} className="zh-slider-viewport">
         <div ref={trackRef} className="zh-slider-track" role="list">
-          {designs.map((d, i) => (
+          {EXTENDED.map((d, extIdx) => (
             <DesignTile
-              key={d.id}
+              key={`${d.id}-${extIdx}`}
               design={d}
-              isFocused={i === focused}
+              isFocused={extIdx === focused}
               onClick={() => {
-                if (i === focused) return; // center click handled by inner <Link>
-                setFocused(i);
+                if (extIdx === focused) return;
+                setFocused(extIdx);
               }}
             />
           ))}
         </div>
       </div>
 
-      <div className="zh-slider-caption" data-changing={captionChanging || undefined} aria-live="polite">
+      <div
+        className="zh-slider-caption"
+        data-changing={captionChanging || undefined}
+        aria-live="polite"
+      >
         <div className="zh-caption-name">{focusedDesign.name}</div>
         {focusedDesign.tagline ? (
           <div className="zh-caption-tagline">{focusedDesign.tagline}</div>
@@ -192,21 +289,19 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
               type="button"
               className="zh-slider-dot"
               role="tab"
-              aria-selected={i === focused}
+              aria-selected={i === realIndex}
               aria-label={`طرح ${d.name}`}
-              onClick={() => setFocused(i)}
+              onClick={() => setFocused(N_CLONES + i)}
             />
           ))}
         </div>
         <div className="zh-slider-counter" role="status">
-          {toPersianDigits(focused + 1)} از {toPersianDigits(designs.length)}
+          {toPersianDigits(realIndex + 1)} از {toPersianDigits(N)}
         </div>
       </div>
     </section>
   );
 }
-
-// ─────────────────────────── Tile + helpers ──────────────────────────────
 
 function DesignTile({
   design,
@@ -223,11 +318,9 @@ function DesignTile({
         <TileMedia design={design} />
       </div>
       <span className="zh-tile-eyebrow">طرح</span>
-      <span className="zh-tile-name">{design.name}</span>
     </>
   );
 
-  // Focused tile is a Link (click navigates). Dim tile is a div (click selects).
   if (isFocused) {
     return (
       <Link
@@ -263,16 +356,9 @@ function DesignTile({
 function TileMedia({ design }: { design: PayloadDesign }) {
   const media: PayloadMedia | null =
     design.sliderMedia ?? design.heroMedia ?? design.gallery?.[0] ?? null;
-  if (!media?.url) return <TilePlaceholder />;
+  if (!media?.url) return null;
   if (media.mimeType?.startsWith('video/')) {
-    return (
-      <video src={media.url} autoPlay loop muted playsInline preload="metadata" />
-    );
+    return <video src={media.url} autoPlay loop muted playsInline preload="metadata" />;
   }
-  // image/* including image/gif — GIFs animate naturally in <img>
   return <img src={media.url} alt="" />;
-}
-
-function TilePlaceholder() {
-  return <span className="zh-tile-watermark" aria-hidden>ژ</span>;
 }

@@ -1,172 +1,186 @@
-/* Designs slider — see docs/superpowers/specs/2026-05-17-designs-index-page-design.md §5.8 */
+/* Designs slider — see docs/superpowers/specs/2026-05-20-designs-big-carousel-design.md */
 
 .zh-slider-section {
   position: relative;
-  padding-block: 24px 16px;
+  padding-block: 36px 16px;
   user-select: none;
+  min-height: 60vh;
+
+  --tile-scale-focused: 1.35;
+  --tile-scale-dim:     0.55;
+  --tile-opacity-dim:   0.40;
+  --tile-blur-dim:      3px;
+  --spill-pct:          45%;
+}
+
+.zh-slider-empty {
+  text-align: center;
+  color: var(--color-stone);
+  padding-block: 64px;
 }
 
 .zh-slider-viewport {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   margin-inline: clamp(16px, 3vw, 40px);
 }
 
 .zh-slider-track {
   display: flex;
-  gap: clamp(12px, 2.5vw, 32px);
-  transition: transform 750ms var(--ease-out-soft);
+  gap: clamp(8px, 1.2vw, 18px);
+  transition: transform 850ms var(--ease-out-quint);
   will-change: transform;
 }
 
-/* Default = dim tile: "Settle" mode — physically smaller + softly blurred,
-   like an out-of-focus magazine spread. The focused tile then pops sharp at
-   full scale, creating a depth-of-field effect. */
 .zh-slider-tile {
-  flex: 0 0 calc((100% - 2 * clamp(12px, 2.5vw, 32px)) / 3);
+  flex: 0 0 calc((100% - 2 * clamp(8px, 1.2vw, 18px)) / 3);
   aspect-ratio: 1 / 1;
   position: relative;
   cursor: pointer;
-  opacity: 0.45;
+  opacity: var(--tile-opacity-dim);
   background: transparent;
   border: 0;
   border-radius: 0;
   overflow: visible;
-  transform: scale(0.88);
-  filter: blur(2px);
+  transform: scale(var(--tile-scale-dim));
+  filter: blur(var(--tile-blur-dim));
+  transform-origin: 50% 50%;
+  text-decoration: none;
+  color: var(--color-charcoal);
   transition:
-    opacity       650ms var(--ease-out-soft),
-    transform     650ms var(--ease-out-soft),
-    filter        650ms var(--ease-out-soft),
-    border-color  650ms var(--ease-out-soft),
-    border-radius 650ms var(--ease-out-soft),
-    box-shadow    650ms var(--ease-out-soft);
+    opacity        750ms var(--ease-out-soft),
+    transform      750ms var(--ease-out-quint),
+    filter         750ms var(--ease-out-soft),
+    border-color   650ms var(--ease-out-soft),
+    border-radius  650ms var(--ease-out-soft);
 }
 
-/* The GIF surface lives on a child div so its size/shape can change
-   independently of the tile box (which carries the card chrome when focused). */
+.zh-slider-tile[data-focused] {
+  opacity: 1;
+  z-index: 5;
+  border: 1px solid var(--color-forest);
+  border-radius: 10px;
+  transform: scale(var(--tile-scale-focused));
+  filter: blur(0);
+}
+
 .zh-tile-bg {
   position: absolute;
   inset: 0;
   overflow: hidden;
   z-index: 0;
-  background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
-  transition: inset 750ms var(--ease-out-soft),
-              border-radius 750ms var(--ease-out-soft);
+  background: linear-gradient(135deg, rgba(95, 119, 96, 0.04), rgba(95, 119, 96, 0.10));
+  transition:
+    inset         800ms var(--ease-out-quint),
+    border-radius 650ms var(--ease-out-soft);
 }
 
-.zh-tile-bg :is(img, video) {
+.zh-tile-bg > img,
+.zh-tile-bg > video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-/* Watermark placeholder when no media is uploaded */
-.zh-tile-watermark {
+.zh-tile-bg::after {
+  content: '';
   position: absolute;
-  inset-inline-end: 8%;
-  inset-block-end: 8%;
-  font-size: clamp(60px, 10vw, 140px);
-  line-height: 1;
-  color: var(--color-ivory);
-  opacity: 0.7;
-  font-weight: 900;
-  pointer-events: none;
+  inset-block-start: 18px;
+  inset-inline-end: 18px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-forest);
+  box-shadow: 0 0 0 0 rgba(95, 119, 96, 0.5);
+  animation: zh-tile-pulse 1.8s ease-in-out infinite;
+  z-index: 1;
 }
 
-/* Eyebrow + name overlays (visible on all tiles for identification) */
+@keyframes zh-tile-pulse {
+  0%, 100% { box-shadow: 0 0 0 0  rgba(95, 119, 96, 0); }
+  50%      { box-shadow: 0 0 0 8px rgba(95, 119, 96, 0.20); }
+}
+
+.zh-slider-tile[data-focused] .zh-tile-bg {
+  right: calc(-1 * var(--spill-pct));
+  border-radius: 10px 0 0 10px;
+}
+
 .zh-tile-eyebrow {
   position: absolute;
-  inset-inline-start: 20px;
-  inset-block-start: 18px;
-  font-size: 10px;
+  inset-inline-start: 24px;
+  inset-block-start: 22px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: var(--tracking-eyebrow-wide, 0.12em);
+  letter-spacing: 0.14em;
   color: var(--color-forest);
   font-weight: 700;
   z-index: 1;
 }
 
-.zh-tile-name {
-  position: absolute;
-  inset-inline-start: 20px;
-  inset-block-end: 18px;
-  font-size: clamp(16px, 1.8vw, 22px);
-  font-weight: 900;
-  color: var(--color-charcoal);
-  z-index: 1;
-}
-
-/* Focused tile: gain chrome + right-spill, sharp + full scale */
-.zh-slider-tile[data-focused] {
-  opacity: 1;
-  z-index: 5;
-  border: 1px solid var(--color-sand);
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(20, 17, 15, 0.10);
-  transform: scale(1);
-  filter: blur(0);
-}
-
-.zh-slider-tile[data-focused] .zh-tile-bg {
-  right: -22%;
-  border-radius: 8px 0 0 8px;
-}
-
-/* Slider arrows */
 .zh-slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: clamp(40px, 5vw, 56px);
-  height: clamp(40px, 5vw, 56px);
+  width: clamp(48px, 5vw, 64px);
+  height: clamp(48px, 5vw, 64px);
   border-radius: 50%;
   background: var(--color-ivory);
   border: 1px solid var(--color-sand);
-  box-shadow: 0 4px 14px rgba(20, 17, 15, 0.08);
+  box-shadow: 0 8px 22px rgba(20, 17, 15, 0.10);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color var(--dur-hover) var(--ease-out-soft),
-              border-color var(--dur-hover) var(--ease-out-soft),
-              box-shadow var(--dur-hover);
+  padding: 0;
   z-index: 10;
   color: var(--color-charcoal);
+  transition:
+    background-color var(--dur-hover),
+    border-color     var(--dur-hover),
+    box-shadow       var(--dur-hover);
 }
 
 .zh-slider-arrow:hover {
   background: var(--color-cream);
   border-color: var(--color-stone);
-  box-shadow: 0 6px 18px rgba(20, 17, 15, 0.12);
+  box-shadow: 0 10px 26px rgba(20, 17, 15, 0.14);
 }
 
-.zh-slider-arrow.zh-prev { right: clamp(4px, 1.5vw, 16px); }
-.zh-slider-arrow.zh-next { left:  clamp(4px, 1.5vw, 16px); }
+.zh-slider-arrow.zh-prev { right: clamp(-4px, 0.5vw, 8px); }
+.zh-slider-arrow.zh-next { left:  clamp(-4px, 0.5vw, 8px); }
 .zh-slider-arrow svg { width: 50%; height: 50%; }
 
-/* Caption */
 .zh-slider-caption {
   text-align: center;
-  padding-block: 32px 20px;
-  min-height: 110px;
+  position: relative;
+  z-index: 20;
+  margin-top: clamp(-160px, -10vw, -100px);
+  padding-block: 0 12px;
+  min-height: 130px;
+  pointer-events: none;
 }
 
 .zh-caption-name {
-  font-size: clamp(28px, 4vw, 42px);
+  font-size: clamp(40px, 6vw, 80px);
   font-weight: 900;
   color: var(--color-ink);
-  line-height: 1.15;
-  margin-bottom: 8px;
+  line-height: 1.05;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+  text-shadow:
+    0 1px 0  rgba(250, 250, 247, 0.7),
+    0 2px 24px rgba(250, 250, 247, 0.85);
   transition: opacity 750ms var(--ease-out-soft);
 }
 
 .zh-caption-tagline {
-  font-size: clamp(14px, 1.3vw, 17px);
+  font-size: clamp(13px, 1.3vw, 17px);
   color: var(--color-stone);
   font-weight: 300;
   line-height: 1.6;
+  text-shadow: 0 1px 0 rgba(250, 250, 247, 0.8);
   transition: opacity 750ms var(--ease-out-soft);
 }
 
@@ -175,13 +189,12 @@
   opacity: 0.3;
 }
 
-/* Indicator (dots + counter) */
 .zh-slider-indicator {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  padding-block: 16px 32px;
+  padding-block: 12px 40px;
 }
 
 .zh-slider-dots {
@@ -200,12 +213,10 @@
   cursor: pointer;
   border: 0;
   padding: 0;
-  transition: background-color var(--dur-hover) var(--ease-out-soft),
-              transform var(--dur-hover) var(--ease-out-soft);
+  transition: background-color var(--dur-hover), transform var(--dur-hover);
 }
 
 .zh-slider-dot:hover { background: var(--color-stone); }
-
 .zh-slider-dot[aria-selected="true"] {
   background: var(--color-charcoal);
   transform: scale(1.5);
@@ -218,66 +229,39 @@
   letter-spacing: 0.08em;
 }
 
-/* Empty / 1-design / 2-design fallback layouts */
-.zh-slider-empty {
-  text-align: center;
-  padding-block: 80px;
-  color: var(--color-stone);
-  font-size: clamp(15px, 1.4vw, 18px);
-}
-
-/* ── Mobile: focused tile dominates, side tiles peek ~half off the viewport ─
-   Desktop keeps the 3-visible model. On mobile each tile becomes 50% of the
-   viewport (minus the gap) so the slot equals exactly V/2 — that puts each
-   side tile's center on the viewport edge, leaving them half visible. Arrows
-   are hidden (swipe + dots cover navigation). Overlays + caption shrink so
-   the bigger focused card has more room to breathe. */
 @media (max-width: 768px) {
   .zh-slider-section {
-    padding-block: 8px 12px;
+    --tile-scale-focused: 1.45;
+    --tile-scale-dim:     0.42;
+    --tile-opacity-dim:   0.30;
+    --spill-pct:          30%;
+    padding-block: 12px 8px;
+    min-height: 0;
   }
-  .zh-slider-viewport {
-    margin-inline: 0;
-  }
-  .zh-slider-track {
-    gap: 12px;
-  }
-  .zh-slider-tile {
-    flex: 0 0 calc(50% - 12px);
-  }
-  .zh-slider-arrow {
-    display: none;
-  }
+  .zh-slider-viewport { margin-inline: 0; }
+  .zh-slider-track { gap: 6px; }
+  .zh-slider-arrow { display: none; }
   .zh-tile-eyebrow {
     font-size: 9px;
-    inset-inline-start: 12px;
-    inset-block-start: 10px;
-  }
-  .zh-tile-name {
-    font-size: 14px;
-    inset-inline-start: 12px;
-    inset-block-end: 10px;
-  }
-  .zh-tile-watermark {
-    font-size: 70px;
-    inset-inline-end: 10%;
-    inset-block-end: 10%;
+    inset-inline-start: 14px;
+    inset-block-start: 12px;
   }
   .zh-slider-caption {
-    padding-block: 18px 8px;
-    min-height: 70px;
+    margin-top: 0;
+    padding-block: 28px 8px;
+    min-height: 100px;
   }
-  .zh-caption-name {
-    font-size: 22px;
-    margin-bottom: 4px;
-  }
-  .zh-caption-tagline {
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .zh-slider-indicator {
-    padding-block: 8px 20px;
-  }
+  .zh-caption-name { font-size: 30px; margin-bottom: 6px; }
+  .zh-caption-tagline { font-size: 13px; }
+  .zh-slider-indicator { padding-block: 8px 28px; }
+}
+
+.zh-slider-section.is-jumping .zh-slider-track,
+.zh-slider-section.is-jumping .zh-slider-tile,
+.zh-slider-section.is-jumping .zh-tile-bg,
+.zh-slider-section.is-jumping .zh-caption-name,
+.zh-slider-section.is-jumping .zh-caption-tagline {
+  transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -287,9 +271,8 @@
   .zh-caption-name,
   .zh-caption-tagline { transition: none; }
 
-  /* Skip the depth-of-field effect entirely — opacity-only dim */
-  .zh-slider-tile {
-    transform: none;
-    filter: none;
-  }
+  .zh-slider-tile { transform: none; filter: none; }
+  .zh-slider-tile[data-focused] { transform: none; }
+
+  .zh-tile-bg::after { animation: none; }
 }
