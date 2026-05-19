@@ -31,9 +31,10 @@ import { Faq } from './globals/Faq'
 import { Care } from './globals/Care'
 import { Events } from './globals/Events'
 import { Privacy } from './globals/Privacy'
-import { Terms } from './globals/Terms'
 import { Returns } from './globals/Returns'
 import { Shipping } from './globals/Shipping'
+import { SiteConfig } from './globals/SiteConfig'
+import { Terms } from './globals/Terms'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -82,9 +83,10 @@ export default buildConfig({
     Care,
     Events,
     Privacy,
-    Terms,
     Returns,
     Shipping,
+    SiteConfig,
+    Terms,
   ],
 
   editor: lexicalEditor(),
