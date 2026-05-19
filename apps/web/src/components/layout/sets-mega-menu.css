@@ -1,0 +1,242 @@
+/* Sets mega-menu (سرویس خواب) — lookbook tile grid variant.
+   Derived from products-mega-menu.css but without tabs/search;
+   .zh-sets-grid renders as cover-image tiles (4/5 aspect-ratio cards). */
+
+/* Trigger wrapper — `position: static` so the absolutely-positioned panel can span the header width */
+.zh-sets-wrap { position: static; }
+
+.zh-sets-trigger {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--color-stone);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-sets-trigger:hover,
+.zh-sets-wrap:hover .zh-sets-trigger,
+.zh-sets-wrap:focus-within .zh-sets-trigger {
+  color: var(--color-charcoal);
+}
+
+.zh-sets-trigger[aria-expanded="true"] {
+  color: var(--color-charcoal);
+}
+
+.zh-sets-trigger .zh-sets-chev {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-inline-start: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
+  transform: rotate(-45deg) translateY(-1px);
+  transition: transform var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-sets-wrap:hover .zh-sets-chev,
+.zh-sets-trigger[aria-expanded="true"] .zh-sets-chev {
+  transform: rotate(135deg) translateY(-1px);
+}
+
+/* Panel */
+.zh-sets-panel {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  background: var(--color-ivory);
+  border-top: 1px solid var(--color-sand);
+  border-bottom: 1px solid var(--color-sand);
+  box-shadow: 0 16px 32px rgba(20, 17, 15, 0.06);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity var(--dur-mega) var(--ease-out-soft),
+              transform var(--dur-mega) var(--ease-out-soft);
+}
+
+.zh-sets-wrap:hover .zh-sets-panel,
+.zh-sets-wrap:focus-within .zh-sets-panel,
+.zh-sets-panel[data-open="true"],
+.zh-sets-panel:hover {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Body: main content + featured aside */
+.zh-sets-body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 3.5rem;
+  padding-block: 2.5rem 3rem;
+  align-items: start;
+}
+
+/* Main area (grid + CTA) */
+.zh-sets-main {
+  min-height: 280px;
+  max-height: calc(100vh - 10rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sand) transparent;
+}
+
+/* Lookbook tile grid */
+.zh-sets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.zh-sets-grid li { list-style: none; }
+
+.zh-sets-tile {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+  transition: transform var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-sets-tile:hover { transform: translateY(-2px); }
+
+.zh-sets-tile__media {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.zh-sets-tile__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20, 17, 15, 0.55), transparent 60%);
+}
+
+.zh-sets-tile__name {
+  position: absolute;
+  inset-inline-start: 14px;
+  inset-block-end: 28px;
+  color: var(--color-ivory);
+  font-weight: 700;
+  font-size: 1.05rem;
+  z-index: 1;
+}
+
+.zh-sets-tile__count {
+  position: absolute;
+  inset-inline-start: 14px;
+  inset-block-end: 10px;
+  color: var(--color-sand);
+  font-size: 0.8rem;
+  z-index: 1;
+}
+
+/* CTA link */
+.zh-sets-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin-top: 1.5rem;
+  border-bottom: 1px solid var(--color-charcoal);
+  padding-bottom: 2px;
+  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-out-soft),
+              border-color var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-sets-cta:hover {
+  color: var(--color-forest);
+  border-bottom-color: var(--color-forest);
+}
+
+/* Arrow inside CTA */
+.zh-sets-arrow {
+  display: inline-block;
+  width: 1rem;
+  height: 1px;
+  background: currentColor;
+  position: relative;
+}
+
+.zh-sets-arrow::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -2px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-inline-start: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  display: block;
+}
+
+/* Featured aside */
+.zh-sets-featured {
+  border-inline-start: 1px solid var(--color-sand);
+  padding-inline-start: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.zh-sets-featured__eyebrow {
+  font-size: 0.75rem;
+  color: var(--color-forest);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow-wide, 0.12em);
+  margin: 0;
+  font-weight: 700;
+}
+
+.zh-sets-featured__media {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.zh-sets-featured__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-charcoal);
+  margin: 0;
+}
+
+.zh-sets-featured__tagline {
+  color: var(--color-stone);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Empty-state message */
+.zh-sets-empty {
+  color: var(--color-stone);
+  font-size: 0.95rem;
+}
+
+/* Hide on mobile (< 768px) — mega-menu is desktop only */
+@media (max-width: 767px) {
+  .zh-sets-wrap { display: none; }
+}

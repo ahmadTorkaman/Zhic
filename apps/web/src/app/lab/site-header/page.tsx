@@ -6,6 +6,7 @@ const EMPTY_NAV_META: NavMeta = {
   designs: [],
   collections: [],
   featuredProduct: null,
+  featuredDesign: null,
 };
 
 export default function SiteHeaderDemoPage() {

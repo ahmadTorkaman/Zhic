@@ -287,6 +287,15 @@ export type NavDesign = {
   /** Persian label derived from age_group; null if unset. */
   subtitle: string | null;
   productCount: number;
+  coverUrl: string | null;
+};
+
+export type NavFeaturedDesign = {
+  id: string | number;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  coverUrl: string | null;
 };
 
 export type NavCollection = {
@@ -312,6 +321,7 @@ export type NavMeta = {
   designs: NavDesign[];
   collections: NavCollection[];
   featuredProduct: NavFeaturedProduct | null;
+  featuredDesign: NavFeaturedDesign | null;
 };
 
 // --- Nav meta pure helpers --------------------------------------------------
@@ -393,6 +403,7 @@ export function bucketNavCounts(
       slug: d.slug,
       subtitle: designSubtitle(d),
       productCount: designCount.get(d.slug) ?? 0,
+      coverUrl: d.heroMedia?.url ?? d.sliderMedia?.url ?? d.gallery?.[0]?.url ?? null,
     })),
     collections: collections.map((c) => ({
       id: c.id,
@@ -852,12 +863,37 @@ async function fetchNavDesigns(): Promise<PayloadDesign[]> {
   // The `featured` flag on designs is a soft hint for other surfaces but no
   // longer gates inclusion here — operator feedback was that filtering hid
   // the bulk of the catalog when only a couple of designs are flagged.
+  // depth=2 ensures heroMedia / sliderMedia / gallery docs are inflated with a
+  // `url` field so SetsMegaMenu can display cover images for each tile.
   const res = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?limit=30&sort=name',
+    '/api/designs?limit=30&sort=name&depth=2',
     'nav-designs',
   );
   if (!res) console.error('[fetchNavMeta] nav-designs: payloadFetch returned null');
   return res?.docs ?? [];
+}
+
+async function fetchNavFeaturedDesign(): Promise<NavFeaturedDesign | null> {
+  // Fetch the design flagged as `featured=true`, sorted by most-recently
+  // published. If no design carries the featured flag, the aside is omitted.
+  // PayloadDesign.featured is a boolean field confirmed in the type at line ~19.
+  const res = await payloadFetch<PayloadList<PayloadDesign>>(
+    '/api/designs?where[featured][equals]=true&limit=1&depth=2&sort=-updatedAt',
+    'nav-featured-design',
+  );
+  if (!res) {
+    console.error('[fetchNavMeta] nav-featured-design: payloadFetch returned null');
+    return null;
+  }
+  const d = res.docs?.[0];
+  if (!d) return null;
+  return {
+    id: d.id,
+    slug: d.slug,
+    name: d.name,
+    tagline: d.tagline ?? null,
+    coverUrl: d.heroMedia?.url ?? d.sliderMedia?.url ?? d.gallery?.[0]?.url ?? null,
+  };
 }
 
 async function fetchNavCollections(): Promise<PayloadCollection[]> {
@@ -907,13 +943,14 @@ async function fetchNavFeaturedProduct(): Promise<NavFeaturedProduct | null> {
 
 export const fetchNavMeta = unstable_cache(
   async (): Promise<NavMeta> => {
-    const [categories, designs, collections, countingProducts, featuredProduct] =
+    const [categories, designs, collections, countingProducts, featuredProduct, featuredDesign] =
       await Promise.all([
         fetchNavCategories(),
         fetchNavDesigns(),
         fetchNavCollections(),
         fetchNavCountingProducts(),
         fetchNavFeaturedProduct(),
+        fetchNavFeaturedDesign(),
       ]);
 
     const counts = bucketNavCounts(categories, designs, collections, countingProducts);
@@ -923,10 +960,11 @@ export const fetchNavMeta = unstable_cache(
       designs: counts.designs,
       collections: counts.collections,
       featuredProduct,
+      featuredDesign,
     };
   },
   ['nav-meta'],
-  { revalidate: 300, tags: ['nav', 'nav-categories', 'nav-designs', 'nav-collections', 'nav-products-featured'] },
+  { revalidate: 300, tags: ['nav', 'nav-categories', 'nav-designs', 'nav-collections', 'nav-products-featured', 'nav-designs-featured'] },
 );
 
 export function productPath(slug: string): string {
