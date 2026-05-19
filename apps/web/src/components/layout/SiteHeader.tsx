@@ -6,14 +6,13 @@ import { usePathname } from 'next/navigation';
 import { Container } from '@zhic/ui';
 import { NAV_LINKS, isNavActive } from './navLinks';
 import { MobileMenu } from './MobileMenu';
-import { ProductsMegaMenu } from './ProductsMegaMenu';
+import { SetsMegaMenu } from './SetsMegaMenu';
+import { PiecesMegaMenu } from './PiecesMegaMenu';
 import type { NavMeta } from '@/lib/payload';
 
 export type SiteHeaderProps = {
   navMeta: NavMeta;
 };
-
-const PRODUCTS_HREF = '/products';
 
 export function SiteHeader({ navMeta }: SiteHeaderProps) {
   const pathname = usePathname();
@@ -33,8 +32,8 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
     ? 'site-header-chrome'
     : 'bg-transparent border border-transparent md:border-x-0 md:border-t-0';
 
-  // Desktop nav excludes محصولات because ProductsMegaMenu owns that entry.
-  const desktopNavLinks = NAV_LINKS.filter((item) => item.href !== PRODUCTS_HREF);
+  // محصولات is removed from NAV_LINKS; SetsMegaMenu + PiecesMegaMenu own those entries.
+  const desktopNavLinks = NAV_LINKS;
 
   return (
     <>
@@ -64,7 +63,8 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
             </Link>
 
             <nav aria-label="اصلی" className="hidden items-center gap-7 text-small text-stone md:flex">
-              <ProductsMegaMenu data={navMeta} pathname={pathname} />
+              <SetsMegaMenu data={navMeta} pathname={pathname} />
+              <PiecesMegaMenu data={navMeta} pathname={pathname} />
               {desktopNavLinks.map((item) => {
                 const active = isNavActive(pathname, item.href);
                 return (

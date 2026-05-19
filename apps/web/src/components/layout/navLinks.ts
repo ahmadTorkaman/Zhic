@@ -4,7 +4,7 @@ export type NavLink = {
 };
 
 export const NAV_LINKS: NavLink[] = [
-  { label: 'محصولات', href: '/products' },
+  // محصولات removed — replaced by SetsMegaMenu + PiecesMegaMenu in SiteHeader.
   { label: 'ژورنال', href: '/journal' },
   { label: 'نمایشگاه‌ها', href: '/showrooms' },
   { label: 'درباره‌ی ما', href: '/about' },

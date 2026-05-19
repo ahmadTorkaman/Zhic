@@ -96,8 +96,6 @@ export function MobileMenu({ open, onClose, pathname, navMeta }: MobileMenuProps
         <MainView
           active={open && view === 'main'}
           pathname={pathname}
-          productsViewId={productsViewId}
-          onProductsClick={() => setView('products')}
           onLinkClick={onClose}
         />
         <ProductsView
@@ -116,14 +114,10 @@ export function MobileMenu({ open, onClose, pathname, navMeta }: MobileMenuProps
 function MainView({
   active,
   pathname,
-  productsViewId,
-  onProductsClick,
   onLinkClick,
 }: {
   active: boolean;
   pathname: string | null;
-  productsViewId: string;
-  onProductsClick: () => void;
   onLinkClick: () => void;
 }) {
   return (
@@ -137,16 +131,34 @@ function MainView({
 
       <ul className="flex flex-col items-center gap-5">
         <li>
-          <button
-            type="button"
-            onClick={onProductsClick}
-            aria-controls={productsViewId}
-            className="text-h4 font-bold text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-ink"
+          <Link
+            href="/designs"
+            onClick={onLinkClick}
+            aria-current={isNavActive(pathname, '/designs') ? 'page' : undefined}
+            className={
+              isNavActive(pathname, '/designs')
+                ? 'text-h4 font-bold text-charcoal'
+                : 'text-h4 font-bold text-stone transition-colors duration-[var(--dur-hover)] hover:text-charcoal'
+            }
           >
-            محصولات
-          </button>
+            سرویس خواب
+          </Link>
         </li>
-        {NAV_LINKS.filter((item) => item.href !== '/products').map((item) => {
+        <li>
+          <Link
+            href="/products"
+            onClick={onLinkClick}
+            aria-current={isNavActive(pathname, '/products') ? 'page' : undefined}
+            className={
+              isNavActive(pathname, '/products')
+                ? 'text-h4 font-bold text-charcoal'
+                : 'text-h4 font-bold text-stone transition-colors duration-[var(--dur-hover)] hover:text-charcoal'
+            }
+          >
+            تخت و وسایل اتاق خواب
+          </Link>
+        </li>
+        {NAV_LINKS.map((item) => {
           const isActive = isNavActive(pathname, item.href);
           return (
             <li key={item.href}>
