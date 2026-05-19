@@ -3,6 +3,7 @@ import * as migration_20260516_224611_add_design_editorial_fields from './202605
 import * as migration_20260517_023800_extend_piece_type_enum from './20260517_023800_extend_piece_type_enum';
 import * as migration_20260517_114048_add_design_slider_media from './20260517_114048_add_design_slider_media';
 import * as migration_20260519_041500_create_rooms from './20260519_041500_create_rooms';
+import * as migration_20260519_221500_add_site_config_subscribers_hero_slides from './20260519_221500_add_site_config_subscribers_hero_slides';
 
 export const migrations = [
   {
@@ -29,5 +30,10 @@ export const migrations = [
     up: migration_20260519_041500_create_rooms.up,
     down: migration_20260519_041500_create_rooms.down,
     name: '20260519_041500_create_rooms'
+  },
+  {
+    up: migration_20260519_221500_add_site_config_subscribers_hero_slides.up,
+    down: migration_20260519_221500_add_site_config_subscribers_hero_slides.down,
+    name: '20260519_221500_add_site_config_subscribers_hero_slides'
   },
 ];

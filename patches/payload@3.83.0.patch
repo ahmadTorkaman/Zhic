@@ -43,3 +43,22 @@ index b32e9a7b5b80661e576286c8f055e9a8beab8889..9f887d44b333e19a07ed4fb2f3b0da3b
          return null;
      },
      JWT: ({ headers })=>{
+diff --git a/dist/bin/loadEnv.js b/dist/bin/loadEnv.js
+index b61ecc1684f0b686fa8bbcefa68b5ed825c09420..ddc063da7f7ac007fdbdad04efa3066a04781663 100644
+--- a/dist/bin/loadEnv.js
++++ b/dist/bin/loadEnv.js
+@@ -1,6 +1,12 @@
+-import nextEnvImport from '@next/env';
++import { createRequire as _createRequireForLoadEnv } from 'node:module';
+ import { findUpSync } from '../utilities/findUp.js';
+-const { loadEnvConfig } = nextEnvImport;
++// Patch: @next/env (Next 16) is a CJS bundle whose exports are added via
++// __nccwpck_require__.d, which Node's ESM↔CJS interop can't statically
++// detect. The original `import nextEnvImport from '@next/env'` followed
++// by destructuring `loadEnvConfig` produced undefined under tsx, which
++// broke `pnpm migrate:create` / `migrate`. Resolve via createRequire so
++// the module is loaded as CJS and exports are read at runtime.
++const { loadEnvConfig } = _createRequireForLoadEnv(import.meta.url)('@next/env');
+ /**
+  * Try to find user's env files and load it. Uses the same algorithm next.js uses to parse env files, meaning this also supports .env.local, .env.development, .env.production, etc.
+  */ export function loadEnv(path) {

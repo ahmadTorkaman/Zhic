@@ -97,10 +97,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI,
     },
-    // Auto-sync schema. Default is true in dev / false in production NODE_ENV;
-    // pm2 sets NODE_ENV=production on this staging box but the box is iterated
-    // on like dev. Switch to `prodMigrations:` when zhicwood.com is real prod.
-    push: true,
+    // Migrations-only — `push: true` is interactive (drizzle-kit asks
+    // about renames) and hangs under pm2 (no TTY), which left this DB
+    // in a partially-synced state until 2026-05-19. Schema changes go
+    // through `pnpm migrate:create <name>` from services/api/.
+    push: false,
   }),
 
   plugins: [
