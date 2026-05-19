@@ -4,6 +4,7 @@ import * as migration_20260517_023800_extend_piece_type_enum from './20260517_02
 import * as migration_20260517_114048_add_design_slider_media from './20260517_114048_add_design_slider_media';
 import * as migration_20260519_041500_create_rooms from './20260519_041500_create_rooms';
 import * as migration_20260519_221500_add_site_config_subscribers_hero_slides from './20260519_221500_add_site_config_subscribers_hero_slides';
+import * as migration_20260519_222500_add_rooms_subscribers_to_locked_documents_rels from './20260519_222500_add_rooms_subscribers_to_locked_documents_rels';
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260519_221500_add_site_config_subscribers_hero_slides.up,
     down: migration_20260519_221500_add_site_config_subscribers_hero_slides.down,
     name: '20260519_221500_add_site_config_subscribers_hero_slides'
+  },
+  {
+    up: migration_20260519_222500_add_rooms_subscribers_to_locked_documents_rels.up,
+    down: migration_20260519_222500_add_rooms_subscribers_to_locked_documents_rels.down,
+    name: '20260519_222500_add_rooms_subscribers_to_locked_documents_rels'
   },
 ];
