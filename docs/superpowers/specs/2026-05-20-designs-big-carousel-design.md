@@ -170,7 +170,7 @@ For `N < N_CLONES + 1`, the clone-tile array degrades gracefully — some entrie
 2. **Caption cross-fade.** When `realIndexOf(focused)` changes (NOT on every `focused` change — the silent jump moves `focused` without changing the real index), set `captionChanging = true` for 220ms then back to false.
 3. **Schedule silent jump.** When `focused` lands on a clone, attach a one-shot `transitionend` listener on the track (filtered to `propertyName === 'transform'`) AND a `setTimeout(TRANSITION_MS)` fallback. Whichever fires first calls `performSilentJump()`.
 4. **Keyboard.** `ArrowLeft → go(+1)`, `ArrowRight → go(-1)`. Skip when target is `INPUT` or `TEXTAREA`.
-5. **Touch swipe.** Threshold 40px. `dx < 0 → go(-1)` (cards follow finger).
+5. **Drag-to-scrub via Pointer Events.** The track follows the pointer (touch / mouse / pen) in real time during the gesture, with the transition paused. On release, snap to the nearest slot, with a velocity bonus that advances one extra in the flick direction past 1.5 px/ms. Past an 8px dead-zone, the gesture is committed as a drag — page scroll is suppressed via `preventDefault` and the subsequent click is suppressed (dim tiles via early-return, focused tile's `<Link>` via `preventDefault`). Below the dead-zone, the gesture behaves as a normal click. See §6 for the full behavior matrix.
 
 ### 3.5 The silent jump
 
@@ -450,8 +450,11 @@ Effect: every tile renders at uniform size (no scale, no blur), focused-state ch
 | Click dot | `setFocused(N_CLONES + realIdx)` (skip clones) |
 | `ArrowLeft` | `go(+1)` (RTL — visually-next is lower x) |
 | `ArrowRight` | `go(-1)` |
-| Touch swipe ≥ 40px, `dx < 0` | `go(-1)` (card follows finger) |
-| Touch swipe ≥ 40px, `dx > 0` | `go(+1)` |
+| Pointer drag on viewport, `\|dx\|` ≤ 8px, then release | Click event fires normally (tile-select or navigate) |
+| Pointer drag on viewport, `\|dx\|` > 8px (drag committed) | Track follows pointer real-time; subsequent click suppressed |
+| Drag release with `round(dx / slot) ≠ 0` | `go(slotsDragged + velocityBonus)`. `velocityBonus = ±1` if `\|velocity\|` > 1.5 px/ms |
+| Drag release with `round(dx / slot) == 0` and no flick | `recenter()` snaps back to starting position |
+| Window resize during active drag | Suppressed (`recenter` no-ops while `isDraggingRef.current === true`) |
 | `focused` lands on clone after `go(...)` | After 850ms transition (or `transitionend`), silent jump to real-equivalent |
 | Window resize | Recompute layout slot, re-apply transform without animation |
 | Esc | No effect (carousel doesn't trap focus) |
