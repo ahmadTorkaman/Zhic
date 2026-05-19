@@ -20,6 +20,8 @@ const PIECE_TYPES: Array<{ value: string; label: string }> = [
   { value: 'bookcase',        label: 'کتابخانه' },
   { value: 'chair',           label: 'صندلی' },
   { value: 'sofa',            label: 'لاوست' },
+  { value: 'changing_table',  label: 'میز تعویض' },
+  { value: 'bracket',         label: 'براکت' },
 ];
 
 export type PiecesMegaMenuProps = {
