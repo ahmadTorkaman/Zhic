@@ -76,7 +76,7 @@ export function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
         </svg>
       </button>
 
-      <div className="relative flex min-h-screen flex-col items-center gap-7 px-4 py-10 pt-16">
+      <div className="relative flex min-h-screen flex-col items-center gap-7 px-4 pb-10 pt-16">
         <span className="text-h3 font-black text-charcoal">ژیک</span>
 
         <ul aria-label="پیمایش اصلی" className="flex w-full max-w-[420px] flex-col gap-2.5">
@@ -88,7 +88,7 @@ export function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
                   href={item.href}
                   onClick={onClose}
                   aria-current={active ? 'page' : undefined}
-                  className="group flex items-center gap-3 rounded-[14px] border border-sand bg-cream px-5 py-4 transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:bg-ivory"
+                  className="flex items-center gap-3 rounded-[14px] border border-sand bg-cream px-5 py-4 transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:bg-ivory"
                 >
                   <span
                     className={`flex-1 text-[22px] font-black leading-[1.15] tracking-[-0.01em] ${
