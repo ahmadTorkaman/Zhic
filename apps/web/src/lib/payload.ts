@@ -219,7 +219,7 @@ export type ProductAvailability =
   | 'backorder'
   | 'discontinued';
 
-export type ProductPieceType =
+export type PieceTypeValue =
   | 'bed'
   | 'nightstand'
   | 'closet'
@@ -227,7 +227,16 @@ export type ProductPieceType =
   | 'mirror'
   | 'desk'
   | 'bookcase'
-  | 'display_cabinet';
+  | 'display_cabinet'
+  | 'vanity'
+  | 'chair'
+  | 'console'
+  | 'changing_table'
+  | 'bracket'
+  | 'sofa';
+
+/** @deprecated Use PieceTypeValue */
+export type ProductPieceType = PieceTypeValue;
 
 export type PayloadProduct = {
   id: string | number;
@@ -237,7 +246,7 @@ export type PayloadProduct = {
   shortDescription?: string | null;
   longDescription?: LexicalRoot | null;
   design?: { id: string | number; name: string; slug: string } | null;
-  piece_type?: ProductPieceType | null;
+  piece_type?: PieceTypeValue | null;
   categoryIds?: PayloadCategory[] | null;
   tagIds?: PayloadTag[] | null;
   materialIds?: PayloadMaterial[] | null;
@@ -322,6 +331,7 @@ export type NavMeta = {
   collections: NavCollection[];
   featuredProduct: NavFeaturedProduct | null;
   featuredDesign: NavFeaturedDesign | null;
+  pieceCounts: Partial<Record<PieceTypeValue, number>>;
 };
 
 // --- Nav meta pure helpers --------------------------------------------------
@@ -368,14 +378,16 @@ export function bucketNavCounts(
   categories: PayloadCategory[],
   designs: PayloadDesign[],
   collections: PayloadCollection[],
-  products: Pick<PayloadProduct, 'categoryIds' | 'design'>[],
+  products: Pick<PayloadProduct, 'categoryIds' | 'design' | 'piece_type'>[],
 ): {
   categories: NavCategory[];
   designs: NavDesign[];
   collections: NavCollection[];
+  pieceCounts: Partial<Record<PieceTypeValue, number>>;
 } {
   const categoryCount = new Map<string, number>();
   const designCount = new Map<string, number>();
+  const pieceCount = new Map<string, number>();
 
   for (const product of products) {
     for (const cat of product.categoryIds ?? []) {
@@ -387,6 +399,9 @@ export function bucketNavCounts(
         product.design.slug,
         (designCount.get(product.design.slug) ?? 0) + 1,
       );
+    }
+    if (product.piece_type) {
+      pieceCount.set(product.piece_type, (pieceCount.get(product.piece_type) ?? 0) + 1);
     }
   }
 
@@ -412,6 +427,7 @@ export function bucketNavCounts(
       subtitle: collectionSubtitle(c),
       productCount: (c.products ?? []).length,
     })),
+    pieceCounts: Object.fromEntries(pieceCount) as Partial<Record<PieceTypeValue, number>>,
   };
 }
 
@@ -906,7 +922,7 @@ async function fetchNavCollections(): Promise<PayloadCollection[]> {
 }
 
 async function fetchNavCountingProducts(): Promise<
-  Pick<PayloadProduct, 'categoryIds' | 'design'>[]
+  Pick<PayloadProduct, 'categoryIds' | 'design' | 'piece_type'>[]
 > {
   // depth=1 inflates categoryIds and design into objects so we can read .slug.
   // No `select` — Payload 3 REST `select` syntax is finicky and the 100-product
@@ -920,6 +936,7 @@ async function fetchNavCountingProducts(): Promise<
   return (res?.docs ?? []).map((p) => ({
     categoryIds: p.categoryIds ?? null,
     design: p.design ?? null,
+    piece_type: p.piece_type ?? null,
   }));
 }
 
@@ -961,6 +978,7 @@ export const fetchNavMeta = unstable_cache(
       collections: counts.collections,
       featuredProduct,
       featuredDesign,
+      pieceCounts: counts.pieceCounts,
     };
   },
   ['nav-meta'],

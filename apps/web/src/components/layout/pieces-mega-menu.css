@@ -1,0 +1,230 @@
+/* Pieces mega-menu (تخت و وسایل اتاق خواب) — text-first piece-type grid variant.
+   Derived from sets-mega-menu.css but without image tiles;
+   .zh-pieces-grid renders as a 2-column text list with per-type counts. */
+
+/* Trigger wrapper — `position: static` so the absolutely-positioned panel can span the header width */
+.zh-pieces-wrap { position: static; }
+
+.zh-pieces-trigger {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--color-stone);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-pieces-trigger:hover,
+.zh-pieces-wrap:hover .zh-pieces-trigger,
+.zh-pieces-wrap:focus-within .zh-pieces-trigger {
+  color: var(--color-charcoal);
+}
+
+.zh-pieces-trigger[aria-expanded="true"] {
+  color: var(--color-charcoal);
+}
+
+.zh-pieces-trigger .zh-pieces-chev {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-inline-start: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
+  transform: rotate(-45deg) translateY(-1px);
+  transition: transform var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-pieces-wrap:hover .zh-pieces-chev,
+.zh-pieces-trigger[aria-expanded="true"] .zh-pieces-chev {
+  transform: rotate(135deg) translateY(-1px);
+}
+
+/* Panel */
+.zh-pieces-panel {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  background: var(--color-ivory);
+  border-top: 1px solid var(--color-sand);
+  border-bottom: 1px solid var(--color-sand);
+  box-shadow: 0 16px 32px rgba(20, 17, 15, 0.06);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity var(--dur-mega) var(--ease-out-soft),
+              transform var(--dur-mega) var(--ease-out-soft);
+}
+
+.zh-pieces-wrap:hover .zh-pieces-panel,
+.zh-pieces-wrap:focus-within .zh-pieces-panel,
+.zh-pieces-panel[data-open="true"],
+.zh-pieces-panel:hover {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Body: main content + featured aside */
+.zh-pieces-body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 3.5rem;
+  padding-block: 2.5rem 3rem;
+  align-items: start;
+}
+
+/* Main area (grid + CTA) */
+.zh-pieces-main {
+  min-height: 280px;
+  max-height: calc(100vh - 10rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sand) transparent;
+}
+
+/* Text-first piece-type grid */
+.zh-pieces-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.zh-pieces-grid li { list-style: none; }
+
+.zh-pieces-grid a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 1rem;
+  color: var(--color-charcoal);
+  padding-block: 0.45rem;
+  border-bottom: 1px solid transparent;
+  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-out-soft),
+              border-color var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-pieces-grid a:hover {
+  color: var(--color-forest);
+  border-bottom-color: var(--color-forest);
+}
+
+.zh-pieces-count {
+  font-size: 0.75rem;
+  color: var(--color-stone);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 479px) {
+  .zh-pieces-grid { grid-template-columns: 1fr; }
+}
+
+/* CTA link */
+.zh-pieces-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin-top: 1.5rem;
+  border-bottom: 1px solid var(--color-charcoal);
+  padding-bottom: 2px;
+  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-out-soft),
+              border-color var(--dur-hover) var(--ease-out-soft);
+}
+
+.zh-pieces-cta:hover {
+  color: var(--color-forest);
+  border-bottom-color: var(--color-forest);
+}
+
+/* Arrow inside CTA */
+.zh-pieces-arrow {
+  display: inline-block;
+  width: 1rem;
+  height: 1px;
+  background: currentColor;
+  position: relative;
+}
+
+.zh-pieces-arrow::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -2px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-inline-start: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  display: block;
+}
+
+/* Featured aside */
+.zh-pieces-featured {
+  border-inline-start: 1px solid var(--color-sand);
+  padding-inline-start: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.zh-pieces-featured__eyebrow {
+  font-size: 0.75rem;
+  color: var(--color-forest);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow-wide, 0.12em);
+  margin: 0;
+  font-weight: 700;
+}
+
+.zh-pieces-featured__media {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.zh-pieces-featured__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-charcoal);
+  margin: 0;
+}
+
+.zh-pieces-featured__tagline {
+  color: var(--color-stone);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.zh-pieces-featured__price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+
+/* Empty-state message */
+.zh-pieces-empty {
+  color: var(--color-stone);
+  font-size: 0.95rem;
+}
+
+/* Hide on mobile (< 768px) — mega-menu is desktop only */
+@media (max-width: 767px) {
+  .zh-pieces-wrap { display: none; }
+}
