@@ -89,7 +89,7 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
         </Container>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} pathname={pathname} navMeta={navMeta} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} pathname={pathname} />
     </>
   );
 }

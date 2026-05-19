@@ -1,52 +1,49 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { NAV_LINKS, isNavActive } from './navLinks';
-import type { NavMeta } from '@/lib/payload';
 
 export type MobileMenuProps = {
   open: boolean;
   onClose: () => void;
   pathname: string | null;
-  navMeta: NavMeta;
 };
 
-type View = 'main' | 'products';
+type Item = { label: string; href: string };
 
-export function MobileMenu({ open, onClose, pathname, navMeta }: MobileMenuProps) {
-  const [view, setView] = useState<View>('main');
-  const productsViewId = useId();
+// Sets + Pieces are hardcoded here because SetsMegaMenu / PiecesMegaMenu
+// own them on desktop and they don't live in NAV_LINKS. Order matches the
+// previous MainView layout so the mobile and desktop nav read the same.
+const ITEMS: Item[] = [
+  { label: 'سرویس خواب', href: '/designs' },
+  { label: 'تخت و وسایل اتاق خواب', href: '/products' },
+  ...NAV_LINKS,
+];
+
+export function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Reset view + scroll lock — keyed on `open` only, so view transitions
-  // inside the menu don't unlock-and-relock scroll.
+  // Body scroll lock — keyed on `open`.
   useEffect(() => {
-    if (!open) {
-      setView('main');
-      return;
-    }
+    if (!open) return;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
   }, [open]);
 
-  // Esc handler — hierarchical (products → main → dismiss). Needs `view`
-  // and `onClose` in the dep array, so re-registers per transition; that's
-  // cheap (just attach/detach event listener, no DOM effect).
+  // Esc dismisses. Flat — no sub-views to step back through.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      if (view === 'products') setView('main');
-      else onClose();
+      if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('keydown', onKey);
     };
-  }, [open, view, onClose]);
+  }, [open, onClose]);
 
   // Move focus into the dialog when it opens so keyboard / AT users
   // don't stay focused on the hamburger button behind the overlay.
@@ -56,9 +53,6 @@ export function MobileMenu({ open, onClose, pathname, navMeta }: MobileMenuProps
     }
   }, [open]);
 
-  const cornerLabel = view === 'main' ? 'بستن' : 'بازگشت';
-  const cornerHandler = view === 'main' ? onClose : () => setView('main');
-
   return (
     <div
       ref={dialogRef}
@@ -67,275 +61,60 @@ export function MobileMenu({ open, onClose, pathname, navMeta }: MobileMenuProps
       aria-modal="true"
       aria-label="منو"
       aria-hidden={!open}
-      className={`fixed inset-0 z-[var(--z-overlay)] overflow-y-auto bg-ivory transition-opacity duration-[var(--dur-dialog)] ease-[var(--ease-out-soft)] focus:outline-none ${
+      className={`fixed inset-0 z-[var(--z-overlay)] overflow-y-auto bg-ivory transition-opacity duration-[var(--dur-dialog)] ease-[var(--ease-out-soft)] motion-reduce:transition-none focus:outline-none ${
         open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
       }`}
     >
       <button
         type="button"
-        aria-label={cornerLabel}
-        onClick={cornerHandler}
+        aria-label="بستن"
+        onClick={onClose}
         className="absolute start-4 top-3 z-10 flex h-10 w-10 items-center justify-center text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-ink"
       >
-        {view === 'main' ? (
-          <svg viewBox="0 0 14 14" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-            <path d="M1 1L13 13M13 1L1 13" strokeLinecap="round" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 16 16" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-            <path d="M11 3L5 8L11 13" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        )}
+        <svg viewBox="0 0 14 14" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+          <path d="M1 1L13 13M13 1L1 13" strokeLinecap="round" />
+        </svg>
       </button>
 
-      <div className="relative min-h-screen pt-16">
-        {/* `active` is gated on `open` so the absolute-positioned, invisible views
-            don't capture pointer events across the viewport when the dialog is
-            closed (pointer-events is NOT a CSS-inherited property, so the outer
-            dialog's pointer-events:none doesn't propagate to inline-styled children). */}
-        <MainView
-          active={open && view === 'main'}
-          pathname={pathname}
-          onLinkClick={onClose}
-        />
-        <ProductsView
-          active={open && view === 'products'}
-          id={productsViewId}
-          navMeta={navMeta}
-          onLinkClick={onClose}
-        />
+      <div className="relative flex min-h-screen flex-col items-center gap-7 px-4 py-10 pt-16">
+        <span className="text-h3 font-black text-charcoal">ژیک</span>
+
+        <ul aria-label="پیمایش اصلی" className="flex w-full max-w-[420px] flex-col gap-2.5">
+          {ITEMS.map((item) => {
+            const active = isNavActive(pathname, item.href);
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={onClose}
+                  aria-current={active ? 'page' : undefined}
+                  className="group flex items-center gap-3 rounded-[14px] border border-sand bg-cream px-5 py-4 transition-colors duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:bg-ivory"
+                >
+                  <span
+                    className={`flex-1 text-[22px] font-black leading-[1.15] tracking-[-0.01em] ${
+                      active ? 'text-forest' : 'text-charcoal'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                  <svg
+                    viewBox="0 0 16 16"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    aria-hidden
+                    className={active ? 'text-forest' : 'text-stone'}
+                  >
+                    <path d="M11 3L5 8L11 13" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
-  );
-}
-
-// ─────────────────────────── Main view (flat 5-link list) ────────────────────────────
-
-function MainView({
-  active,
-  pathname,
-  onLinkClick,
-}: {
-  active: boolean;
-  pathname: string | null;
-  onLinkClick: () => void;
-}) {
-  return (
-    <div
-      aria-label="منوی اصلی"
-      inert={!active}
-      style={{ opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none' }}
-      className="absolute inset-0 overflow-y-auto flex flex-col items-center gap-7 px-4 py-10 transition-opacity duration-[var(--dur-dialog)] ease-[var(--ease-out-soft)] motion-reduce:transition-none"
-    >
-      <span className="text-h3 font-black text-charcoal">ژیک</span>
-
-      <ul className="flex flex-col items-center gap-5">
-        <li>
-          <Link
-            href="/designs"
-            onClick={onLinkClick}
-            aria-current={isNavActive(pathname, '/designs') ? 'page' : undefined}
-            className={
-              isNavActive(pathname, '/designs')
-                ? 'text-h4 font-bold text-charcoal'
-                : 'text-h4 font-bold text-stone transition-colors duration-[var(--dur-hover)] hover:text-charcoal'
-            }
-          >
-            سرویس خواب
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/products"
-            onClick={onLinkClick}
-            aria-current={isNavActive(pathname, '/products') ? 'page' : undefined}
-            className={
-              isNavActive(pathname, '/products')
-                ? 'text-h4 font-bold text-charcoal'
-                : 'text-h4 font-bold text-stone transition-colors duration-[var(--dur-hover)] hover:text-charcoal'
-            }
-          >
-            تخت و وسایل اتاق خواب
-          </Link>
-        </li>
-        {NAV_LINKS.map((item) => {
-          const isActive = isNavActive(pathname, item.href);
-          return (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                onClick={onLinkClick}
-                aria-current={isActive ? 'page' : undefined}
-                className={
-                  isActive
-                    ? 'text-h4 font-bold text-charcoal'
-                    : 'text-h4 font-bold text-stone transition-colors duration-[var(--dur-hover)] hover:text-charcoal'
-                }
-              >
-                {item.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-// ─────────────────────────── Products view (catalog hierarchy) ────────────────────────────
-
-function ProductsView({
-  active,
-  id,
-  navMeta,
-  onLinkClick,
-}: {
-  active: boolean;
-  id: string;
-  navMeta: NavMeta;
-  onLinkClick: () => void;
-}) {
-  return (
-    <div
-      id={id}
-      aria-label="منوی محصولات"
-      inert={!active}
-      style={{ opacity: active ? 1 : 0, pointerEvents: active ? 'auto' : 'none' }}
-      className="absolute inset-0 overflow-y-auto flex flex-col gap-6 px-4 py-10 transition-opacity duration-[var(--dur-dialog)] ease-[var(--ease-out-soft)] motion-reduce:transition-none"
-    >
-      <h2 className="text-center text-h3 font-black text-charcoal">محصولات</h2>
-
-      <form
-        action="/products"
-        method="get"
-        role="search"
-        onSubmit={onLinkClick}
-        className="mx-auto flex w-full max-w-[320px] items-center gap-2 rounded-full border border-sand bg-cream px-4 py-2.5 focus-within:border-forest focus-within:bg-ivory"
-      >
-        <span aria-hidden className="inline-flex text-stone">
-          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <circle cx="7" cy="7" r="5" />
-            <path d="M11 11l3 3" strokeLinecap="round" />
-          </svg>
-        </span>
-        <input
-          type="search"
-          name="q"
-          placeholder="جستجوی محصول…"
-          aria-label="جستجو در محصولات"
-          className="min-w-0 flex-1 bg-transparent text-body text-charcoal placeholder:text-stone focus:outline-none"
-        />
-      </form>
-
-      <CategoriesSection items={navMeta.categories} onLinkClick={onLinkClick} />
-      {navMeta.designs.length > 0 && <DesignsSection items={navMeta.designs} onLinkClick={onLinkClick} />}
-      {navMeta.collections.length > 0 && <CollectionsSection items={navMeta.collections} onLinkClick={onLinkClick} />}
-
-      <Link
-        href="/products"
-        onClick={onLinkClick}
-        className="mt-2 self-center text-h4 font-bold text-charcoal underline underline-offset-4 transition-colors duration-[var(--dur-hover)] hover:text-forest"
-      >
-        ← تمامی محصولات
-      </Link>
-    </div>
-  );
-}
-
-function CategoriesSection({
-  items,
-  onLinkClick,
-}: {
-  items: NavMeta['categories'];
-  onLinkClick: () => void;
-}) {
-  return (
-    <section aria-labelledby="mob-cats-h" className="flex flex-col gap-3">
-      <h3 id="mob-cats-h" className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
-        دسته‌بندی‌ها
-      </h3>
-      {items.length === 0 ? (
-        <p className="text-body text-stone">هیچ دسته‌بندی پیدا نشد.</p>
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {items.map((c) => (
-            <li key={c.id}>
-              <Link
-                href={`/products?cat=${encodeURIComponent(c.slug)}`}
-                onClick={onLinkClick}
-                className="block text-h4 font-bold text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-forest"
-              >
-                {c.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
-function DesignsSection({
-  items,
-  onLinkClick,
-}: {
-  items: NavMeta['designs'];
-  onLinkClick: () => void;
-}) {
-  return (
-    <section aria-labelledby="mob-designs-h" className="flex flex-col gap-3">
-      <h3 id="mob-designs-h" className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
-        طرح‌ها
-      </h3>
-      <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
-        {items.map((d) => (
-          <li key={d.id}>
-            <Link
-              href={`/designs/${encodeURIComponent(d.slug)}`}
-              onClick={onLinkClick}
-              className="block text-body font-bold text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-forest"
-            >
-              {d.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <Link
-        href="/designs"
-        onClick={onLinkClick}
-        className="mt-3 self-start text-body font-bold text-charcoal underline underline-offset-4 transition-colors duration-[var(--dur-hover)] hover:text-forest"
-      >
-        ← همه‌ی طرح‌ها
-      </Link>
-    </section>
-  );
-}
-
-function CollectionsSection({
-  items,
-  onLinkClick,
-}: {
-  items: NavMeta['collections'];
-  onLinkClick: () => void;
-}) {
-  return (
-    <section aria-labelledby="mob-cols-h" className="flex flex-col gap-3">
-      <h3 id="mob-cols-h" className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
-        مجموعه‌ها
-      </h3>
-      <ul className="flex flex-col gap-2">
-        {items.map((c) => (
-          <li key={c.id}>
-            <Link
-              href={`/collections/${encodeURIComponent(c.slug)}`}
-              onClick={onLinkClick}
-              className="block text-h4 font-bold text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-forest"
-            >
-              {c.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
