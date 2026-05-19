@@ -59,7 +59,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       ...designs,
       ...designs.slice(0, N_CLONES),
     ],
-    [designs, N],
+    [designs],
   );
 
   const [focused, setFocused] = useState<number>(N_CLONES);
@@ -261,6 +261,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
               key={`${d.id}-${extIdx}`}
               design={d}
               isFocused={extIdx === focused}
+              isClone={isCloneIndex(extIdx)}
               onClick={() => {
                 if (extIdx === focused) return;
                 setFocused(extIdx);
@@ -306,10 +307,12 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
 function DesignTile({
   design,
   isFocused,
+  isClone = false,
   onClick,
 }: {
   design: PayloadDesign;
   isFocused: boolean;
+  isClone?: boolean;
   onClick?: () => void;
 }) {
   const inner = (
@@ -339,14 +342,15 @@ function DesignTile({
       className="zh-slider-tile"
       role="listitem"
       onClick={onClick}
-      tabIndex={0}
+      tabIndex={isClone ? -1 : 0}
+      aria-hidden={isClone || undefined}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           onClick?.();
         }
       }}
-      aria-label={`طرح ${design.name} (انتخاب کنید برای دیدن)`}
+      aria-label={isClone ? undefined : `طرح ${design.name} (انتخاب کنید برای دیدن)`}
     >
       {inner}
     </div>
