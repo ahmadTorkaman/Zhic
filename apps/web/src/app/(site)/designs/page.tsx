@@ -1,4 +1,3 @@
-import { Container, Breadcrumbs } from '@zhic/ui';
 import { DesignsSlider } from '@/components/design/DesignsSlider';
 import { fetchAllDesigns } from '@/lib/payload';
 
@@ -10,18 +9,7 @@ export const metadata = {
 
 export default async function DesignsIndexPage() {
   const designs = await fetchAllDesigns();
-  return (
-    <>
-      <Container>
-        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
-          <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'طرح‌ها' }]} />
-        </div>
-        <header className="pb-2 pt-1 text-center md:pb-3 md:pt-2">
-          <h1 className="text-[20px] font-black leading-tight text-ink md:text-[28px]">طرح‌ها</h1>
-        </header>
-      </Container>
-
-      <DesignsSlider designs={designs} />
-    </>
-  );
+  // The slider owns the entire viewport (fixed positioning) and handles its
+  // own breadcrumb + skip-link chrome in the top row; no surrounding Container.
+  return <DesignsSlider designs={designs} />;
 }

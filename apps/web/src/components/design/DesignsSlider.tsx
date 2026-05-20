@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import * as React from 'react';
 import Link from 'next/link';
-import type { PayloadDesign, PayloadMedia } from '@/lib/payload';
+import type { PayloadDesign } from '@/lib/payload';
 import './designs-slider.css';
 
 export type DesignsSliderProps = {
@@ -10,490 +10,514 @@ export type DesignsSliderProps = {
 };
 
 const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
-const toPersianDigits = (n: number) =>
+const toPersian = (n: number | string) =>
   String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[Number(d)] ?? d);
 
-const CAPTION_FADE_MS = 220;
-const N_CLONES = 4;
-const TRANSITION_MS = 1000; // 850ms track translate + 150ms safety buffer
-const DRAG_DEAD_ZONE_PX = 8; // sub-threshold movement counts as a click, not a drag
-const VELOCITY_FLICK_THRESHOLD = 1.5; // px/ms — past this, snap one extra tile in velocity direction
+function getEyebrow(d: PayloadDesign): string {
+  switch (d.age_group) {
+    case 'infant':
+    case 'child':
+      return 'طرح ژیک · سرویس کودک';
+    case 'teen':
+      return 'طرح ژیک · سرویس نوجوان';
+    case 'adult':
+    default:
+      return 'طرح ژیک · سرویس بزرگسال';
+  }
+}
+
+function getMediaUrl(d: PayloadDesign): string | undefined {
+  return d.heroMedia?.url ?? d.sliderMedia?.url ?? d.gallery?.[0]?.url ?? undefined;
+}
+
+function getMediaMime(d: PayloadDesign): string | undefined {
+  return (
+    d.heroMedia?.mimeType ??
+    d.sliderMedia?.mimeType ??
+    d.gallery?.[0]?.mimeType ??
+    undefined
+  );
+}
 
 export function DesignsSlider({ designs }: DesignsSliderProps) {
-  if (designs.length === 0) {
+  if (!designs?.length) {
     return (
-      <section className="zh-slider-section">
-        <p className="zh-slider-empty">به‌زودی طرح‌های ژیک به این صفحه اضافه می‌شوند.</p>
-      </section>
+      <div className="zh-designs-slider">
+        <main className="zh-designs-stage" aria-label="گالری طرح‌های ژیک">
+          <p
+            style={{
+              gridRow: '1 / -1',
+              alignSelf: 'center',
+              textAlign: 'center',
+              color: 'var(--color-stone)',
+            }}
+          >
+            به‌زودی طرح‌های ژیک به این صفحه اضافه می‌شوند.
+          </p>
+        </main>
+      </div>
     );
-  }
-  if (designs.length === 1) {
-    return <SingleDesignFallback design={designs[0]!} />;
   }
   return <Slider designs={designs} />;
 }
 
-function SingleDesignFallback({ design }: { design: PayloadDesign }) {
+// SVG bedroom-set silhouette used when a design has no uploaded media.
+// Matches the v14 mockup: neutral mid-gray pieces on the ivory stage.
+function SvgPlaceholder() {
+  const tone = '#9A9A9A';
+  const shadow = '#4A4A4A';
   return (
-    <section className="zh-slider-section" aria-label="گالری طرح‌ها">
-      <div
-        className="zh-slider-viewport"
-        style={{ marginInline: 'clamp(36px, 8vw, 100px)' }}
-      >
-        <div className="zh-slider-track">
-          <DesignTile design={design} isFocused />
-        </div>
-      </div>
-      <div className="zh-slider-caption">
-        <div className="zh-caption-name">{design.name}</div>
-        {design.tagline ? <div className="zh-caption-tagline">{design.tagline}</div> : null}
-      </div>
-    </section>
+    <svg viewBox="0 0 720 380" aria-hidden role="img">
+      <g transform="translate(40 60)">
+        <rect x="0" y="0" width="110" height="260" rx="6" fill={tone} />
+      </g>
+      <g transform="translate(170 200)">
+        <rect x="0" y="0" width="140" height="120" rx="5" fill={tone} />
+      </g>
+      <g transform="translate(330 130)">
+        <rect x="0" y="0" width="320" height="80" rx="4" fill={tone} />
+        <rect x="20" y="80" width="280" height="50" rx="6" fill={shadow} opacity="0.25" />
+        <rect x="30" y="84" width="260" height="42" rx="4" fill="#FFFFFF" opacity="0.85" />
+        <rect x="0" y="130" width="320" height="22" rx="3" fill={tone} />
+      </g>
+      <g transform="translate(670 220)">
+        <rect x="0" y="0" width="40" height="100" rx="3" fill={tone} />
+      </g>
+      <ellipse cx="380" cy="345" rx="320" ry="12" fill={shadow} opacity="0.10" />
+    </svg>
   );
+}
+
+// Split a string into per-word spans so the [data-state="entering"] CSS
+// fires the per-word blur stagger via calc(var(--i) * 70ms).
+function staggeredWords(text: string): React.ReactNode {
+  const words = text.split(/\s+/).filter(Boolean);
+  return words.map((w, i) => (
+    <React.Fragment key={i}>
+      <span className="zh-designs-word" style={{ ['--i' as never]: i }}>
+        {w}
+      </span>
+      {i < words.length - 1 ? ' ' : null}
+    </React.Fragment>
+  ));
 }
 
 function Slider({ designs }: { designs: PayloadDesign[] }) {
   const N = designs.length;
-  const EXTENDED = useMemo(
-    () => [
-      ...designs.slice(N - N_CLONES),
-      ...designs,
-      ...designs.slice(0, N_CLONES),
-    ],
-    [designs],
-  );
 
-  const [focused, setFocused] = useState<number>(N_CLONES);
-  const [captionChanging, setCaptionChanging] = useState(false);
-  const [isJumping, setIsJumping] = useState(false);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const jumpTimerRef = useRef<number | null>(null);
+  // progress is React state (sync with React tree); progressRef shadows it
+  // so event handlers + animation loops can read the current value without
+  // depending on closure capture.
+  const [progress, setProgress] = React.useState(0);
+  const [isScrubbing, setIsScrubbing] = React.useState(false);
+  const [focused, setFocused] = React.useState(0);
+  const [promptHidden, setPromptHidden] = React.useState(false);
 
-  // Drag-to-scrub state. All refs (synchronous reads in pointer handlers,
-  // no React re-render needed during the gesture).
-  const dragStartXRef = useRef<number | null>(null);
-  const dragStartFocusedRef = useRef<number>(N_CLONES);
-  const dragOffsetRef = useRef<number>(0);
-  const lastMoveTimeRef = useRef<number>(0);
-  const lastMoveXRef = useRef<number>(0);
-  const velocityRef = useRef<number>(0);
-  const isDraggingRef = useRef(false);
-  const wasDragRef = useRef(false);
+  const progressRef = React.useRef(0);
+  const isScrubbingRef = React.useRef(false);
+  const promptHiddenRef = React.useRef(false);
+  React.useLayoutEffect(() => {
+    progressRef.current = progress;
+  }, [progress]);
+  React.useLayoutEffect(() => {
+    isScrubbingRef.current = isScrubbing;
+  }, [isScrubbing]);
+  React.useLayoutEffect(() => {
+    promptHiddenRef.current = promptHidden;
+  }, [promptHidden]);
 
-  const realIndex = ((focused - N_CLONES) % N + N) % N;
-  const focusedDesign = designs[realIndex]!;
+  // DOM refs
+  const stageRef = React.useRef<HTMLDivElement | null>(null);
+  const cardRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+  const textRef = React.useRef<HTMLDivElement | null>(null);
 
-  const isCloneIndex = useCallback(
-    (ext: number) => ext < N_CLONES || ext >= N_CLONES + N,
-    [N],
-  );
+  // Animation refs
+  const snapTimerRef = React.useRef<number | null>(null);
+  const snapAnimRef = React.useRef<number | null>(null);
 
-  // Center the focused tile in the viewport using LAYOUT dimensions, NOT
-  // getBoundingClientRect (which returns the scaled rect). offsetWidth /
-  // offsetLeft give the un-scaled layout dims so the slot stays the same
-  // regardless of which tile is currently focused.
-  const recenter = useCallback(() => {
-    // Skip during active drag — pointermove is imperatively setting transform
-    // and recenter would yank the track back to the focused position mid-drag.
-    if (isDraggingRef.current) return;
-    const track = trackRef.current;
-    const viewport = viewportRef.current;
-    if (!track || !viewport || track.children.length < 2) return;
-    const tile0 = track.children[0] as HTMLElement;
-    const tile1 = track.children[1] as HTMLElement;
-    const tileWidth = tile0.offsetWidth;
-    const slot = Math.abs(tile1.offsetLeft - tile0.offsetLeft);
-    const viewportWidth = viewport.offsetWidth;
-    const shift = focused * slot - (viewportWidth - tileWidth) / 2;
-    track.style.transform = `translateX(${shift}px)`;
+  // Imperative render — recompute every card's transform/opacity/filter from
+  // progressRef + isScrubbingRef. Called on every progress/isScrubbing tick
+  // AND on resize (to recompute the slot width).
+  const render = React.useCallback(() => {
+    const vp = progressRef.current;
+    const cards = cardRefs.current;
+    const first = cards[0];
+    if (!first) return;
+
+    const cardRect = first.getBoundingClientRect();
+    const cardW = cardRect.width;
+    const vw = window.innerWidth;
+    const gap7vw = vw * 0.07;
+    const gapPx = vw < 768
+      ? Math.min(56, Math.max(28, gap7vw))
+      : Math.min(110, Math.max(48, gap7vw));
+    const slot = cardW + gapPx;
+
+    const scrubbing = isScrubbingRef.current;
+    const blurMult = scrubbing ? 1.0 : 1.8;
+
+    for (let i = 0; i < cards.length; i++) {
+      const c = cards[i];
+      if (!c) continue;
+      const dist = i - vp;
+      const absDist = Math.abs(dist);
+      const offsetX = -dist * slot;
+      const scale = Math.max(0.28, 1.22 - absDist * 0.34);
+      const opacity = absDist > 1 ? 0 : Math.max(0.15, 1 - absDist * 0.32);
+      const blur = Math.min(22, absDist * 6 * blurMult);
+      c.style.transform = `translate(-50%, -50%) translateX(${offsetX.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+      c.style.opacity = opacity.toFixed(3);
+      c.style.filter = `blur(${blur.toFixed(2)}px)`;
+      c.style.zIndex = String(Math.round(100 - absDist * 10));
+    }
+
+    // Focused index changes drive the text-swap animation
+    const nearest = Math.max(0, Math.min(N - 1, Math.round(vp)));
+    setFocused((prev) => (prev === nearest ? prev : nearest));
+
+    // Scroll prompt hides once the user has actually advanced
+    const wantHidden = vp > 0.15;
+    if (wantHidden !== promptHiddenRef.current) {
+      promptHiddenRef.current = wantHidden;
+      setPromptHidden(wantHidden);
+    }
+  }, [N]);
+
+  // Run render on every progress / isScrubbing change + after first mount.
+  React.useLayoutEffect(() => {
+    render();
+  }, [progress, isScrubbing, render]);
+
+  // Trigger text re-enter animation whenever focused changes. Forced reflow
+  // between leaving → entering re-arms the [data-state="entering"] selectors
+  // so the per-word stagger + name dia-shine + CTA delay fire again.
+  React.useEffect(() => {
+    const text = textRef.current;
+    if (!text) return;
+    text.dataset.state = 'leaving';
+    void text.offsetWidth;
+    text.dataset.state = 'entering';
   }, [focused]);
 
-  useEffect(() => {
-    recenter();
-    window.addEventListener('resize', recenter);
-    return () => window.removeEventListener('resize', recenter);
-  }, [recenter]);
-
-  // Caption cross-fade fires on REAL-INDEX change only. Silent jumps move
-  // `focused` between equivalent clone/real positions; realIndex doesn't
-  // change, so this effect doesn't re-run and the caption stays put.
-  useEffect(() => {
-    setCaptionChanging(true);
-    const t = window.setTimeout(() => setCaptionChanging(false), CAPTION_FADE_MS);
-    return () => window.clearTimeout(t);
-  }, [realIndex]);
-
-  // Schedule silent jump when focused lands on a clone. Listen for the
-  // track's transform transitionend (most reliable) with a setTimeout
-  // fallback in case the event doesn't fire (interrupted by another click,
-  // slow tab, etc.).
-  useEffect(() => {
-    if (!isCloneIndex(focused)) return;
-    const track = trackRef.current;
-    if (!track) return;
-
-    let fired = false;
-    const fire = () => {
-      if (fired) return;
-      fired = true;
-      track.removeEventListener('transitionend', onEnd);
-      if (jumpTimerRef.current !== null) {
-        window.clearTimeout(jumpTimerRef.current);
-        jumpTimerRef.current = null;
-      }
-      performSilentJump();
-    };
-    const onEnd = (e: TransitionEvent) => {
-      if (e.target !== track) return;
-      if (e.propertyName !== 'transform') return;
-      fire();
-    };
-    track.addEventListener('transitionend', onEnd);
-    jumpTimerRef.current = window.setTimeout(fire, TRANSITION_MS);
-
-    return () => {
-      track.removeEventListener('transitionend', onEnd);
-      if (jumpTimerRef.current !== null) {
-        window.clearTimeout(jumpTimerRef.current);
-        jumpTimerRef.current = null;
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- performSilentJump
-    // is recreated each render and captures the current `focused` via closure;
-    // including it in deps would cause an infinite re-schedule loop.
-  }, [focused, isCloneIndex]);
-
-  function performSilentJump() {
-    const realFocused = (((focused - N_CLONES) % N) + N) % N + N_CLONES;
-    setIsJumping(true);
-    const track = trackRef.current;
-    if (track) {
-      track.style.transition = 'none';
-      track.querySelectorAll<HTMLElement>('.zh-slider-tile, .zh-tile-bg').forEach((el) => {
-        el.style.transition = 'none';
-      });
+  // animateTo — smooth snap to a target index using ease-out-quint.
+  const animateTo = React.useCallback((target: number) => {
+    if (snapAnimRef.current !== null) {
+      cancelAnimationFrame(snapAnimRef.current);
+      snapAnimRef.current = null;
     }
-    setFocused(realFocused);
+    const from = progressRef.current;
+    const distance = target - from;
+    const duration = Math.min(700, Math.max(300, Math.abs(distance) * 600));
+    const startTime = performance.now();
+    const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5);
+    setIsScrubbing(true);
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - startTime) / duration);
+      const newP = from + distance * easeOutQuint(t);
+      progressRef.current = newP;
+      setProgress(newP);
+      if (t < 1) {
+        snapAnimRef.current = requestAnimationFrame(tick);
+      } else {
+        snapAnimRef.current = null;
+        setIsScrubbing(false);
+      }
+    };
+    snapAnimRef.current = requestAnimationFrame(tick);
+  }, []);
 
-    // Force reflow so the no-transition state is committed before re-enabling.
-    if (track) void track.offsetWidth;
+  const scheduleSnap = React.useCallback(() => {
+    if (snapTimerRef.current !== null) {
+      clearTimeout(snapTimerRef.current);
+    }
+    snapTimerRef.current = window.setTimeout(() => {
+      const target = Math.max(0, Math.min(N - 1, Math.round(progressRef.current)));
+      animateTo(target);
+    }, 180);
+  }, [N, animateTo]);
 
-    // Two animation frames before re-enabling — first paints the jumped state,
-    // second re-arms transitions.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setIsJumping(false);
-        const t = trackRef.current;
-        if (t) {
-          t.style.transition = '';
-          t.querySelectorAll<HTMLElement>('.zh-slider-tile, .zh-tile-bg').forEach((el) => {
-            el.style.transition = '';
-          });
+  // Lock body scroll while the slider is mounted — the stage is fixed and
+  // owns the viewport; the rest of the page must not scroll.
+  React.useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  // Wheel input (mouse wheel + trackpad horizontal scroll). Both axes drive
+  // the same virtualProgress. Direction is REVERSED per v14: wheel down /
+  // trackpad right = back; wheel up / trackpad left = forward.
+  React.useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const WHEEL_SENSITIVITY = 600;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (snapAnimRef.current !== null) {
+        cancelAnimationFrame(snapAnimRef.current);
+        snapAnimRef.current = null;
+      }
+      setIsScrubbing(true);
+      const delta = e.deltaY + e.deltaX;
+      const newP = Math.max(
+        0,
+        Math.min(N - 1, progressRef.current - delta / WHEEL_SENSITIVITY),
+      );
+      progressRef.current = newP;
+      setProgress(newP);
+      scheduleSnap();
+    };
+    stage.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      stage.removeEventListener('wheel', onWheel);
+    };
+  }, [N, scheduleSnap]);
+
+  // Touch input — horizontal swipe drives virtualProgress directly (no
+  // velocity decay; release triggers scheduleSnap). Swipe RIGHT advances.
+  React.useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartProgress = 0;
+    let touchAxis: 'h' | 'v' | null = null;
+    const TOUCH_SENSITIVITY = 220;
+
+    const onStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchStartProgress = progressRef.current;
+      touchAxis = null;
+      setIsScrubbing(true);
+      if (snapAnimRef.current !== null) {
+        cancelAnimationFrame(snapAnimRef.current);
+        snapAnimRef.current = null;
+      }
+    };
+    const onMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      if (touchAxis === null) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          touchAxis = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
         }
-      });
-    });
-  }
+      }
+      e.preventDefault();
+      const drive = dx;
+      const newP = Math.max(
+        0,
+        Math.min(N - 1, touchStartProgress + drive / TOUCH_SENSITIVITY),
+      );
+      progressRef.current = newP;
+      setProgress(newP);
+    };
+    const onEnd = () => {
+      scheduleSnap();
+      touchAxis = null;
+    };
+    stage.addEventListener('touchstart', onStart, { passive: true });
+    stage.addEventListener('touchmove', onMove, { passive: false });
+    stage.addEventListener('touchend', onEnd);
+    return () => {
+      stage.removeEventListener('touchstart', onStart);
+      stage.removeEventListener('touchmove', onMove);
+      stage.removeEventListener('touchend', onEnd);
+    };
+  }, [N, scheduleSnap]);
 
-  const go = useCallback(
-    (delta: number) => {
-      setFocused((prev) => {
-        let next = prev + delta;
-        // Hard-wrap. Uses while loops so multi-step deltas (from a drag that
-        // crossed several slot boundaries) normalize correctly.
-        while (next < 0) next += N;
-        while (next >= EXTENDED.length) next -= N;
-        return next;
-      });
-    },
-    [N, EXTENDED.length],
-  );
-
-  // Keyboard arrows — RTL: ArrowLeft = next, ArrowRight = prev
-  useEffect(() => {
+  // Keyboard — ArrowRight/Up/PageUp = next, ArrowLeft/Down/PageDown/Space = prev.
+  React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
-      if (e.key === 'ArrowLeft') go(+1);
-      else if (e.key === 'ArrowRight') go(-1);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [go]);
-
-  // Drag-to-scrub via Pointer Events — unified path for touch + mouse + pen.
-  // Track follows the pointer in real time during the drag (inline transform,
-  // transitions paused). On release, snap to the nearest slot, with a flick
-  // velocity bonus that advances one extra in the flick direction.
-  useEffect(() => {
-    const vp = viewportRef.current;
-    if (!vp) return;
-
-    const measureLayout = () => {
-      const track = trackRef.current;
-      if (!track || track.children.length < 2) return null;
-      const tile0 = track.children[0] as HTMLElement;
-      const tile1 = track.children[1] as HTMLElement;
-      return {
-        slot: Math.abs(tile1.offsetLeft - tile0.offsetLeft),
-        tileWidth: tile0.offsetWidth,
-        viewportWidth: vp.offsetWidth,
-      };
-    };
-
-    const onPointerDown = (e: PointerEvent) => {
-      // Mouse right-click / middle-click: ignore.
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      // Pointer-down on an interactive control inside the viewport (e.g. a
-      // future inline button): ignore so the control handles its own click.
-      const target = e.target as HTMLElement | null;
-      if (target?.closest('button')) return;
-
-      dragStartXRef.current = e.clientX;
-      dragStartFocusedRef.current = focused;
-      dragOffsetRef.current = 0;
-      lastMoveTimeRef.current = performance.now();
-      lastMoveXRef.current = e.clientX;
-      velocityRef.current = 0;
-      isDraggingRef.current = true;
-      wasDragRef.current = false;
-      vp.dataset.dragging = '';
-
-      const track = trackRef.current;
-      if (track) track.style.transition = 'none';
-      try {
-        vp.setPointerCapture(e.pointerId);
-      } catch {
-        // setPointerCapture may throw on some platforms; degrade gracefully.
-      }
-    };
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (!isDraggingRef.current || dragStartXRef.current === null) return;
-      const dx = e.clientX - dragStartXRef.current;
-      dragOffsetRef.current = dx;
-      if (Math.abs(dx) > DRAG_DEAD_ZONE_PX) {
-        wasDragRef.current = true;
-        e.preventDefault(); // suppress page scroll once the drag is committed
-      }
-
-      // Smoothed velocity (px/ms) from the most recent move delta.
-      const now = performance.now();
-      const dt = now - lastMoveTimeRef.current;
-      if (dt > 0) {
-        velocityRef.current = (e.clientX - lastMoveXRef.current) / dt;
-      }
-      lastMoveTimeRef.current = now;
-      lastMoveXRef.current = e.clientX;
-
-      const layout = measureLayout();
-      if (!layout) return;
-      const baseShift =
-        dragStartFocusedRef.current * layout.slot -
-        (layout.viewportWidth - layout.tileWidth) / 2;
-      const track = trackRef.current;
-      if (track) {
-        track.style.transform = `translateX(${baseShift + dx}px)`;
-      }
-    };
-
-    const onPointerEnd = (e: PointerEvent) => {
-      if (!isDraggingRef.current) return;
-      isDraggingRef.current = false;
-      try {
-        vp.releasePointerCapture(e.pointerId);
-      } catch {
-        // ignore
-      }
-      delete vp.dataset.dragging;
-
-      const dx = dragOffsetRef.current;
-      const v = velocityRef.current;
-      const track = trackRef.current;
-      if (track) track.style.transition = '';
-
-      const layout = measureLayout();
-      if (!layout) {
-        recenter();
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
         return;
       }
-
-      // Round dx to nearest whole slot, then add a velocity bonus for flicks.
-      const slotsDragged = Math.round(dx / layout.slot);
-      const velocityBonus =
-        Math.abs(v) > VELOCITY_FLICK_THRESHOLD ? Math.sign(v) : 0;
-      const totalAdvance = slotsDragged + velocityBonus;
-
-      if (totalAdvance !== 0) {
-        go(totalAdvance);
-      } else {
-        recenter(); // snap back to original position
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        animateTo(Math.min(N - 1, Math.round(progressRef.current) + 1));
+      } else if (
+        e.key === 'ArrowLeft' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'PageDown' ||
+        e.key === ' '
+      ) {
+        e.preventDefault();
+        animateTo(Math.max(0, Math.round(progressRef.current) - 1));
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        animateTo(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        animateTo(N - 1);
       }
     };
-
-    vp.addEventListener('pointerdown', onPointerDown);
-    vp.addEventListener('pointermove', onPointerMove);
-    vp.addEventListener('pointerup', onPointerEnd);
-    vp.addEventListener('pointercancel', onPointerEnd);
+    document.addEventListener('keydown', onKey);
     return () => {
-      vp.removeEventListener('pointerdown', onPointerDown);
-      vp.removeEventListener('pointermove', onPointerMove);
-      vp.removeEventListener('pointerup', onPointerEnd);
-      vp.removeEventListener('pointercancel', onPointerEnd);
+      document.removeEventListener('keydown', onKey);
     };
-  }, [focused, go, recenter]);
+  }, [N, animateTo]);
+
+  // Re-render card geometry on viewport resize.
+  React.useEffect(() => {
+    const onResize = () => render();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, [render]);
+
+  const focusedDesign = designs[focused] ?? designs[0]!;
+  const focusedSlug = focusedDesign.slug ?? '';
+  const focusedTagline = (focusedDesign.tagline ?? '').trim();
 
   return (
-    <section
-      className={`zh-slider-section${isJumping ? ' is-jumping' : ''}`}
-      aria-roledescription="carousel"
-      aria-label="گالری طرح‌ها"
-    >
-      <button
-        type="button"
-        className="zh-slider-arrow zh-prev"
-        aria-label="طرح قبلی"
-        onClick={() => go(-1)}
+    <div className="zh-designs-slider">
+      <main
+        ref={stageRef}
+        className="zh-designs-stage"
+        aria-label="گالری طرح‌های ژیک"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-          <path d="M9 6L15 12L9 18" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <button
-        type="button"
-        className="zh-slider-arrow zh-next"
-        aria-label="طرح بعدی"
-        onClick={() => go(+1)}
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-          <path d="M15 6L9 12L15 18" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
+        <div className="zh-designs-top">
+          <nav className="zh-designs-breadcrumb" aria-label="مسیر">
+            <Link href="/">خانه</Link> / طرح‌ها
+          </nav>
+          <div
+            className="zh-designs-dots"
+            role="tablist"
+            aria-label="گزینش طرح"
+          >
+            {designs.map((d, i) => (
+              <button
+                key={String(d.id)}
+                type="button"
+                className={`zh-designs-dot${i === focused ? ' is-active' : ''}`}
+                role="tab"
+                aria-selected={i === focused}
+                aria-label={`طرح ${d.name}`}
+                onClick={() => animateTo(i)}
+              />
+            ))}
+          </div>
+          <div className="zh-designs-skip">
+            <Link href="/products">همه‌ی محصولات</Link>
+          </div>
+        </div>
 
-      <div ref={viewportRef} className="zh-slider-viewport">
-        <div ref={trackRef} className="zh-slider-track" role="list">
-          {EXTENDED.map((d, extIdx) => (
-            <DesignTile
-              key={`${d.id}-${extIdx}`}
-              design={d}
-              isFocused={extIdx === focused}
-              isClone={isCloneIndex(extIdx)}
-              onSelect={() => {
-                if (wasDragRef.current) {
-                  wasDragRef.current = false;
-                  return;
-                }
-                if (extIdx === focused) return;
-                setFocused(extIdx);
-              }}
-              onFocusedNavigate={(e) => {
-                // The focused tile is a <Link>. If a drag just ended on it,
-                // suppress the navigation that would otherwise fire on click.
-                if (wasDragRef.current) {
-                  wasDragRef.current = false;
-                  e.preventDefault();
-                }
-              }}
+        <div className="zh-designs-filmstrip" aria-label="فیلم‌نوار طرح‌ها">
+          <div className="zh-designs-track">
+            <div
+              className="zh-designs-pedestal"
+              data-visible={isScrubbing ? 'false' : 'true'}
+              aria-hidden
             />
-          ))}
+            {designs.map((d, i) => {
+              const mediaUrl = getMediaUrl(d);
+              const mime = getMediaMime(d);
+              return (
+                <div
+                  key={String(d.id)}
+                  ref={(el) => {
+                    cardRefs.current[i] = el;
+                  }}
+                  className="zh-designs-card"
+                  data-i={i}
+                >
+                  {mediaUrl ? (
+                    mime?.startsWith('video/') ? (
+                      <video
+                        src={mediaUrl}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img
+                        src={mediaUrl}
+                        alt=""
+                        loading={i === focused ? 'eager' : 'lazy'}
+                        decoding="async"
+                      />
+                    )
+                  ) : (
+                    <SvgPlaceholder />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      <div
-        className="zh-slider-caption"
-        data-changing={captionChanging || undefined}
-        aria-live="polite"
-      >
-        <div className="zh-caption-name">{focusedDesign.name}</div>
-        {focusedDesign.tagline ? (
-          <div className="zh-caption-tagline">{focusedDesign.tagline}</div>
-        ) : null}
-      </div>
-
-      <div className="zh-slider-indicator">
-        <div className="zh-slider-dots" role="tablist" aria-label="گزینش طرح">
-          {designs.map((d, i) => (
-            <button
-              key={d.id}
-              type="button"
-              className="zh-slider-dot"
-              role="tab"
-              aria-selected={i === realIndex}
-              aria-label={`طرح ${d.name}`}
-              onClick={() => setFocused(N_CLONES + i)}
-            />
-          ))}
+        <div ref={textRef} className="zh-designs-text" data-state="entering">
+          <div className="zh-designs-text-top">
+            <div className="zh-designs-eyebrow">
+              {staggeredWords(getEyebrow(focusedDesign))}
+            </div>
+            <div className="zh-designs-name">
+              <span className="zh-designs-name-shine">{focusedDesign.name}</span>
+            </div>
+            <div className="zh-designs-tagline">
+              {focusedTagline ? staggeredWords(focusedTagline) : null}
+            </div>
+          </div>
+          <div className="zh-designs-text-cta">
+            <Link
+              href={`/designs/${encodeURIComponent(focusedSlug)}`}
+              className="zh-designs-cta"
+              aria-label={`دیدن کامل طرح ${focusedDesign.name}`}
+            >
+              <span>دیدن کامل طرح {focusedDesign.name}</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
         </div>
-        <div className="zh-slider-counter" role="status">
-          {toPersianDigits(realIndex + 1)} از {toPersianDigits(N)}
+
+        <div className="zh-designs-bottom">
+          <div
+            className="zh-designs-prompt"
+            data-hidden={promptHidden ? 'true' : 'false'}
+          >
+            <svg
+              className="zh-designs-prompt-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden
+            >
+              <path
+                d="M9 6L15 12L9 18"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>
+              برای دیدن کلکسیون به راست اسکرول کنید · طرح{' '}
+              {toPersian(focused + 1)} / {toPersian(N)}
+            </span>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function DesignTile({
-  design,
-  isFocused,
-  isClone = false,
-  onSelect,
-  onFocusedNavigate,
-}: {
-  design: PayloadDesign;
-  isFocused: boolean;
-  isClone?: boolean;
-  onSelect?: () => void;
-  onFocusedNavigate?: React.MouseEventHandler<HTMLAnchorElement>;
-}) {
-  const inner = (
-    <>
-      <div className="zh-tile-bg">
-        <TileMedia design={design} />
-      </div>
-      <span className="zh-tile-eyebrow">طرح</span>
-    </>
-  );
-
-  if (isFocused) {
-    return (
-      <Link
-        href={`/designs/${encodeURIComponent(design.slug)}`}
-        onClick={onFocusedNavigate}
-        className="zh-slider-tile"
-        data-focused
-        role="listitem"
-        aria-label={`طرح ${design.name} (انتخاب‌شده، رفتن به صفحه‌ی طرح)`}
-      >
-        {inner}
-      </Link>
-    );
-  }
-  return (
-    <div
-      className="zh-slider-tile"
-      role="listitem"
-      onClick={onSelect}
-      tabIndex={isClone ? -1 : 0}
-      aria-hidden={isClone || undefined}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onSelect?.();
-        }
-      }}
-      aria-label={isClone ? undefined : `طرح ${design.name} (انتخاب کنید برای دیدن)`}
-    >
-      {inner}
+      </main>
     </div>
   );
-}
-
-function TileMedia({ design }: { design: PayloadDesign }) {
-  const media: PayloadMedia | null =
-    design.sliderMedia ?? design.heroMedia ?? design.gallery?.[0] ?? null;
-  if (!media?.url) return null;
-  if (media.mimeType?.startsWith('video/')) {
-    return <video src={media.url} autoPlay loop muted playsInline preload="metadata" />;
-  }
-  return <img src={media.url} alt="" />;
 }

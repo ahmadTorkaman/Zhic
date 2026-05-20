@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/designs — rebuild v6 (horizontal filmstrip · collection)</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eye:   0.14em;
+    --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --tone:   #C49A6C;
+    --shadow: #8B6F47;
+
+    /* Filmstrip geometry — v7: bigger gap pushes dim cards further left/right,
+       gives the focused card more breathing room without changing its size. */
+    --card-w: 38vw;
+    --card-gap: clamp(48px, 7vw, 110px);
+  }
+  @media (max-width: 768px) {
+    :root {
+      --card-w: 64vw;
+      --card-gap: clamp(28px, 7vw, 56px);
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* ── Pill header ─────────────────────────────────────────────────── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    font-weight: 900;
+    color: var(--color-charcoal);
+    font-size: 14px;
+  }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: 64px; border-inline: 0; border-top: 0; }
+  }
+
+  /* ── Stage ───────────────────────────────────────────────────────── */
+  .stage {
+    position: fixed;
+    inset: 0;
+    padding-top: 72px;
+    display: grid;
+    /* v13 (later): only 2 grid rows now — top bar and the filmstrip.
+       Text + scroll prompt are positioned absolutely at the bottom so
+       they overlay the filmstrip's lower edge instead of stealing grid
+       space. This lets the filmstrip claim ~93vh on desktop. */
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    transition: background 800ms var(--ease-out-soft);
+  }
+  @media (min-width: 768px) {
+    .stage { padding-top: 88px; }
+  }
+
+  /* v14: page tone gradient stripped of per-design --tone / --shadow so
+     the whole stage stays neutral. Only the noise overlay remains. */
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 240px 240px;
+    opacity: 0.07;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+  .stage > * { position: relative; z-index: 2; }
+
+  /* ── Top row ────────────────────────────────────────────────────── */
+  .stage-top {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(12px, 3vw, 32px);
+    padding-block: 8px 0;
+    padding-inline: clamp(16px, 4vw, 48px);
+    max-width: 1480px;
+    margin-inline: auto;
+    width: 100%;
+    color: var(--color-stone);
+    font-size: 12px;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+  }
+  /* v13 (later): dots moved to top row, center column. */
+  .stage-top { grid-template-columns: 1fr auto 1fr; }
+  .stage-breadcrumb { grid-column: 1; justify-self: start; }
+  .stage-top .dots  { grid-column: 2; justify-self: center; }
+  .stage-skip       { grid-column: 3; justify-self: end; }
+
+  .stage-breadcrumb {
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--color-stone);
+  }
+  .stage-breadcrumb a { color: inherit; text-decoration: none; }
+  .stage-counter {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+  .stage-counter .current { color: var(--color-ink); font-size: 14px; }
+  .stage-counter .total { color: var(--color-stone); opacity: 0.6; }
+  .stage-counter .progress {
+    display: block;
+    width: clamp(80px, 14vw, 220px);
+    height: 1px;
+    background: var(--color-sand);
+    position: relative;
+    overflow: hidden;
+  }
+  .stage-counter .progress > i {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: var(--color-charcoal);
+    width: 0%;
+  }
+  .stage-skip { font-size: 11px; }
+  .stage-skip a {
+    color: var(--color-stone);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-block-end: 2px;
+    transition: color 240ms, border-color 240ms;
+  }
+  .stage-skip a:hover { color: var(--color-charcoal); border-color: var(--color-stone); }
+
+  /* ── Filmstrip — horizontal track of cards ───────────────────────── */
+  .filmstrip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .filmstrip-track {
+    position: absolute;
+    inset: 0;
+    /* Each card is positioned absolutely. The track itself is just the
+       coordinate space — no transform. Per-card transforms drive their X. */
+  }
+  .filmstrip-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* v14 update: card height clamp pulled back from 72vh to 60vh — the
+       previous bump was too big and the focused card felt oversized. */
+    width: min(var(--card-w), 60vh);
+    aspect-ratio: 1 / 1;
+    transform-origin: 50% 50%;
+    /* X offset + scale + opacity + blur all derived from distance from
+       virtualProgress; written inline by JS each frame. */
+    transition:
+      transform 700ms var(--ease-out-quint),
+      opacity   700ms var(--ease-out-soft),
+      filter    700ms var(--ease-out-soft);
+    will-change: transform, opacity, filter;
+    pointer-events: none;
+  }
+  .filmstrip-card[data-snapping="true"] { transition: none; }
+  .filmstrip-card img,
+  .filmstrip-card svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ── Pedestal — glassy backdrop behind the focused card ───────────────
+     Sits at viewport center, slightly larger than the focused card, with
+     translucent tone-gradient + backdrop-blur. Toggled visible only when
+     the user is SETTLED on a design (not scrubbing or snap-animating). */
+  /* v14: pedestal is wide enough to physically cover the dim ±1 cards
+     and lives at z-index 95 — above the dim cards (z 70-90) but below the
+     focused (z 100). Translucent neutral fill so the dim cards stay VISIBLE
+     through the glass (just blurred + slightly hazed), not hidden by it. */
+  .pedestal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* v14 update: pedestal kept narrow (1.4x card width) but taller — 1.38x
+       gives the glass card more vertical presence around the focused media. */
+    width: calc(min(var(--card-w), 60vh) * 1.4);
+    height: calc(min(var(--card-w), 60vh) * 1.38);
+    transform: translate(-50%, -50%) scale(0.94);
+    /* Neutral ivory glass — fill bumped to ~40% so the pedestal is
+       actually visible on its own (previous 0.18 / 0.10 was invisible
+       against the ivory background). Subtle border + inset shine make
+       the rectangle perceptible without re-introducing tone color. */
+    background: linear-gradient(
+      135deg,
+      rgba(250, 250, 247, 0.42) 0%,
+      rgba(232, 224, 216, 0.30) 100%
+    );
+    backdrop-filter: blur(48px) saturate(1.05);
+    -webkit-backdrop-filter: blur(48px) saturate(1.05);
+    border: 1px solid rgba(44, 40, 37, 0.18);
+    border-radius: 28px;
+    box-shadow:
+      inset 0 1px 0 rgba(250, 250, 247, 0.55),
+      0 30px 80px -20px rgba(20, 17, 15, 0.18);
+    opacity: 0;
+    z-index: 95;      /* between dim cards (70-90) and focused (100) */
+    pointer-events: none;
+    transition:
+      opacity   500ms var(--ease-out-soft),
+      transform 700ms var(--ease-out-quint),
+      background 600ms var(--ease-out-soft);
+  }
+  .pedestal[data-visible="true"] {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    transition:
+      opacity   600ms var(--ease-out-soft) 80ms,    /* small delay on appear */
+      transform 700ms var(--ease-out-quint) 80ms,
+      background 600ms var(--ease-out-soft);
+  }
+
+  /* ── Text block — v13 (later): .stage-text spans the entire stage as an
+     overlay so its two children (text-top + text-cta) can position
+     absolutely relative to it without collapsing to zero height. */
+  .stage-text {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 110;
+  }
+  .stage-text-top {
+    position: absolute;
+    top: clamp(140px, 18vh, 210px);
+    inset-inline: 0;
+    text-align: center;
+    padding-inline: clamp(16px, 4vw, 48px);
+  }
+  .stage-text-cta {
+    position: absolute;
+    bottom: 56px;
+    inset-inline: 0;
+    text-align: center;
+    padding-inline: clamp(16px, 4vw, 48px);
+  }
+  .stage-text .stage-cta { pointer-events: auto; }
+  .stage-text[data-state="leaving"] {
+    opacity: 0;
+    transform: translateY(-10px);
+    filter: blur(6px);
+    transition: opacity 200ms var(--ease-out-soft), transform 200ms var(--ease-out-soft), filter 200ms var(--ease-out-soft);
+  }
+  .stage-text[data-state="entering"] {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    transition: none;
+  }
+
+  .stage-eyebrow {
+    font-size: 11px;
+    color: var(--color-forest);
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .stage-name {
+    font-size: clamp(28px, 4.4vw, 52px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+    color: var(--color-ink);
+  }
+  .stage-tagline {
+    font-size: clamp(12px, 1.2vw, 15px);
+    color: var(--color-charcoal);
+    font-weight: 300;
+    line-height: 1.5;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+
+  .word {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(12px);
+    transition:
+      opacity   500ms var(--ease-out-soft) calc(var(--i, 0) * 70ms),
+      filter    500ms var(--ease-out-soft) calc(var(--i, 0) * 70ms),
+      transform 600ms var(--ease-out-quint) calc(var(--i, 0) * 70ms);
+  }
+  [data-state="entering"] .word {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+
+  .name-shine {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-ink) 0%,
+      var(--color-ink) 35%,
+      color-mix(in srgb, var(--color-gold) 80%, var(--color-ivory)) 50%,
+      var(--color-ink) 65%,
+      var(--color-ink) 100%
+    );
+    /* For background-clip: text to fill the whole word, the gradient image
+       MUST stay covering the element area at every step of the animation.
+       background-size 240% + bg-position 0% → 100% keeps the image position
+       at [0%, -140%] of the element (i.e. always covering [0, 100%]). The
+       gold band at gradient-50% sweeps across as bg-position animates. */
+    background-size: 240% 100%;
+    background-position: 0% 0;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    transition: background-position 1100ms var(--ease-out-quint);
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(12px);
+  }
+  [data-state="entering"] .name-shine {
+    background-position: 100% 0;
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+    transition:
+      background-position 1100ms var(--ease-out-quint) 100ms,
+      opacity 500ms var(--ease-out-soft) 100ms,
+      filter  500ms var(--ease-out-soft) 100ms,
+      transform 600ms var(--ease-out-quint) 100ms;
+  }
+
+  .stage-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    color: var(--color-charcoal);
+    padding: 10px 20px;
+    border: 1px solid var(--color-charcoal);
+    border-radius: 9999px;
+    text-decoration: none;
+    pointer-events: auto;
+    transition: background-color 240ms var(--ease-out-soft), color 240ms var(--ease-out-soft);
+    background: rgba(250, 250, 247, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  [data-state="entering"] .stage-cta {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 500ms var(--ease-out-soft) 500ms,
+      transform 600ms var(--ease-out-quint) 500ms,
+      background-color 240ms var(--ease-out-soft),
+      color 240ms var(--ease-out-soft);
+  }
+  .stage-cta:hover { background: var(--color-charcoal); color: var(--color-ivory); }
+  .stage-cta svg { width: 10px; height: 10px; }
+
+  /* ── Bottom row — v13 (later): absolute, sits below the text block. */
+  .stage-bottom {
+    position: absolute;
+    bottom: 14px;
+    inset-inline: 0;
+    padding-inline: clamp(16px, 4vw, 48px);
+    display: grid;
+    z-index: 110;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    justify-items: center;
+    text-align: center;
+  }
+  .dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  .dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 2px;
+    background: var(--color-sand);
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    transition:
+      width 350ms var(--ease-out-quint),
+      background-color 240ms var(--ease-out-soft);
+  }
+  .dot:hover { background: var(--color-stone); }
+  .dot.active {
+    background: var(--color-charcoal);
+    width: 22px;
+  }
+
+  .scroll-prompt {
+    color: var(--color-stone);
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.7;
+    transition: opacity 400ms var(--ease-out-soft);
+  }
+  .scroll-prompt[data-hidden="true"] { opacity: 0; }
+  .scroll-prompt .arrow {
+    width: 22px;
+    height: 22px;
+    color: var(--color-stone);
+    animation: arrow-shift 1.7s var(--ease-out-soft) infinite;
+  }
+  /* v14 update: scroll direction reversed — arrow points/shifts RIGHT now. */
+  @keyframes arrow-shift {
+    0%, 100% { transform: translateX(0); opacity: 0.55; }
+    50%      { transform: translateX(8px); opacity: 1; }
+  }
+
+  /* ── Mobile ──────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .stage-top { padding-inline: 16px; gap: 8px; position: relative; }
+    .stage-breadcrumb { visibility: hidden; }
+    .stage-skip {
+      position: absolute;
+      inset-inline-end: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+    }
+    .stage-counter .progress { width: 70px; }
+    .stage-name { font-size: clamp(26px, 8vw, 42px); }
+    .stage-tagline { font-size: 12px; }
+    .stage-cta { padding: 9px 16px; font-size: 10px; }
+    .dot { width: 6px; }
+    .dot.active { width: 16px; }
+    .scroll-prompt { font-size: 9px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-prompt .arrow { animation: none; }
+    .stage, .filmstrip-card { transition: none; }
+    .word, .name-shine, .stage-cta { transition: opacity 0ms, filter 0ms, transform 0ms; }
+  }
+
+  .stage-tag {
+    position: fixed;
+    bottom: 12px;
+    inset-inline-end: 12px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.78;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+</style>
+</head>
+<body>
+
+<div class="pill-header">ژیک</div>
+
+<main class="stage" id="stage" aria-label="گالری طرح‌های ژیک">
+
+  <div class="stage-top">
+    <nav class="stage-breadcrumb" aria-label="مسیر"><a href="#">خانه</a> / طرح‌ها</nav>
+    <div class="dots" id="dots" role="tablist" aria-label="گزینش طرح"></div>
+    <div class="stage-skip"><a href="#" id="skipLink">همه‌ی طرح‌ها</a></div>
+  </div>
+
+  <div class="filmstrip" aria-label="فیلم‌نوار طرح‌ها">
+    <div class="filmstrip-track" id="track">
+      <div class="pedestal" id="pedestal" data-visible="true" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="stage-text" id="stageText" data-state="entering">
+    <div class="stage-text-top">
+      <div class="stage-eyebrow" id="stageEyebrow"></div>
+      <div class="stage-name"><span class="name-shine" id="stageName"></span></div>
+      <div class="stage-tagline" id="stageTagline"></div>
+    </div>
+    <div class="stage-text-cta">
+      <a href="#" class="stage-cta" id="stageCta">
+        <span id="stageCtaLabel"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="stage-bottom">
+    <div class="scroll-prompt" id="scrollPrompt">
+      <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>برای دیدن کلکسیون به راست اسکرول کنید</span>
+    </div>
+  </div>
+
+</main>
+
+<div class="stage-tag">پیش‌نمایش — <span>Designs Rebuild v14 · neutral cards · wide pedestal glass over dim sets</span></div>
+
+<script>
+  const API = 'http://80.240.31.146:3001/api/media/file/';
+  const DESIGNS = [
+    // v10 palette — each design is a SOFT SHADE of one of the 5 brand colors:
+    //   forest #5F7760, caramel #C2986B, light gray #D3D3D3, cream #E5CBAF, pale sage #B0C4B1
+    // tone = lighter pull; shadow = slightly deeper pull. Cohesive across the gallery.
+    { slug: 'verna',       name: 'ورنا',         eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'روشن، طبیعی، با حسی از ساحل.',                    tone: '#C3D2C4', shadow: '#8AA08C', image: API + 'all.webp' },
+    { slug: 'parla-kerem', name: 'پارلا کرم',     eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'کرمی، آرام، برای زندگی کم‌حرف.',                  tone: '#ECDABF', shadow: '#BD9C79', image: API + 'all-1.webp' },
+    { slug: 'luka-plus',   name: 'لوکا پلاس',     eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'نسخه‌ی بلندتر و کشیده‌تر لوکا.',                  tone: '#D8D8D8', shadow: '#989898', image: API + 'all-2.webp' },
+    { slug: 'elegans',     name: 'الگانس',        eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'شکوه کم‌حرف. لمس طلای کم‌رنگ.',                    tone: '#D4B388', shadow: '#9A7548', image: API + 'all-3.webp' },
+    { slug: 'skate',       name: 'اسکیت',         eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'خط‌های مدرن، لبه‌های قاطع.',                       tone: '#BFCEC0', shadow: '#859B86', image: API + 'all-4.webp' },
+    { slug: 'jacqueline',  name: 'ژاکلین',        eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'ظرافت کلاسیک. خط‌های منحنی.',                      tone: '#EDD9BC', shadow: '#B89878', image: API + 'all-5.webp' },
+    { slug: 'sento',       name: 'سنتو',          eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'سکوت ژاپنی. خط افقی محض.',                         tone: '#7A8E7B', shadow: '#4A5A4B' },
+    { slug: 'mucha',       name: 'موکا',          eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'گرم، عمیق، با تنالیته‌ی قهوه.',                    tone: '#B08660', shadow: '#6F5232' },
+    { slug: 'luka',        name: 'لوکا',          eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'هندسه‌ی دقیق. سطح صاف.',                           tone: '#CDCDCD', shadow: '#8C8C8C' },
+    { slug: 'lotus',       name: 'لوتوس',         eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'آرامش گیاهی. سبز خزه‌ای.',                         tone: '#6E8470', shadow: '#41513F' },
+    { slug: 'lorena',      name: 'لورنا',         eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'نرم، رمانتیک، با لمس صورتی.',                      tone: '#EDD6BB', shadow: '#BF9676' },
+    { slug: 'loof',        name: 'لوف',           eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'گندم گرم. ساده اما سخاوتمند.',                     tone: '#D2AB81', shadow: '#9C7547' },
+    { slug: 'iron',        name: 'آیرون',         eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'استحکام صنعتی. خط‌های قاطع.',                      tone: '#B5B5B5', shadow: '#555555' },
+    { slug: 'caroline',    name: 'کارولین',       eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'فضای آرام. کرم و قهوه‌ای روشن.',                   tone: '#EBD8BB', shadow: '#B8946E' },
+    { slug: 'elizabeth',   name: 'الیزابت',       eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'کلاسیک و ساخت‌یافته. لبه‌های نرم.',                tone: '#DABF95', shadow: '#A07F4E' },
+    { slug: 'black-white', name: 'Black & White', eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'دو رنگ. هیچ شکی نباشد.',                           tone: '#BFBFBF', shadow: '#2A2A2A' },
+    { slug: 'parla',       name: 'پارلا',         eyebrow: 'طرح ژیک · سرویس بزرگسال', tagline: 'سادگی پایدار. خنثی.',                              tone: '#C8C8C8', shadow: '#707070' },
+    { slug: 'gandom',      name: 'گندم',          eyebrow: 'طرح ژیک · سرویس کودک',    tagline: 'گرم، برای خواب کودکانه.',                          tone: '#CFA677', shadow: '#8E6840' },
+  ];
+  const N = DESIGNS.length;
+
+  const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+  const toPersian = (n) => String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[+d]);
+  const padTwo = (n) => String(n).padStart(2, '0');
+
+  // v14: SVG placeholder rendered in neutral grays — strips per-design color
+  // so we can see whether the pedestal's backdrop-blur actually lays glass
+  // on the dim cards without color confusing the test. Mid-gray + dark-gray
+  // contrast against the ivory background well enough to remain visible.
+  function svgPlaceholder(/* d */) {
+    const tone = '#9A9A9A';   // mid gray (was #C8C8C8 — too light against ivory)
+    const shadow = '#4A4A4A'; // dark gray
+    return `
+      <svg viewBox="0 0 720 380" aria-hidden role="img">
+        <g transform="translate(40 60)"><rect x="0" y="0" width="110" height="260" rx="6" fill="${tone}"/></g>
+        <g transform="translate(170 200)"><rect x="0" y="0" width="140" height="120" rx="5" fill="${tone}"/></g>
+        <g transform="translate(330 130)">
+          <rect x="0" y="0" width="320" height="80" rx="4" fill="${tone}"/>
+          <rect x="20" y="80" width="280" height="50" rx="6" fill="${shadow}" opacity="0.25"/>
+          <rect x="30" y="84" width="260" height="42" rx="4" fill="#FFFFFF" opacity="0.85"/>
+          <rect x="0" y="130" width="320" height="22" rx="3" fill="${tone}"/>
+        </g>
+        <g transform="translate(670 220)"><rect x="0" y="0" width="40" height="100" rx="3" fill="${tone}"/></g>
+        <ellipse cx="380" cy="345" rx="320" ry="12" fill="${shadow}" opacity="0.10"/>
+      </svg>
+    `;
+  }
+
+  // ── Build the filmstrip ───────────────────────────────────────────
+  const track = document.getElementById('track');
+  DESIGNS.forEach((d, i) => {
+    const card = document.createElement('div');
+    card.className = 'filmstrip-card';
+    card.dataset.i = i;
+    if (d.image) {
+      card.innerHTML = `<img src="${d.image}" alt="" loading="lazy" decoding="async">`;
+    } else {
+      card.innerHTML = svgPlaceholder(d);
+    }
+    track.appendChild(card);
+  });
+
+  // ── Build the dots ────────────────────────────────────────────────
+  const dotsEl = document.getElementById('dots');
+  DESIGNS.forEach((d, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot';
+    dot.role = 'tab';
+    dot.setAttribute('aria-label', `طرح ${d.name}`);
+    dot.addEventListener('click', () => animateTo(i));
+    dotsEl.appendChild(dot);
+  });
+
+  // ── State ─────────────────────────────────────────────────────────
+  let virtualProgress = 0;
+  let isScrubbing = false;
+  const pedestal = document.getElementById('pedestal');
+  function setScrubbing(v) {
+    if (v === isScrubbing) return;
+    isScrubbing = v;
+    pedestal.dataset.visible = v ? 'false' : 'true';
+    // Re-render so the dim cards' blur multiplier updates with the state.
+    if (typeof render === 'function') render();
+  }
+  let textIndex = -1;
+  let snapTimer = null;
+  let snapAnim = null;
+  let promptHidden = false;
+
+  const stage = document.getElementById('stage');
+  const text = document.getElementById('stageText');
+  const eyebrowEl = document.getElementById('stageEyebrow');
+  const nameEl = document.getElementById('stageName');
+  const taglineEl = document.getElementById('stageTagline');
+  const ctaLabelEl = document.getElementById('stageCtaLabel');
+  const scrollPrompt = document.getElementById('scrollPrompt');
+  const cards = track.querySelectorAll('.filmstrip-card');
+  const dotsList = dotsEl.querySelectorAll('.dot');
+  // v13: counterCurrent / counterTotal / progressFill removed with the counter element.
+
+  function setWordStagger(el, str) {
+    const words = str.split(/\s+/).filter(Boolean);
+    el.innerHTML = words.map((w, i) => `<span class="word" style="--i:${i}">${w}</span>`).join(' ');
+  }
+
+  function setTextContent(i) {
+    const d = DESIGNS[i];
+    setWordStagger(eyebrowEl, d.eyebrow);
+    setWordStagger(taglineEl, d.tagline);
+    nameEl.textContent = d.name;
+    ctaLabelEl.textContent = 'دیدن کامل طرح ' + d.name;
+    textIndex = i;
+  }
+
+  function triggerEnter() {
+    text.dataset.state = 'leaving';
+    void text.offsetWidth;
+    text.dataset.state = 'entering';
+  }
+
+  // ── Color interpolation ───────────────────────────────────────────
+  function hexToRgb(hex) {
+    const h = hex.replace('#','');
+    return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
+  }
+  function rgbToCss({r,g,b}) { return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`; }
+  function lerpColor(c1, c2, t) {
+    return {
+      r: c1.r + (c2.r - c1.r) * t,
+      g: c1.g + (c2.g - c1.g) * t,
+      b: c1.b + (c2.b - c1.b) * t,
+    };
+  }
+  const palettes = DESIGNS.map(d => ({ tone: hexToRgb(d.tone), shadow: hexToRgb(d.shadow) }));
+
+  // ── Filmstrip layout ──────────────────────────────────────────────
+  // In RTL UX: card 0 is the "first" — center it at vp=0. To advance to
+  // card 1 (the next in reading direction = LEFT), card 1 should slide in
+  // from the LEFT and become centered while card 0 exits to the RIGHT.
+  //
+  // X positions: each card sits at translateX(-50%) (centers itself on the
+  // left edge of the stage) plus an offset based on (i - virtualProgress).
+  // In RTL: positive offset = LEFT direction (because of doc dir), so the
+  // formula is offsetVw = (i - virtualProgress) * (card-width + gap).
+  //
+  // We use CSS px values via getComputedStyle for accurate slot width.
+  function slotWidthPx() {
+    const cs = getComputedStyle(document.documentElement);
+    const w = parseFloat(cs.getPropertyValue('--card-w'));
+    const g = parseFloat(cs.getPropertyValue('--card-gap'));
+    // --card-w is "38vw" etc. — parseFloat returns the number, we resolve to px
+    const vw = window.innerWidth;
+    const cardPx = (w / 100) * vw;          // assumes vw unit
+    const gapPx = isNaN(g) ? 24 : g;        // gap may be clamp() — we resolve later
+    return cardPx + gapPx;
+  }
+
+  function render() {
+    // v11 fix: gap was reading "clamp(48px, 7vw, 110px)" from the CSS var and
+    // falling back to 24px on desktop, which compressed the spacing and made
+    // the dim cards crowd into the focused one. Compute the clamp() value in
+    // JS directly using the viewport width so layout math always matches CSS.
+    const card = cards[0];
+    const cardRect = card.getBoundingClientRect();
+    const cardW = cardRect.width;
+    const vw = window.innerWidth;
+    const gap7vw = vw * 0.07;
+    const gapPx = vw < 768
+      ? Math.min(56, Math.max(28, gap7vw))
+      : Math.min(110, Math.max(48, gap7vw));
+    const slot = cardW + gapPx;
+
+    // Per-card transform
+    cards.forEach((c, i) => {
+      const distFromFocus = i - virtualProgress;
+      // In RTL: positive distFromFocus = card is to the LEFT of focus (next).
+      // We want card with distFromFocus=0 at center (X=0).
+      // Card with distFromFocus=+1 should be one slot to the LEFT visually
+      // (which in RTL = negative translateX, since the doc dir is reverse).
+      // Actually CSS translateX is always physical. In RTL we want the next
+      // card on the visual LEFT, so translateX must be NEGATIVE for +1.
+      const offsetX = -distFromFocus * slot;
+      const absDist = Math.abs(distFromFocus);
+      // v14 update: focused card peaks at scale 1.22 — bigger focused media,
+       // dim neighbours fall off proportionally.
+      const scale = Math.max(0.28, 1.22 - absDist * 0.34);
+      // v8: only the immediate neighbour on each side is visible (±1).
+      const opacity = absDist > 1 ? 0 : Math.max(0.15, 1 - absDist * 0.32);
+      // v10: dim sets get extra blur when the user is SETTLED on a design
+      // (pedestal visible). While scrubbing, blur is lighter so the
+      // neighbours stay legible mid-motion.
+      const blurMult = isScrubbing ? 1.0 : 1.8;
+      const blur = Math.min(22, absDist * 6 * blurMult);
+      c.style.transform = `translate(-50%, -50%) translateX(${offsetX.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+      c.style.opacity = opacity.toFixed(3);
+      c.style.filter = `blur(${blur.toFixed(2)}px)`;
+      c.style.zIndex = Math.round(100 - absDist * 10);
+    });
+
+    // Text content swap on nearest integer
+    const nearest = Math.max(0, Math.min(N - 1, Math.round(virtualProgress)));
+    if (nearest !== textIndex) {
+      setTextContent(nearest);
+      triggerEnter();
+    }
+
+    // Tone gradient
+    const i1 = Math.max(0, Math.min(N - 1, Math.floor(virtualProgress)));
+    const i2 = Math.min(N - 1, i1 + 1);
+    const t = virtualProgress - i1;
+    const tone = lerpColor(palettes[i1].tone, palettes[i2].tone, t);
+    const shadow = lerpColor(palettes[i1].shadow, palettes[i2].shadow, t);
+    document.documentElement.style.setProperty('--tone', rgbToCss(tone));
+    document.documentElement.style.setProperty('--shadow', rgbToCss(shadow));
+
+    // Dots only (counter removed in v13)
+    dotsList.forEach((d, i) => d.classList.toggle('active', i === nearest));
+
+    // Prompt hide
+    if (!promptHidden && virtualProgress > 0.15) {
+      promptHidden = true;
+      scrollPrompt.dataset.hidden = 'true';
+    } else if (promptHidden && virtualProgress < 0.05) {
+      promptHidden = false;
+      scrollPrompt.dataset.hidden = 'false';
+    }
+  }
+
+  function scheduleSnap() {
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => {
+      const target = Math.max(0, Math.min(N - 1, Math.round(virtualProgress)));
+      animateTo(target);
+    }, 180);
+  }
+
+  function animateTo(target) {
+    if (snapAnim) cancelAnimationFrame(snapAnim);
+    const from = virtualProgress;
+    const distance = target - from;
+    const duration = Math.min(700, Math.max(300, Math.abs(distance) * 600));
+    const start = performance.now();
+    const easeOutQuint = (t) => 1 - Math.pow(1 - t, 5);
+    setScrubbing(true);   // pedestal stays hidden during the snap animation
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      virtualProgress = from + distance * easeOutQuint(t);
+      render();
+      if (t < 1) {
+        snapAnim = requestAnimationFrame(tick);
+      } else {
+        snapAnim = null;
+        setScrubbing(false);   // settled — pedestal fades in
+      }
+    };
+    snapAnim = requestAnimationFrame(tick);
+  }
+
+  // ── Inputs ────────────────────────────────────────────────────────
+  // Accept both deltaY (mouse wheel) and deltaX (trackpad horizontal scroll)
+  const WHEEL_SENSITIVITY = 600;
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (snapAnim) { cancelAnimationFrame(snapAnim); snapAnim = null; }
+    setScrubbing(true);   // hide pedestal on any wheel
+    // v14 update: scroll direction reversed. Wheel down / trackpad right
+    // now goes BACK (vp-); wheel up / trackpad left advances forward (vp+).
+    const delta = e.deltaY + e.deltaX;
+    virtualProgress = Math.max(0, Math.min(N - 1, virtualProgress - delta / WHEEL_SENSITIVITY));
+    render();
+    scheduleSnap();
+  }, { passive: false });
+
+  // Touch swipe — horizontal
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartProgress = 0;
+  let touchAxis = null;     // 'h' or 'v' — lock to one axis
+  const TOUCH_SENSITIVITY = 220;
+  stage.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartProgress = virtualProgress;
+    touchAxis = null;
+    setScrubbing(true);   // hide pedestal as soon as the finger touches
+    if (snapAnim) { cancelAnimationFrame(snapAnim); snapAnim = null; }
+  }, { passive: true });
+  stage.addEventListener('touchmove', (e) => {
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+    if (touchAxis === null) {
+      // Lock axis once a clear direction emerges
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+        touchAxis = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      }
+    }
+    e.preventDefault();
+    // v14 update: touch direction reversed. Swiping RIGHT (dx>0) now
+    // advances forward (vp+); swiping LEFT goes back.
+    const drive = dx;
+    virtualProgress = Math.max(0, Math.min(N - 1, touchStartProgress + drive / TOUCH_SENSITIVITY));
+    render();
+  }, { passive: false });
+  stage.addEventListener('touchend', () => {
+    scheduleSnap();
+    touchAxis = null;
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    // v14 update: keyboard direction reversed to match the new wheel/touch.
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault();
+      animateTo(Math.min(N - 1, Math.round(virtualProgress) + 1));
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault();
+      animateTo(Math.max(0, Math.round(virtualProgress) - 1));
+    } else if (e.key === 'Home') {
+      e.preventDefault(); animateTo(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); animateTo(N - 1);
+    }
+  });
+
+  window.addEventListener('resize', render);
+
+  setTextContent(0);
+  render();
+</script>
+
+</body>
+</html>
