@@ -18,11 +18,13 @@
   }
 }
 
-/* ── Stage — fills the viewport below the site header ───────────────── */
+/* ── Stage — fills the viewport below the site header ─────────────────
+   Tracks the canonical --header-height token + a 16px breathing buffer
+   so the filmstrip stays aligned even if the header height shifts. */
 .zh-designs-stage {
   position: fixed;
   inset: 0;
-  padding-top: 72px;
+  padding-block-start: calc(var(--header-height) + var(--space-4));
   display: grid;
   grid-template-rows: auto 1fr;
   align-items: center;
@@ -33,7 +35,7 @@
   color: var(--color-charcoal);
 }
 @media (min-width: 768px) {
-  .zh-designs-stage { padding-top: 88px; }
+  .zh-designs-stage { padding-block-start: calc(var(--header-height) + var(--space-5)); }
 }
 
 .zh-designs-stage::after {

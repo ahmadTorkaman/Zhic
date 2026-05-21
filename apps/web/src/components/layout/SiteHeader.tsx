@@ -37,7 +37,7 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
   return (
     <>
       <header
-        className={`fixed top-3 inset-x-3 z-[var(--z-header)] rounded-full py-2 md:top-0 md:inset-x-0 md:rounded-none md:py-4 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${chromeClass}`}
+        className={`fixed top-3 inset-x-3 z-[var(--z-header)] rounded-full py-2 md:top-0 md:inset-x-0 md:rounded-none md:py-3 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${chromeClass}`}
       >
         <Container>
           {/*
@@ -57,7 +57,7 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
                 aria-label="منو"
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen(true)}
-                className="flex h-9 w-9 items-center justify-center text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-ink md:hidden"
+                className="flex h-7 w-7 items-center justify-center text-charcoal transition-colors duration-[var(--dur-hover)] hover:text-ink md:hidden"
               >
                 <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
                   <path d="M2 4H14M2 8H14M2 12H14" strokeLinecap="round" />
@@ -118,7 +118,7 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
               <button
                 type="button"
                 aria-label="جستجو"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-stone transition-colors duration-[var(--dur-hover)] hover:bg-sand/40 hover:text-ink"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-stone transition-colors duration-[var(--dur-hover)] hover:bg-sand/40 hover:text-ink md:h-8 md:w-8"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -140,7 +140,7 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
               <button
                 type="button"
                 aria-label="علاقه‌مندی‌ها"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-stone transition-colors duration-[var(--dur-hover)] hover:bg-sand/40 hover:text-ink"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-stone transition-colors duration-[var(--dur-hover)] hover:bg-sand/40 hover:text-ink md:h-8 md:w-8"
               >
                 <svg
                   viewBox="0 0 24 24"
