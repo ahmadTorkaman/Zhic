@@ -26,6 +26,7 @@ import { CategoryFilterProvider } from '@/components/category/category-filter-st
 import { CategoryFilterTrigger } from '@/components/category/CategoryFilterTrigger';
 import { CategoryFilterSheet } from '@/components/category/CategoryFilterSheet';
 import { buildFilterHref } from '@/lib/category-filter-url';
+import { categoryCollectionPageLd, breadcrumbListLd } from '@/lib/category-jsonld';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -212,6 +213,15 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         />
 
         <div className="pb-12" />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryCollectionPageLd(category)) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbListLd(buildCrumbs(category))) }}
+        />
       </CategoryFilterProvider>
     );
   }
@@ -256,6 +266,15 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       </Container>
 
       <div className="pb-12" />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryCollectionPageLd(category)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbListLd(buildCrumbs(category))) }}
+      />
     </>
   );
 }
