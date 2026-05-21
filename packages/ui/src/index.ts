@@ -37,5 +37,7 @@ export { CountUp } from './CountUp';
 export type { CountUpProps } from './CountUp';
 export { BlurInText } from './BlurInText';
 export type { BlurInTextProps } from './BlurInText';
+export { FadeUp } from './FadeUp';
+export type { FadeUpProps } from './FadeUp';
 export { computeRowOffset } from './journal-rows-math';
 export type { JournalRowInput } from './journal-rows-math';
