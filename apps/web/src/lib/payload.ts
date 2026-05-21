@@ -868,6 +868,14 @@ export async function fetchCategories(): Promise<PayloadCategory[]> {
   return res?.docs ?? [];
 }
 
+export async function fetchAllCategories(): Promise<PayloadCategory[]> {
+  const res = await payloadFetch<PayloadList<PayloadCategory>>(
+    '/api/categories?limit=500&depth=1&sort=name',
+    'all-categories',
+  );
+  return res?.docs ?? [];
+}
+
 export async function fetchMaterials(): Promise<PayloadMaterial[]> {
   const res = await payloadFetch<PayloadList<PayloadMaterial>>(
     '/api/materials?limit=100&sort=name',

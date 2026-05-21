@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/env';
 import { API_URL } from '@/lib/env';
+import { fetchAllCategories } from '@/lib/payload';
 
 type PayloadDoc = { slug: string; updatedAt?: string };
 type PayloadList = { docs: PayloadDoc[] };
@@ -20,16 +21,16 @@ async function fetchSlugs(collection: string, query = ''): Promise<PayloadDoc[]>
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, collections, categories, designs, showrooms, articles, journalCategories, tags] =
+  const [products, collections, designs, showrooms, articles, journalCategories, tags, allCategories] =
     await Promise.all([
       fetchSlugs('products'),
       fetchSlugs('collections'),
-      fetchSlugs('categories'),
       fetchSlugs('designs'),
       fetchSlugs('showrooms'),
       fetchSlugs('articles', '&where[status][equals]=published'),
       fetchSlugs('journal-categories'),
       fetchSlugs('tags'),
+      fetchAllCategories(),
     ]);
 
   const entries: MetadataRoute.Sitemap = [
@@ -77,12 +78,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  for (const c of categories) {
+  for (const c of allCategories) {
     entries.push({
       url: `${SITE_URL}/categories/${c.slug}`,
-      lastModified: c.updatedAt,
-      changeFrequency: 'monthly',
-      priority: 0.8,
+      lastModified: c.updatedAt ? new Date(c.updatedAt) : undefined,
+      changeFrequency: 'monthly' as const,
+      priority: c.parent ? 0.7 : 0.75,
     });
   }
 
