@@ -134,31 +134,98 @@ async function seed() {
 
   // --- Categories ---------------------------------------------------------
 
+  // Note: the parent-cover-required hook (added in Task 1) requires `cover` on any
+  // category with parent=null. These flat-leaf categories predate the hub structure;
+  // we supply existing media ids as placeholder covers so the seed can run.
+  // bedroom→12 (takht 100), beds→7 (takht nozad), wardrobes→5 (komod 2 dar),
+  // dressers→3 (deraver 3 kesho)
   const catBedroom = await upsertBySlug('categories', 'bedroom', {
     name: 'اتاق خواب',
     slug: 'bedroom',
+    cover: 12,
   })
   const catBeds = await upsertBySlug('categories', 'beds', {
     name: 'تخت‌خواب',
     slug: 'beds',
     description: 'تخت‌خواب‌های دست‌ساز برای آرامش‌ترین لحظه‌های روز.',
+    cover: 7,
   })
   const catWardrobes = await upsertBySlug('categories', 'wardrobes', {
     name: 'کمد',
     slug: 'wardrobes',
     description: 'کمدهای ذخیره‌سازی با هنر چوب‌کاری ایرانی.',
+    cover: 5,
   })
   const catDressers = await upsertBySlug('categories', 'dressers', {
     name: 'دراور',
     slug: 'dressers',
     description: 'دراورهایی برای نظم و زیبایی اتاق.',
+    cover: 3,
   })
+  // Media id 15 = 'ayne ghadi.webp' — full-length mirror image; suitable hero for آینه‌ها parent.
+  // The existing `mirrors` entry is reshaped into the hub parent: hub fields (tagline, intro,
+  // allowed_axes, explicit parent=null) are added directly here; no separate mirrors-hub record.
   const catMirrors = await upsertBySlug('categories', 'mirrors', {
-    name: 'آینه',
+    name: 'آینه‌ها',
     slug: 'mirrors',
-    description: 'آینه‌های قاب‌چوبی، روایتی از حضور هنر در روزمرگی.',
+    description: 'آینه‌های ژیک در هفت زیرنوع — برای هر گوشه‌ی خانه.',
+    tagline: 'انعکاسی از سکوت — هفت زبان، یک تأمل',
+    cover: 15,
+    intro: doc(
+      'آینه در فلسفه‌ی ژیک سطحی برای انعکاس نیست؛ سطحی است که با کنار رفتن، فضا را بازتر می‌کند. ما هفت زیرنوع آینه می‌سازیم — از آینه‌ی دیواری ساده تا آینه‌ی قدی تمام‌قد و آینه‌ی روی دراور — و هر کدام را در پنج طرح از مجموعه‌های گندم، باروت، لوتوس، سنتو و الیزابت ارائه می‌دهیم.',
+      'قاب‌ها همگی از روکش طبیعی گردو یا راش‌اند، با تراش دستی، و در نسبت‌های طلایی برش می‌خورند.',
+    ),
+    parent: null,
+    allowed_axes: [],
   })
+  // upsertBySlug returns the existing record without merging; force-apply hub fields so
+  // re-runs on a pre-existing DB also promote mirrors to the full hub shape.
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  await payload.update({
+    collection: 'categories' as any,
+    id: catMirrors.id,
+    data: {
+      name: 'آینه‌ها',
+      description: 'آینه‌های ژیک در هفت زیرنوع — برای هر گوشه‌ی خانه.',
+      tagline: 'انعکاسی از سکوت — هفت زبان، یک تأمل',
+      cover: 15,
+      intro: doc(
+        'آینه در فلسفه‌ی ژیک سطحی برای انعکاس نیست؛ سطحی است که با کنار رفتن، فضا را بازتر می‌کند. ما هفت زیرنوع آینه می‌سازیم — از آینه‌ی دیواری ساده تا آینه‌ی قدی تمام‌قد و آینه‌ی روی دراور — و هر کدام را در پنج طرح از مجموعه‌های گندم، باروت، لوتوس، سنتو و الیزابت ارائه می‌دهیم.',
+        'قاب‌ها همگی از روکش طبیعی گردو یا راش‌اند، با تراش دستی، و در نسبت‌های طلایی برش می‌خورند.',
+      ),
+      parent: null,
+      allowed_axes: [],
+    } as any,
+  })
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   console.log(`  Categories: ${[catBedroom, catBeds, catWardrobes, catDressers, catMirrors].length}`)
+  console.log(`  Hub category (parent): mirrors (reshaped)`)
+
+  // --- Hub demo categories (wall-mirror leaf) --------------------------------
+
+  const catWallMirror = await upsertBySlug('categories', 'wall-mirror', {
+    name: 'آینه دیواری',
+    slug: 'wall-mirror',
+    description: 'آینه‌های دیواری ژیک — قاب چوب گردو، در سه اندازه و پنج طرح.',
+    tagline: 'انعکاسی برای دیوار، با ساده‌ترین خط‌ها',
+    cover: null,
+    intro: doc(
+      'آینه‌های دیواری ژیک از پاسخی به یک نیاز ساده آغاز می‌شوند: فضایی که با نور بازی کند، بی‌آنکه سطح را اشغال کند. هر آینه با تراش دستی قاب چوب گردو، در سه اندازه‌ی استاندارد و در پنج طرح از مجموعه‌های گندم، باروت، لوتوس، سنتو و الیزابت ساخته می‌شود.',
+      'قاب‌ها از روکش طبیعی گردو و راش انتخاب می‌شوند؛ آینه با ضدبخاری مات و سطح بدون لک تولید می‌شود.',
+    ),
+    parent: catMirrors.id,
+    allowed_axes: ['size'],
+    rule: 'use where size variant exists',
+  })
+  // Force-apply parent link so re-runs on a pre-existing DB also wire the leaf correctly.
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  await payload.update({
+    collection: 'categories' as any,
+    id: catWallMirror.id,
+    data: { parent: catMirrors.id, allowed_axes: ['size'] } as any,
+  })
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  console.log(`  Hub category (leaf): آینه دیواری`)
 
   // --- Tags ---------------------------------------------------------------
 
