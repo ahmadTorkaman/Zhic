@@ -1,0 +1,19 @@
+.row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (min-width: 640px) { .row { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+.card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  aspect-ratio: 4 / 5;
+  display: block;
+  transition: transform .6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card:hover { transform: translateY(-3px); }
+.bg { position: absolute; inset: 0; transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+.card:hover .bg { transform: scale(1.04); }
+.scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(20,17,15,0.6) 100%); }
+.meta { position: absolute; inset-block-end: 16px; inset-inline-start: 16px; color: #fff; }
+.eye { font-size: 9px; letter-spacing: 0.18em; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+.nm { font-size: 20px; font-weight: 900; line-height: 1.1; margin-block-start: 4px; }
+.arrow { position: absolute; inset-block-end: 16px; inset-inline-end: 16px; color: rgba(255,255,255,0.7); transition: all .3s cubic-bezier(0.22, 1, 0.36, 1); }
+.card:hover .arrow { color: #fff; inset-inline-end: 12px; }
