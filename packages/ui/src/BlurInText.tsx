@@ -6,6 +6,8 @@ import { splitIntoWords } from './text-split';
 export type BlurInTextProps = {
   /** The text to animate. */
   children: string;
+  /** Initial delay for the entire block in ms. Default 0. Added to per-word stagger offset. */
+  delay?: number;
   /** Delay per word index in ms. Default 90. */
   stagger?: number;
   /** Transition duration per word in ms. Default 700. */
@@ -24,6 +26,10 @@ export type BlurInTextProps = {
  * preserved as plain text nodes between word spans, so Persian glyph shaping
  * stays intact within each word.
  *
+ * The `delay` prop offsets the entire block (applied before the per-word
+ * stagger), enabling staggered entrance across sibling `BlurInText` blocks
+ * without coupling them to a single parent controller.
+ *
  * @remarks
  * The component assumes `children` is static — the wrapped pieces are keyed
  * by array index. If `children` changes after mount, the existing word spans
@@ -33,6 +39,7 @@ export type BlurInTextProps = {
  */
 export function BlurInText({
   children,
+  delay = 0,
   stagger = 90,
   duration = 700,
   as = 'span',
@@ -75,7 +82,7 @@ export function BlurInText({
       opacity: visible ? 1 : 0,
       filter: visible ? 'blur(0)' : 'blur(18px)',
       transition: `opacity ${duration}ms cubic-bezier(0.22, 1, 0.36, 1), filter ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`,
-      transitionDelay: `${idx * stagger}ms`,
+      transitionDelay: `${delay + idx * stagger}ms`,
       willChange: visible ? 'auto' : 'opacity, filter',
     };
     return (

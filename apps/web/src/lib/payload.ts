@@ -596,7 +596,7 @@ export async function fetchCategory(
 ): Promise<PayloadCategory | null> {
   const params = new URLSearchParams({
     'where[slug][equals]': slug,
-    depth: '1',
+    depth: '2',
     limit: '1',
   });
   const res = await payloadFetch<PayloadList<PayloadCategory>>(
