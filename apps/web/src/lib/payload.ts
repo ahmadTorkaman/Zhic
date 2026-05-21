@@ -194,8 +194,16 @@ export type PayloadCategory = {
   name: string;
   slug: string;
   description?: string | null;
+  // NEW fields (sub-project D):
+  tagline?: string | null;
+  cover?: PayloadMedia | null;
+  intro?: LexicalRoot | null;
+  allowed_axes?: string[] | null;
+  rule?: string | null;
+  // existing:
   parent?: PayloadCategory | string | number | null;
   seo?: PayloadSeo | null;
+  updatedAt?: string;
 };
 
 export type PayloadTag = {
