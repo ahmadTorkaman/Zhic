@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/categories/[slug] · parent — mockup</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-sand-2:   #DDD3C7;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-forest-deep: #455A47;
+    --color-gold:     #C49A6C;
+    --color-gold-deep: #9A754A;
+
+    --tracking-eye: 0.18em;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --header-h: 64px;
+    --container-pad: clamp(16px, 4vw, 64px);
+    --max-w: 1440px;
+    --read-w: 720px;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+    --space-9: 96px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body { min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  ul, ol { list-style: none; }
+
+  /* ─────────────────────────────────────────────── pill header ─── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    z-index: 100;
+    /* 1fr / auto / 1fr keeps the middle nav truly centered in the bar
+       regardless of how wide the brand or icons get. */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 18px;
+    gap: 16px;
+  }
+  .pill-header .brand {
+    font-weight: 900;
+    font-size: 17px;
+    color: var(--color-charcoal);
+    position: relative;
+    justify-self: start;  /* RTL: visual right */
+  }
+  .pill-header nav { justify-self: center; }
+  .pill-header .icons { justify-self: end; }  /* RTL: visual left */
+  .pill-header .brand::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    inset-inline: 4px;
+    height: 2px;
+    background: var(--color-forest);
+    border-radius: 1px;
+  }
+  .pill-header nav { display: none; }
+  .pill-header .icons { display: flex; gap: 4px; align-items: center; }
+  .pill-header .icon-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-stone);
+    border-radius: 50%;
+    transition: color .2s var(--ease-out-soft), background .2s var(--ease-out-soft);
+  }
+  .pill-header .icon-btn:hover { color: var(--color-ink); background: rgba(232, 224, 216, 0.4); }
+  .pill-header .icon-btn svg { width: 18px; height: 18px; }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: var(--header-h); border-inline: 0; border-top: 0; padding: 0 32px; }
+    .pill-header nav { display: flex; justify-content: center; gap: 28px; font-size: 14px; color: var(--color-charcoal); }
+    .pill-header nav a:hover { color: var(--color-forest); }
+  }
+
+  /* ─────────────────────────────────────────────── hero (full-bleed) ─── */
+  .hero {
+    margin-top: calc(var(--header-h) + 12px);
+    position: relative;
+    width: 100%;
+    aspect-ratio: 21/9;
+    overflow: hidden;
+    background: var(--color-cream);
+  }
+  @media (max-width: 767px) {
+    .hero { margin-top: 70px; aspect-ratio: 4/5; }
+  }
+  /* Darker, "department"-feeling gradient — parents read as bigger landscape */
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(20,17,15,0.65) 100%),
+                radial-gradient(ellipse at 25% 30%, #c9a87a 0%, #6b5236 50%, #2a1d10 100%);
+  }
+  .hero-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 240px 240px;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+  }
+
+  /* Multi-mirror motif — parent hero shows three mirror shapes to suggest "category of mirrors" */
+  .hero-motif {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: 8%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: clamp(16px, 2vw, 36px);
+    align-items: center;
+  }
+  .hero-motif .m {
+    background: linear-gradient(170deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 100%);
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.32), inset 0 0 60px rgba(255,255,255,0.08);
+  }
+  .hero-motif .m1 {
+    width: clamp(70px, 11vw, 160px);
+    aspect-ratio: 3/4;
+    border-radius: 50% 50% 50% 50% / 12% 12% 88% 88%;
+  }
+  .hero-motif .m2 {
+    width: clamp(80px, 13vw, 190px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .hero-motif .m3 {
+    width: clamp(54px, 9vw, 130px);
+    aspect-ratio: 4/6;
+    border-radius: 4px;
+  }
+  @media (max-width: 767px) {
+    .hero-motif {
+      inset-inline-end: 50%;
+      transform: translate(50%, -55%);
+      gap: 10px;
+    }
+    .hero-motif .m1 { width: 56px; }
+    .hero-motif .m2 { width: 64px; }
+    .hero-motif .m3 { width: 44px; }
+  }
+
+  .hero-text {
+    position: absolute;
+    inset-inline-start: var(--container-pad);
+    inset-block-end: clamp(24px, 6vw, 56px);
+    color: var(--color-ivory);
+    max-width: min(540px, 80vw);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+    font-weight: 400;
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+  .hero-title {
+    font-size: clamp(44px, 7vw, 88px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .hero-tagline {
+    font-size: clamp(16px, 1.6vw, 20px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.88);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ─────────────────────────────────────────────── main shell ─── */
+  .shell {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+  }
+
+  /* breadcrumb */
+  .crumb {
+    padding: 24px 0 0;
+    font-size: 12px;
+    color: var(--color-stone);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .crumb a { color: var(--color-stone); transition: color .2s var(--ease-out-soft); }
+  .crumb a:hover { color: var(--color-forest); }
+  .crumb .sep { color: var(--color-sand-2); }
+  .crumb .now { color: var(--color-charcoal); font-weight: 700; }
+
+  /* single-column for parent (no sidebar) — content flows in a max-width container */
+  .body { margin-top: 32px; }
+
+  /* intro (parent uses wider reading width because copy is longer/more thematic) */
+  .intro {
+    max-width: var(--read-w);
+    padding-block: 8px 32px;
+  }
+  .intro p {
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--color-charcoal);
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+  .intro p:last-child { margin-bottom: 0; }
+  .intro strong { font-weight: 700; color: var(--color-ink); }
+  .intro p:first-child::first-letter {
+    font-size: 1.8em;
+    font-weight: 900;
+    color: var(--color-ink);
+    float: right;
+    line-height: 1;
+    margin-inline-start: 6px;
+    margin-block-start: 4px;
+  }
+
+  /* callouts */
+  .callouts {
+    display: flex;
+    gap: 36px;
+    padding-block: 22px;
+    border-top: 1px solid var(--color-sand);
+    border-bottom: 1px solid var(--color-sand);
+    flex-wrap: wrap;
+    margin-block: 8px 56px;
+  }
+  .callout {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .callout .num {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .callout .lbl {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+  }
+  @media (max-width: 767px) {
+    .callouts { gap: 24px; padding-block: 16px; }
+    .callout .num { font-size: 24px; }
+  }
+
+  /* section header (shared by all sections) */
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-top: 56px;
+    border-top: 1px solid var(--color-sand);
+  }
+  .sec-head.first { padding-top: 0; border-top: 0; }
+  .sec-eyebrow {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-forest);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .sec-title {
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+  .sec-sub {
+    color: var(--color-stone);
+    font-size: 13px;
+    margin-inline-start: auto;
+  }
+
+  /* child-categories grid — bigger tiles, parent's primary surface */
+  .children-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  @media (min-width: 768px) {
+    .children-grid { grid-template-columns: repeat(3, 1fr); gap: 28px 24px; }
+  }
+  @media (min-width: 1200px) {
+    .children-grid { grid-template-columns: repeat(4, 1fr); gap: 32px 24px; }
+  }
+  .child-card {
+    display: block;
+    position: relative;
+    color: var(--color-charcoal);
+  }
+  /* Quiet card — same treatment as leaf product tiles. Borderless WebP product
+     image sits centered inside this frame. */
+  .child-card .bg {
+    aspect-ratio: 4/5;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(180deg, #FCFBF7 0%, #F6F2EB 100%);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 0 0 rgba(20, 17, 15, 0);
+    transition:
+      transform .35s var(--ease-out-soft),
+      box-shadow .35s var(--ease-out-soft),
+      border-color .35s var(--ease-out-soft);
+  }
+  .child-card:hover .bg {
+    transform: translateY(-4px);
+    border-color: rgba(232, 224, 216, 0.85);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      0 14px 28px rgba(20, 17, 15, 0.07);
+  }
+  /* per-child variant classes (c1..c7) kept as hooks but no longer color the card —
+     only the silhouette inset varies via ::before below */
+  .child-card .bg.c1, .child-card .bg.c2, .child-card .bg.c3,
+  .child-card .bg.c4, .child-card .bg.c5, .child-card .bg.c6,
+  .child-card .bg.c7 { /* same cream wash for all */ }
+
+  /* mirror motif inside each child card — shape matches the child's actual silhouette */
+  .child-card .bg::before {
+    content: '';
+    position: absolute;
+    inset: 22% 30%;
+    background: linear-gradient(170deg, rgba(95, 119, 96, 0.10) 0%, rgba(95, 119, 96, 0.02) 100%);
+    border: 1px solid rgba(140, 130, 121, 0.25);
+    box-shadow: 0 10px 22px rgba(20, 17, 15, 0.06), inset 0 0 26px rgba(255, 255, 255, 0.4);
+    transition: transform .8s var(--ease-out-soft);
+  }
+  .child-card:hover .bg::before { transform: scale(1.02); }
+  .child-card .bg.c1::before { border-radius: 50% 50% 50% 50% / 12% 12% 88% 88%; }     /* wall (arched) */
+  .child-card .bg.c2::before { inset: 18% 28%; border-radius: 50%; aspect-ratio: 1; }     /* round */
+  .child-card .bg.c3::before { inset: 28% 38%; border-radius: 4px; aspect-ratio: 4/9; }   /* standing */
+  .child-card .bg.c4::before { inset: 32% 32%; border-radius: 20%; }                       /* dresser */
+  .child-card .bg.c5::before { inset: 28% 34%; border-radius: 4px; aspect-ratio: 5/4; }    /* nightstand */
+  .child-card .bg.c6::before { inset: 32% 30%; border-radius: 4px; aspect-ratio: 4/3; }    /* table */
+  .child-card .bg.c7::before { inset: 26% 36%; border-radius: 6px; aspect-ratio: 3/4; }    /* vanity */
+
+  .child-card .meta {
+    padding-top: 16px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .child-card .name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink);
+    line-height: 1.4;
+  }
+  .child-card .count {
+    font-size: 11px;
+    color: var(--color-stone);
+    letter-spacing: 0.05em;
+    font-feature-settings: "tnum";
+  }
+  .child-card .arrow {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--color-stone);
+    transition: all .25s var(--ease-out-soft);
+  }
+  .child-card:hover .arrow { color: var(--color-forest); margin-inline-start: 4px; }
+
+  /* designs-with-this-type — same as leaf */
+  .designs-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 640px) {
+    .designs-row { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  }
+  .design-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    aspect-ratio: 4/5;
+    display: block;
+    transition: transform .6s var(--ease-out-soft);
+  }
+  .design-card:hover { transform: translateY(-3px); }
+  .design-card .bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 1.2s var(--ease-out-soft);
+  }
+  .design-card:hover .bg { transform: scale(1.04); }
+  .design-card.gandom .bg { background: linear-gradient(160deg, #c8a878, #6f4e2e); }
+  .design-card.baloot .bg { background: linear-gradient(160deg, #9a8870, #4a3a2a); }
+  .design-card.lotus .bg { background: linear-gradient(160deg, #d4c4a8, #7a5d3a); }
+  .design-card.sento .bg { background: linear-gradient(160deg, #b89c78, #5d4226); }
+  .design-card .scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(20,17,15,0.6) 100%);
+  }
+  .design-card .meta {
+    position: absolute;
+    bottom: 16px;
+    inset-inline-start: 16px;
+    color: #fff;
+  }
+  .design-card .meta .eye {
+    font-size: 9px;
+    letter-spacing: var(--tracking-eye);
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+  }
+  .design-card .meta .nm {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-top: 4px;
+  }
+  .design-card .arrow {
+    position: absolute;
+    bottom: 16px;
+    inset-inline-end: 16px;
+    color: rgba(255,255,255,0.7);
+    transition: all .3s var(--ease-out-soft);
+  }
+  .design-card:hover .arrow { color: #fff; inset-inline-end: 12px; }
+
+  /* siblings strip — parents-row */
+  .siblings-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-bottom: 96px;
+  }
+  @media (min-width: 640px) {
+    .siblings-row { grid-template-columns: repeat(4, 1fr); }
+  }
+  .sibling-card {
+    display: block;
+    color: inherit;
+    position: relative;
+  }
+  .sibling-card .bg {
+    aspect-ratio: 16/10;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: transform .6s var(--ease-out-soft);
+  }
+  .sibling-card:hover .bg { transform: translateY(-2px); }
+  /* siblings = other parent categories with their own characteristic shapes */
+  .sibling-card .bg.beds { background: linear-gradient(135deg, #c8b89a, #5d4628); }
+  .sibling-card .bg.wardrobes { background: linear-gradient(135deg, #d8c4a3, #6f4e2e); }
+  .sibling-card .bg.dressers { background: linear-gradient(135deg, #ddd0b8, #876e44); }
+  .sibling-card .bg.desks { background: linear-gradient(135deg, #d4c4a8, #7a5d3a); }
+
+  .sibling-card .bg::before {
+    content: '';
+    position: absolute;
+    inset: 20% 36%;
+    background: linear-gradient(170deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 100%);
+    border: 1px solid rgba(255,255,255,0.24);
+  }
+  .sibling-card .bg.beds::before { inset: 30% 22%; aspect-ratio: 9/4; border-radius: 4px; }
+  .sibling-card .bg.wardrobes::before { inset: 16% 32%; aspect-ratio: 3/4; border-radius: 4px; }
+  .sibling-card .bg.dressers::before { inset: 28% 26%; aspect-ratio: 6/4; border-radius: 4px; }
+  .sibling-card .bg.desks::before { inset: 32% 24%; aspect-ratio: 8/4; border-radius: 2px; }
+
+  .sibling-card .nm {
+    padding-top: 12px;
+    font-size: 14px;
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+  .sibling-card .ct {
+    font-size: 11px;
+    color: var(--color-stone);
+    padding-top: 2px;
+  }
+
+  /* footer placeholder */
+  .footer {
+    background: var(--color-cream);
+    padding: 64px var(--container-pad) 96px;
+    color: var(--color-stone);
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px solid var(--color-sand);
+  }
+
+  /* ─────────────────────────────────────────── come-up fade-in ───── */
+  .fadeup {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .fadeup.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fadeup { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ pill header ════════════════════════ -->
+<header class="pill-header">
+  <a href="/" class="brand">ژیک</a>
+  <nav>
+    <a href="/products">محصولات</a>
+    <a href="/designs">طرح‌ها</a>
+    <a href="/journal">روایت‌ها</a>
+    <a href="/showrooms">نمایشگاه‌ها</a>
+    <a href="/about">درباره ژیک</a>
+  </nav>
+  <div class="icons">
+    <button class="icon-btn" aria-label="جستجو">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7.5"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+    <button class="icon-btn" aria-label="علاقه‌مندی‌ها">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════ hero ═══════════════════════════════ -->
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-motif" aria-hidden="true">
+    <div class="m m1"></div>
+    <div class="m m2"></div>
+    <div class="m m3"></div>
+  </div>
+  <div class="hero-text">
+    <span class="hero-eyebrow fadeup">دسته‌بندی</span>
+    <h1 class="hero-title fadeup" style="transition-delay: 140ms">آینه‌ها</h1>
+    <p class="hero-tagline fadeup" style="transition-delay: 320ms">انعکاسی از سکوت — هفت زبان، یک تأمل</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ main shell ═════════════════════════ -->
+<div class="shell">
+  <nav class="crumb" aria-label="مسیر">
+    <a href="/">خانه</a>
+    <span class="sep">/</span>
+    <a href="/products">محصولات</a>
+    <span class="sep">/</span>
+    <span class="now">آینه‌ها</span>
+  </nav>
+
+  <main class="body">
+
+    <!-- intro (parent — longer, more thematic) -->
+    <section class="intro">
+      <p class="fadeup">آینه در فلسفه‌ی ژیک سطحی برای انعکاس نیست؛ <strong>سطحی است که با کنار رفتن، فضا را بازتر می‌کند.</strong> ما هفت زیرنوع آینه می‌سازیم — از آینه‌ی دیواری ساده تا آینه‌ی قدی تمام‌قد و آینه‌ی روی دراور — و هر کدام را در پنج طرح از مجموعه‌های گندم، باروت، لوتوس، سنتو و الیزابت ارائه می‌دهیم.</p>
+      <p class="fadeup" style="transition-delay: 140ms">قاب‌ها همگی از روکش طبیعی گردو یا راش‌اند، با تراش دستی، و در نسبت‌های طلایی برش می‌خورند. آینه با ضدبخاری مات و سطح بدون لک تولید می‌شود؛ پوشش پشتی برای دوام و مقاومت در برابر رطوبت. هر زیرنوع برای نقطه‌ای خاص از خانه طراحی شده — راهرو، اتاق خواب، میز آرایش، نشیمن.</p>
+    </section>
+
+    <!-- callouts (parent-level counts) -->
+    <section class="callouts" aria-label="نمای کلی">
+      <div class="callout fadeup">
+        <div class="num">۷</div>
+        <div class="lbl">زیرنوع</div>
+      </div>
+      <div class="callout fadeup" style="transition-delay: 90ms">
+        <div class="num">۴۵</div>
+        <div class="lbl">محصول</div>
+      </div>
+      <div class="callout fadeup" style="transition-delay: 180ms">
+        <div class="num">۵</div>
+        <div class="lbl">طرح</div>
+      </div>
+      <div class="callout fadeup" style="transition-delay: 270ms">
+        <div class="num">۲</div>
+        <div class="lbl">روکش چوب</div>
+      </div>
+    </section>
+
+    <!-- children grid (the parent's primary surface) -->
+    <header class="sec-head first">
+      <div>
+        <div class="sec-eyebrow fadeup">★ زیرنوع‌ها</div>
+        <h2 class="sec-title fadeup" style="transition-delay: 80ms">هفت زبان برای انعکاس</h2>
+      </div>
+      <span class="sec-sub fadeup" style="transition-delay: 160ms">۷ دسته</span>
+    </header>
+
+    <div class="children-grid" aria-label="زیرنوع‌های آینه">
+      <a class="child-card" href="/docs/category-leaf-mockup.html">
+        <div class="bg c1"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه دیواری</div>
+            <div class="arrow">۸ محصول ←</div>
+          </div>
+        </div>
+      </a>
+      <a class="child-card" href="#">
+        <div class="bg c2"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه گرد</div>
+            <div class="arrow">۵ محصول ←</div>
+          </div>
+        </div>
+      </a>
+      <a class="child-card" href="#">
+        <div class="bg c3"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه قدی</div>
+            <div class="arrow">۶ محصول ←</div>
+          </div>
+        </div>
+      </a>
+      <a class="child-card" href="#">
+        <div class="bg c4"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه دراور</div>
+            <div class="arrow">۴ محصول ←</div>
+          </div>
+        </div>
+      </a>
+      <a class="child-card" href="#">
+        <div class="bg c5"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه پاتختی</div>
+            <div class="arrow">۳ محصول ←</div>
+          </div>
+        </div>
+      </a>
+      <a class="child-card" href="#">
+        <div class="bg c6"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه میز</div>
+            <div class="arrow">۷ محصول ←</div>
+          </div>
+        </div>
+      </a>
+      <a class="child-card" href="#">
+        <div class="bg c7"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه میز آرایش</div>
+            <div class="arrow">۶ محصول ←</div>
+          </div>
+        </div>
+      </a>
+      <a class="child-card" href="#">
+        <div class="bg c4"></div>
+        <div class="meta">
+          <div>
+            <div class="name">آینه تعویض</div>
+            <div class="arrow">۶ محصول ←</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- designs-with-this-type — parent shows designs that have ANY mirror -->
+    <header class="sec-head">
+      <div>
+        <div class="sec-eyebrow fadeup">★ این دسته در</div>
+        <h2 class="sec-title fadeup" style="transition-delay: 80ms">طرح‌هایی که آینه دارند</h2>
+      </div>
+      <span class="sec-sub fadeup" style="transition-delay: 160ms">۵ طرح موجود</span>
+    </header>
+
+    <div class="designs-row" aria-label="طرح‌های مرتبط">
+      <a class="design-card gandom" href="/designs/gandom">
+        <div class="bg"></div>
+        <div class="scrim"></div>
+        <div class="meta">
+          <div class="eye">طرح</div>
+          <div class="nm">گندم</div>
+        </div>
+        <div class="arrow">←</div>
+      </a>
+      <a class="design-card baloot" href="/designs/baloot">
+        <div class="bg"></div>
+        <div class="scrim"></div>
+        <div class="meta">
+          <div class="eye">طرح</div>
+          <div class="nm">باروت</div>
+        </div>
+        <div class="arrow">←</div>
+      </a>
+      <a class="design-card lotus" href="/designs/lotus">
+        <div class="bg"></div>
+        <div class="scrim"></div>
+        <div class="meta">
+          <div class="eye">طرح</div>
+          <div class="nm">لوتوس</div>
+        </div>
+        <div class="arrow">←</div>
+      </a>
+      <a class="design-card sento" href="/designs/sento">
+        <div class="bg"></div>
+        <div class="scrim"></div>
+        <div class="meta">
+          <div class="eye">طرح</div>
+          <div class="nm">سنتو</div>
+        </div>
+        <div class="arrow">←</div>
+      </a>
+    </div>
+
+    <!-- siblings — other parent categories -->
+    <header class="sec-head">
+      <div>
+        <div class="sec-eyebrow fadeup">دیگر دسته‌بندی‌ها</div>
+        <h2 class="sec-title fadeup" style="transition-delay: 80ms">از همان قفسه</h2>
+      </div>
+      <a class="sec-sub fadeup" style="transition-delay: 160ms" href="/products">همه‌ی دسته‌بندی‌ها ←</a>
+    </header>
+
+    <div class="siblings-row" aria-label="parent‌های هم‌سطح">
+      <a class="sibling-card" href="#">
+        <div class="bg beds"></div>
+        <div class="nm">تخت و سرویس خواب</div>
+        <div class="ct">۷ زیرنوع · ۹۸ محصول</div>
+      </a>
+      <a class="sibling-card" href="#">
+        <div class="bg wardrobes"></div>
+        <div class="nm">کمدها</div>
+        <div class="ct">۳ زیرنوع · ۳۴ محصول</div>
+      </a>
+      <a class="sibling-card" href="#">
+        <div class="bg dressers"></div>
+        <div class="nm">دراور و کشو</div>
+        <div class="ct">۲ زیرنوع · ۲۲ محصول</div>
+      </a>
+      <a class="sibling-card" href="#">
+        <div class="bg desks"></div>
+        <div class="nm">میز و صندلی</div>
+        <div class="ct">۴ زیرنوع · ۲۹ محصول</div>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- footer placeholder -->
+<footer class="footer">© ۱۴۰۵ ژیک — مبلمان دست‌ساز چوب</footer>
+
+<script>
+  // come-up fade-in: mirrors BlurInText's IntersectionObserver behavior.
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      document.querySelectorAll('.fadeup').forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.fadeup').forEach(el => io.observe(el));
+  })();
+</script>
+</body>
+</html>
