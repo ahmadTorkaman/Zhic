@@ -1,5 +1,7 @@
-import { API_URL } from './env';
 import { unstable_cache } from 'next/cache';
+import { API_URL } from './env';
+import { payloadFetch } from './payload-internal';
+export { payloadFetch } from './payload-internal';
 
 export type PayloadMedia = {
   id: string | number;
@@ -468,7 +470,7 @@ export type ProductsQuery = {
 
 export const PRODUCTS_PER_PAGE = 12;
 
-type PayloadList<T> = { docs: T[]; totalDocs?: number };
+export type PayloadList<T> = { docs: T[]; totalDocs?: number };
 type PayloadPage<T> = {
   docs: T[];
   totalDocs: number;
@@ -476,18 +478,6 @@ type PayloadPage<T> = {
   page: number;
   limit: number;
 };
-
-async function payloadFetch<T>(path: string, tag: string): Promise<T | null> {
-  try {
-    const res = await fetch(`${API_URL}${path}`, {
-      next: { revalidate: 300, tags: [tag] },
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
-  } catch {
-    return null;
-  }
-}
 
 export async function fetchHome(): Promise<PayloadHome | null> {
   return payloadFetch<PayloadHome>('/api/globals/home?depth=2', 'home');
