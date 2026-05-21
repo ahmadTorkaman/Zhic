@@ -391,6 +391,40 @@ export interface Category {
   slug?: string | null;
   description?: string | null;
   /**
+   * یک جمله کوتاه که زیر نام دسته‌بندی در hero نمایش داده می‌شود.
+   */
+  tagline?: string | null;
+  /**
+   * تصویر تمام‌عرض بالای صفحه. برای parent‌ها الزامی؛ برای leaf‌ها اختیاری.
+   */
+  cover?: (number | null) | Media;
+  /**
+   * ۲ تا ۳ پاراگراف کوتاه پس از hero. متن اصلی SEO صفحه.
+   */
+  intro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * از xlsx برای leaf‌ها: size, footboard, doors, drawers, glass, width, pieces. برای parent‌ها خالی می‌ماند.
+   */
+  allowed_axes?: string[] | null;
+  /**
+   * یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.
+   */
+  rule?: string | null;
+  /**
    * برای ساخت ساختار درختی (اختیاری)
    */
   parent?: (number | null) | Category;
@@ -1176,6 +1210,11 @@ export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   description?: T;
+  tagline?: T;
+  cover?: T;
+  intro?: T;
+  allowed_axes?: T;
+  rule?: T;
   parent?: T;
   seo?:
     | T
