@@ -1,5 +1,5 @@
 .hero {
-  margin-top: calc(var(--header-h, 64px) + 12px);
+  margin-block-start: calc(var(--header-h, 64px) + 12px);
   position: relative;
   width: 100%;
   aspect-ratio: 21 / 9;
@@ -7,7 +7,7 @@
   background: var(--color-cream);
 }
 @media (max-width: 767px) {
-  .hero { margin-top: 70px; aspect-ratio: 4 / 5; }
+  .hero { margin-block-start: 70px; aspect-ratio: 4 / 5; }
 }
 .heroImg {
   position: absolute;
@@ -37,7 +37,7 @@
   text-transform: uppercase;
   color: rgba(255,255,255,0.75);
   font-weight: 400;
-  margin-bottom: 14px;
+  margin-block-end: 14px;
   display: inline-block;
   padding-inline-end: 14px;
   border-inline-end: 1px solid rgba(255,255,255,0.35);
@@ -54,7 +54,7 @@
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: #fff;
-  margin-bottom: 12px;
+  margin-block-end: 12px;
 }
 .titleParent { font-size: clamp(44px, 7vw, 88px); }
 .tagline {

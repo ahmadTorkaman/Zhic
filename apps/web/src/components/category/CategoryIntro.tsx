@@ -1,3 +1,4 @@
+import { FadeUp } from '@zhic/ui';
 import { RichText } from '@/lib/richtext';
 import type { LexicalRoot } from '@/lib/payload';
 import styles from './CategoryIntro.module.css';
@@ -11,8 +12,8 @@ export function CategoryIntro({ intro, variant }: CategoryIntroProps) {
   if (!intro?.root?.children?.length) return null;
   const cls = variant === 'parent' ? `${styles.wrap} ${styles.parent}` : styles.wrap;
   return (
-    <section className={cls}>
+    <FadeUp as="section" className={cls}>
       <RichText value={intro} />
-    </section>
+    </FadeUp>
   );
 }

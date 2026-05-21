@@ -383,7 +383,7 @@ async function seed() {
       ),
       design: designAramesh.id,
       piece_type: 'mirror',
-      categoryIds: [catMirrors.id],
+      categoryIds: [catMirrors.id, catWallMirror.id],
       materialIds: [matOak.id],
       tagIds: [tagModern.id],
       basePriceRials: 65_000_000,
@@ -487,6 +487,15 @@ async function seed() {
       relatedProductIds: [idAramesh],
       pairsWithProductIds: [idKomodBahar],
     },
+  })
+
+  // Force-apply categoryIds for MIR-005 so re-runs on existing DBs assign the
+  // wall-mirror leaf category (upsertBySlug skips updates on existing records).
+  const idAiinehAramesh = productIdBySlug.get('aiineh-aramesh')!
+  await payload.update({
+    collection: 'products' as any,
+    id: idAiinehAramesh,
+    data: { categoryIds: [catMirrors.id, catWallMirror.id] } as any,
   })
 
   console.log('  Product relations: wired (related + pairsWith)')
