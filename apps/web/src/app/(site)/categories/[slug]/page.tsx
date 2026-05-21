@@ -253,7 +253,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           <CategoryIntro intro={category.intro} variant="parent" />
           <CategoryCallouts callouts={callouts} variant="parent" />
 
-          <ChildCategoriesGrid children={childCats} />
+          <ChildCategoriesGrid items={childCats} />
 
           <DesignsWithType
             designs={designsWithType}

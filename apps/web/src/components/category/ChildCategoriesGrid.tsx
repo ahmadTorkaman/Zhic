@@ -5,11 +5,11 @@ import tiles from './CategoryTiles.module.css';
 import styles from './ChildCategoriesGrid.module.css';
 
 export type ChildCategoriesGridProps = {
-  children: (PayloadCategory & { _productCount?: number })[];
+  items: (PayloadCategory & { _productCount?: number })[];
 };
 
-export function ChildCategoriesGrid({ children }: ChildCategoriesGridProps) {
-  if (!children.length) {
+export function ChildCategoriesGrid({ items }: ChildCategoriesGridProps) {
+  if (!items.length) {
     return (
       <p style={{ color: 'var(--color-stone)', textAlign: 'center', padding: '32px 0' }}>
         به‌زودی زیرنوع‌ها افزوده می‌شوند.
@@ -18,7 +18,7 @@ export function ChildCategoriesGrid({ children }: ChildCategoriesGridProps) {
   }
   return (
     <div className={styles.grid} aria-label="زیرنوع‌ها">
-      {children.map((child) => (
+      {items.map((child) => (
         <Link
           key={child.slug}
           href={`/categories/${child.slug}`}
