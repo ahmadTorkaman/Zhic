@@ -1,0 +1,33 @@
+.wrap {
+  max-width: 640px;
+  padding-block: 8px 28px;
+}
+.wrap.parent {
+  max-width: 720px;
+  padding-block: 8px 32px;
+}
+.wrap p {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--color-charcoal);
+  margin-block-end: 14px;
+  font-weight: 400;
+}
+.wrap.parent p {
+  font-size: 17px;
+  line-height: 1.9;
+  margin-block-end: 16px;
+}
+.wrap p:last-child { margin-block-end: 0; }
+.wrap strong { font-weight: 700; color: var(--color-ink); }
+
+/* Drop cap on the first letter of the first paragraph — parent variant only */
+.wrap.parent p:first-child::first-letter {
+  font-size: 1.8em;
+  font-weight: 900;
+  color: var(--color-ink);
+  float: right;          /* RTL: floats to the start (right) side */
+  line-height: 1;
+  margin-inline-start: 6px;
+  margin-block-start: 4px;
+}
