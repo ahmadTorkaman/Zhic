@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { ValidationError } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedContentAccess } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
@@ -20,29 +21,74 @@ export const Categories: CollectionConfig = {
         }
         return data
       },
+      ({ data, operation }) => {
+        // beforeValidate fires only on create/update per Payload's type; guard
+        // positively so this hook is robust if that ever changes.
+        if (operation !== 'create' && operation !== 'update') return data
+        if (!data) return data
+        if (data.parent == null && !data.cover) {
+          throw new ValidationError({
+            collection: 'categories',
+            errors: [
+              { path: 'cover', message: 'برای دسته‌بندی parent، تصویر hero الزامی است.' },
+            ],
+          })
+        }
+        return data
+      },
     ],
   },
   fields: [
-    {
-      name: 'name',
-      type: 'text',
-      required: true,
-      label: 'نام دسته‌بندی',
-    },
+    { name: 'name', type: 'text', required: true, label: 'نام دسته‌بندی' },
     {
       name: 'slug',
       type: 'text',
       unique: true,
       label: 'اسلاگ',
-      admin: {
-        position: 'sidebar',
-        description: 'Auto-generated from name if left empty',
-      },
+      admin: { position: 'sidebar', description: 'Auto-generated from name if left empty' },
     },
     {
       name: 'description',
       type: 'textarea',
-      label: 'توضیحات',
+      label: 'توضیحات کوتاه',
+      admin: { description: 'یک خط برای متاتگ / SEO. متن طولانی hub در فیلد «مقدمه» می‌رود.' },
+    },
+    {
+      name: 'tagline',
+      type: 'text',
+      label: 'تک‌خطی شاعرانه',
+      admin: { description: 'یک جمله کوتاه که زیر نام دسته‌بندی در hero نمایش داده می‌شود.' },
+    },
+    {
+      name: 'cover',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'تصویر hero',
+      admin: {
+        description:
+          'تصویر تمام‌عرض بالای صفحه. برای parent‌ها الزامی؛ برای leaf‌ها اختیاری — در صورت خالی بودن، اولین تصویر اولین محصول این دسته استفاده می‌شود.',
+      },
+    },
+    {
+      name: 'intro',
+      type: 'richText',
+      label: 'مقدمه',
+      admin: { description: '۲ تا ۳ پاراگراف کوتاه پس از hero. متن اصلی SEO صفحه. حدود ۱۰۰ کلمه.' },
+    },
+    {
+      name: 'allowed_axes',
+      type: 'text',
+      hasMany: true,
+      label: 'محورهای واریانت مجاز',
+      admin: {
+        description: 'از xlsx برای leaf‌ها: size, footboard, doors, drawers, glass, width, pieces. برای parent‌ها خالی می‌ماند.',
+      },
+    },
+    {
+      name: 'rule',
+      type: 'textarea',
+      label: 'قواعد واریانت',
+      admin: { description: 'از xlsx: یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.' },
     },
     {
       name: 'parent',
@@ -51,7 +97,7 @@ export const Categories: CollectionConfig = {
       label: 'دسته‌بندی والد',
       admin: {
         position: 'sidebar',
-        description: 'برای ساخت ساختار درختی (اختیاری)',
+        description: 'برای ساخت ساختار درختی (اختیاری برای parent‌ها، الزامی برای leaf‌ها)',
       },
     },
     seoFields,
