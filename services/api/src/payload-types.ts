@@ -924,6 +924,10 @@ export interface PayloadLockedDocument {
         value: number | Design;
       } | null)
     | ({
+        relationTo: 'product-variants';
+        value: number | ProductVariant;
+      } | null)
+    | ({
         relationTo: 'products';
         value: number | Product;
       } | null)

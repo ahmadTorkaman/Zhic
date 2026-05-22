@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto'
+import { Client as PgClient } from 'pg'
 import { getPayload } from 'payload'
 import config from './payload.config'
 
@@ -149,6 +151,7 @@ async function seed() {
     slug: 'beds',
     description: 'تخت‌خواب‌های دست‌ساز برای آرامش‌ترین لحظه‌های روز.',
     cover: 7,
+    allowed_axes: ['size', 'footboard'],
   })
   const catWardrobes = await upsertBySlug('categories', 'wardrobes', {
     name: 'کمد',
@@ -198,6 +201,28 @@ async function seed() {
     } as any,
   })
   /* eslint-enable @typescript-eslint/no-explicit-any */
+  // Force-apply allowed_axes on catBeds so existing DBs converge on re-seed.
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  await payload.update({
+    collection: 'categories' as any,
+    id: catBeds.id,
+    data: { allowed_axes: ['size', 'footboard'] } as any,
+  })
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  // Payload hasMany-text persistence quirk: the update call above may not write the
+  // array rows to categories_allowed_axes. Upsert directly via SQL to guarantee
+  // convergence on every re-seed (same workaround used for wall-mirror in sub-project D Task 4).
+  {
+    const dbUrl = (process.env.DATABASE_URI ?? process.env.POSTGRES_URL ?? '').trim()
+    const pgc = new PgClient({ connectionString: dbUrl })
+    await pgc.connect()
+    await pgc.query('DELETE FROM categories_allowed_axes WHERE _parent_id = $1', [catBeds.id])
+    await pgc.query(
+      'INSERT INTO categories_allowed_axes (_order, _parent_id, id, value) VALUES ($1,$2,$3,$4),($5,$6,$7,$8)',
+      [0, catBeds.id, randomUUID(), 'size', 1, catBeds.id, randomUUID(), 'footboard'],
+    )
+    await pgc.end()
+  }
   console.log(`  Categories: ${[catBedroom, catBeds, catWardrobes, catDressers, catMirrors].length}`)
   console.log(`  Hub category (parent): mirrors (reshaped)`)
 

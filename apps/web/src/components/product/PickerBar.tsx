@@ -25,8 +25,16 @@ export type PickerBarProps = {
 
 export function PickerBar({ product, variants, allowedAxes, onInquiry }: PickerBarProps) {
   const { selectedAxes, selectedVariant, selectAxis } = useVariantSelection();
+
+  // Compute price and formatted display (number part only, "تومان" in separate span)
+  // Computed before hooks so useState can use it as the initial value.
+  const priceRials = variantPriceRials(product.basePriceRials ?? 0, selectedVariant);
+  const priceDisplay = formatMoney(priceRials, { suffix: 'none' });
+
   const [inView, setInView] = useState(false);
   const [priceFlip, setPriceFlip] = useState(false);
+  const [displayedPrice, setDisplayedPrice] = useState(priceDisplay);
+  const initialRender = useRef(true);
   const priceRef = useRef<HTMLSpanElement>(null);
 
   // Slide up on first paint via requestAnimationFrame
@@ -35,21 +43,25 @@ export function PickerBar({ product, variants, allowedAxes, onInquiry }: PickerB
     return () => cancelAnimationFrame(id);
   }, []);
 
-  // Compute price and formatted display (number part only, "تومان" in separate span)
-  const priceRials = variantPriceRials(product.basePriceRials ?? 0, selectedVariant);
-  const priceDisplay = formatMoney(priceRials, { suffix: 'none' });
-
-  // Cross-fade the price on selection change.
-  // Use setTimeout to avoid calling setState synchronously inside an effect.
+  // Cross-fade the price on selection change: old visible → fade out → swap text → fade in.
+  // Skip on first mount (no animation needed for initial display).
   useEffect(() => {
-    if (!priceRef.current) return;
-    const tOn = window.setTimeout(() => setPriceFlip(true), 0);
-    const tOff = window.setTimeout(() => setPriceFlip(false), 200);
+    if (initialRender.current) {
+      initialRender.current = false;
+      setDisplayedPrice(priceDisplay);
+      return;
+    }
+    // No change → no animation
+    if (displayedPrice === priceDisplay) return;
+    // Start the fade-out
+    setPriceFlip(true);
+    const swap = window.setTimeout(() => setDisplayedPrice(priceDisplay), 180);
+    const off = window.setTimeout(() => setPriceFlip(false), 200);
     return () => {
-      window.clearTimeout(tOn);
-      window.clearTimeout(tOff);
+      window.clearTimeout(swap);
+      window.clearTimeout(off);
     };
-  }, [priceDisplay]);
+  }, [priceDisplay, displayedPrice]);
 
   const axisOptions = deriveAxisOptions(variants, allowedAxes);
 
@@ -120,7 +132,7 @@ export function PickerBar({ product, variants, allowedAxes, onInquiry }: PickerB
               ref={priceRef}
               className={`${styles.priceNum} ${priceFlip ? styles.flip : ''}`}
             >
-              {priceDisplay}
+              {displayedPrice}
             </span>
             <span className={styles.priceUnit}>تومان</span>
           </span>
