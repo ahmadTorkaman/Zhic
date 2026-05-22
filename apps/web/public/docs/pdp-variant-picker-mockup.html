@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/products/[slug] · PDP variant picker — mockup</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-sand-2:   #DDD3C7;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-forest-deep: #455A47;
+    --color-gold:     #C49A6C;
+    --color-gold-deep: #9A754A;
+
+    /* Canonical glass tokens — copied from packages/design-system/css/tokens.css
+       so the mockup mirrors the production glass-card recipe exactly. */
+    --glass-bg:        rgba(250, 250, 247, 0.6);
+    --glass-border:    rgba(232, 224, 216, 0.5);
+    --glass-blur:      24px;
+    --shadow-subtle:   0 2px  8px rgba(20, 17, 15, 0.03);
+    --shadow-card:     0 8px 32px rgba(20, 17, 15, 0.04);
+    --hover-lift:      -2px;
+    --hover-lift-card: -3px;
+
+    --tracking-eye: 0.18em;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-hover: 200ms;
+
+    --header-h: 56px;
+    --picker-h: 76px;
+    --container-pad: clamp(16px, 4vw, 64px);
+    --max-w: 1440px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body { min-height: 100vh; padding-block-end: calc(var(--picker-h) + 24px); }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  ul, ol { list-style: none; }
+
+  /* ─────────────────────────────────────────── pill header (same as /categories) */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    z-index: 100;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding-inline: 18px;
+    gap: 16px;
+  }
+  .pill-header .brand {
+    font-weight: 900;
+    font-size: 17px;
+    color: var(--color-charcoal);
+    position: relative;
+    justify-self: start;
+  }
+  .pill-header .brand::after {
+    content: '';
+    position: absolute;
+    inset-block-end: -3px;
+    inset-inline: 4px;
+    height: 2px;
+    background: var(--color-forest);
+    border-radius: 1px;
+  }
+  .pill-header nav { display: none; justify-self: center; }
+  .pill-header .icons {
+    justify-self: end;
+    display: flex; gap: 4px; align-items: center;
+  }
+  .pill-header .icon-btn {
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--color-stone);
+    border-radius: 50%;
+    transition: color .2s var(--ease-out-soft), background .2s var(--ease-out-soft);
+  }
+  .pill-header .icon-btn:hover { color: var(--color-ink); background: rgba(232, 224, 216, 0.4); }
+  .pill-header .icon-btn svg { width: 18px; height: 18px; }
+
+  @media (min-width: 768px) {
+    .pill-header {
+      top: 0; inset-inline: 0;
+      border-radius: 0;
+      height: var(--header-h);
+      border-inline: 0; border-block-start: 0;
+      padding-inline: 32px;
+    }
+    .pill-header nav {
+      display: flex; gap: 28px;
+      font-size: 14px; color: var(--color-charcoal);
+    }
+    .pill-header nav a:hover { color: var(--color-forest); }
+  }
+
+  /* ─────────────────────────────────────────── breadcrumb */
+  .crumb {
+    max-width: var(--max-w);
+    margin-inline: auto;
+    padding: calc(var(--header-h) + 16px) var(--container-pad) 0;
+    font-size: 12px;
+    color: var(--color-stone);
+    display: flex; align-items: center;
+    gap: 8px; flex-wrap: wrap;
+  }
+  @media (max-width: 767px) {
+    .crumb { padding-block-start: 70px; }
+  }
+  .crumb a { color: var(--color-stone); transition: color .2s var(--ease-out-soft); }
+  .crumb a:hover { color: var(--color-forest); }
+  .crumb .sep { color: var(--color-sand-2); }
+  .crumb .now { color: var(--color-charcoal); font-weight: 700; }
+
+  /* ─────────────────────────────────────────── cinematic hero */
+  .hero {
+    max-width: var(--max-w);
+    margin-inline: auto;
+    margin-block-start: 18px;
+    padding-inline: var(--container-pad);
+  }
+  .hero-frame {
+    position: relative;
+    aspect-ratio: 21/9;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--color-cream);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.6),
+      0 14px 40px rgba(20,17,15,0.06);
+  }
+  @media (max-width: 767px) {
+    .hero-frame { aspect-ratio: 4/5; }
+  }
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 600ms var(--ease-out-soft);
+  }
+  .hero-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 240px 240px;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
+  /* gradient placeholders per variant */
+  .hero-img.size-120 { background: linear-gradient(140deg, #d8c4a3 0%, #8b6f47 60%, #3e2f1f 100%); }
+  .hero-img.size-140 { background: linear-gradient(140deg, #c8b89a 0%, #7a5d3a 60%, #2e2316 100%); }
+  .hero-img.size-160 { background: linear-gradient(140deg, #c8a878 0%, #6e4e2e 60%, #2a1e10 100%); }
+  .hero-img.size-180 { background: linear-gradient(140deg, #b89c78 0%, #5d4226 60%, #221810 100%); }
+
+  /* product-shape motif (simulates the borderless WebP) */
+  .hero-img .shape {
+    position: absolute;
+    inset-block-end: 12%;
+    inset-inline-start: 50%;
+    transform: translateX(50%);
+    width: 50%;
+    aspect-ratio: 5/2;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.04) 100%);
+    border: 1px solid rgba(255,255,255,0.24);
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+
+  /* ─────────────────────────────────────────── shell + 2-col content */
+  .shell {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+  }
+  .content {
+    margin-block-start: 32px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  @media (min-width: 1024px) {
+    .content {
+      grid-template-columns: 1fr 320px;
+      gap: 56px;
+    }
+  }
+
+  .main { min-width: 0; }
+  .meta {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 12px;
+    color: var(--color-stone);
+    margin-block-end: 10px;
+  }
+  .meta .eye {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eye);
+    font-weight: 700;
+    color: var(--color-forest);
+  }
+  .meta a { color: var(--color-stone); transition: color .2s var(--ease-out-soft); }
+  .meta a:hover { color: var(--color-forest); }
+  .title {
+    font-size: clamp(34px, 4.4vw, 52px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin-block-end: 12px;
+  }
+  .tagline {
+    font-size: clamp(16px, 1.6vw, 20px);
+    font-weight: 300;
+    color: var(--color-stone);
+    font-style: italic;
+    line-height: 1.5;
+    margin-block-end: 24px;
+    max-width: 560px;
+  }
+  .copy { max-width: 560px; }
+  .copy p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--color-charcoal);
+    margin-block-end: 14px;
+  }
+  .copy p:last-child { margin-block-end: 0; }
+  .copy strong { font-weight: 700; color: var(--color-ink); }
+
+  .specs {
+    margin-block-start: 48px;
+    padding-block-start: 28px;
+    border-block-start: 1px solid var(--color-sand);
+  }
+  .specs h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-charcoal);
+    margin-block-end: 16px;
+  }
+  .specs dl {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 640px) {
+    .specs dl { grid-template-columns: 160px 1fr; row-gap: 12px; column-gap: 16px; }
+  }
+  .specs dt {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+    padding-block-start: 4px;
+  }
+  .specs dd {
+    font-size: 14px;
+    color: var(--color-charcoal);
+    line-height: 1.65;
+  }
+  .specs dd span[dir="ltr"] { display: inline-block; }
+
+  /* ─────────────────────────────────────────── sidebar (now info-only)
+     Uses the canonical .glass-card recipe — ivory 60% + 24px blur +
+     sand-50% border + subtle shadow. Identical to the live glass-card
+     class in packages/design-system/css/base.css. */
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+  .info-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow-subtle);
+    transition: background var(--dur-hover) var(--ease-out-soft),
+                box-shadow var(--dur-hover) var(--ease-out-soft),
+                transform var(--dur-hover) var(--ease-out-soft);
+  }
+  .info-card:hover {
+    background: rgba(250, 250, 247, 0.8);
+    box-shadow: var(--shadow-card);
+    transform: translateY(var(--hover-lift));
+  }
+  .info-card .lbl {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-block-end: 6px;
+  }
+  .info-card .val {
+    font-size: 15px;
+    color: var(--color-ink);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .info-card .val strong { font-weight: 700; }
+  /* Forest variant — for design/series callout. Same glass recipe with
+     a forest-tinted border + label. */
+  .info-card.green { border-color: rgba(95, 119, 96, 0.28); }
+  .info-card.green .lbl { color: var(--color-forest); }
+
+  /* ─────────────────────────────────────────── related row */
+  .related {
+    max-width: var(--max-w);
+    margin: 80px auto 0;
+    padding-block: 56px 96px;
+    padding-inline: var(--container-pad);
+    border-block-start: 1px solid var(--color-sand);
+  }
+  .related h2 {
+    font-size: clamp(22px, 2.4vw, 32px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    margin-block-end: 24px;
+  }
+  .related-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 640px) { .related-row { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
+  .tile { display: block; color: inherit; }
+  .tile-img {
+    aspect-ratio: 4/5;
+    border-radius: 4px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #FCFBF7 0%, #F6F2EB 100%);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: transform .35s var(--ease-out-soft), box-shadow .35s var(--ease-out-soft);
+    position: relative;
+  }
+  .tile-img::before {
+    content: '';
+    position: absolute;
+    inset: 28% 30% 16%;
+    background: linear-gradient(180deg, rgba(95,119,96,0.10) 0%, rgba(95,119,96,0.02) 100%);
+    border: 1px solid rgba(140,130,121,0.25);
+    border-radius: 4px 4px 0 0;
+  }
+  .tile:hover .tile-img { transform: translateY(-4px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 14px 28px rgba(20,17,15,0.07); }
+  .tile-meta { padding-block-start: 12px; }
+  .tile-name { font-size: 14px; font-weight: 700; color: var(--color-ink); margin-block-end: 4px; }
+  .tile-design { font-size: 11px; color: var(--color-stone); }
+
+  /* ─────────────────────────────────────────── STICKY VARIANT PICKER BAR
+     Glass-card treatment — same recipe as packages/design-system .glass-card.
+     Ivory at 60% opacity + 24px backdrop-blur + sand border + subtle shadow.
+     Unified with the rest of the site's chrome (site-header-chrome uses the
+     same blur, /designs v14 pedestal uses the same family at higher blur). */
+  .picker-bar {
+    position: fixed;
+    inset-block-end: 16px;
+    inset-inline: 16px;
+    z-index: 90;
+    background: rgba(250, 250, 247, 0.78);  /* slightly more opaque than --glass-bg for legibility */
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+    color: var(--color-charcoal);
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 12px 40px rgba(20, 17, 15, 0.08);
+    padding: 14px 18px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 18px;
+    transform: translateY(120%);
+    transition: transform 350ms var(--ease-out-quint);
+  }
+  .picker-bar.in { transform: translateY(0); }
+
+  @media (max-width: 767px) {
+    .picker-bar {
+      inset-block-end: 12px;
+      inset-inline: 12px;
+      padding: 12px 14px;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
+  /* axes container — chip strips */
+  .axes {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 767px) {
+    .axes { gap: 14px; }
+  }
+  .axis-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .axis-label .nm {
+    font-size: 10px;
+    color: var(--color-stone);
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .axis-chips {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    font-size: 13px;
+    padding: 5px 11px;
+    border-radius: 9999px;
+    background: rgba(232, 224, 216, 0.45);          /* sand at 45% — translucent */
+    color: var(--color-charcoal);
+    cursor: pointer;
+    transition: background var(--dur-hover) var(--ease-out-soft),
+                color var(--dur-hover) var(--ease-out-soft),
+                opacity var(--dur-hover) var(--ease-out-soft);
+    font-weight: 400;
+    font-feature-settings: "tnum";
+    user-select: none;
+    border: 1px solid transparent;
+  }
+  .chip:hover {
+    background: rgba(232, 224, 216, 0.7);
+    color: var(--color-ink);
+  }
+  .chip.active {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    font-weight: 700;
+    border-color: var(--color-ink);
+  }
+  .chip.disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* price + cta block */
+  .right-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-inline-start: 8px;
+    border-inline-start: 1px solid rgba(232, 224, 216, 0.7);
+  }
+  @media (max-width: 767px) {
+    .right-block {
+      padding-inline-start: 0;
+      border-inline-start: 0;
+      border-block-start: 1px solid rgba(232, 224, 216, 0.7);
+      padding-block-start: 10px;
+      justify-content: space-between;
+    }
+  }
+  .price-block { display: flex; flex-direction: column; gap: 2px; }
+  .price-block .lbl {
+    font-size: 9px;
+    color: var(--color-stone);
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .price-num {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-ink);
+    font-feature-settings: "tnum";
+    line-height: 1;
+    transition: opacity 200ms var(--ease-out-soft);
+  }
+  .price-unit {
+    font-size: 11px;
+    color: var(--color-stone);
+    margin-inline-start: 4px;
+    font-weight: 400;
+  }
+  .price-num.flip { opacity: 0; }
+
+  .cta {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: 1px solid var(--color-ink);
+    transition: background var(--dur-hover) var(--ease-out-soft),
+                color var(--dur-hover) var(--ease-out-soft),
+                transform .15s var(--ease-out-soft);
+    white-space: nowrap;
+    position: relative;
+  }
+  .cta::after {
+    /* gold accent line at the bottom — keeps the brand whisper without
+       making the whole button gold (matches the operator's "luxury restraint"
+       memory: accent is earned). */
+    content: '';
+    position: absolute;
+    inset-block-end: -1px;
+    inset-inline: 6px;
+    height: 2px;
+    background: var(--color-gold);
+    border-radius: 1px;
+    transition: inset var(--dur-hover) var(--ease-out-soft);
+  }
+  .cta:hover { background: var(--color-charcoal); }
+  .cta:hover::after { inset-inline: 2px; }
+  .cta:active { transform: scale(0.98); }
+
+  /* ─────────────────────────────────────────── come-up animations */
+  .fadeup {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .fadeup.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .fadeup { opacity: 1; transform: none; transition: none; }
+    .picker-bar, .hero-img, .price-num { transition: none !important; }
+    .picker-bar { transform: translateY(0); }
+  }
+
+  /* footer placeholder */
+  .footer {
+    background: var(--color-cream);
+    padding: 56px var(--container-pad) 84px;
+    color: var(--color-stone);
+    font-size: 12px;
+    text-align: center;
+    border-block-start: 1px solid var(--color-sand);
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ pill header ════════════════════════ -->
+<header class="pill-header">
+  <a href="/" class="brand">ژیک</a>
+  <nav>
+    <a href="/products">محصولات</a>
+    <a href="/designs">طرح‌ها</a>
+    <a href="/journal">روایت‌ها</a>
+    <a href="/showrooms">نمایشگاه‌ها</a>
+    <a href="/about">درباره ژیک</a>
+  </nav>
+  <div class="icons">
+    <button class="icon-btn" aria-label="جستجو">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+        <circle cx="11" cy="11" r="7.5"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+    <button class="icon-btn" aria-label="علاقه‌مندی‌ها">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- breadcrumb -->
+<nav class="crumb" aria-label="مسیر">
+  <a href="/">خانه</a>
+  <span class="sep">/</span>
+  <a href="/products">محصولات</a>
+  <span class="sep">/</span>
+  <a href="/designs/gandom">طرح گندم</a>
+  <span class="sep">/</span>
+  <span class="now">تخت گندم</span>
+</nav>
+
+<!-- cinematic hero -->
+<section class="hero">
+  <div class="hero-frame">
+    <div class="hero-img size-120" id="hero-img" aria-hidden></div>
+  </div>
+</section>
+
+<!-- shell with main + sidebar -->
+<div class="shell">
+  <div class="content">
+    <main class="main">
+      <div class="meta fadeup">
+        <span class="eye">طرح</span>
+        <a href="/designs/gandom">گندم</a>
+        <span class="sep">·</span>
+        <a href="/categories/bed">تخت</a>
+      </div>
+      <h1 class="title fadeup" style="transition-delay: 90ms">تخت گندم</h1>
+      <p class="tagline fadeup" style="transition-delay: 220ms">گرما برای خواب کودکانه — تراش دستی از روکش گردو</p>
+
+      <div class="copy fadeup" style="transition-delay: 360ms">
+        <p>تخت گندم پاسخی است به نیازی ساده: <strong>فضایی که گرما را در خود نگه دارد، بی‌آنکه آن را بنمایاند.</strong> قاب از روکش گردوی ایرانی با تراش دستی، در چهار اندازه‌ی استاندارد و دو ارتفاع پاتختی ساخته می‌شود.</p>
+        <p>زیرسازی چندلایه‌ی پلی‌وود ایرانی، روکش انتخابی از گردو یا راش، اتصالات فلزی پنهان و گوشه‌های لبه‌گرد برای ایمنی کودک.</p>
+      </div>
+
+      <section class="specs fadeup" style="transition-delay: 480ms">
+        <h2>مشخصات</h2>
+        <dl>
+          <dt>ابعاد</dt>
+          <dd><span dir="ltr">120 × 200 × 90 cm</span> (اندازه‌ی انتخاب‌شده)</dd>
+          <dt>روکش</dt>
+          <dd>گردوی ایرانی · راش</dd>
+          <dt>زمان تحویل</dt>
+          <dd>۵۶ روز کاری</dd>
+          <dt>گارانتی</dt>
+          <dd>۵ سال — ساختار قاب و اتصالات</dd>
+          <dt>مراقبت</dt>
+          <dd>پاک‌سازی با دستمال خشک · دوری از تماس مستقیم با آب</dd>
+        </dl>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="info-card green fadeup">
+        <div class="lbl">طرح</div>
+        <div class="val"><strong>گندم</strong><br>گرما برای خواب کودکانه — یک سبک کامل از تخت تا کتابخانه</div>
+      </div>
+      <div class="info-card fadeup" style="transition-delay: 90ms">
+        <div class="lbl">زمان تحویل</div>
+        <div class="val">۵۶ روز کاری</div>
+      </div>
+      <div class="info-card fadeup" style="transition-delay: 180ms">
+        <div class="lbl">گارانتی</div>
+        <div class="val">۵ سال ساختار</div>
+      </div>
+      <div class="info-card fadeup" style="transition-delay: 270ms">
+        <div class="lbl">روکش‌ها</div>
+        <div class="val">گردو · راش</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- related products -->
+<section class="related">
+  <h2>کنار آن خوب است</h2>
+  <div class="related-row">
+    <a class="tile" href="#">
+      <div class="tile-img"></div>
+      <div class="tile-meta">
+        <div class="tile-name">پاتختی گندم</div>
+        <div class="tile-design">طرح گندم · گردو</div>
+      </div>
+    </a>
+    <a class="tile" href="#">
+      <div class="tile-img"></div>
+      <div class="tile-meta">
+        <div class="tile-name">دراور گندم</div>
+        <div class="tile-design">طرح گندم · گردو</div>
+      </div>
+    </a>
+    <a class="tile" href="#">
+      <div class="tile-img"></div>
+      <div class="tile-meta">
+        <div class="tile-name">کتابخانه گندم</div>
+        <div class="tile-design">طرح گندم · گردو</div>
+      </div>
+    </a>
+    <a class="tile" href="#">
+      <div class="tile-img"></div>
+      <div class="tile-meta">
+        <div class="tile-name">میز تحریر گندم</div>
+        <div class="tile-design">طرح گندم · گردو</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<footer class="footer">© ۱۴۰۵ ژیک — مبلمان دست‌ساز چوب</footer>
+
+<!-- ════════════════════════════════════════ sticky variant picker bar ══════════ -->
+<div class="picker-bar" id="picker-bar" role="region" aria-label="انتخاب واریانت">
+  <div class="axes">
+    <div class="axis-label">
+      <span class="nm">سایز</span>
+      <div class="axis-chips" data-axis="size">
+        <span class="chip active" data-value="120">۱۲۰</span>
+        <span class="chip" data-value="140">۱۴۰</span>
+        <span class="chip" data-value="160">۱۶۰</span>
+        <span class="chip" data-value="180">۱۸۰</span>
+      </div>
+    </div>
+    <div class="axis-label">
+      <span class="nm">پاتختی</span>
+      <div class="axis-chips" data-axis="footboard">
+        <span class="chip active" data-value="high">بلند</span>
+        <span class="chip" data-value="low">کوتاه</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-block">
+    <div class="price-block">
+      <span class="lbl">قیمت</span>
+      <span><span class="price-num" id="price-num">۲۴٫۸۰۰٫۰۰۰</span><span class="price-unit">تومان</span></span>
+    </div>
+    <button class="cta" type="button">استعلام قیمت</button>
+  </div>
+</div>
+
+<script>
+  // ── fade-up reveal (matches BlurInText IO behavior) ──────────
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      document.querySelectorAll('.fadeup').forEach(el => el.classList.add('in'));
+    } else {
+      const io = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        }
+      }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+      document.querySelectorAll('.fadeup').forEach(el => io.observe(el));
+    }
+  })();
+
+  // ── sticky bar slide-up on first paint ──────────────────────
+  window.addEventListener('load', () => {
+    requestAnimationFrame(() => {
+      document.getElementById('picker-bar').classList.add('in');
+    });
+  });
+
+  // ── variant interaction: chip click → update state, price, hero ──
+  // Mock variant lookup. Real implementation hits productVariants collection.
+  const VARIANT_MATRIX = {
+    '120-high': { price: '۲۴٫۸۰۰٫۰۰۰', heroClass: 'size-120' },
+    '120-low':  { price: '۲۴٫۲۰۰٫۰۰۰', heroClass: 'size-120' },
+    '140-high': { price: '۲۸٫۵۰۰٫۰۰۰', heroClass: 'size-140' },
+    '140-low':  { price: '۲۷٫۹۰۰٫۰۰۰', heroClass: 'size-140' },
+    '160-high': { price: '۳۲٫۸۰۰٫۰۰۰', heroClass: 'size-160' },
+    '160-low':  { price: '۳۲٫۲۰۰٫۰۰۰', heroClass: 'size-160' },
+    '180-high': { price: '۳۶٫۴۰۰٫۰۰۰', heroClass: 'size-180' },
+    '180-low':  { price: '۳۵٫۸۰۰٫۰۰۰', heroClass: 'size-180' },
+  };
+
+  const state = { size: '120', footboard: 'high' };
+
+  function update() {
+    const key = `${state.size}-${state.footboard}`;
+    const variant = VARIANT_MATRIX[key];
+    if (!variant) return;
+
+    // price fade
+    const priceEl = document.getElementById('price-num');
+    priceEl.classList.add('flip');
+    setTimeout(() => {
+      priceEl.textContent = variant.price;
+      priceEl.classList.remove('flip');
+    }, 180);
+
+    // hero cross-fade — swap class
+    const heroEl = document.getElementById('hero-img');
+    heroEl.style.opacity = '0';
+    setTimeout(() => {
+      heroEl.className = `hero-img ${variant.heroClass}`;
+      heroEl.style.opacity = '1';
+    }, 280);
+  }
+
+  document.querySelectorAll('.axis-chips').forEach(group => {
+    const axis = group.dataset.axis;
+    group.addEventListener('click', (e) => {
+      const chip = e.target.closest('.chip');
+      if (!chip || chip.classList.contains('disabled')) return;
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state[axis] = chip.dataset.value;
+      update();
+    });
+  });
+</script>
+</body>
+</html>
