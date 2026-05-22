@@ -60,6 +60,21 @@ export const Designs: CollectionConfig = {
       },
     },
     {
+      name: 'occupancies',
+      type: 'select',
+      hasMany: true,
+      label: 'گروه ست خواب',
+      options: [
+        { label: 'سرویس خواب نوزاد', value: 'baby' },
+        { label: 'سرویس خواب نوجوان', value: 'teen' },
+        { label: 'سرویس خواب دونفره', value: 'double' },
+        { label: 'سرویس خواب دوطبقه', value: 'bunk' },
+      ],
+      admin: {
+        description: 'این طرح در کدام صفحات هاب «سرویس خواب /bedroom-set/{slug}» نمایش داده شود؟ انتخاب چند گزینه ممکن است. خالی یعنی هیچ هاب آرایش‌نشده‌ای نمایش نمی‌دهد.',
+      },
+    },
+    {
       name: 'description',
       type: 'richText',
       label: 'توضیحات',

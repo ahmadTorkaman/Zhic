@@ -10,6 +10,7 @@ import * as migration_20260522_150000_create_product_variants from './20260522_1
 import * as migration_20260522_153000_extend_inquiries_with_variant from './20260522_153000_extend_inquiries_with_variant';
 import * as migration_20260522_220000_add_warranty_years_to_products from './20260522_220000_add_warranty_years_to_products';
 import * as migration_20260522_221000_fix_price_delta_rials_type from './20260522_221000_fix_price_delta_rials_type';
+import * as migration_20260523_120000_add_occupancies_and_axis_filter from './20260523_120000_add_occupancies_and_axis_filter';
 
 export const migrations = [
   {
@@ -71,5 +72,10 @@ export const migrations = [
     up: migration_20260522_221000_fix_price_delta_rials_type.up,
     down: migration_20260522_221000_fix_price_delta_rials_type.down,
     name: '20260522_221000_fix_price_delta_rials_type'
+  },
+  {
+    up: migration_20260523_120000_add_occupancies_and_axis_filter.up,
+    down: migration_20260523_120000_add_occupancies_and_axis_filter.down,
+    name: '20260523_120000_add_occupancies_and_axis_filter'
   },
 ];

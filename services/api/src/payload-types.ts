@@ -210,6 +210,10 @@ export interface Design {
    * Exact age group names pending brand decision (OD-3)
    */
   age_group?: ('infant' | 'child' | 'teen' | 'adult') | null;
+  /**
+   * این طرح در کدام صفحات هاب «سرویس خواب /bedroom-set/{slug}» نمایش داده شود؟
+   */
+  occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
   description?: {
     root: {
       type: string;
@@ -453,6 +457,13 @@ export interface Category {
    * یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.
    */
   rule?: string | null;
+  /**
+   * فقط برای صفحات SEO-promoted facet (مثل /storage/wardrobe/double-door). شکل: { axis, value }.
+   */
+  axis_filter?: {
+    axis: string;
+    value: string | number;
+  } | null;
   /**
    * برای ساخت ساختار درختی (اختیاری)
    */
@@ -1049,6 +1060,7 @@ export interface DesignsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   age_group?: T;
+  occupancies?: T;
   description?: T;
   gallery?: T;
   featured?: T;
@@ -1273,6 +1285,7 @@ export interface CategoriesSelect<T extends boolean = true> {
   intro?: T;
   allowed_axes?: T;
   rule?: T;
+  axis_filter?: T;
   parent?: T;
   seo?:
     | T

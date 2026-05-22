@@ -95,6 +95,14 @@ export const Categories: CollectionConfig = {
       admin: { description: 'از xlsx: یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.' },
     },
     {
+      name: 'axis_filter',
+      type: 'json',
+      label: 'فیلتر محور خودکار (facet)',
+      admin: {
+        description: 'فقط برای صفحات SEO-promoted facet (مثل /storage/wardrobe/double-door). شکل: { "axis": "doors", "value": "2" }. صفحه به‌طور خودکار محصولات را با این محور فیلتر می‌کند. برای parent و leaf معمولی خالی می‌ماند.',
+      },
+    },
+    {
       name: 'parent',
       type: 'relationship',
       relationTo: 'categories',
