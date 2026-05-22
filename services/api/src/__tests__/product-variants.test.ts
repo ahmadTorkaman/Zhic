@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { ProductVariants } from '../collections/ProductVariants';
 
 describe('ProductVariants collection', () => {
-  it('has slug "productVariants"', () => {
-    expect(ProductVariants.slug).toBe('productVariants');
+  it('has slug "product-variants"', () => {
+    expect(ProductVariants.slug).toBe('product-variants');
   });
 
   it('declares all required fields', () => {

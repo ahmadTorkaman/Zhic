@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { publishedContentAccess } from '../lib/access'
 
 export const ProductVariants: CollectionConfig = {
-  slug: 'productVariants',
+  slug: 'product-variants',
   labels: { singular: 'واریانت محصول', plural: 'واریانت‌های محصول' },
   admin: {
     useAsTitle: 'label',
