@@ -39,12 +39,16 @@ export function PickerBar({ product, variants, allowedAxes, onInquiry }: PickerB
   const priceRials = variantPriceRials(product.basePriceRials ?? 0, selectedVariant);
   const priceDisplay = formatMoney(priceRials, { suffix: 'none' });
 
-  // Cross-fade the price on selection change
+  // Cross-fade the price on selection change.
+  // Use setTimeout to avoid calling setState synchronously inside an effect.
   useEffect(() => {
     if (!priceRef.current) return;
-    setPriceFlip(true);
-    const t = window.setTimeout(() => setPriceFlip(false), 200);
-    return () => window.clearTimeout(t);
+    const tOn = window.setTimeout(() => setPriceFlip(true), 0);
+    const tOff = window.setTimeout(() => setPriceFlip(false), 200);
+    return () => {
+      window.clearTimeout(tOn);
+      window.clearTimeout(tOff);
+    };
   }, [priceDisplay]);
 
   const axisOptions = deriveAxisOptions(variants, allowedAxes);

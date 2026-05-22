@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { PayloadImage } from '@/components/PayloadImage';
 import { useVariantSelection } from './VariantSelectionContext';
 import type { PayloadProduct } from '@/lib/payload';
@@ -14,14 +13,9 @@ export function HeroImage({ product }: HeroImageProps) {
   const { selectedVariant } = useVariantSelection();
   const cover = product.gallery?.[0] ?? null;
   const variantImage = selectedVariant?.image ?? null;
-  const [overlayVisible, setOverlayVisible] = useState(false);
 
-  // Toggle overlay visibility based on whether the selected variant has its
-  // own image. When variantImage becomes null, fade overlay out; when it
-  // becomes set, fade in.
-  useEffect(() => {
-    setOverlayVisible(Boolean(variantImage?.url));
-  }, [variantImage?.url]);
+  // Derived: overlay is visible whenever the selected variant provides its own image.
+  const overlayVisible = Boolean(variantImage?.url);
 
   return (
     <div className={styles.frame}>
