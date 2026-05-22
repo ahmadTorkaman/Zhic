@@ -115,6 +115,25 @@ async function seed() {
   type WithId = { id: string | number }
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
+  /**
+   * **WARNING: upsertBySlug is CREATE-ONLY.** It returns the existing
+   * document untouched if one already exists with the given slug —
+   * subsequent `data` is silently ignored. Intentional, so re-running seed
+   * does not clobber operator edits made via the Payload admin.
+   *
+   * If you need to UPDATE an existing record (e.g., the xlsx import
+   * pipeline overwriting catalog rows), do NOT call this helper. Instead:
+   *
+   *   const found = await payload.find({ collection, where: { slug: { equals } }, limit: 1 })
+   *   if (found.docs[0]) {
+   *     await payload.update({ collection, id: found.docs[0].id, data })
+   *   } else {
+   *     await payload.create({ collection, data })
+   *   }
+   *
+   * Watch out for the Payload 3 hasMany-text persistence quirk on
+   * `update()` (see handoff §5.2 + seed.ts `allowed_axes` workaround).
+   */
   async function upsertBySlug<T extends WithId>(
     collection: 'categories' | 'tags' | 'materials' | 'designs' | 'products' | 'collections' | 'showrooms' | 'articles' | 'authors' | 'journal-categories' | 'rooms',
     slug: string,

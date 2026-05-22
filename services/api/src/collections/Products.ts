@@ -187,6 +187,17 @@ export const Products: CollectionConfig = {
       min: 0,
     },
     {
+      name: 'warrantyYears',
+      type: 'number',
+      defaultValue: 5,
+      label: 'گارانتی (سال)',
+      min: 0,
+      admin: {
+        description: 'سال‌های گارانتی ساختار. نمایش در سایدبار PDP.',
+        step: 1,
+      },
+    },
+    {
       name: 'dimensions',
       type: 'group',
       label: 'ابعاد (سانتی‌متر)',

@@ -984,11 +984,13 @@ async function fetchNavCountingProducts(): Promise<
   Pick<PayloadProduct, 'categoryIds' | 'design' | 'piece_type'>[]
 > {
   // depth=1 inflates categoryIds and design into objects so we can read .slug.
-  // No `select` — Payload 3 REST `select` syntax is finicky and the 100-product
-  // payload is small enough at depth=1 (~200-500KB) for a 5-min cached call.
-  // Switch to denormalized productCount fields if this gets heavy (FU-MM-f).
+  // No `select` — Payload 3 REST `select` syntax is finicky and the payload
+  // at depth=1 (~1-2MB at 500 products) is small enough for a 5-min cached
+  // call. Limit set above the post-xlsx-import ceiling (~220 products) with
+  // headroom; switch to denormalized productCount fields if this gets heavy
+  // (FU-MM-f).
   const res = await payloadFetch<PayloadList<PayloadProduct>>(
-    '/api/products?limit=100&depth=1&where[status][equals]=published',
+    '/api/products?limit=500&depth=1&where[status][equals]=published',
     'nav-products',
   );
   if (!res) console.error('[fetchNavMeta] nav-products: payloadFetch returned null');

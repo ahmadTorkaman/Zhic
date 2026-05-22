@@ -14,27 +14,27 @@ describe('ProductVariants collection', () => {
   });
 
   it('product field is a required relationship to products', () => {
-    const product = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'product') as never;
+    const product = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'product') as any;
     expect(product.type).toBe('relationship');
     expect(product.relationTo).toBe('products');
     expect(product.required).toBe(true);
   });
 
   it('sku is required and unique', () => {
-    const sku = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'sku') as never;
+    const sku = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'sku') as any;
     expect(sku.required).toBe(true);
     expect(sku.unique).toBe(true);
   });
 
   it('axes is an array field with key + value sub-fields', () => {
-    const axes = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'axes') as never;
+    const axes = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'axes') as any;
     expect(axes.type).toBe('array');
     const subFieldNames = (axes.fields ?? []).map((f: { name: string }) => f.name);
     expect(subFieldNames).toEqual(['key', 'value']);
   });
 
   it('availability matches Product.availability enum values', () => {
-    const availability = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'availability') as never;
+    const availability = (ProductVariants.fields ?? []).find((f) => (f as { name: string }).name === 'availability') as any;
     expect(availability.type).toBe('select');
     const values = (availability.options ?? []).map((o: { value: string }) => o.value);
     expect(values).toEqual(['in_stock', 'made_to_order', 'backorder', 'discontinued']);

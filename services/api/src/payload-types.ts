@@ -312,6 +312,10 @@ export interface Product {
   salePriceRials?: number | null;
   availability: 'in_stock' | 'made_to_order' | 'backorder' | 'discontinued';
   leadTimeDays: number;
+  /**
+   * سال‌های گارانتی ساختار. پیش‌فرض ۵.
+   */
+  warrantyYears?: number | null;
   dimensions?: {
     width?: number | null;
     height?: number | null;
@@ -1071,6 +1075,7 @@ export interface ProductsSelect<T extends boolean = true> {
   salePriceRials?: T;
   availability?: T;
   leadTimeDays?: T;
+  warrantyYears?: T;
   dimensions?:
     | T
     | {

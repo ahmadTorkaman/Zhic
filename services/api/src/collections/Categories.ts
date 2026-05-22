@@ -26,7 +26,11 @@ export const Categories: CollectionConfig = {
         // positively so this hook is robust if that ever changes.
         if (operation !== 'create' && operation !== 'update') return data
         if (!data) return data
-        if (data.parent == null && !data.cover) {
+        // Only enforce on create, OR on update when `parent` is being
+        // explicitly set. Partial updates that don't touch `parent`
+        // (e.g., patching `allowed_axes` on a leaf) must not be rejected.
+        const isParentBeingSet = operation === 'create' || Object.hasOwn(data, 'parent')
+        if (isParentBeingSet && data.parent == null && !data.cover) {
           throw new ValidationError({
             collection: 'categories',
             errors: [
