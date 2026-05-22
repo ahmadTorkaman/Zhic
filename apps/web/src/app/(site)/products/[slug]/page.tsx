@@ -12,7 +12,7 @@ import { fetchProduct, productPath } from '@/lib/payload';
 import { buildMetadata } from '@/lib/seo';
 import { VariantSelectionProvider } from '@/components/product/VariantSelectionContext';
 import { HeroImage } from '@/components/product/HeroImage';
-import { PickerBar } from '@/components/product/PickerBar';
+import { InquiryHandler } from '@/components/product/InquiryHandler';
 import { sortVariants } from '@/lib/variant-helpers';
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -128,7 +128,7 @@ export default async function ProductPage({ params }: PageProps) {
 
       <div className="pb-[calc(var(--picker-h,76px)+24px)]" />
 
-      <PickerBar product={product} variants={variants} allowedAxes={allowedAxes} />
+      <InquiryHandler product={product} variants={variants} allowedAxes={allowedAxes} />
     </VariantSelectionProvider>
   );
 }
