@@ -1,0 +1,39 @@
+/* Canonical .glass-card recipe — same tokens as
+   packages/design-system/css/base.css .glass-card. Mirrored here as a
+   CSS module so the component is colocated with its styles. */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  padding-block: 18px;
+  padding-inline: 20px;
+  box-shadow: var(--shadow-subtle);
+  transition:
+    background var(--dur-hover) var(--ease-out-soft),
+    box-shadow var(--dur-hover) var(--ease-out-soft),
+    transform var(--dur-hover) var(--ease-out-soft);
+}
+.card:hover {
+  background: rgba(250, 250, 247, 0.8);
+  box-shadow: var(--shadow-card);
+  transform: translateY(var(--hover-lift));
+}
+.card.forest { border-color: rgba(95, 119, 96, 0.28); }
+.lbl {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--color-stone);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-block-end: 6px;
+}
+.card.forest .lbl { color: var(--color-forest); }
+.val {
+  font-size: 15px;
+  color: var(--color-ink);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.val strong { font-weight: 700; }
