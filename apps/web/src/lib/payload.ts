@@ -16,6 +16,9 @@ export type PayloadDesign = {
   name: string;
   slug: string;
   age_group?: 'infant' | 'child' | 'teen' | 'adult' | null;
+  /** Phase 1 (2026-05-23) — which /bedroom-set/{slug} occupancy hub pages should
+   *  list this series. A series can belong to multiple (parla → all four). */
+  occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
   description?: LexicalRoot | null;
   gallery?: PayloadMedia[] | null;
   featured?: boolean | null;
@@ -202,6 +205,11 @@ export type PayloadCategory = {
   intro?: LexicalRoot | null;
   allowed_axes?: string[] | null;
   rule?: string | null;
+  // Phase 1 (2026-05-23) — facet-page auto-filter. When set, the category
+  // page pre-filters its product query by this axis/value pair. Used for
+  // the 5 SEO-promoted facet sub-leaves (bed/baby/convertible + 4 wardrobe
+  // door-counts).
+  axis_filter?: { axis: string; value: string | number } | null;
   // existing:
   parent?: PayloadCategory | string | number | null;
   seo?: PayloadSeo | null;
@@ -484,6 +492,9 @@ export type ProductsQuery = {
   q?: string;
   /** Filter to a single design by slug. */
   design?: string;
+  /** Restrict to a specific set of product IDs. Used by facet-page renderer
+   *  to AND the category filter with "products whose variant axes match". */
+  productIds?: Array<string | number>;
 };
 
 export const PRODUCTS_PER_PAGE = 12;
@@ -614,7 +625,10 @@ export async function fetchCategory(
 ): Promise<PayloadCategory | null> {
   const params = new URLSearchParams({
     'where[slug][equals]': slug,
-    depth: '2',
+    // depth=3 so the catch-all route in /bedroom-furniture/[...slug] can
+    // walk parent.parent.parent for path validation on 3-segment URLs
+    // (the deepest in the canonical tree, e.g., /bed/baby/convertible).
+    depth: '3',
     limit: '1',
   });
   const res = await payloadFetch<PayloadList<PayloadCategory>>(
@@ -809,6 +823,9 @@ export async function fetchProducts(
   if (query.design) {
     params.set('where[design.slug][equals]', query.design);
   }
+  if (query.productIds?.length) {
+    params.set('where[id][in]', query.productIds.join(','));
+  }
   // Size band is RSC-side post-fetch — handled by applyClientSizeBand in lib/products.
   const fallback: PayloadPage<PayloadProduct> = {
     docs: [],
@@ -881,6 +898,61 @@ export async function fetchAllDesigns(): Promise<PayloadDesign[]> {
     'designs',
   );
   return res?.docs ?? [];
+}
+
+/**
+ * Designs that should appear on the `/bedroom-set/{occupancy}` hub.
+ * `occupancy` is one of: baby, teen, double, bunk.
+ * Backed by the `designs.occupancies` array field added in Phase 1
+ * (migration 20260523_120000). Sorted by name.
+ */
+export async function fetchDesignsByOccupancy(
+  occupancy: 'baby' | 'teen' | 'double' | 'bunk',
+): Promise<PayloadDesign[]> {
+  const params = new URLSearchParams({
+    'where[occupancies][contains]': occupancy,
+    limit: '100',
+    sort: 'name',
+    depth: '2',
+  });
+  const res = await payloadFetch<PayloadList<PayloadDesign>>(
+    `/api/designs?${params.toString()}`,
+    'designs',
+  );
+  return res?.docs ?? [];
+}
+
+/**
+ * Returns the product IDs whose `productVariants.axes` contains a matching
+ * (key, value) pair. Used to AND with a category filter on the facet pages
+ * (e.g., `/bedroom-furniture/storage/wardrobe/double-door` shows wardrobes
+ * that have at least one variant with axis "doors" = "2").
+ *
+ * Two-round-trip cost (variants → products) is fine at the 5-min revalidate
+ * window; promote to a custom REST endpoint if/when traffic warrants.
+ */
+export async function fetchProductIdsByAxis(
+  axisKey: string,
+  axisValue: string | number,
+): Promise<Array<string | number>> {
+  const params = new URLSearchParams({
+    'where[axes.key][equals]': axisKey,
+    'where[axes.value][equals]': String(axisValue),
+    depth: '0',
+    limit: '500',
+  });
+  const res = await payloadFetch<PayloadList<{ product?: { id: string | number } | string | number | null }>>(
+    `/api/product-variants?${params.toString()}`,
+    'product-variants',
+  );
+  if (!res?.docs?.length) return [];
+  const ids = new Set<string | number>();
+  for (const v of res.docs) {
+    if (v.product == null) continue;
+    if (typeof v.product === 'object') ids.add(v.product.id);
+    else ids.add(v.product);
+  }
+  return Array.from(ids);
 }
 
 export async function fetchCollection(
