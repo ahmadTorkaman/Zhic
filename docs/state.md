@@ -111,6 +111,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 
 | Item | Status | Commit | Notes |
 | --- | --- | --- | --- |
+| 5.1 PDP variant picker | ✅ | 776d877 | Full PDP variant-picker UX shipped. New product-variants Payload collection (axes JSON, priceDelta, optional per-variant image, displayOrder). Sticky bottom bar with inline-chip interaction (β density) using the canonical .glass-card recipe. Hero cross-fades 600ms to variant.image when set. Sidebar repurposed from purchase-widget to info-only InfoCard stack (طرح / lead time / warranty / materials). InquiryHandler wraps the bar; CTA redirects to /contact with product+variant+axes prefill. 17 vitest cases across helpers + components. Spec: docs/superpowers/specs/2026-05-22-pdp-variant-picker-design.md. Open FUs: PDV-a..l. |
 | Categories Hub Pages (Sub-project D) | ✅ | `4315b11` | `/categories/[slug]` rewritten as a full SEO hub page handling both parent categories (~7) and leaf categories (~32) from one route. Schema extended: `tagline`, `cover` (upload), `intro` (richText), `allowed_axes` (text[]), `rule` on Categories collection with hand-written Postgres migration. Five new fetchers in `apps/web/src/lib/category-fetchers.ts` (`fetchCategoryBySlug`, `fetchChildCategories`, `fetchDesignsForCategory`, `fetchDesignsForParentCategory`, `fetchFilterOptions`). Parent branch renders ChildCategoriesGrid (2→3→4 col grid of child tiles) + auto-callout strip + DesignsWithType cross-links + siblings strip. Leaf branch renders CategoryFilterSidebar (sticky 280px desktop server component) + CategoryFilterDrawer (mobile bottom-sheet paired client component) + paginated product grid + active-filter pill bar + sort radio. Filter state in URL params; filtered URLs canonical to base with `robots: noindex,follow`. SiteHeader rework piggybacked: 1fr/auto/1fr nav grid, SVG icon set, scroll-activated glass backdrop. JSON-LD: `CollectionPage` + `BreadcrumbList` on all category pages. Sitemap: parents at 0.75 priority, leaves at 0.7. 15 Vitest cases in `category-fetchers.test.ts` pin filter logic + two-step join behaviour. Spec: `docs/superpowers/specs/2026-05-21-categories-hub-pages-design.md`. Plan: `docs/superpowers/plans/2026-05-21-categories-hub-pages.md`. Open FUs: FU-CAT-a through FU-CAT-i. |
 | ProductsMegaMenu | ✅ | (PR HEAD) | Top-tab + pinned featured layout per v2 mockup. Closes FU-2.2-a (محصولات half) + FU-3.2-u. New fetchNavMeta bundles categories/designs/collections/featured-product from Payload; new ProductsMegaMenu client component in `apps/web/src/components/layout/`. Mobile stays a flat link. Spec: `docs/superpowers/specs/2026-05-16-products-dropdown-mega-menu-design.md`. Plan: `docs/superpowers/plans/2026-05-16-products-dropdown-mega-menu.md`. |
 | Mobile header floating pill | ✅ | `3fe2125` | Mobile site header becomes a 12px-inset, rounded-full floating pill ≈42px tall with full-border chrome when scrolled. Desktop unchanged. --header-height bumped to 3.5rem on mobile to track the pill's bottom edge so breadcrumbs and StickyBreadcrumb clear it. HomeHero gets pt-[var(--header-height)] md:pt-0 so the cream image-half starts below the pill instead of being overlapped. |
@@ -327,6 +328,18 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-CAT-g | CAT | Saved-filter / shareable filter URLs with `<meta name="robots" content="index">` enabled per-combination after SEO research validates which combos warrant indexing. |
 | FU-CAT-h | CAT | `prefetch` strategy for sibling-category cards — prefetch on hover, since users often navigate sibling → sibling. |
 | FU-CAT-i | CAT | Parent page "featured product" strip — operator picks 4 hero products that cut across children. Was Option P2 from brainstorming; deferred to keep v1 lean. |
+| FU-PDV-a | PDV | AggregateOffer JSON-LD with lowPrice/highPrice across variants |
+| FU-PDV-b | PDV | Admin-only variant-list <details> in the sidebar (?debug=1 flag) |
+| FU-PDV-c | PDV | Variant inventory sync via MES (Package 4) |
+| FU-PDV-d | PDV | Per-variant 3D model variants via gltfVariantName |
+| FU-PDV-e | PDV | Shareable variant URLs (?v=<sku>) with canonical redirect |
+| FU-PDV-f | PDV | Variant matrix admin UI for Cartesian-product auto-gen |
+| FU-PDV-g | PDV | Color-swatch chip rendering for finish-type axes |
+| FU-PDV-h | PDV | Animated number counter for price (deferred — luxury restraint) |
+| FU-PDV-i | PDV | Per-axis disabled-combination logic (progressive disclosure) |
+| FU-PDV-j | PDV | Mobile bar auto-collapse if axes wrap to 3+ lines |
+| FU-PDV-k | PDV | /contact form to read product+variant+axes query params and prefill |
+| FU-PDV-l | PDV | Variant-aware dimensions in SpecsAccordion ابعاد row (spec §11.7) |
 
 ---
 
