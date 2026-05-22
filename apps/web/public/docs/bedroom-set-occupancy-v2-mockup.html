@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/bedroom-set/baby · occupancy v2 (magazine spread) — mockup</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory: #FAFAF7; --color-cream: #F5F0EB; --color-sand: #E8E0D8; --color-sand-2: #DDD3C7;
+    --color-stone: #8C8279; --color-charcoal: #2C2825; --color-ink: #14110F;
+    --color-forest: #5F7760; --color-forest-deep: #455A47; --color-gold: #C49A6C;
+    --tracking-eye: 0.18em;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --header-h: 64px;
+    --container-pad: clamp(16px, 4vw, 64px);
+    --max-w: 1440px;
+    --read-w: 720px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--color-ivory); color: var(--color-charcoal); font-family: 'Ayandeh', 'Tahoma', sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  ul, ol { list-style: none; }
+
+  /* pill header */
+  .pill-header { position: fixed; top: 12px; inset-inline: 12px; height: 42px; border-radius: 9999px; background: rgba(250, 250, 247, 0.92); backdrop-filter: blur(14px); border: 1px solid var(--color-sand); box-shadow: 0 2px 8px rgba(0,0,0,0.04); z-index: 100; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 18px; gap: 16px; }
+  .pill-header .brand { font-weight: 900; font-size: 17px; color: var(--color-charcoal); position: relative; justify-self: start; }
+  .pill-header nav { justify-self: center; display: none; }
+  .pill-header .icons { justify-self: end; display: flex; gap: 4px; align-items: center; }
+  .pill-header .brand::after { content: ''; position: absolute; bottom: -3px; inset-inline: 4px; height: 2px; background: var(--color-forest); border-radius: 1px; }
+  .pill-header .icon-btn { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-stone); border-radius: 50%; transition: color .2s var(--ease-out-soft), background .2s var(--ease-out-soft); }
+  .pill-header .icon-btn:hover { color: var(--color-ink); background: rgba(232, 224, 216, 0.4); }
+  .pill-header .icon-btn svg { width: 18px; height: 18px; }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: var(--header-h); border-inline: 0; padding: 0 32px; }
+    .pill-header nav { display: flex; justify-content: center; gap: 28px; font-size: 14px; color: var(--color-charcoal); }
+    .pill-header nav a:hover { color: var(--color-forest); }
+  }
+
+  /* hero — same warm cream-on-cream as v1 */
+  .hero { margin-top: calc(var(--header-h) + 12px); position: relative; width: 100%; aspect-ratio: 21/8; overflow: hidden; background: var(--color-cream); }
+  @media (max-width: 767px) { .hero { margin-top: 70px; aspect-ratio: 4/5; } }
+  .hero-img { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(245, 240, 235, 0) 50%, rgba(232, 224, 216, 0.7) 100%), radial-gradient(ellipse at 25% 35%, #f5ebe0 0%, #e8d8c8 55%, #d4bea8 100%); }
+  .hero-img::after { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); background-size: 240px 240px; opacity: 0.05; mix-blend-mode: overlay; }
+  .hero-motif { position: absolute; top: 50%; inset-inline-end: 14%; transform: translateY(-50%); width: clamp(120px, 18vw, 260px); aspect-ratio: 5/4; border-radius: 8% 8% 50% 50% / 8% 8% 28% 28%; background: linear-gradient(170deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.18) 100%); border: 1px solid rgba(196, 154, 108, 0.35); backdrop-filter: blur(2px); box-shadow: 0 30px 60px rgba(106, 79, 48, 0.18), inset 0 0 80px rgba(255, 255, 255, 0.45); }
+  .hero-motif::before { content: ''; position: absolute; inset: 24% 16% 8% 16%; border-radius: 4px; background-image: linear-gradient(90deg, transparent 0%, transparent 12%, rgba(196, 154, 108, 0.22) 12%, rgba(196, 154, 108, 0.22) 14%, transparent 14%, transparent 30%, rgba(196, 154, 108, 0.22) 30%, rgba(196, 154, 108, 0.22) 32%, transparent 32%, transparent 48%, rgba(196, 154, 108, 0.22) 48%, rgba(196, 154, 108, 0.22) 50%, transparent 50%, transparent 66%, rgba(196, 154, 108, 0.22) 66%, rgba(196, 154, 108, 0.22) 68%, transparent 68%, transparent 84%, rgba(196, 154, 108, 0.22) 84%, rgba(196, 154, 108, 0.22) 86%, transparent 86%); }
+  @media (max-width: 767px) { .hero-motif { inset-inline-end: 50%; transform: translate(50%, -55%); width: 130px; } }
+
+  .hero-text { position: absolute; inset-inline-start: var(--container-pad); inset-block-end: clamp(24px, 6vw, 56px); max-width: min(540px, 80vw); color: var(--color-ink); }
+  .hero-eyebrow { font-size: 11px; letter-spacing: var(--tracking-eye); text-transform: uppercase; color: var(--color-forest-deep); font-weight: 700; margin-bottom: 14px; display: inline-block; }
+  .hero-title { font-size: clamp(44px, 7vw, 86px); font-weight: 900; line-height: 1.0; letter-spacing: -0.03em; color: var(--color-ink); margin-bottom: 16px; }
+  .hero-tagline { font-size: clamp(16px, 1.7vw, 21px); font-weight: 300; color: var(--color-charcoal); font-style: italic; line-height: 1.55; max-width: 440px; }
+
+  /* shell */
+  .shell { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--container-pad); }
+  .crumb { padding: 24px 0 0; font-size: 12px; color: var(--color-stone); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .crumb a { color: var(--color-stone); transition: color .2s var(--ease-out-soft); }
+  .crumb a:hover { color: var(--color-forest); }
+  .crumb .sep { color: var(--color-sand-2); }
+  .crumb .now { color: var(--color-charcoal); font-weight: 700; }
+
+  .body { margin-top: 36px; }
+
+  /* editorial intro */
+  .intro { max-width: var(--read-w); padding-block: 8px 36px; }
+  .intro p { font-size: 17px; line-height: 1.95; color: var(--color-charcoal); margin-bottom: 18px; }
+  .intro strong { font-weight: 700; color: var(--color-ink); }
+  .intro p:first-child::first-letter { font-size: 2em; font-weight: 900; color: var(--color-forest-deep); float: right; line-height: 1; margin-inline-start: 6px; margin-block-start: 6px; }
+
+  /* callouts */
+  .callouts { display: flex; gap: 36px; padding-block: 22px; border-top: 1px solid var(--color-sand); border-bottom: 1px solid var(--color-sand); flex-wrap: wrap; margin-block: 8px 64px; }
+  .callout { display: flex; flex-direction: column; gap: 4px; }
+  .callout .num { font-size: 32px; font-weight: 900; color: var(--color-ink); line-height: 1; letter-spacing: -0.02em; }
+  .callout .lbl { font-size: 11px; letter-spacing: var(--tracking-eye); color: var(--color-stone); text-transform: uppercase; }
+
+  /* section head */
+  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 56px; padding-top: 56px; border-top: 1px solid var(--color-sand); }
+  .sec-head.first { padding-top: 0; border-top: 0; }
+  .sec-eyebrow { font-size: 11px; letter-spacing: var(--tracking-eye); color: var(--color-forest); text-transform: uppercase; font-weight: 700; }
+  .sec-title { font-size: clamp(24px, 2.6vw, 34px); font-weight: 900; color: var(--color-ink); letter-spacing: -0.02em; line-height: 1.2; margin-top: 4px; }
+  .sec-sub { color: var(--color-stone); font-size: 13px; margin-inline-start: auto; }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     ★ v2 SIGNATURE: magazine spread
+     Instead of a 3-col grid of equal cards, alternate image-left / text-right
+     rows — like a printed catalog spread. Slower to scan but emotionally
+     richer; each series gets paragraph copy + bigger media. Designed for
+     the slower-decision context of bedroom-set buying (high price, high
+     emotional weight, low-frequency purchase).
+     ──────────────────────────────────────────────────────────────────────── */
+  .spread { display: flex; flex-direction: column; gap: 96px; padding-bottom: 64px; }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .row { grid-template-columns: 6fr 5fr; gap: 64px; }
+    .row.flip { grid-template-columns: 5fr 6fr; }
+    .row.flip .media-col { order: 2; }
+    .row.flip .text-col { order: 1; }
+  }
+  .media-col {
+    position: relative;
+  }
+  .media-frame {
+    aspect-ratio: 5/6;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: transform .8s var(--ease-out-soft);
+  }
+  .row:hover .media-frame { transform: translateY(-4px); }
+  .media-frame .bg { position: absolute; inset: 0; transition: transform 1.5s var(--ease-out-soft); }
+  .row:hover .media-frame .bg { transform: scale(1.03); }
+  /* per-series washes */
+  .row.skate     .bg { background: linear-gradient(160deg, #e4d4be 0%, #a48868 65%, #5d4326 100%); }
+  .row.elizabeth .bg { background: linear-gradient(160deg, #f0e4d2 0%, #c9ab85 60%, #6e533a 100%); }
+  .row.baloot    .bg { background: linear-gradient(160deg, #c8b596 0%, #806647 65%, #3e2e1f 100%); }
+  .row.parla     .bg { background: linear-gradient(160deg, #ddc6a5 0%, #ad8a64 60%, #4e3924 100%); }
+  .row.catherine .bg { background: linear-gradient(160deg, #ede0cb 0%, #b5947a 60%, #5a4232 100%); }
+  .row.caroline  .bg { background: linear-gradient(160deg, #e8d5b8 0%, #b0906a 65%, #4f3a26 100%); }
+  .row.gandom    .bg { background: linear-gradient(160deg, #d8c4a3 0%, #8e6e44 60%, #3a2912 100%); }
+  .row.loof      .bg { background: linear-gradient(160deg, #d8d4be 0%, #9a8c66 60%, #4a3c24 100%); }
+  .row.sento     .bg { background: linear-gradient(160deg, #c8b89c 0%, #8a6f4a 60%, #3e2c18 100%); }
+
+  .media-frame .crib {
+    position: absolute;
+    inset: 28% 24% 22% 24%;
+    border-radius: 12% 12% 38% 38% / 8% 8% 24% 24%;
+    background: linear-gradient(170deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 100%);
+    border: 1px solid rgba(255,255,255,0.30);
+    overflow: hidden;
+  }
+  .media-frame .crib::before {
+    content: '';
+    position: absolute;
+    inset: 22% 12% 8% 12%;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%, transparent 13%,
+      rgba(255,255,255,0.30) 13%, rgba(255,255,255,0.30) 16%,
+      transparent 16%, transparent 31%,
+      rgba(255,255,255,0.30) 31%, rgba(255,255,255,0.30) 34%,
+      transparent 34%, transparent 49%,
+      rgba(255,255,255,0.30) 49%, rgba(255,255,255,0.30) 52%,
+      transparent 52%, transparent 67%,
+      rgba(255,255,255,0.30) 67%, rgba(255,255,255,0.30) 70%,
+      transparent 70%, transparent 85%,
+      rgba(255,255,255,0.30) 85%, rgba(255,255,255,0.30) 88%,
+      transparent 88%
+    );
+  }
+  .media-frame.stub { background: var(--color-cream); }
+  .media-frame.stub .bg, .media-frame.stub .crib { display: none; }
+  .media-frame.stub::after {
+    content: 'به‌زودی';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-stone);
+    font-size: 14px;
+    letter-spacing: var(--tracking-eye);
+  }
+
+  /* page number — magazine convention */
+  .row-num {
+    position: absolute;
+    top: -32px;
+    inset-inline-start: 0;
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .row-num .pg {
+    color: var(--color-forest);
+    font-weight: 900;
+  }
+
+  .text-col {
+    padding-block: 16px;
+  }
+  .row-eye {
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .row-name {
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 14px;
+  }
+  .row-tagline {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--color-charcoal);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    max-width: 480px;
+  }
+  .row-body {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-charcoal);
+    margin-bottom: 24px;
+    max-width: 480px;
+  }
+  .row-body strong { font-weight: 700; color: var(--color-ink); }
+  .row-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: baseline;
+    margin-bottom: 24px;
+  }
+  .row-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .row-meta-item .val {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-ink);
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .row-meta-item .lbl {
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+  }
+  .row-cta {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 12px 22px 14px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 2px;
+    position: relative;
+    transition: background .25s var(--ease-out-soft);
+  }
+  /* 2px gold accent line at bottom — locked CTA treatment per [[zhic-luxury-restraint]] */
+  .row-cta::after {
+    content: '';
+    position: absolute;
+    inset-inline: 4px;
+    inset-block-end: 0;
+    height: 2px;
+    background: var(--color-gold);
+    border-radius: 1px;
+  }
+  .row-cta:hover { background: var(--color-charcoal); }
+  .row-cta .ar {
+    font-size: 12px;
+    transition: transform .25s var(--ease-out-soft);
+  }
+  .row-cta:hover .ar { transform: translateX(-4px); }
+
+  /* other occupancies row — same as v1 */
+  .occupancies-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding-bottom: 96px; }
+  @media (min-width: 768px) { .occupancies-row { grid-template-columns: repeat(3, 1fr); } }
+  .occ-card { display: block; color: inherit; position: relative; padding: 32px 28px; border-radius: 4px; background: var(--color-cream); border: 1px solid rgba(232, 224, 216, 0.55); transition: transform .4s var(--ease-out-soft), border-color .4s var(--ease-out-soft), background .4s var(--ease-out-soft); min-height: 200px; }
+  .occ-card:hover { transform: translateY(-3px); border-color: var(--color-forest); background: #fff; }
+  .occ-card .eye { font-size: 10px; letter-spacing: var(--tracking-eye); color: var(--color-forest); text-transform: uppercase; font-weight: 700; margin-bottom: 12px; display: block; }
+  .occ-card .nm { font-size: 26px; font-weight: 900; color: var(--color-ink); line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .occ-card .ct { font-size: 12px; color: var(--color-stone); margin-bottom: 18px; }
+  .occ-card .arrow { font-size: 13px; color: var(--color-charcoal); border-bottom: 1px solid var(--color-sand-2); padding-bottom: 2px; transition: all .25s var(--ease-out-soft); display: inline-block; }
+  .occ-card:hover .arrow { color: var(--color-forest); border-color: var(--color-forest); }
+  .occ-card .glyph { position: absolute; inset-inline-end: 24px; inset-block-start: 24px; width: 38px; height: 38px; color: var(--color-sand-2); transition: color .35s var(--ease-out-soft), transform .35s var(--ease-out-soft); }
+  .occ-card:hover .glyph { color: var(--color-forest); transform: scale(1.08); }
+  .occ-card .glyph svg { width: 100%; height: 100%; }
+
+  .footer { background: var(--color-cream); padding: 64px var(--container-pad) 96px; color: var(--color-stone); font-size: 12px; text-align: center; border-top: 1px solid var(--color-sand); }
+
+  .fadeup { opacity: 0; transform: translateY(16px); transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1); }
+  .fadeup.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .fadeup { opacity: 1; transform: none; transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="pill-header">
+  <a href="/" class="brand">ژیک</a>
+  <nav>
+    <a href="/bedroom-set">سرویس خواب</a>
+    <a href="/bedroom-furniture">مبلمان اتاق خواب</a>
+    <a href="/showrooms">شعب ژیک</a>
+    <a href="/about">درباره ما</a>
+    <a href="/contact">تماس با ما</a>
+  </nav>
+  <div class="icons">
+    <button class="icon-btn" aria-label="جستجو"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <button class="icon-btn" aria-label="علاقه‌مندی‌ها"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-motif" aria-hidden="true"></div>
+  <div class="hero-text">
+    <span class="hero-eyebrow fadeup">سرویس خواب</span>
+    <h1 class="hero-title fadeup" style="transition-delay: 140ms">سرویس خواب نوزاد</h1>
+    <p class="hero-tagline fadeup" style="transition-delay: 320ms">نُه طرح برای نخستین اتاق — جایی برای رشد، نه برای بزرگ‌نمایی.</p>
+  </div>
+</section>
+
+<div class="shell">
+  <nav class="crumb" aria-label="مسیر">
+    <a href="/">خانه</a> <span class="sep">/</span>
+    <a href="/bedroom-set">سرویس خواب</a> <span class="sep">/</span>
+    <span class="now">نوزاد</span>
+  </nav>
+
+  <main class="body">
+
+    <section class="intro">
+      <p class="fadeup">اولین اتاق چیزی است که نمی‌توان به آن بازگشت. ژیک نُه طرح برای این لحظه دارد — هر کدام با <strong>تخت قابل‌تبدیل</strong>، یا تخت نوزاد ساده، یا چارچوبی که از سن صفر تا هفت می‌ماند. هیچ‌کدام شلوغ نیستند. هیچ‌کدام ادعا ندارند که برای ابد. ولی هر کدام برای جایی که شب نوزاد در آن می‌خوابد، طراحی شده.</p>
+      <p class="fadeup" style="transition-delay: 140ms">روکش‌ها از گردو و راش‌اند — هر دو با پوشش طبیعی، بدون رنگ شیمیایی. لبه‌ها مدور، گوشه‌ها بدون تیزی. این صفحه را مانند یک کاتالوگ بخوانید: هر طرح، یک قاب کامل.</p>
+    </section>
+
+    <section class="callouts" aria-label="نمای کلی">
+      <div class="callout fadeup"><div class="num">۹</div><div class="lbl">طرح برای نوزاد</div></div>
+      <div class="callout fadeup" style="transition-delay: 90ms"><div class="num">۴۲</div><div class="lbl">قطعه‌ی همراه</div></div>
+      <div class="callout fadeup" style="transition-delay: 180ms"><div class="num">۲</div><div class="lbl">روکش چوب</div></div>
+      <div class="callout fadeup" style="transition-delay: 270ms"><div class="num">۲</div><div class="lbl">سال زمان زایش</div></div>
+    </section>
+
+    <header class="sec-head first">
+      <div>
+        <div class="sec-eyebrow fadeup">★ کاتالوگ طرح‌ها</div>
+        <h2 class="sec-title fadeup" style="transition-delay: 80ms">نُه دنیای کوچک</h2>
+      </div>
+      <span class="sec-sub fadeup" style="transition-delay: 160ms">۹ طرح</span>
+    </header>
+
+    <!-- magazine spread — alternating media/text rows -->
+    <div class="spread" aria-label="کاتالوگ طرح‌ها">
+
+      <article class="row skate fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۱</span> · از ۰۹</div>
+          <a href="/bedroom-set/skate" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۱ — اسکیت</span>
+          <h3 class="row-name">اسکیت</h3>
+          <p class="row-tagline">خط راست، لبه‌ی مدور، فضای باز.</p>
+          <p class="row-body">اسکیت ساده‌ترین طرح ژیک است — کمتر تزئین، بیشتر <strong>جای نفس کشیدن</strong>. تخت قابل‌تبدیل که از تخت نوزادی به نیمکت تک‌نفره می‌رود؛ پاتختی با یک کشو، دراور با چهار. اگر اولین اتاق فرزندتان است و نمی‌دانید چه می‌خواهید، اسکیت پیشنهاد ماست.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۵</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۲</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۷</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/skate" class="row-cta">دیدن طرح اسکیت<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row elizabeth flip fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۲</span> · از ۰۹</div>
+          <a href="/bedroom-set/elizabeth" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۲ — الیزابت</span>
+          <h3 class="row-name">الیزابت</h3>
+          <p class="row-tagline">چهارچوب کلاسیک، بافت گرم، در دو روکش.</p>
+          <p class="row-body">الیزابت طرحی است که <strong>والدین می‌خرند و فرزند بزرگ می‌شود توی‌اش</strong>. سه‌چارچوب چوبی با گوشه‌های مدور، پاتختی با ساعت توکار، کمد دو‌درب با آینه‌ی کوچک داخل. در دو نسخه‌ی روکش — کرم و خاکستری — موجود است، که هر دو کاملاً متفاوت روی دیوار خانه می‌نشینند.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۶</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۲</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۱۰</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/elizabeth" class="row-cta">دیدن طرح الیزابت<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row baloot fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۳</span> · از ۰۹</div>
+          <a href="/bedroom-set/baloot" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۳ — باروت</span>
+          <h3 class="row-name">باروت</h3>
+          <p class="row-tagline">روکش بلوط، نقش‌برجسته‌ی نرم، خانه‌ی روستایی مدرن.</p>
+          <p class="row-body">باروت طرحی است که <strong>به یاد چوب اولین خانه می‌اندازد</strong>. تخت با چهارچوب بلوط ضخیم، باکس داخلی برای ذخیره‌ی پتو، پاتختی با کشوی پنهان. مناسب برای اتاق‌هایی که می‌خواهند روستایی باشند بدون اینکه شلوغ شوند.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۷</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۱</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۸</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/baloot" class="row-cta">دیدن طرح باروت<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row parla flip fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۴</span> · از ۰۹</div>
+          <a href="/bedroom-set/parla" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۴ — پارلا</span>
+          <h3 class="row-name">پارلا</h3>
+          <p class="row-tagline">سه نسخه، یک خانواده — کرم، سبز، دو‌مرحله‌ای.</p>
+          <p class="row-body">پارلا طرح <strong>پر‌قطعه‌ترین</strong> ژیک است — کاملاً برای اتاق‌هایی که می‌خواهند یک سیستم یکپارچه داشته باشند. تخت قابل‌تبدیل، پاتختی، کمد سه‌درب، دراور، میز‌تعویض، شلف دیواری، حفاظ تخت. در سه روکش — کرم سبک، سبز خفته، و نسخه‌ی دو‌مرحله‌ای که چوب طبیعی را به‌تدریج تیره می‌کند.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۸</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۳</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۱۲</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/parla" class="row-cta">دیدن طرح پارلا<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row catherine fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۵</span> · از ۰۹</div>
+          <a href="/bedroom-set/catherine" class="media-frame stub">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۵ — کاترین</span>
+          <h3 class="row-name">کاترین</h3>
+          <p class="row-tagline">طرحی تازه — عکس‌ها به‌زودی منتشر می‌شود.</p>
+          <p class="row-body">کاترین جدیدترین مجموعه‌ی نوزادی ژیک است که هنوز در حال عکاسی استودیویی است. شامل تخت ۱۴۰، صندلی میز آرایش، دراور ۴ و ۵ کشو، و شزلون مادر در گوشه‌ی اتاق. اگر می‌خواهید قبل از انتشار رسمی اطلاع پیدا کنید، ما را در شبکه‌های اجتماعی دنبال کنید.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۶</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">—</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۸</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/catherine" class="row-cta">جزئیات بیشتر<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row caroline flip fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۶</span> · از ۰۹</div>
+          <a href="/bedroom-set/caroline" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۶ — کارولین</span>
+          <h3 class="row-name">کارولین</h3>
+          <p class="row-tagline">دستگیره‌های فلزی برنزی، کنترست گرم با چوب روشن.</p>
+          <p class="row-body">کارولین طرحی است که <strong>جزئیات‌اش حرف می‌زنند</strong>. روکش روشن چوب گردو، دستگیره‌های برنزی دست‌ساز، گوشه‌های گرد. مناسب برای اتاق‌هایی که می‌خواهند پر‌جزئیات باشند بدون اینکه شلوغ بنمایند.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۵</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۱</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۸</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/caroline" class="row-cta">دیدن طرح کارولین<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row gandom fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۷</span> · از ۰۹</div>
+          <a href="/bedroom-set/gandom" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۷ — گندم</span>
+          <h3 class="row-name">گندم</h3>
+          <p class="row-tagline">تنها طرح ژیک با تخت نوزاد <em>تخصصی</em>.</p>
+          <p class="row-body">گندم تنها طرحی است که تخت نوزادی‌اش <strong>قابل‌تبدیل نیست</strong> — یک تخت اختصاصی برای ۰ تا ۲ سال، با ارتفاع تنظیم‌شدنی، جدوال آرامی که در شب کودک را آرام نگه می‌دارد. شامل کتابخانه‌ی کوچک، دراور ۴ کشو، شلف دیواری، و کمد سه‌درب با آینه‌ی داخلی. روکش گردوی روشن.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۴</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۱</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۲</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/gandom" class="row-cta">دیدن طرح گندم<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row loof flip fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۸</span> · از ۰۹</div>
+          <a href="/bedroom-set/loof" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۸ — لوف</span>
+          <h3 class="row-name">لوف</h3>
+          <p class="row-tagline">دو روکش، کرم و سبز خفته — مناسب اتاق‌های روشن.</p>
+          <p class="row-body">لوف طرحی است که <strong>نور را پخش می‌کند، نه می‌بلعد</strong>. سطح صاف، گوشه‌های گرد، روکش با بازتاب ملایم. کامل برای اتاق‌هایی با پنجره‌ی بزرگ. شامل تخت قابل‌تبدیل، باکس تخت، حفاظ، میز‌تعویض، صفحه‌ی تعویض جدا، ویترین کوچک، و کتابخانه‌ی کنار تخت.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۷</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۲</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۱۰</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/loof" class="row-cta">دیدن طرح لوف<span class="ar">←</span></a>
+        </div>
+      </article>
+
+      <article class="row sento fadeup">
+        <div class="media-col">
+          <div class="row-num"><span class="pg">۰۹</span> · از ۰۹</div>
+          <a href="/bedroom-set/sento" class="media-frame">
+            <div class="bg"></div>
+            <div class="crib" aria-hidden="true"></div>
+          </a>
+        </div>
+        <div class="text-col">
+          <span class="row-eye">طرح ۰۹ — سنتو</span>
+          <h3 class="row-name">سنتو</h3>
+          <p class="row-tagline">حداقل‌گرا، چهارچوب نازک — برای اتاق‌های کوچک.</p>
+          <p class="row-body">سنتو طرحی است که <strong>کم‌ترین فضای ممکن را اشغال می‌کند</strong>. چهارچوب نازک، پایه‌های بلندتر از معمول (تمیز‌کردن زیر تخت با جارو راحت‌تر است)، و کمد دو‌درب کم‌عمق برای اتاق‌های زیر ۱۲ متر مربع. مناسب آپارتمان‌های شهری.</p>
+          <div class="row-meta">
+            <div class="row-meta-item"><span class="val">۵</span><span class="lbl">قطعه</span></div>
+            <div class="row-meta-item"><span class="val">۲</span><span class="lbl">روکش</span></div>
+            <div class="row-meta-item"><span class="val">۰–۱۰</span><span class="lbl">سن</span></div>
+          </div>
+          <a href="/bedroom-set/sento" class="row-cta">دیدن طرح سنتو<span class="ar">←</span></a>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- other occupancies strip -->
+    <header class="sec-head">
+      <div>
+        <div class="sec-eyebrow fadeup">★ دیگر سن‌ها و پیکربندی‌ها</div>
+        <h2 class="sec-title fadeup" style="transition-delay: 80ms">سرویس‌های دیگر</h2>
+      </div>
+      <a class="sec-sub fadeup" style="transition-delay: 160ms" href="/bedroom-set">همه‌ی طرح‌ها ←</a>
+    </header>
+
+    <div class="occupancies-row" aria-label="دیگر گروه‌های سرویس خواب">
+      <a class="occ-card" href="/bedroom-set/teen">
+        <span class="glyph" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="6" y="14" width="28" height="14" rx="1"/>
+            <line x1="8" y1="28" x2="8" y2="32"/>
+            <line x1="32" y1="28" x2="32" y2="32"/>
+          </svg>
+        </span>
+        <span class="eye">گروه سنی</span>
+        <div class="nm">نوجوان</div>
+        <div class="ct">۲۰ طرح</div>
+        <span class="arrow">برای ۹–۱۸ سال ←</span>
+      </a>
+
+      <a class="occ-card" href="/bedroom-set/double">
+        <span class="glyph" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="14" width="34" height="14" rx="1"/>
+            <line x1="20" y1="14" x2="20" y2="28"/>
+            <line x1="5" y1="28" x2="5" y2="32"/>
+            <line x1="35" y1="28" x2="35" y2="32"/>
+          </svg>
+        </span>
+        <span class="eye">پیکربندی</span>
+        <div class="nm">دو‌نفره</div>
+        <div class="ct">۱۸ طرح</div>
+        <span class="arrow">برای اتاق مشترک ←</span>
+      </a>
+
+      <a class="occ-card" href="/bedroom-set/bunk">
+        <span class="glyph" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="6" y="6" width="28" height="11" rx="1"/>
+            <rect x="6" y="22" width="28" height="11" rx="1"/>
+            <line x1="8" y1="33" x2="8" y2="36"/>
+            <line x1="32" y1="33" x2="32" y2="36"/>
+            <line x1="20" y1="6" x2="20" y2="36" stroke-dasharray="2 3" opacity="0.4"/>
+          </svg>
+        </span>
+        <span class="eye">پیکربندی</span>
+        <div class="nm">دو‌طبقه</div>
+        <div class="ct">۳ طرح</div>
+        <span class="arrow">برای دو کودک، یک اتاق ←</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<footer class="footer">© ۱۴۰۵ ژیک — مبلمان دست‌ساز چوب</footer>
+
+<script>
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) { document.querySelectorAll('.fadeup').forEach(el => el.classList.add('in')); return; }
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) { if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); } }
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.fadeup').forEach(el => io.observe(el));
+  })();
+</script>
+</body>
+</html>
