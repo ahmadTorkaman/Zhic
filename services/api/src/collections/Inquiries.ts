@@ -81,6 +81,25 @@ export const Inquiries: CollectionConfig = {
       },
     },
     {
+      name: 'productVariant',
+      type: 'relationship',
+      relationTo: 'product-variants',
+      label: 'واریانت محصول',
+      admin: {
+        position: 'sidebar',
+        description: 'واریانت دقیقی که کاربر در PDP انتخاب کرده. در صورت محصول تک‌SKU خالی است.',
+      },
+    },
+    {
+      name: 'selectedAxes',
+      type: 'json',
+      label: 'محورهای انتخاب‌شده',
+      admin: {
+        position: 'sidebar',
+        description: 'snapshot کلید/مقدار از زمان ارسال. مثلاً {"size":"160","footboard":"high"}.',
+      },
+    },
+    {
       name: 'status',
       type: 'select',
       defaultValue: 'new',

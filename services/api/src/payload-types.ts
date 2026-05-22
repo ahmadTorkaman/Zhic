@@ -885,6 +885,8 @@ export interface Inquiry {
    * Set when submitted from a product detail page
    */
   product?: (number | null) | Product;
+  productVariant?: (number | null) | ProductVariant;
+  selectedAxes?: Record<string, unknown> | null;
   status?: ('new' | 'contacted' | 'closed') | null;
   updatedAt: string;
   createdAt: string;
@@ -1356,6 +1358,8 @@ export interface InquiriesSelect<T extends boolean = true> {
   message?: T;
   routed_to?: T;
   product?: T;
+  productVariant?: T;
+  selectedAxes?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;

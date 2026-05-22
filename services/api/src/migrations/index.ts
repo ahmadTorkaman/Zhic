@@ -7,6 +7,7 @@ import * as migration_20260519_221500_add_site_config_subscribers_hero_slides fr
 import * as migration_20260519_222500_add_rooms_subscribers_to_locked_documents_rels from './20260519_222500_add_rooms_subscribers_to_locked_documents_rels';
 import * as migration_20260521_180000_add_category_hub_fields from './20260521_180000_add_category_hub_fields';
 import * as migration_20260522_150000_create_product_variants from './20260522_150000_create_product_variants';
+import * as migration_20260522_153000_extend_inquiries_with_variant from './20260522_153000_extend_inquiries_with_variant';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260522_150000_create_product_variants.up,
     down: migration_20260522_150000_create_product_variants.down,
     name: '20260522_150000_create_product_variants'
+  },
+  {
+    up: migration_20260522_153000_extend_inquiries_with_variant.up,
+    down: migration_20260522_153000_extend_inquiries_with_variant.down,
+    name: '20260522_153000_extend_inquiries_with_variant'
   },
 ];
