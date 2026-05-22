@@ -918,6 +918,59 @@ async function seed() {
     console.log(`  Room: ${seed.name}`)
   }
 
+  // ── Variants for the flagship bed product (sub-project C demo) ──
+  // 4 sizes × 2 footboards = 8 variants. Operator can extend or replace
+  // these once sub-project B's xlsx import runs.
+  const variantSpecs: Array<{
+    sku: string;
+    axes: { key: string; value: string }[];
+    priceDelta: number;
+    label: string;
+    displayOrder: number;
+  }> = [
+    { sku: 'GAN-BED-120-H', axes: [{ key: 'size', value: '120' }, { key: 'footboard', value: 'high' }], priceDelta: 0,           label: 'تخت گندم · ۱۲۰ · بلند',  displayOrder: 0 },
+    { sku: 'GAN-BED-120-L', axes: [{ key: 'size', value: '120' }, { key: 'footboard', value: 'low'  }], priceDelta: -6000000,    label: 'تخت گندم · ۱۲۰ · کوتاه', displayOrder: 1 },
+    { sku: 'GAN-BED-140-H', axes: [{ key: 'size', value: '140' }, { key: 'footboard', value: 'high' }], priceDelta: 37000000,    label: 'تخت گندم · ۱۴۰ · بلند',  displayOrder: 2 },
+    { sku: 'GAN-BED-140-L', axes: [{ key: 'size', value: '140' }, { key: 'footboard', value: 'low'  }], priceDelta: 31000000,    label: 'تخت گندم · ۱۴۰ · کوتاه', displayOrder: 3 },
+    { sku: 'GAN-BED-160-H', axes: [{ key: 'size', value: '160' }, { key: 'footboard', value: 'high' }], priceDelta: 80000000,    label: 'تخت گندم · ۱۶۰ · بلند',  displayOrder: 4 },
+    { sku: 'GAN-BED-160-L', axes: [{ key: 'size', value: '160' }, { key: 'footboard', value: 'low'  }], priceDelta: 74000000,    label: 'تخت گندم · ۱۶۰ · کوتاه', displayOrder: 5 },
+    { sku: 'GAN-BED-180-H', axes: [{ key: 'size', value: '180' }, { key: 'footboard', value: 'high' }], priceDelta: 116000000,   label: 'تخت گندم · ۱۸۰ · بلند',  displayOrder: 6 },
+    { sku: 'GAN-BED-180-L', axes: [{ key: 'size', value: '180' }, { key: 'footboard', value: 'low'  }], priceDelta: 110000000,   label: 'تخت گندم · ۱۸۰ · کوتاه', displayOrder: 7 },
+  ];
+
+  const prodTakhtArameshId = productIdBySlug.get('takht-aramesh')!
+
+  for (const v of variantSpecs) {
+    const existing = await payload.find({
+      collection: 'product-variants' as any,
+      where: { sku: { equals: v.sku } },
+      limit: 1,
+    });
+
+    const variantData = {
+      product: prodTakhtArameshId,
+      sku: v.sku,
+      label: v.label,
+      axes: v.axes,
+      priceDeltaRials: v.priceDelta,
+      displayOrder: v.displayOrder,
+    };
+
+    if (existing.docs.length > 0) {
+      await payload.update({
+        collection: 'product-variants' as any,
+        id: existing.docs[0].id,
+        data: variantData as any,
+      });
+    } else {
+      await payload.create({
+        collection: 'product-variants' as any,
+        data: variantData as any,
+      });
+    }
+  }
+  console.log(`  Variants seeded: ${variantSpecs.length} for gandom-bed`);
+
   console.log('\nSeed complete!')
   process.exit(0)
 }

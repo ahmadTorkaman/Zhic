@@ -81,11 +81,33 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
 
     CREATE INDEX IF NOT EXISTS "product_variants_axes_parent_key_idx"
       ON "product_variants_axes" USING btree ("_parent_id", "key");
+
+    -- Register product_variants in Payload's locked-documents relation table
+    -- so the admin UI can lock records for concurrent-edit protection.
+    ALTER TABLE "payload_locked_documents_rels"
+      ADD COLUMN IF NOT EXISTS "product_variants_id" integer;
+
+    DO $$ BEGIN
+      ALTER TABLE "payload_locked_documents_rels"
+        ADD CONSTRAINT "payload_locked_documents_rels_product_variants_fk"
+        FOREIGN KEY ("product_variants_id")
+        REFERENCES "product_variants"("id")
+        ON DELETE CASCADE ON UPDATE NO ACTION;
+    EXCEPTION WHEN duplicate_object THEN null;
+    END $$;
+
+    CREATE INDEX IF NOT EXISTS "payload_locked_documents_rels_product_variants_id_idx"
+      ON "payload_locked_documents_rels" USING btree ("product_variants_id");
   `)
 }
 
 export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
+    ALTER TABLE "payload_locked_documents_rels"
+      DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_product_variants_fk";
+    DROP INDEX IF EXISTS "payload_locked_documents_rels_product_variants_id_idx";
+    ALTER TABLE "payload_locked_documents_rels"
+      DROP COLUMN IF EXISTS "product_variants_id";
     DROP TABLE IF EXISTS "product_variants_axes";
     DROP TABLE IF EXISTS "product_variants";
   `)
