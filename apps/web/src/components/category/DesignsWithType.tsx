@@ -27,7 +27,7 @@ export function DesignsWithType({
       />
       <div className={styles.row} aria-label="طرح‌های مرتبط">
         {designs.map((d) => (
-          <Link key={d.slug} href={`/designs/${d.slug}`} className={styles.card}>
+          <Link key={d.slug} href={`/bedroom-set/${d.slug}`} className={styles.card}>
             <div
               className={styles.bg}
               style={{

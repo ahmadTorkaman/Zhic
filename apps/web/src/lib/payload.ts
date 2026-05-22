@@ -20,13 +20,13 @@ export type PayloadDesign = {
   gallery?: PayloadMedia[] | null;
   featured?: boolean | null;
   basePriceRials?: number | null;
-  /** Short lead sentence shown under the design name on /designs/<slug>. */
+  /** Short lead sentence shown under the design name on /bedroom-set/<slug>. */
   tagline?: string | null;
-  /** Hero image for /designs/<slug>. Falls back to gallery[0] if null. */
+  /** Hero image for /bedroom-set/<slug>. Falls back to gallery[0] if null. */
   heroMedia?: PayloadMedia | null;
   /** Long-form editorial story with embedded media blocks. */
   storyBlocks?: LexicalRoot | null;
-  /** Slider tile media on /designs (ideally a GIF). Falls back to heroMedia / gallery[0]. */
+  /** Slider tile media on /bedroom-set (ideally a GIF). Falls back to heroMedia / gallery[0]. */
   sliderMedia?: PayloadMedia | null;
 };
 
@@ -625,7 +625,7 @@ export async function fetchCategory(
 }
 
 export function categoryPath(slug: string): string {
-  return `/categories/${slug}`;
+  return `/bedroom-furniture/${slug}`;
 }
 
 export async function fetchLatestArticles(limit = 3): Promise<PayloadArticle[]> {

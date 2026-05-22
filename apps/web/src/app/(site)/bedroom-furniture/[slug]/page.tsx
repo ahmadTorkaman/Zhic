@@ -61,7 +61,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     title: category.name,
     description,
     image: ogImageUrl,
-    path: `/categories/${slug}`,
+    path: `/bedroom-furniture/${slug}`,
   });
 
   if (hasFilterParams) {
@@ -69,7 +69,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     // buildMetadata only ever sets noindex,follow=false — so we patch manually.
     return {
       ...base,
-      alternates: { canonical: `/categories/${slug}` },
+      alternates: { canonical: `/bedroom-furniture/${slug}` },
       robots: { index: false, follow: true },
     };
   }
@@ -87,7 +87,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   if (!category) notFound();
 
   const isLeaf = category.parent != null && typeof category.parent === 'object';
-  const basePath = `/categories/${slug}`;
+  const basePath = `/bedroom-furniture/${slug}`;
 
   // --- Search-param parsing ---------------------------------------------------
   const page = Number(sp.page) > 0 ? Number(sp.page) : 1;
@@ -189,7 +189,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                 siblings={siblings}
                 variant="leaf"
                 parentName={parent.name}
-                seeAllHref={`/categories/${parent.slug}`}
+                seeAllHref={`/bedroom-furniture/${parent.slug}`}
               />
             </main>
 

@@ -35,9 +35,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${SITE_URL}/products`, changeFrequency: 'weekly', priority: 0.9 },
+    // /products index removed from sitemap: it's the killed sub-E flat catalog.
+    // Phase 3 adds /bedroom-furniture root index in its place. /products/[slug]
+    // PDPs are still emitted in the products loop below.
     { url: `${SITE_URL}/journal`, changeFrequency: 'daily', priority: 0.9 },
-    { url: `${SITE_URL}/designs`, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${SITE_URL}/bedroom-set`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${SITE_URL}/showrooms`, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/contact`, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${SITE_URL}/about`, changeFrequency: 'monthly', priority: 0.6 },
@@ -71,7 +73,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const d of designs) {
     entries.push({
-      url: `${SITE_URL}/designs/${d.slug}`,
+      url: `${SITE_URL}/bedroom-set/${d.slug}`,
       lastModified: d.updatedAt,
       changeFrequency: 'monthly',
       priority: 0.7,
@@ -80,7 +82,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const c of allCategories) {
     entries.push({
-      url: `${SITE_URL}/categories/${c.slug}`,
+      url: `${SITE_URL}/bedroom-furniture/${c.slug}`,
       lastModified: c.updatedAt ? new Date(c.updatedAt) : undefined,
       changeFrequency: 'monthly' as const,
       priority: c.parent ? 0.7 : 0.75,

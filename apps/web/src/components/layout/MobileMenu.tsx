@@ -16,8 +16,8 @@ type Item = { label: string; href: string };
 // own them on desktop and they don't live in NAV_LINKS. Order matches the
 // previous MainView layout so the mobile and desktop nav read the same.
 const ITEMS: Item[] = [
-  { label: 'سرویس خواب', href: '/designs' },
-  { label: 'تخت و وسایل اتاق خواب', href: '/products' },
+  { label: 'سرویس خواب', href: '/bedroom-set' },
+  { label: 'مبلمان اتاق خواب', href: '/bedroom-furniture' },
   ...NAV_LINKS,
 ];
 

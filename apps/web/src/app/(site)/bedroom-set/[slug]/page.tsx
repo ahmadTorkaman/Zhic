@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: design.name,
     description: design.tagline ?? `طرح ${design.name} — مبلمان دست‌ساز ژیک`,
-    alternates: { canonical: `/designs/${design.slug}` },
+    alternates: { canonical: `/bedroom-set/${design.slug}` },
     openGraph: {
       title: design.name,
       description: design.tagline ?? undefined,

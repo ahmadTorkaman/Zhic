@@ -45,7 +45,7 @@ export function buildCrumbs(category: PayloadCategory): Crumb[] {
   }
   return [
     ...base,
-    { label: category.parent.name, href: `/categories/${category.parent.slug}` },
+    { label: category.parent.name, href: `/bedroom-furniture/${category.parent.slug}` },
     { label: category.name },
   ];
 }

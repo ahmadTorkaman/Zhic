@@ -23,7 +23,7 @@ export function ProductSidebar({ product }: ProductSidebarProps) {
     <div className="flex flex-col gap-4">
       {designName && designSlug ? (
         <InfoCard label="طرح" variant="forest">
-          <Link href={`/designs/${designSlug}`} className="text-ink hover:text-forest">
+          <Link href={`/bedroom-set/${designSlug}`} className="text-ink hover:text-forest">
             <strong>{designName}</strong>
           </Link>
         </InfoCard>

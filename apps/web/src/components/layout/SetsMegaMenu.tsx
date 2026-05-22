@@ -18,7 +18,7 @@ export function SetsMegaMenu({ data, pathname }: SetsMegaMenuProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
-  const active = pathname?.startsWith('/designs') ?? false;
+  const active = pathname?.startsWith('/bedroom-set') ?? false;
 
   useEffect(() => {
     if (!open) return;
@@ -74,7 +74,7 @@ export function SetsMegaMenu({ data, pathname }: SetsMegaMenuProps) {
                   {data.designs.map((d) => (
                     <li key={d.id}>
                       <Link
-                        href={`/designs/${encodeURIComponent(d.slug)}`}
+                        href={`/bedroom-set/${encodeURIComponent(d.slug)}`}
                         className="zh-sets-tile"
                         onClick={() => setOpen(false)}
                       >
@@ -93,7 +93,7 @@ export function SetsMegaMenu({ data, pathname }: SetsMegaMenuProps) {
                     </li>
                   ))}
                 </ul>
-                <Link href="/designs" className="zh-sets-cta" onClick={() => setOpen(false)}>
+                <Link href="/bedroom-set" className="zh-sets-cta" onClick={() => setOpen(false)}>
                   همه‌ی سرویس‌ها <span className="zh-sets-arrow" aria-hidden />
                 </Link>
               </div>
@@ -114,7 +114,7 @@ export function SetsMegaMenu({ data, pathname }: SetsMegaMenuProps) {
                   <p className="zh-sets-featured__tagline">{data.featuredDesign.tagline}</p>
                 )}
                 <Link
-                  href={`/designs/${encodeURIComponent(data.featuredDesign.slug)}`}
+                  href={`/bedroom-set/${encodeURIComponent(data.featuredDesign.slug)}`}
                   className="zh-sets-cta"
                   onClick={() => setOpen(false)}
                 >

@@ -21,7 +21,7 @@ export function ChildCategoriesGrid({ items }: ChildCategoriesGridProps) {
       {items.map((child) => (
         <Link
           key={child.slug}
-          href={`/categories/${child.slug}`}
+          href={`/bedroom-furniture/${child.slug}`}
           className={`${styles.cardLink} ${tiles.quietCardLink}`}
         >
           <div className={`${tiles.quietCard} ${tiles.aspect45}`}>

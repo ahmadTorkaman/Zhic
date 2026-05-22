@@ -32,6 +32,20 @@ const nextConfig: NextConfig = {
     return [
       { source: '/invoices', destination: '/invoices/index.html', permanent: false },
       { source: '/invoices/', destination: '/invoices/index.html', permanent: false },
+
+      // IA rework 2026-05-23: piece-type tree moved to /bedroom-furniture, series
+      // hubs moved to /bedroom-set. PDP route /products/[slug] is unaffected (this
+      // redirect block only fires on /products itself, not /products/<slug>).
+      // 301 permanent so search engines update their indexes.
+      //
+      // /products → /bedroom-furniture redirect deferred to Phase 4 (sub-E cleanup)
+      // because the /bedroom-furniture root index page doesn't exist until Phase 3.
+      // Until then, /products still serves the legacy filter index. Don't re-add
+      // the redirect until the target page is real.
+      { source: '/categories', destination: '/bedroom-furniture', permanent: true },
+      { source: '/categories/:path*', destination: '/bedroom-furniture/:path*', permanent: true },
+      { source: '/designs', destination: '/bedroom-set', permanent: true },
+      { source: '/designs/:path*', destination: '/bedroom-set/:path*', permanent: true },
     ];
   },
 };

@@ -10,7 +10,7 @@ export function categoryCollectionPageLd(category: PayloadCategory) {
     '@type': 'CollectionPage',
     name: category.name,
     description: category.tagline ?? deriveDescriptionFromIntro(category.intro) ?? undefined,
-    url: `${SITE_URL}/categories/${category.slug}`,
+    url: `${SITE_URL}/bedroom-furniture/${category.slug}`,
     image: category.cover?.url ?? undefined,
     isPartOf: { '@type': 'WebSite', name: 'ژیک', url: SITE_URL },
   };

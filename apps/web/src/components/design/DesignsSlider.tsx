@@ -61,7 +61,7 @@ export function DesignsSlider({ designs }: DesignsSliderProps) {
   return <Slider designs={designs} />;
 }
 
-// SVG bedroom-set silhouette used when a design has no uploaded media.
+// SVG design silhouette used when a design has no uploaded media.
 // Matches the v14 mockup: neutral mid-gray pieces on the ivory stage.
 function SvgPlaceholder() {
   const tone = '#9A9A9A';
@@ -470,7 +470,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
           </div>
           <div className="zh-designs-text-cta">
             <Link
-              href={`/designs/${encodeURIComponent(focusedSlug)}`}
+              href={`/bedroom-set/${encodeURIComponent(focusedSlug)}`}
               className="zh-designs-cta"
               aria-label={`دیدن کامل طرح ${focusedDesign.name}`}
             >

@@ -54,7 +54,7 @@ describe('buildCrumbs', () => {
     };
     const crumbs = buildCrumbs(cat as PayloadCategory);
     expect(crumbs).toHaveLength(4);
-    expect(crumbs[2]).toEqual({ label: 'آینه‌ها', href: '/categories/mirrors' });
+    expect(crumbs[2]).toEqual({ label: 'آینه‌ها', href: '/bedroom-furniture/mirrors' });
     expect(crumbs[3]).toEqual({ label: 'آینه دیواری' });
   });
 });

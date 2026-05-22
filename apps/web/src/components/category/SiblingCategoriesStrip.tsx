@@ -31,7 +31,7 @@ export function SiblingCategoriesStrip({
       />
       <div className={styles.row}>
         {siblings.map((s) => (
-          <Link key={s.slug} href={`/categories/${s.slug}`} className={`${styles.cardLink} ${tiles.quietCardLink}`}>
+          <Link key={s.slug} href={`/bedroom-furniture/${s.slug}`} className={`${styles.cardLink} ${tiles.quietCardLink}`}>
             <div className={`${styles.bg} ${tiles.quietCard} ${tiles.aspect1610}`} />
             <div className={styles.nm}>{s.name}</div>
             {/* Count line could be added if we precompute productCount on each sibling — defer. */}
