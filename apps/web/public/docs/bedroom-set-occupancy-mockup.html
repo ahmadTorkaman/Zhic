@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/bedroom-set/baby · occupancy hub — mockup</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-sand-2:   #DDD3C7;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-forest-deep: #455A47;
+    --color-gold:     #C49A6C;
+    --color-gold-deep: #9A754A;
+
+    --tracking-eye: 0.18em;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --header-h: 64px;
+    --container-pad: clamp(16px, 4vw, 64px);
+    --max-w: 1440px;
+    --read-w: 720px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    font-weight: 400; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body { min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  ul, ol { list-style: none; }
+
+  /* pill header — shared */
+  .pill-header {
+    position: fixed; top: 12px; inset-inline: 12px; height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.92);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    z-index: 100;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; padding: 0 18px; gap: 16px;
+  }
+  .pill-header .brand { font-weight: 900; font-size: 17px; color: var(--color-charcoal); position: relative; justify-self: start; }
+  .pill-header nav { justify-self: center; }
+  .pill-header .icons { justify-self: end; }
+  .pill-header .brand::after { content: ''; position: absolute; bottom: -3px; inset-inline: 4px; height: 2px; background: var(--color-forest); border-radius: 1px; }
+  .pill-header nav { display: none; }
+  .pill-header .icons { display: flex; gap: 4px; align-items: center; }
+  .pill-header .icon-btn { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-stone); border-radius: 50%; transition: color .2s var(--ease-out-soft), background .2s var(--ease-out-soft); }
+  .pill-header .icon-btn:hover { color: var(--color-ink); background: rgba(232, 224, 216, 0.4); }
+  .pill-header .icon-btn svg { width: 18px; height: 18px; }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: var(--header-h); border-inline: 0; border-top: 0; padding: 0 32px; }
+    .pill-header nav { display: flex; justify-content: center; gap: 28px; font-size: 14px; color: var(--color-charcoal); }
+    .pill-header nav a:hover { color: var(--color-forest); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ★ OCCUPANCY SIGNATURE: softer hero
+     Unlike the catalog pages (industrial walnut tones), this hero leans into
+     warmth and stillness — cream/ivory base, low contrast, a single quiet
+     motif that suggests "crib" without being literal. Tonal restraint
+     ("luxury = restraint" per the brand) carries the emotional weight that
+     baby/teen/double/bunk pages need.
+     ─────────────────────────────────────────────────────────────────────── */
+  .hero {
+    margin-top: calc(var(--header-h) + 12px);
+    position: relative;
+    width: 100%;
+    aspect-ratio: 21/8;
+    overflow: hidden;
+    background: var(--color-cream);
+  }
+  @media (max-width: 767px) { .hero { margin-top: 70px; aspect-ratio: 4/5; } }
+  /* warm cream-on-cream wash, no dramatic radial gradient — the surface IS the mood */
+  .hero-img {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(245, 240, 235, 0) 50%, rgba(232, 224, 216, 0.7) 100%),
+      radial-gradient(ellipse at 25% 35%, #f5ebe0 0%, #e8d8c8 55%, #d4bea8 100%);
+  }
+  /* subtle warm grain — different from catalog's industrial grain */
+  .hero-img::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 240px 240px;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+  /* single rounded form — visual cue for "crib" without being literal */
+  .hero-motif {
+    position: absolute;
+    top: 50%; inset-inline-end: 14%;
+    transform: translateY(-50%);
+    width: clamp(120px, 18vw, 260px);
+    aspect-ratio: 5/4;
+    border-radius: 8% 8% 50% 50% / 8% 8% 28% 28%;
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.18) 100%);
+    border: 1px solid rgba(196, 154, 108, 0.35);
+    backdrop-filter: blur(2px);
+    box-shadow:
+      0 30px 60px rgba(106, 79, 48, 0.18),
+      inset 0 0 80px rgba(255, 255, 255, 0.45);
+  }
+  /* "crib bars" suggested as inner divisions */
+  .hero-motif::before {
+    content: '';
+    position: absolute;
+    inset: 24% 16% 8% 16%;
+    border-radius: 4px;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%, transparent 12%,
+      rgba(196, 154, 108, 0.22) 12%, rgba(196, 154, 108, 0.22) 14%,
+      transparent 14%, transparent 30%,
+      rgba(196, 154, 108, 0.22) 30%, rgba(196, 154, 108, 0.22) 32%,
+      transparent 32%, transparent 48%,
+      rgba(196, 154, 108, 0.22) 48%, rgba(196, 154, 108, 0.22) 50%,
+      transparent 50%, transparent 66%,
+      rgba(196, 154, 108, 0.22) 66%, rgba(196, 154, 108, 0.22) 68%,
+      transparent 68%, transparent 84%,
+      rgba(196, 154, 108, 0.22) 84%, rgba(196, 154, 108, 0.22) 86%,
+      transparent 86%
+    );
+  }
+  @media (max-width: 767px) {
+    .hero-motif { inset-inline-end: 50%; transform: translate(50%, -55%); width: 130px; }
+  }
+
+  .hero-text {
+    position: absolute;
+    inset-inline-start: var(--container-pad);
+    inset-block-end: clamp(24px, 6vw, 56px);
+    max-width: min(540px, 80vw);
+    /* charcoal text on cream — completely different from the white-on-dark of catalog */
+    color: var(--color-ink);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    color: var(--color-forest-deep);
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+  .hero-title {
+    font-size: clamp(44px, 7vw, 86px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+    margin-bottom: 16px;
+  }
+  .hero-tagline {
+    font-size: clamp(16px, 1.7vw, 21px);
+    font-weight: 300;
+    color: var(--color-charcoal);
+    font-style: italic;
+    line-height: 1.55;
+    max-width: 440px;
+  }
+
+  /* shell */
+  .shell { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--container-pad); }
+
+  .crumb {
+    padding: 24px 0 0; font-size: 12px;
+    color: var(--color-stone);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--color-stone); transition: color .2s var(--ease-out-soft); }
+  .crumb a:hover { color: var(--color-forest); }
+  .crumb .sep { color: var(--color-sand-2); }
+  .crumb .now { color: var(--color-charcoal); font-weight: 700; }
+
+  /* no sidebar — this is an index, not a filter surface */
+  .body { margin-top: 36px; }
+
+  /* editorial intro — wider than leaf, with first-letter treatment from parent */
+  .intro {
+    max-width: var(--read-w);
+    padding-block: 8px 36px;
+  }
+  .intro p {
+    font-size: 17px;
+    line-height: 1.95;
+    color: var(--color-charcoal);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+  .intro p:last-child { margin-bottom: 0; }
+  .intro strong { font-weight: 700; color: var(--color-ink); }
+  .intro p:first-child::first-letter {
+    font-size: 2em;
+    font-weight: 900;
+    color: var(--color-forest-deep);
+    float: right;
+    line-height: 1;
+    margin-inline-start: 6px;
+    margin-block-start: 6px;
+  }
+
+  /* callouts */
+  .callouts {
+    display: flex;
+    gap: 36px;
+    padding-block: 22px;
+    border-top: 1px solid var(--color-sand);
+    border-bottom: 1px solid var(--color-sand);
+    flex-wrap: wrap;
+    margin-block: 8px 56px;
+  }
+  .callout { display: flex; flex-direction: column; gap: 4px; }
+  .callout .num {
+    font-size: 32px; font-weight: 900;
+    color: var(--color-ink); line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .callout .lbl {
+    font-size: 11px; letter-spacing: var(--tracking-eye);
+    color: var(--color-stone); text-transform: uppercase;
+  }
+  @media (max-width: 767px) { .callouts { gap: 24px; padding-block: 16px; } .callout .num { font-size: 24px; } }
+
+  /* section head */
+  .sec-head {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 28px; padding-top: 56px;
+    border-top: 1px solid var(--color-sand);
+  }
+  .sec-head.first { padding-top: 0; border-top: 0; }
+  .sec-eyebrow {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-forest);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .sec-title {
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+  .sec-sub {
+    color: var(--color-stone);
+    font-size: 13px;
+    margin-inline-start: auto;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ★ OCCUPANCY SIGNATURE: series tile grid
+     Big editorial cards — bigger than the leaf's product tiles, more
+     photographic than the parent's child cards. Each cell tells the visitor
+     "this is a curated identity, not a SKU". 9 baby series in 3-col grid.
+     ─────────────────────────────────────────────────────────────────────── */
+  .series-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px 24px;
+    margin-block-end: 32px;
+  }
+  @media (min-width: 640px) {
+    .series-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .series-grid { grid-template-columns: repeat(3, 1fr); gap: 36px 28px; }
+  }
+  .series-card {
+    display: block;
+    color: var(--color-charcoal);
+    position: relative;
+  }
+  .series-card .media {
+    aspect-ratio: 5/6;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: transform .6s var(--ease-out-soft);
+  }
+  .series-card:hover .media { transform: translateY(-4px); }
+  .series-card .bg {
+    position: absolute; inset: 0;
+    transition: transform 1.4s var(--ease-out-soft);
+  }
+  .series-card:hover .bg { transform: scale(1.04); }
+  /* per-series tonal washes — warm, not industrial */
+  .series-card.skate .bg     { background: linear-gradient(160deg, #e4d4be 0%, #a48868 65%, #5d4326 100%); }
+  .series-card.elizabeth .bg { background: linear-gradient(160deg, #f0e4d2 0%, #c9ab85 60%, #6e533a 100%); }
+  .series-card.baloot .bg    { background: linear-gradient(160deg, #c8b596 0%, #806647 65%, #3e2e1f 100%); }
+  .series-card.parla .bg     { background: linear-gradient(160deg, #ddc6a5 0%, #ad8a64 60%, #4e3924 100%); }
+  .series-card.catherine .bg { background: linear-gradient(160deg, #ede0cb 0%, #b5947a 60%, #5a4232 100%); }
+  .series-card.caroline .bg  { background: linear-gradient(160deg, #e8d5b8 0%, #b0906a 65%, #4f3a26 100%); }
+  .series-card.gandom .bg    { background: linear-gradient(160deg, #d8c4a3 0%, #8e6e44 60%, #3a2912 100%); }
+  .series-card.loof .bg      { background: linear-gradient(160deg, #d8d4be 0%, #9a8c66 60%, #4a3c24 100%); }
+  .series-card.sento .bg     { background: linear-gradient(160deg, #c8b89c 0%, #8a6f4a 60%, #3e2c18 100%); }
+
+  /* subtle scrim — much lighter than catalog (let the warmth breathe) */
+  .series-card .scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(20,17,15,0.55) 100%);
+  }
+  /* crib silhouette overlay — same crib bars motif as hero, but inside the card */
+  .series-card .crib {
+    position: absolute;
+    inset: 28% 22% 26% 22%;
+    border-radius: 12% 12% 38% 38% / 8% 8% 24% 24%;
+    background: linear-gradient(170deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%);
+    border: 1px solid rgba(255,255,255,0.28);
+    overflow: hidden;
+  }
+  .series-card .crib::before {
+    content: '';
+    position: absolute;
+    inset: 22% 12% 8% 12%;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%, transparent 13%,
+      rgba(255,255,255,0.28) 13%, rgba(255,255,255,0.28) 16%,
+      transparent 16%, transparent 31%,
+      rgba(255,255,255,0.28) 31%, rgba(255,255,255,0.28) 34%,
+      transparent 34%, transparent 49%,
+      rgba(255,255,255,0.28) 49%, rgba(255,255,255,0.28) 52%,
+      transparent 52%, transparent 67%,
+      rgba(255,255,255,0.28) 67%, rgba(255,255,255,0.28) 70%,
+      transparent 70%, transparent 85%,
+      rgba(255,255,255,0.28) 85%, rgba(255,255,255,0.28) 88%,
+      transparent 88%
+    );
+  }
+  /* hidden series — visible: false (the 7 image-less per D1 resolution) */
+  .series-card.hidden-stub .media {
+    background: var(--color-cream);
+  }
+  .series-card.hidden-stub .bg,
+  .series-card.hidden-stub .scrim,
+  .series-card.hidden-stub .crib { display: none; }
+  .series-card.hidden-stub .media::after {
+    content: 'به‌زودی';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-stone);
+    font-size: 13px;
+    letter-spacing: var(--tracking-eye);
+  }
+
+  /* meta below card — bigger than leaf */
+  .series-card .meta {
+    padding-top: 20px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .series-card .meta-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .series-card .eye {
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .series-card .name {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .series-card .ct {
+    font-size: 11px;
+    color: var(--color-stone);
+    margin-top: 6px;
+    font-feature-settings: "tnum";
+  }
+  .series-card .arrow {
+    font-size: 13px;
+    color: var(--color-sand-2);
+    transition: all .25s var(--ease-out-soft);
+  }
+  .series-card:hover .arrow {
+    color: var(--color-forest);
+    transform: translateX(-3px);
+  }
+
+  /* ★ OCCUPANCY SIGNATURE: other-occupancies strip
+     Bottom of the page — peer occupancy hubs. Different visual style from
+     siblings on the leaf — these are FOUR cards, each a different mode
+     (baby/teen/double/bunk), not a list of similar items. Card shows a
+     custom shape and the count of available series. */
+  .occupancies-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-bottom: 96px;
+  }
+  @media (min-width: 768px) {
+    .occupancies-row { grid-template-columns: repeat(3, 1fr); }
+  }
+  .occ-card {
+    display: block;
+    color: inherit;
+    position: relative;
+    padding: 32px 28px;
+    border-radius: 4px;
+    background: var(--color-cream);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    transition:
+      transform .4s var(--ease-out-soft),
+      border-color .4s var(--ease-out-soft),
+      background .4s var(--ease-out-soft);
+    min-height: 200px;
+  }
+  .occ-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-forest);
+    background: #fff;
+  }
+  .occ-card .eye {
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-forest);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .occ-card .nm {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .occ-card .ct {
+    font-size: 12px;
+    color: var(--color-stone);
+    margin-bottom: 18px;
+    font-feature-settings: "tnum";
+  }
+  .occ-card .arrow {
+    font-size: 13px;
+    color: var(--color-charcoal);
+    border-bottom: 1px solid var(--color-sand-2);
+    padding-bottom: 2px;
+    transition: all .25s var(--ease-out-soft);
+    display: inline-block;
+  }
+  .occ-card:hover .arrow { color: var(--color-forest); border-color: var(--color-forest); }
+  /* tiny shape on each occupancy card — visual key */
+  .occ-card .glyph {
+    position: absolute;
+    inset-inline-end: 24px;
+    inset-block-start: 24px;
+    width: 38px;
+    height: 38px;
+    color: var(--color-sand-2);
+    transition: color .35s var(--ease-out-soft), transform .35s var(--ease-out-soft);
+  }
+  .occ-card:hover .glyph { color: var(--color-forest); transform: scale(1.08); }
+  .occ-card .glyph svg { width: 100%; height: 100%; }
+
+  /* footer */
+  .footer {
+    background: var(--color-cream);
+    padding: 64px var(--container-pad) 96px;
+    color: var(--color-stone);
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px solid var(--color-sand);
+  }
+
+  /* come-up fade-in */
+  .fadeup {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .fadeup.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .fadeup { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- pill header -->
+<header class="pill-header">
+  <a href="/" class="brand">ژیک</a>
+  <nav>
+    <a href="/bedroom-set">سرویس خواب</a>
+    <a href="/bedroom-furniture">مبلمان اتاق خواب</a>
+    <a href="/showrooms">شعب ژیک</a>
+    <a href="/about">درباره ما</a>
+    <a href="/contact">تماس با ما</a>
+  </nav>
+  <div class="icons">
+    <button class="icon-btn" aria-label="جستجو">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7.5"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+    <button class="icon-btn" aria-label="علاقه‌مندی‌ها">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- hero -->
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-motif" aria-hidden="true"></div>
+  <div class="hero-text">
+    <span class="hero-eyebrow fadeup">سرویس خواب</span>
+    <h1 class="hero-title fadeup" style="transition-delay: 140ms">سرویس خواب نوزاد</h1>
+    <p class="hero-tagline fadeup" style="transition-delay: 320ms">نُه طرح برای نخستین اتاق — جایی برای رشد، نه برای بزرگ‌نمایی.</p>
+  </div>
+</section>
+
+<!-- main shell -->
+<div class="shell">
+  <nav class="crumb" aria-label="مسیر">
+    <a href="/">خانه</a>
+    <span class="sep">/</span>
+    <a href="/bedroom-set">سرویس خواب</a>
+    <span class="sep">/</span>
+    <span class="now">نوزاد</span>
+  </nav>
+
+  <main class="body">
+
+    <!-- editorial intro -->
+    <section class="intro">
+      <p class="fadeup">اولین اتاق چیزی است که نمی‌توان به آن بازگشت. ژیک نُه طرح برای این لحظه دارد — هر کدام با <strong>تخت قابل‌تبدیل</strong>، یا تخت نوزاد ساده، یا چارچوبی که از سن صفر تا هفت می‌ماند. هیچ‌کدام شلوغ نیستند. هیچ‌کدام ادعا ندارند که برای ابد. ولی هر کدام برای جایی که شب نوزاد در آن می‌خوابد، طراحی شده.</p>
+      <p class="fadeup" style="transition-delay: 140ms">روکش‌ها از گردو و راش‌اند — هر دو با پوشش طبیعی، بدون رنگ شیمیایی. لبه‌ها مدور، گوشه‌ها بدون تیزی. هر طرح در همین صفحه قابل دیدن است؛ کلیک روی هر کارت شما را به صفحه‌ی کامل آن طرح می‌برد، جایی که قطعه‌های همراه — پاتختی، کمد، دراور — نشان داده می‌شود.</p>
+    </section>
+
+    <!-- callouts -->
+    <section class="callouts" aria-label="نمای کلی">
+      <div class="callout fadeup">
+        <div class="num">۹</div>
+        <div class="lbl">طرح برای نوزاد</div>
+      </div>
+      <div class="callout fadeup" style="transition-delay: 90ms">
+        <div class="num">۴۲</div>
+        <div class="lbl">قطعه‌ی همراه</div>
+      </div>
+      <div class="callout fadeup" style="transition-delay: 180ms">
+        <div class="num">۲</div>
+        <div class="lbl">روکش چوب</div>
+      </div>
+      <div class="callout fadeup" style="transition-delay: 270ms">
+        <div class="num">۲</div>
+        <div class="lbl">سال زمان زایش</div>
+      </div>
+    </section>
+
+    <!-- series grid -->
+    <header class="sec-head first">
+      <div>
+        <div class="sec-eyebrow fadeup">★ طرح‌ها</div>
+        <h2 class="sec-title fadeup" style="transition-delay: 80ms">نُه دنیای کوچک</h2>
+      </div>
+      <span class="sec-sub fadeup" style="transition-delay: 160ms">۹ طرح</span>
+    </header>
+
+    <div class="series-grid" aria-label="طرح‌های مناسب نوزاد">
+      <a class="series-card skate fadeup" href="/bedroom-set/skate">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۱</span>
+            <span class="name">اسکیت</span>
+            <span class="ct">۵ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card elizabeth fadeup" style="transition-delay: 80ms" href="/bedroom-set/elizabeth">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۲</span>
+            <span class="name">الیزابت</span>
+            <span class="ct">۶ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card baloot fadeup" style="transition-delay: 160ms" href="/bedroom-set/baloot">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۳</span>
+            <span class="name">باروت</span>
+            <span class="ct">۷ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card parla fadeup" style="transition-delay: 240ms" href="/bedroom-set/parla">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۴</span>
+            <span class="name">پارلا</span>
+            <span class="ct">۸ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card catherine hidden-stub fadeup" style="transition-delay: 320ms" href="/bedroom-set/catherine">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۵</span>
+            <span class="name">کاترین</span>
+            <span class="ct">۶ قطعه · در انتظار عکس</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card caroline fadeup" style="transition-delay: 400ms" href="/bedroom-set/caroline">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۶</span>
+            <span class="name">کارولین</span>
+            <span class="ct">۵ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card gandom fadeup" style="transition-delay: 480ms" href="/bedroom-set/gandom">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۷</span>
+            <span class="name">گندم</span>
+            <span class="ct">۴ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card loof fadeup" style="transition-delay: 560ms" href="/bedroom-set/loof">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۸</span>
+            <span class="name">لوف</span>
+            <span class="ct">۷ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+
+      <a class="series-card sento fadeup" style="transition-delay: 640ms" href="/bedroom-set/sento">
+        <div class="media">
+          <div class="bg"></div>
+          <div class="crib" aria-hidden="true"></div>
+          <div class="scrim"></div>
+        </div>
+        <div class="meta">
+          <div class="meta-left">
+            <span class="eye">طرح ۰۹</span>
+            <span class="name">سنتو</span>
+            <span class="ct">۵ قطعه</span>
+          </div>
+          <span class="arrow">←</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- other occupancies strip -->
+    <header class="sec-head">
+      <div>
+        <div class="sec-eyebrow fadeup">★ دیگر سن‌ها و پیکربندی‌ها</div>
+        <h2 class="sec-title fadeup" style="transition-delay: 80ms">سرویس‌های دیگر</h2>
+      </div>
+      <a class="sec-sub fadeup" style="transition-delay: 160ms" href="/bedroom-set">همه‌ی طرح‌ها ←</a>
+    </header>
+
+    <div class="occupancies-row" aria-label="دیگر گروه‌های سرویس خواب">
+      <a class="occ-card" href="/bedroom-set/teen">
+        <span class="glyph" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="6" y="14" width="28" height="14" rx="1"/>
+            <line x1="8" y1="28" x2="8" y2="32"/>
+            <line x1="32" y1="28" x2="32" y2="32"/>
+          </svg>
+        </span>
+        <span class="eye">گروه سنی</span>
+        <div class="nm">نوجوان</div>
+        <div class="ct">۲۰ طرح</div>
+        <span class="arrow">برای ۹–۱۸ سال ←</span>
+      </a>
+
+      <a class="occ-card" href="/bedroom-set/double">
+        <span class="glyph" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="14" width="34" height="14" rx="1"/>
+            <line x1="20" y1="14" x2="20" y2="28"/>
+            <line x1="5" y1="28" x2="5" y2="32"/>
+            <line x1="35" y1="28" x2="35" y2="32"/>
+          </svg>
+        </span>
+        <span class="eye">پیکربندی</span>
+        <div class="nm">دو‌نفره</div>
+        <div class="ct">۱۸ طرح</div>
+        <span class="arrow">برای اتاق مشترک ←</span>
+      </a>
+
+      <a class="occ-card" href="/bedroom-set/bunk">
+        <span class="glyph" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="6" y="6" width="28" height="11" rx="1"/>
+            <rect x="6" y="22" width="28" height="11" rx="1"/>
+            <line x1="8" y1="33" x2="8" y2="36"/>
+            <line x1="32" y1="33" x2="32" y2="36"/>
+            <line x1="20" y1="6" x2="20" y2="36" stroke-dasharray="2 3" opacity="0.4"/>
+          </svg>
+        </span>
+        <span class="eye">پیکربندی</span>
+        <div class="nm">دو‌طبقه</div>
+        <div class="ct">۳ طرح</div>
+        <span class="arrow">برای دو کودک، یک اتاق ←</span>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- footer -->
+<footer class="footer">© ۱۴۰۵ ژیک — مبلمان دست‌ساز چوب</footer>
+
+<script>
+  // come-up fade-in
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      document.querySelectorAll('.fadeup').forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.fadeup').forEach(el => io.observe(el));
+  })();
+</script>
+</body>
+</html>

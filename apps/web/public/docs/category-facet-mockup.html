@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/bedroom-furniture/storage/wardrobe/double-door · facet sub-leaf — mockup</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-sand-2:   #DDD3C7;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-forest-deep: #455A47;
+    --color-gold:     #C49A6C;
+    --color-gold-deep: #9A754A;
+
+    --tracking-eye: 0.18em;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --header-h: 64px;
+    --container-pad: clamp(16px, 4vw, 64px);
+    --max-w: 1440px;
+    --sidebar-w: 280px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    font-weight: 400; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body { min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  ul, ol { list-style: none; }
+
+  /* pill header — identical to leaf */
+  .pill-header {
+    position: fixed; top: 12px; inset-inline: 12px; height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.92);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    z-index: 100;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; padding: 0 18px; gap: 16px;
+  }
+  .pill-header .brand { font-weight: 900; font-size: 17px; color: var(--color-charcoal); position: relative; justify-self: start; }
+  .pill-header nav { justify-self: center; }
+  .pill-header .icons { justify-self: end; }
+  .pill-header .brand::after { content: ''; position: absolute; bottom: -3px; inset-inline: 4px; height: 2px; background: var(--color-forest); border-radius: 1px; }
+  .pill-header nav { display: none; }
+  .pill-header .icons { display: flex; gap: 4px; align-items: center; }
+  .pill-header .icon-btn { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-stone); border-radius: 50%; transition: color .2s var(--ease-out-soft), background .2s var(--ease-out-soft); }
+  .pill-header .icon-btn:hover { color: var(--color-ink); background: rgba(232, 224, 216, 0.4); }
+  .pill-header .icon-btn svg { width: 18px; height: 18px; }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: var(--header-h); border-inline: 0; border-top: 0; padding: 0 32px; }
+    .pill-header nav { display: flex; justify-content: center; gap: 28px; font-size: 14px; color: var(--color-charcoal); }
+    .pill-header nav a:hover { color: var(--color-forest); }
+  }
+
+  /* hero — narrower aspect, more intimate framing for the facet */
+  .hero {
+    margin-top: calc(var(--header-h) + 12px);
+    position: relative;
+    width: 100%;
+    aspect-ratio: 21/8;  /* slightly slimmer than parent — feels more specific */
+    overflow: hidden;
+    background: var(--color-cream);
+  }
+  @media (max-width: 767px) { .hero { margin-top: 70px; aspect-ratio: 4/4.5; } }
+  .hero-img {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(20,17,15,0.62) 100%),
+                radial-gradient(ellipse at 30% 30%, #c9a87a 0%, #6b5236 55%, #2a1d10 100%);
+  }
+  .hero-img::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 240px 240px; opacity: 0.06; mix-blend-mode: overlay;
+  }
+  /* two-door motif: TWO equally tall door panels — the page's signature visual */
+  .hero-motif {
+    position: absolute; top: 50%; inset-inline-end: 12%;
+    transform: translateY(-50%);
+    display: flex; gap: clamp(6px, 1vw, 14px); align-items: stretch;
+    height: clamp(150px, 20vw, 250px);
+  }
+  .hero-motif .door {
+    width: clamp(56px, 8vw, 110px);
+    background: linear-gradient(170deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.04) 100%);
+    border: 1px solid rgba(255,255,255,0.24);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.34), inset 0 0 60px rgba(255,255,255,0.06);
+    border-radius: 2px;
+    position: relative;
+  }
+  /* tiny handle dot on each door to suggest the configuration */
+  .hero-motif .door::after {
+    content: ''; position: absolute;
+    top: 50%; inset-inline-end: 8%;
+    width: 2px; height: 22px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 1px;
+    transform: translateY(-50%);
+  }
+  .hero-motif .door:nth-child(1)::after { inset-inline-end: auto; inset-inline-start: 8%; }
+  @media (max-width: 767px) {
+    .hero-motif { inset-inline-end: 50%; transform: translate(50%, -55%); height: 130px; }
+  }
+
+  .hero-text {
+    position: absolute;
+    inset-inline-start: var(--container-pad);
+    inset-block-end: clamp(24px, 6vw, 56px);
+    color: var(--color-ivory);
+    max-width: min(540px, 80vw);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+    font-weight: 400;
+    margin-bottom: 14px;
+    display: inline-block;
+    padding-inline-end: 14px;
+    border-inline-end: 1px solid rgba(255,255,255,0.35);
+  }
+  .hero-eyebrow + .hero-eyebrow { border: 0; padding-inline-start: 14px; color: rgba(255,255,255,0.55); }
+  .hero-title {
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .hero-tagline {
+    font-size: clamp(16px, 1.6vw, 20px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.88);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* shell */
+  .shell { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--container-pad); }
+
+  .crumb {
+    padding: 24px 0 0; font-size: 12px;
+    color: var(--color-stone);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--color-stone); transition: color .2s var(--ease-out-soft); }
+  .crumb a:hover { color: var(--color-forest); }
+  .crumb .sep { color: var(--color-sand-2); }
+  .crumb .now { color: var(--color-charcoal); font-weight: 700; }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ★ FACET SIGNATURE: scope strip
+     Sits BELOW breadcrumb, ABOVE the layout grid. Tells the visitor "this
+     page is permanently filtered to this axis value — it's not a temporary
+     selection you can deselect; it's the page itself." Uses a lock glyph
+     and a slightly inset background that reads as 'page-level scope'.
+
+     Crucially: this replaces the leaf's "active filters" strip. Other axes
+     (طرح، روکش، قیمت) still filter as normal in the sidebar — only the
+     promoted facet (doors) is locked here.
+     ─────────────────────────────────────────────────────────────────────── */
+  .scope {
+    margin-block: 28px 0;
+    padding: 14px 20px;
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .scope-lock {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--color-forest);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .scope-lock svg { width: 14px; height: 14px; }
+  .scope-body { flex: 1; min-width: 0; }
+  .scope-label {
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-forest);
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .scope-value {
+    font-size: 14px;
+    color: var(--color-charcoal);
+    line-height: 1.4;
+  }
+  .scope-value strong { color: var(--color-ink); font-weight: 700; }
+  .scope-action {
+    font-size: 12px;
+    color: var(--color-forest);
+    padding: 6px 14px;
+    border-radius: 9999px;
+    border: 1px solid var(--color-forest);
+    transition: all .2s var(--ease-out-soft);
+    flex-shrink: 0;
+  }
+  .scope-action:hover { background: var(--color-forest); color: #fff; }
+
+  /* 2-col layout — same as leaf */
+  .layout {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 1024px) {
+    .layout { grid-template-columns: 1fr var(--sidebar-w); gap: 64px; }
+  }
+
+  .main { min-width: 0; }
+
+  /* intro — shorter, more specific than leaf */
+  .intro {
+    max-width: 640px;
+    padding-block: 8px 28px;
+  }
+  .intro p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--color-charcoal);
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+  .intro p:last-child { margin-bottom: 0; }
+  .intro strong { font-weight: 700; color: var(--color-ink); }
+
+  /* callouts */
+  .callouts {
+    display: flex;
+    gap: 28px;
+    padding-block: 18px;
+    border-top: 1px solid var(--color-sand);
+    border-bottom: 1px solid var(--color-sand);
+    flex-wrap: wrap;
+    margin-block: 8px 32px;
+  }
+  .callout { display: flex; flex-direction: column; gap: 4px; }
+  .callout .num { font-size: 28px; font-weight: 900; color: var(--color-ink); line-height: 1; letter-spacing: -0.02em; }
+  .callout .lbl { font-size: 11px; letter-spacing: var(--tracking-eye); color: var(--color-stone); text-transform: uppercase; }
+
+  /* result bar */
+  .result-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px; gap: 12px;
+  }
+  .result-count { font-size: 13px; color: var(--color-stone); }
+  .result-sort {
+    font-size: 13px; color: var(--color-charcoal);
+    background: transparent;
+    border: 1px solid var(--color-sand);
+    border-radius: 9999px;
+    padding: 6px 14px;
+    font-family: inherit;
+  }
+  .result-sort:hover { border-color: var(--color-forest); color: var(--color-forest); }
+
+  /* product grid */
+  .grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px 16px;
+  }
+  @media (min-width: 640px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 32px 20px; } }
+  @media (min-width: 1280px) { .grid { gap: 40px 24px; } }
+  @media (max-width: 1023px) { .grid { grid-template-columns: repeat(2, 1fr) !important; } }
+  @media (max-width: 480px) { .grid { grid-template-columns: repeat(1, 1fr) !important; gap: 24px; } }
+  .tile { display: block; position: relative; color: var(--color-charcoal); }
+  .tile-img {
+    aspect-ratio: 4/5;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(180deg, #FCFBF7 0%, #F6F2EB 100%);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 0 0 rgba(20, 17, 15, 0);
+    transition: transform .35s var(--ease-out-soft), box-shadow .35s var(--ease-out-soft), border-color .35s var(--ease-out-soft);
+  }
+  .tile:hover .tile-img {
+    transform: translateY(-4px);
+    border-color: rgba(232, 224, 216, 0.85);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 14px 28px rgba(20, 17, 15, 0.07);
+  }
+  /* TWO-DOOR wardrobe silhouette — vertical rectangle with one central split */
+  .tile-img::before {
+    content: '';
+    position: absolute;
+    inset: 16% 28%;
+    border-radius: 3px;
+    background: linear-gradient(170deg, rgba(95, 119, 96, 0.10) 0%, rgba(95, 119, 96, 0.02) 100%);
+    border: 1px solid rgba(140, 130, 121, 0.25);
+    box-shadow: 0 10px 22px rgba(20, 17, 15, 0.06), inset 0 0 26px rgba(255, 255, 255, 0.4);
+    transition: transform .8s var(--ease-out-soft);
+  }
+  .tile:hover .tile-img::before { transform: scale(1.02); }
+  .tile-img::after {
+    content: '';
+    position: absolute;
+    top: 16%; bottom: 16%; left: 50%;
+    width: 1px;
+    background: rgba(140, 130, 121, 0.35);
+    pointer-events: none;
+  }
+
+  .tile-meta { padding-top: 14px; padding-inline: 2px; }
+  .tile-name { font-size: 15px; font-weight: 700; color: var(--color-ink); margin-bottom: 4px; line-height: 1.4; }
+  .tile-design { font-size: 12px; color: var(--color-stone); margin-bottom: 8px; }
+  .tile-price { font-size: 14px; color: var(--color-charcoal); font-weight: 400; }
+  .tile-price .unit { font-size: 11px; color: var(--color-stone); margin-inline-start: 4px; }
+
+  /* pagination */
+  .pagination {
+    display: flex; justify-content: center; align-items: center; gap: 12px;
+    padding-block: 40px; margin-top: 24px; border-top: 1px solid var(--color-sand);
+  }
+  .pagination .page-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--color-stone);
+    transition: all .2s var(--ease-out-soft);
+  }
+  .pagination .page-num.active { background: var(--color-ink); color: #fff; font-weight: 700; }
+  .pagination .page-num:hover:not(.active) { background: var(--color-cream); color: var(--color-ink); }
+  .pagination .nav-arrow {
+    font-size: 13px; color: var(--color-stone);
+    padding: 6px 12px; border-radius: 9999px;
+    border: 1px solid var(--color-sand);
+    transition: all .2s var(--ease-out-soft);
+  }
+  .pagination .nav-arrow:hover { border-color: var(--color-forest); color: var(--color-forest); }
+
+  /* section headers */
+  .sec-head {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 24px; padding-top: 64px;
+    border-top: 1px solid var(--color-sand);
+  }
+  .sec-eyebrow { font-size: 11px; letter-spacing: var(--tracking-eye); color: var(--color-forest); text-transform: uppercase; font-weight: 700; }
+  .sec-title { font-size: clamp(22px, 2.4vw, 32px); font-weight: 900; color: var(--color-ink); letter-spacing: -0.02em; line-height: 1.2; }
+  .sec-sub { color: var(--color-stone); font-size: 13px; margin-inline-start: auto; }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     ★ FACET SIGNATURE #2: peer-facets strip
+     Replaces the leaf's "siblings" (other category leaves) with PEER FACETS —
+     the other promoted axis values for the same parent. The visitor lands
+     here on /wardrobe/double-door and we offer single/triple/sliding as
+     equivalent intent landing pages.
+     ─────────────────────────────────────────────────────────────────────── */
+  .peers-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    padding-bottom: 32px;
+  }
+  @media (min-width: 640px) { .peers-row { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+  .peer-card {
+    display: block;
+    color: inherit;
+    padding: 22px 24px;
+    border-radius: 4px;
+    background: var(--color-cream);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    transition:
+      transform .35s var(--ease-out-soft),
+      border-color .35s var(--ease-out-soft),
+      background .35s var(--ease-out-soft);
+    position: relative;
+  }
+  .peer-card::after {
+    content: '←';
+    position: absolute;
+    inset-block-start: 20px;
+    inset-inline-end: 20px;
+    color: var(--color-sand-2);
+    font-size: 14px;
+    transition: all .25s var(--ease-out-soft);
+  }
+  .peer-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-forest);
+    background: #fff;
+  }
+  .peer-card:hover::after { color: var(--color-forest); transform: translateX(-3px); }
+  .peer-eye {
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .peer-name {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--color-ink);
+    margin-bottom: 4px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .peer-count {
+    font-size: 11px;
+    color: var(--color-stone);
+    font-feature-settings: "tnum";
+  }
+  /* inline silhouette in peer cards — varies by door-count */
+  .peer-silhouette {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 14px;
+    height: 22px;
+    align-items: end;
+  }
+  .peer-silhouette span {
+    display: block;
+    width: 6px;
+    background: var(--color-stone);
+    opacity: 0.4;
+    border-radius: 1px;
+    transition: background .25s var(--ease-out-soft), opacity .25s var(--ease-out-soft);
+  }
+  .peer-card:hover .peer-silhouette span { background: var(--color-forest); opacity: 0.85; }
+  .peer-silhouette span { height: 22px; }
+  .peer-card.sliding .peer-silhouette span { width: 11px; }
+
+  /* "see all" parent link */
+  .see-all {
+    margin-top: 16px;
+    text-align: center;
+    padding-bottom: 96px;
+  }
+  .see-all a {
+    font-size: 13px;
+    color: var(--color-charcoal);
+    border-bottom: 1px solid var(--color-sand-2);
+    padding-bottom: 2px;
+    transition: color .2s var(--ease-out-soft), border-color .2s var(--ease-out-soft);
+  }
+  .see-all a:hover { color: var(--color-forest); border-color: var(--color-forest); }
+
+  /* sidebar */
+  .sidebar { display: none; }
+  @media (min-width: 1024px) {
+    .sidebar {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+      align-self: start;
+      max-height: calc(100vh - var(--header-h) - 48px);
+      overflow-y: auto;
+      padding-bottom: 16px;
+      padding-inline-end: 4px;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--color-sand-2); border-radius: 2px; }
+  }
+  .sidebar-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .sidebar-title {
+    font-size: 13px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .sidebar-clear {
+    font-size: 11px;
+    color: var(--color-forest);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .filter-group {
+    padding-block: 18px;
+    border-top: 1px solid var(--color-sand);
+  }
+  .filter-group:first-of-type { border-top: 0; padding-top: 0; }
+  .filter-label {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  /* ★ FACET SIGNATURE #3: the locked-axis filter group in the sidebar.
+     Subtly grayed background, a small lock icon next to the label, and the
+     selected chip is `.locked` (forest tint but un-clickable). The user
+     reads "this is the page's scope" without us having to spell it out. */
+  .filter-group.locked {
+    background: rgba(232, 224, 216, 0.25);
+    margin-inline: -12px;
+    padding-inline: 12px;
+    border-radius: 4px;
+    border-top: 0;
+  }
+  .filter-group.locked + .filter-group { border-top: 1px solid var(--color-sand); }
+  .filter-group.locked .filter-label { color: var(--color-forest-deep); }
+  .filter-group.locked .lock-icon {
+    width: 12px; height: 12px; color: var(--color-forest);
+  }
+  .filter-group.locked .locked-note {
+    font-size: 10px;
+    color: var(--color-stone);
+    margin-top: 8px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 12px;
+    color: var(--color-charcoal);
+    padding: 5px 12px;
+    border-radius: 9999px;
+    border: 1px solid var(--color-sand);
+    background: transparent;
+    cursor: pointer;
+    transition: all .2s var(--ease-out-soft);
+  }
+  .chip:hover { border-color: var(--color-forest); color: var(--color-forest); }
+  .chip.on {
+    background: var(--color-forest);
+    color: #fff;
+    border-color: var(--color-forest);
+  }
+  /* locked chip = looks like selected but with reduced contrast + cursor: default */
+  .chip.locked {
+    background: var(--color-forest);
+    color: #fff;
+    border-color: var(--color-forest);
+    cursor: default;
+    opacity: 0.92;
+    position: relative;
+    padding-inline-start: 24px;
+  }
+  .chip.locked::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 9px; height: 9px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round'><rect x='5' y='11' width='14' height='10' rx='1.5'/><path d='M8 11V8a4 4 0 0 1 8 0v3'/></svg>");
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  /* footer placeholder */
+  .footer {
+    background: var(--color-cream);
+    padding: 64px var(--container-pad) 96px;
+    color: var(--color-stone);
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px solid var(--color-sand);
+  }
+
+  /* come-up fade-in */
+  .fadeup {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .fadeup.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .fadeup { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ pill header ═══════════════════════ -->
+<header class="pill-header">
+  <a href="/" class="brand">ژیک</a>
+  <nav>
+    <a href="/bedroom-set">سرویس خواب</a>
+    <a href="/bedroom-furniture">مبلمان اتاق خواب</a>
+    <a href="/showrooms">شعب ژیک</a>
+    <a href="/about">درباره ما</a>
+    <a href="/contact">تماس با ما</a>
+  </nav>
+  <div class="icons">
+    <button class="icon-btn" aria-label="جستجو">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7.5"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+    <button class="icon-btn" aria-label="علاقه‌مندی‌ها">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════ hero ═══════════════════════════════ -->
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-motif" aria-hidden="true">
+    <div class="door"></div>
+    <div class="door"></div>
+  </div>
+  <div class="hero-text">
+    <span class="hero-eyebrow fadeup">کمد</span>
+    <span class="hero-eyebrow fadeup">پیکربندی</span>
+    <h1 class="hero-title fadeup" style="transition-delay: 140ms">کمد دو‌درب</h1>
+    <p class="hero-tagline fadeup" style="transition-delay: 320ms">دو لنگه‌ی متقارن — نقطه‌ی شروع کلاسیک</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ main shell ═════════════════════════ -->
+<div class="shell">
+  <nav class="crumb" aria-label="مسیر">
+    <a href="/">خانه</a>
+    <span class="sep">/</span>
+    <a href="/bedroom-furniture">مبلمان اتاق خواب</a>
+    <span class="sep">/</span>
+    <a href="/bedroom-furniture/storage">ذخیره‌سازی</a>
+    <span class="sep">/</span>
+    <a href="/bedroom-furniture/storage/wardrobe">کمد</a>
+    <span class="sep">/</span>
+    <span class="now">دو‌درب</span>
+  </nav>
+
+  <!-- ★ scope strip — declares the page's intrinsic filter -->
+  <div class="scope" role="status" aria-label="محدوده‌ی صفحه">
+    <span class="scope-lock" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="11" width="14" height="10" rx="1.5"/>
+        <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+      </svg>
+    </span>
+    <div class="scope-body">
+      <span class="scope-label">محدوده‌ی این صفحه</span>
+      <span class="scope-value">فقط <strong>کمدهای دو‌درب</strong> — صفحه‌ی اختصاصی برای این پیکربندی</span>
+    </div>
+    <a href="/bedroom-furniture/storage/wardrobe" class="scope-action">همه‌ی کمدها ←</a>
+  </div>
+
+  <div class="layout">
+    <!-- ─────────────────────────────── main column ─────────────────────────── -->
+    <main class="main">
+
+      <section class="intro">
+        <p class="fadeup">کمد دو‌درب نقطه‌ی شروع کلاسیک ذخیره‌سازی است — <strong>دو لنگه‌ی متقارن</strong>، فضای آویز در یک سو، قفسه‌ها در دیگری. عرض استاندارد بین ۸۰ تا ۱۲۰ سانتی‌متر؛ مناسب اتاق‌های متوسط که جای کمد سه‌درب ندارند اما به یک کمد تک‌درب راضی نیستند.</p>
+        <p class="fadeup" style="transition-delay: 140ms">۱۴ مدل از ۸ طرح ژیک، با تنوع روکش گردو و راش، و تنوع داخلی (آویز/قفسه/ترکیب).</p>
+      </section>
+
+      <section class="callouts" aria-label="نمای کلی">
+        <div class="callout fadeup">
+          <div class="num">۱۴</div>
+          <div class="lbl">محصول</div>
+        </div>
+        <div class="callout fadeup" style="transition-delay: 90ms">
+          <div class="num">۸</div>
+          <div class="lbl">طرح</div>
+        </div>
+        <div class="callout fadeup" style="transition-delay: 180ms">
+          <div class="num">۸۰–۱۲۰</div>
+          <div class="lbl">سانتی‌متر عرض</div>
+        </div>
+        <div class="callout fadeup" style="transition-delay: 270ms">
+          <div class="num">۲</div>
+          <div class="lbl">روکش چوب</div>
+        </div>
+      </section>
+
+      <div class="result-bar">
+        <span class="result-count">نمایش <strong>۱۴</strong> کمد دو‌درب</span>
+        <button class="result-sort" type="button">جدیدترین ↓</button>
+      </div>
+
+      <section class="grid" aria-label="کمدهای دو‌درب">
+        <a class="tile fadeup" href="#">
+          <div class="tile-img"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد دو‌درب گندم</div>
+            <div class="tile-design">طرح گندم</div>
+            <div class="tile-price">۷۹٬۴۳۷٬۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile fadeup" style="transition-delay: 60ms" href="#">
+          <div class="tile-img"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد دو‌درب باروت</div>
+            <div class="tile-design">طرح باروت</div>
+            <div class="tile-price">۸۲٬۱۲۰٬۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile fadeup" style="transition-delay: 120ms" href="#">
+          <div class="tile-img"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد دو‌درب الیزابت</div>
+            <div class="tile-design">طرح الیزابت</div>
+            <div class="tile-price">۸۹٬۲۴۰٬۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile fadeup" style="transition-delay: 180ms" href="#">
+          <div class="tile-img"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد دو‌درب لوتوس</div>
+            <div class="tile-design">طرح لوتوس</div>
+            <div class="tile-price">۷۴٬۸۲۰٬۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile fadeup" style="transition-delay: 240ms" href="#">
+          <div class="tile-img"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد دو‌درب سنتو</div>
+            <div class="tile-design">طرح سنتو</div>
+            <div class="tile-price">۶۴٬۱۲۰٬۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile fadeup" style="transition-delay: 300ms" href="#">
+          <div class="tile-img"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد دو‌درب کارولین</div>
+            <div class="tile-design">طرح کارولین</div>
+            <div class="tile-price">۷۱٬۳۸۰٬۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+      </section>
+
+      <nav class="pagination" aria-label="صفحه‌بندی">
+        <a class="nav-arrow" href="#" aria-label="صفحه‌ی قبل">→</a>
+        <a class="page-num active" href="#">۱</a>
+        <a class="page-num" href="#">۲</a>
+        <a class="page-num" href="#">۳</a>
+        <a class="nav-arrow" href="#" aria-label="صفحه‌ی بعد">←</a>
+      </nav>
+
+      <!-- ★ peer-facets strip — the sibling pattern, replaced by peer axes -->
+      <header class="sec-head">
+        <div>
+          <div class="sec-eyebrow fadeup">★ صفحه‌های هم‌سطح</div>
+          <h2 class="sec-title fadeup" style="transition-delay: 80ms">دیگر پیکربندی‌های کمد</h2>
+        </div>
+        <a class="sec-sub fadeup" style="transition-delay: 160ms" href="/bedroom-furniture/storage/wardrobe">همه‌ی کمدها ←</a>
+      </header>
+
+      <div class="peers-row" aria-label="پیکربندی‌های هم‌سطح">
+        <a class="peer-card" href="/bedroom-furniture/storage/wardrobe/single-door">
+          <div class="peer-silhouette" aria-hidden="true"><span></span></div>
+          <span class="peer-eye">یک درب</span>
+          <div class="peer-name">کمد یک‌درب</div>
+          <div class="peer-count">۶ مدل</div>
+        </a>
+        <a class="peer-card" href="/bedroom-furniture/storage/wardrobe/triple-door">
+          <div class="peer-silhouette" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span class="peer-eye">سه درب</span>
+          <div class="peer-name">کمد سه‌درب</div>
+          <div class="peer-count">۱۸ مدل</div>
+        </a>
+        <a class="peer-card sliding" href="/bedroom-furniture/storage/wardrobe/sliding">
+          <div class="peer-silhouette" aria-hidden="true"><span></span><span></span></div>
+          <span class="peer-eye">ریلی</span>
+          <div class="peer-name">کمد ریلی</div>
+          <div class="peer-count">۱ مدل</div>
+        </a>
+      </div>
+
+      <div class="see-all">
+        <a href="/bedroom-furniture/storage/wardrobe">→ بازگشت به همه‌ی کمدها</a>
+      </div>
+
+    </main>
+
+    <!-- ─────────────────────────────── sidebar ─────────────────────────────── -->
+    <aside class="sidebar" aria-label="فیلتر محصولات">
+      <div class="sidebar-head">
+        <span class="sidebar-title">فیلتر</span>
+        <a class="sidebar-clear" href="#">پاک‌کردن همه</a>
+      </div>
+
+      <!-- ★ locked axis group — the page's intrinsic filter shown as scope -->
+      <div class="filter-group locked">
+        <div class="filter-label">
+          تعداد درب
+          <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="10" rx="1.5"/>
+            <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+          </svg>
+        </div>
+        <div class="chip-row">
+          <button class="chip locked" disabled aria-disabled="true">دو</button>
+        </div>
+        <p class="locked-note">این محور توسط صفحه قفل شده. برای تغییر، از <a href="/bedroom-furniture/storage/wardrobe" style="color: var(--color-forest); text-decoration: underline; text-underline-offset: 2px;">پیکربندی دیگری</a> استفاده کنید.</p>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">طرح</div>
+        <div class="chip-row">
+          <button class="chip">گندم</button>
+          <button class="chip">باروت</button>
+          <button class="chip">الیزابت</button>
+          <button class="chip">لوتوس</button>
+          <button class="chip">سنتو</button>
+          <button class="chip">کارولین</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">روکش</div>
+        <div class="chip-row">
+          <button class="chip">گردو</button>
+          <button class="chip">راش</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-label">قیمت</div>
+        <div class="chip-row">
+          <button class="chip">زیر ۶۰م</button>
+          <button class="chip">۶۰–۸۰م</button>
+          <button class="chip">۸۰–۱۰۰م</button>
+          <button class="chip">۱۰۰م+</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- footer placeholder -->
+<footer class="footer">© ۱۴۰۵ ژیک — مبلمان دست‌ساز چوب</footer>
+
+<script>
+  // come-up fade-in
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      document.querySelectorAll('.fadeup').forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.fadeup').forEach(el => io.observe(el));
+  })();
+</script>
+</body>
+</html>
