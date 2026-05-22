@@ -248,6 +248,22 @@ export type PieceTypeValue =
 /** @deprecated Use PieceTypeValue */
 export type ProductPieceType = PieceTypeValue;
 
+export type PayloadProductVariantAxis = { key: string; value: string };
+
+export type PayloadProductVariant = {
+  id: string | number;
+  product: string | number | PayloadProduct;
+  sku: string;
+  label?: string | null;
+  axes: PayloadProductVariantAxis[];
+  priceDeltaRials?: number | null;
+  availability?: 'in_stock' | 'made_to_order' | 'backorder' | 'discontinued' | null;
+  image?: PayloadMedia | null;
+  displayOrder?: number | null;
+  updatedAt?: string;
+  createdAt?: string;
+};
+
 export type PayloadProduct = {
   id: string | number;
   name: string;
@@ -272,6 +288,7 @@ export type PayloadProduct = {
   featuredOrder?: number | null;
   relatedProductIds?: PayloadProduct[] | null;
   pairsWithProductIds?: PayloadProduct[] | null;
+  variants?: PayloadProductVariant[] | null;
   specs?: LexicalRoot | null;
   createdAt?: string | null;
   status?: 'draft' | 'published' | null;
@@ -815,11 +832,31 @@ export async function fetchProduct(
     depth: '3',
     limit: '1',
   });
-  const res = await payloadFetch<PayloadList<PayloadProduct>>(
+  // Variants live in a separate collection; Payload 3 doesn't auto-populate
+  // reverse-relations even at depth=3. We do a second fetch and merge.
+  const result = await payloadFetch<PayloadPage<PayloadProduct>>(
     `/api/products?${params.toString()}`,
     'products',
   );
-  return res?.docs[0] ?? null;
+  const product = result?.docs[0] ?? null;
+  if (!product) return null;
+
+  // Fetch variants for this product. Sorted by displayOrder ASC, then
+  // createdAt ASC for tie-breaks. depth=2 inflates the optional `image`
+  // upload field to a PayloadMedia object.
+  const variantParams = new URLSearchParams({
+    'where[product][equals]': String(product.id),
+    sort: 'displayOrder,createdAt',
+    depth: '2',
+    limit: '50',
+  });
+  const variantList = await payloadFetch<PayloadList<PayloadProductVariant>>(
+    `/api/product-variants?${variantParams.toString()}`,
+    'product-variants',
+  );
+  product.variants = variantList?.docs ?? [];
+
+  return product;
 }
 
 export async function fetchDesign(
