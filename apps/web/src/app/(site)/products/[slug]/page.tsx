@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Container, Breadcrumbs } from '@zhic/ui';
+import { Container } from '@zhic/ui';
 import { StickyBreadcrumb } from '@/components/layout/StickyBreadcrumb';
 import { CinematicHero } from '@/components/hero/CinematicHero';
 import { ProductThumbnails } from '@/components/product/ProductThumbnails';
@@ -10,12 +10,15 @@ import { Tile } from '@/components/tile/Tile';
 import { RichText } from '@/lib/richtext';
 import { fetchProduct, productPath } from '@/lib/payload';
 import { buildMetadata } from '@/lib/seo';
+import { VariantSelectionProvider } from '@/components/product/VariantSelectionContext';
+import { HeroImage } from '@/components/product/HeroImage';
+import { PickerBar } from '@/components/product/PickerBar';
+import { sortVariants } from '@/lib/variant-helpers';
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug: rawSlug } = await params;
-  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
   const slug = decodeURIComponent(rawSlug);
   const product = await fetchProduct(slug);
   return buildMetadata({
@@ -28,7 +31,6 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug: rawSlug } = await params;
-  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
   const slug = decodeURIComponent(rawSlug);
   const product = await fetchProduct(slug);
   if (!product) notFound();
@@ -40,8 +42,15 @@ export default async function ProductPage({ params }: PageProps) {
   ];
 
   const gallery = product.gallery ?? [];
-  const cover = gallery[0] ?? null;
+  const variants = sortVariants(product.variants ?? []);
+  const firstVariant = variants[0] ?? null;
+  const category = typeof product.categoryIds?.[0] === 'object' ? product.categoryIds[0] : null;
+  const allowedAxes = category?.allowed_axes ?? [];
 
+  // Specs are computed from product fields. The "ابعاد" row is left as
+  // product-level; the picker handles the size axis. (If we want
+  // selected-variant-aware dimensions on the spec row, we'd need a client
+  // wrapper around the accordion — deferred to a follow-up.)
   const specs: { label: string; content: React.ReactNode }[] = [];
 
   if (product.dimensions) {
@@ -53,60 +62,37 @@ export default async function ProductPage({ params }: PageProps) {
       specs.push({ label: 'ابعاد', content: <span dir="ltr">{parts.join(' · ')}</span> });
     }
   }
-
   if (product.materialIds?.length) {
-    specs.push({
-      label: 'متریال',
-      content: product.materialIds.map((m) => m.name).join(' · '),
-    });
+    specs.push({ label: 'متریال', content: product.materialIds.map((m) => m.name).join(' · ') });
   }
-
   if (product.specs) {
     specs.push({ label: 'مشخصات فنی', content: <RichText value={product.specs} /> });
   }
 
   return (
-    <>
+    <VariantSelectionProvider variants={variants} initialVariant={firstVariant}>
       <StickyBreadcrumb items={crumbs} />
 
-      <CinematicHero
-        image={
-          cover ? (
-            <PayloadImage
-              media={cover}
-              alt={product.name}
-              loading="eager"
-              fetchPriority="high"
-            />
-          ) : undefined
-        }
-      />
+      <CinematicHero image={<HeroImage product={product} />} />
 
       <Container>
-        <div className="grid grid-cols-1 gap-[var(--space-8)] pb-9 lg:grid-cols-[1fr_380px]">
-          {/* Content column */}
+        <div className="grid grid-cols-1 gap-[var(--space-8)] pb-9 lg:grid-cols-[1fr_320px]">
           <div>
             {gallery.length > 1 ? (
               <div className="mb-7">
                 <ProductThumbnails images={gallery} activeIndex={0} />
               </div>
             ) : null}
-
             <h1 className="mb-4 text-h2 font-black text-ink">{product.name}</h1>
-            {product.tagline ? (
-              <p className="mb-6 text-lead font-light text-stone">{product.tagline}</p>
-            ) : null}
+            {product.tagline ? <p className="mb-6 text-lead font-light text-stone">{product.tagline}</p> : null}
             {product.shortDescription ? (
-              <p className="mb-7 max-w-[560px] text-body leading-[1.85] text-charcoal">
-                {product.shortDescription}
-              </p>
+              <p className="mb-7 max-w-[560px] text-body leading-[1.85] text-charcoal">{product.shortDescription}</p>
             ) : null}
             {product.longDescription ? (
               <div className="mb-7 max-w-[560px] text-body leading-[1.85] text-charcoal">
                 <RichText value={product.longDescription} />
               </div>
             ) : null}
-
             {specs.length > 0 ? (
               <div className="mt-7 border-t border-sand pt-6">
                 <h2 className="mb-5 text-h4 font-bold text-charcoal">مشخصات</h2>
@@ -114,8 +100,6 @@ export default async function ProductPage({ params }: PageProps) {
               </div>
             ) : null}
           </div>
-
-          {/* Sidebar column */}
           <aside>
             <ProductSidebar product={product} />
           </aside>
@@ -130,13 +114,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <Tile
                   key={String(rp.id)}
                   href={productPath(rp.slug)}
-                  image={
-                    <PayloadImage
-                      media={rp.gallery?.[0] ?? null}
-                      alt={rp.name}
-                      fallbackText="تصویر"
-                    />
-                  }
+                  image={<PayloadImage media={rp.gallery?.[0] ?? null} alt={rp.name} fallbackText="تصویر" />}
                   aspect="4/5"
                   title={rp.name}
                   price={rp.basePriceRials ?? undefined}
@@ -148,7 +126,9 @@ export default async function ProductPage({ params }: PageProps) {
         ) : null}
       </Container>
 
-      <div className="pb-12" />
-    </>
+      <div className="pb-[calc(var(--picker-h,76px)+24px)]" />
+
+      <PickerBar product={product} variants={variants} allowedAxes={allowedAxes} />
+    </VariantSelectionProvider>
   );
 }
