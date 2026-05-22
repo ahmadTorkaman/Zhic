@@ -281,6 +281,7 @@ export type PayloadProduct = {
   salePriceRials?: number | null;
   availability?: ProductAvailability | null;
   leadTimeDays?: number | null;
+  warrantyYears?: number | null;
   dimensions?: { width?: number; height?: number; depth?: number } | null;
   gallery?: PayloadMedia[] | null;
   inquiry_enabled?: boolean | null;
