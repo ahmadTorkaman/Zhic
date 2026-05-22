@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     designs: Design;
     products: Product;
+    'product-variants': ProductVariant;
     showrooms: Showroom;
     articles: Article;
     authors: Author;
@@ -90,6 +91,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     designs: DesignsSelect<false> | DesignsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    'product-variants': ProductVariantsSelect<false> | ProductVariantsSelect<true>;
     showrooms: ShowroomsSelect<false> | ShowroomsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
@@ -375,6 +377,29 @@ export interface Product {
      */
     noindex?: boolean | null;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-variants".
+ */
+export interface ProductVariant {
+  id: number;
+  product: number | Product;
+  sku: string;
+  label?: string | null;
+  axes?:
+    | {
+        key: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  priceDeltaRials?: number | null;
+  availability?: ('in_stock' | 'made_to_order' | 'backorder' | 'discontinued') | null;
+  image?: (number | null) | Media;
+  displayOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1065,6 +1090,28 @@ export interface ProductsSelect<T extends boolean = true> {
         canonicalUrl?: T;
         noindex?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-variants_select".
+ */
+export interface ProductVariantsSelect<T extends boolean = true> {
+  product?: T;
+  sku?: T;
+  label?: T;
+  axes?:
+    | T
+    | {
+        key?: T;
+        value?: T;
+        id?: T;
+      };
+  priceDeltaRials?: T;
+  availability?: T;
+  image?: T;
+  displayOrder?: T;
   updatedAt?: T;
   createdAt?: T;
 }
