@@ -84,18 +84,37 @@ export function resolveVariant(
 }
 
 /**
- * Build the picker's axis groups. Order follows `allowedAxes` first
- * (the canonical order from the category), then appends any axis keys
- * the variants ACTUALLY use that aren't in allowedAxes — handles two
- * common drift cases:
+ * Build the picker's axis groups. Returns only axes that present a real
+ * CHOICE — i.e., have two or more distinct values. Order follows
+ * `allowedAxes` first (the canonical order from the category), then
+ * appends any axis keys the variants ACTUALLY use that aren't in
+ * allowedAxes.
  *
- *  (a) Variant has an axis (e.g. `finish` derived by the D4 heuristic)
- *      that the category's allowed_axes didn't list. Show it anyway —
- *      the variant exists, the user should be able to choose it.
+ * Why filter to ≥2 values:
  *
+ *  - 166 of 285 catalog products have 0 variants (single-SKU). Picker
+ *    is hidden entirely for these — no axisOptions[] entries at all.
+ *
+ *  - 56 catalog products have exactly 1 variant with one or more axes
+ *    (e.g., `baloot-vanity` with axes=[{drawers:4}]). The product IS
+ *    that single configuration — there's no choice to make. Rendering
+ *    an "اندازه: ۱۴۰" chip with no siblings looks like a broken picker.
+ *
+ *  - For multi-variant products, an axis where every variant shares the
+ *    same value (e.g., all 3 variants are finish:cream) is similarly
+ *    not a choice — surface it in the spec accordion if needed, not
+ *    here.
+ *
+ * Net result: the picker bar only shows axis groups the user can
+ * actually interact with. Single-fixed-configuration products show a
+ * picker bar with just price + CTA (still useful chrome).
+ *
+ * Tolerates drift cases:
+ *  (a) Variant has an axis (e.g. `finish` derived by D4) that the
+ *      category's allowed_axes didn't list. Show it anyway IF ≥2
+ *      values across variants.
  *  (b) allowedAxes lists an axis (e.g. `footboard`) but no variant
- *      provides a value for it. Drop the empty group rather than render
- *      a label with no chips.
+ *      provides a value for it. Drop the empty group.
  *
  * Values per axis are deduped and preserve first-seen order.
  */
@@ -120,7 +139,7 @@ export function deriveAxisOptions(
         ),
       ),
     }))
-    .filter((group) => group.values.length > 0);
+    .filter((group) => group.values.length >= 2);
 }
 
 function dedupe<T>(arr: T[]): T[] {

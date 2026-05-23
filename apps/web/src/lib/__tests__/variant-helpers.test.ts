@@ -43,8 +43,12 @@ describe('deriveAxisOptions', () => {
     // axes variants actually have. This tolerates real-world data drift
     // (D4 finish heuristic adding `finish` to variants whose category's
     // allowed_axes didn't list it).
+    //
+    // NB: requires ≥2 distinct values per axis to pass the picker filter,
+    // so this test uses 2 variants with different values per axis.
     const variants: PayloadProductVariant[] = [
       { id: 1, product: 10, sku: 'X', axes: [{ key: 'size', value: '120' }, { key: 'mystery', value: 'foo' }], displayOrder: 0 },
+      { id: 2, product: 10, sku: 'Y', axes: [{ key: 'size', value: '140' }, { key: 'mystery', value: 'bar' }], displayOrder: 1 },
     ];
     const out = deriveAxisOptions(variants, ['size']);
     expect(out.map((a) => a.key)).toEqual(['size', 'mystery']);
@@ -63,6 +67,19 @@ describe('deriveAxisOptions', () => {
     ];
     const out = deriveAxisOptions(variants, ['size', 'footboard']);
     expect(out.map((a) => a.key)).toEqual(['size']);
+  });
+  it('drops axis groups with only one value (single-choice — not a real picker)', () => {
+    // Catalog reality: 56 of 285 products have exactly 1 variant. Each
+    // axis on that single variant shows up with one value. Without this
+    // filter the picker renders "اندازه: ۱۴۰" with no siblings — looks
+    // like a broken UI. Filtering ≥2 means the picker only renders axes
+    // where the user actually has a choice to make.
+    const variants: PayloadProductVariant[] = [
+      { id: 1, product: 10, sku: 'X', axes: [{ key: 'size', value: '140' }, { key: 'finish', value: 'cream' }], displayOrder: 0 },
+      { id: 2, product: 10, sku: 'Y', axes: [{ key: 'size', value: '160' }, { key: 'finish', value: 'cream' }], displayOrder: 1 },
+    ];
+    const out = deriveAxisOptions(variants, ['size', 'finish']);
+    expect(out.map((a) => a.key)).toEqual(['size']); // finish has only 'cream' across both variants
   });
 });
 
