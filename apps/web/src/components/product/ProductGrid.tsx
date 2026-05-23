@@ -29,6 +29,11 @@ export function ProductGrid({ products }: ProductGridProps) {
                 media={p.gallery?.[0] ?? null}
                 alt={p.name}
                 fallbackText="تصویر به‌زودی"
+                // Borderless WebP product silhouettes go edge-to-edge in the
+                // source file. `object-contain` keeps the whole shape visible
+                // (no cropping); p-6 pulls the visible area in ~24px so the
+                // cream card background reads as a frame around the product.
+                className="h-full w-full object-contain p-6"
               />
             }
             aspect="4/5"

@@ -67,9 +67,9 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
               <Link
                 href="/"
                 aria-label="ژیک — صفحه‌ی اصلی"
-                className="hidden transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:inline-flex"
+                className="hidden h-full items-center transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:inline-flex"
               >
-                <img src="/zhic-logo.svg" alt="ژیک" className="h-7 w-auto" />
+                <img src="/zhic-logo.svg" alt="ژیک" className="block h-5 w-auto" />
               </Link>
             </div>
 
@@ -80,9 +80,9 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
               <Link
                 href="/"
                 aria-label="ژیک — صفحه‌ی اصلی"
-                className="inline-flex transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:hidden"
+                className="inline-flex h-full items-center transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:hidden"
               >
-                <img src="/zhic-logo.svg" alt="ژیک" className="h-6 w-auto" />
+                <img src="/zhic-logo.svg" alt="ژیک" className="block h-[18px] w-auto" />
               </Link>
               {/* Desktop nav */}
               <nav aria-label="اصلی" className="hidden items-center gap-7 text-small text-stone md:flex">
