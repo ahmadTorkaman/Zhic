@@ -1014,14 +1014,17 @@ async function fetchNavCategories(): Promise<PayloadCategory[]> {
 }
 
 async function fetchNavDesigns(): Promise<PayloadDesign[]> {
-  // Show all designs in the mega-menu's طرح‌ها panel (sorted alphabetically).
-  // The `featured` flag on designs is a soft hint for other surfaces but no
-  // longer gates inclusion here — operator feedback was that filtering hid
-  // the bulk of the catalog when only a couple of designs are flagged.
-  // depth=2 ensures heroMedia / sliderMedia / gallery docs are inflated with a
-  // `url` field so SetsMegaMenu can display cover images for each tile.
+  // Show designs in the mega-menu's طرح‌ها panel — same filter as the
+  // /bedroom-set carousel: only designs that have a slider image ready.
+  // Operator-requested 2026-05-23: hide the 13 designs without sliderMedia
+  // from this surface too, so the SetsMegaMenu doesn't expose them in the
+  // header dropdown. They'll surface automatically when a slider image
+  // is uploaded (or `--bedroom-set-media --apply` linker is re-run).
+  //
+  // depth=2 ensures heroMedia / sliderMedia / gallery docs are inflated
+  // with a `url` field so SetsMegaMenu can display cover images per tile.
   const res = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?limit=30&sort=name&depth=2',
+    '/api/designs?limit=30&sort=name&depth=2&where[sliderMedia][exists]=true',
     'nav-designs',
   );
   if (!res) console.error('[fetchNavMeta] nav-designs: payloadFetch returned null');
