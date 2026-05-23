@@ -34,7 +34,10 @@ import pg from 'pg'
 import xlsx from 'xlsx'
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
+
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url))
 
 // ───────────────────────── Constants ─────────────────────────
 
@@ -150,13 +153,13 @@ const APPLY = args.apply
 // ───────────────────────── DB connection ─────────────────────────
 
 function readDatabaseUri(): string {
-  const envPath = path.resolve(import.meta.dirname, '..', '.env')
+  const envPath = path.resolve(SCRIPT_DIR, '..', '.env')
   const content = fs.readFileSync(envPath, 'utf8')
   for (const line of content.split('\n')) {
     const m = line.match(/^DATABASE_URI=(.+)$/)
     if (m) return m[1]!.trim().replace(/^["']|["']$/g, '')
   }
-  throw new Error('DATABASE_URI not found in services/api/.env')
+  throw new Error(`DATABASE_URI not found in ${envPath}`)
 }
 
 // ───────────────────────── Helpers ─────────────────────────
@@ -587,6 +590,157 @@ async function runInventory(client: pg.Client) {
   console.log(`${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── WIPE PHASE ─────────────────────────
+
+/**
+ * Re-derive the media wipe targets at wipe time (DB may have shifted since
+ * inventory ran). "Product-only refs" = media whose ONLY refs are to
+ * products/products_rels/product_variants. Per operator decision:
+ *   - Delete demo products / variants / designs / categories (full wipe).
+ *   - Delete ONLY product-referenced media. Do NOT touch orphans or media
+ *     referenced from designs/showrooms/home/journal/etc.
+ */
+async function getMediaWipeIds(client: pg.Client): Promise<number[]> {
+  const all = await client.query<{ id: number }>('SELECT id FROM media')
+  if (all.rows.length === 0) return []
+
+  const refsPerMedia = new Map<number, Set<string>>()
+  for (const r of all.rows) refsPerMedia.set(r.id, new Set())
+
+  // Walk all known media-referencing places. Each tag tells us which
+  // collection refs that media. "Product-only" if every tag is products|
+  // product-variants.
+  type Ref = { mediaCol: string; refTag: string; sql: string }
+  const checks: Ref[] = [
+    { mediaCol: 'hero_media_id', refTag: 'designs', sql: 'SELECT hero_media_id AS media_id FROM designs WHERE hero_media_id IS NOT NULL' },
+    { mediaCol: 'slider_media_id', refTag: 'designs', sql: 'SELECT slider_media_id AS media_id FROM designs WHERE slider_media_id IS NOT NULL' },
+    { mediaCol: 'cover_id', refTag: 'categories', sql: 'SELECT cover_id AS media_id FROM categories WHERE cover_id IS NOT NULL' },
+    { mediaCol: 'image_id', refTag: 'product-variants', sql: 'SELECT image_id AS media_id FROM product_variants WHERE image_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'designs', sql: 'SELECT media_id FROM designs_rels WHERE media_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'products', sql: 'SELECT media_id FROM products_rels WHERE media_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'articles', sql: 'SELECT media_id FROM articles_rels WHERE media_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'showrooms', sql: 'SELECT media_id FROM showrooms_rels WHERE media_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'home', sql: 'SELECT media_id FROM home_rels WHERE media_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'collections', sql: 'SELECT media_id FROM collections_rels WHERE media_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'materials', sql: 'SELECT media_id FROM materials_rels WHERE media_id IS NOT NULL' },
+    { mediaCol: 'media_id', refTag: 'home', sql: 'SELECT media_id FROM home_hero_slides WHERE media_id IS NOT NULL' },
+  ]
+  for (const c of checks) {
+    try {
+      const r = await client.query<{ media_id: number }>(c.sql)
+      for (const row of r.rows) refsPerMedia.get(row.media_id)?.add(c.refTag)
+    } catch {
+      // table may not exist on this DB; skip silently
+    }
+  }
+
+  // "Wipe" = at least one product/variant ref AND no non-product refs.
+  // Orphans (empty refs) stay (operator instruction).
+  const wipeIds: number[] = []
+  for (const [id, refs] of refsPerMedia.entries()) {
+    if (refs.size === 0) continue // orphan → keep
+    const hasNonProduct = [...refs].some(
+      (r) => r !== 'products' && r !== 'product-variants',
+    )
+    if (!hasNonProduct) wipeIds.push(id)
+  }
+  return wipeIds
+}
+
+async function runWipe(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`💣 WIPE — Phase 6.2 ${APPLY ? '✍️  APPLY MODE (destructive)' : '🔍 DRY-RUN (no writes)'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  // Snapshot counts before
+  const before = await client.query<{ c: string; n: number }>(`
+    SELECT 'products' AS c, count(*)::int AS n FROM products
+    UNION ALL SELECT 'product_variants', count(*)::int FROM product_variants
+    UNION ALL SELECT 'designs', count(*)::int FROM designs
+    UNION ALL SELECT 'categories', count(*)::int FROM categories
+    UNION ALL SELECT 'media', count(*)::int FROM media
+  `)
+  console.log(`Before:`)
+  for (const r of before.rows) console.log(`  ${r.c.padEnd(20)} ${r.n}`)
+
+  const mediaWipeIds = await getMediaWipeIds(client)
+  console.log(`\nProduct-only-referenced media IDs to wipe: ${mediaWipeIds.length}`)
+  if (mediaWipeIds.length > 0 && mediaWipeIds.length <= 30) {
+    console.log(`  ${mediaWipeIds.join(', ')}`)
+  }
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN. Pass --apply to execute. No writes performed.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`💥 EXECUTING WIPE IN TRANSACTION`)
+  console.log(`${'─'.repeat(70)}`)
+
+  await client.query('BEGIN')
+  try {
+    // CASCADE deletes propagate through *_rels and child tables (allowed_axes,
+    // occupancies, variants_axes, payload_locked_documents_rels). We hit the
+    // parent tables in order; PG resolves FKs at statement boundary.
+
+    // 1. ProductVariants first (depends on products via FK CASCADE, but cleaner
+    //    to drop them explicitly since the table also has product_variants_axes
+    //    child rows).
+    const variants = await client.query(`DELETE FROM product_variants RETURNING id`)
+    console.log(`  ✓ Deleted ${variants.rowCount} product_variants (+ axes via CASCADE)`)
+
+    // 2. Products. CASCADE deletes products_rels (gallery refs + categoryIds rels).
+    const products = await client.query(`DELETE FROM products RETURNING id`)
+    console.log(`  ✓ Deleted ${products.rowCount} products (+ rels via CASCADE)`)
+
+    // 3. Designs. CASCADE deletes designs_rels (gallery + storyBlocks media)
+    //    + designs_occupancies (Phase 1 child table).
+    const designs = await client.query(`DELETE FROM designs RETURNING id`)
+    console.log(`  ✓ Deleted ${designs.rowCount} designs (+ rels + occupancies via CASCADE)`)
+
+    // 4. Categories. Self-referential parent FK uses SET NULL by default in
+    //    Payload; deleting in any order works. CASCADE on categories_allowed_axes.
+    const categories = await client.query(`DELETE FROM categories RETURNING id`)
+    console.log(`  ✓ Deleted ${categories.rowCount} categories (+ allowed_axes via CASCADE)`)
+
+    // 5. Product-only-referenced media. Use the IDs captured BEFORE the
+    //    product/variant deletes — after those CASCADEs, the refs are gone
+    //    and the media looks like a plain orphan, which we don't touch.
+    if (mediaWipeIds.length > 0) {
+      const r = await client.query(
+        `DELETE FROM media WHERE id = ANY($1::int[]) RETURNING id`,
+        [mediaWipeIds],
+      )
+      console.log(`  ✓ Deleted ${r.rowCount} product-only-referenced media records`)
+    } else {
+      console.log(`  ✓ No product-only-referenced media to wipe`)
+    }
+
+    await client.query('COMMIT')
+  } catch (e: any) {
+    await client.query('ROLLBACK')
+    console.error(`\n✗ Transaction aborted: ${e.message || e}\n`)
+    throw e
+  }
+
+  // Snapshot counts after
+  const after = await client.query<{ c: string; n: number }>(`
+    SELECT 'products' AS c, count(*)::int AS n FROM products
+    UNION ALL SELECT 'product_variants', count(*)::int FROM product_variants
+    UNION ALL SELECT 'designs', count(*)::int FROM designs
+    UNION ALL SELECT 'categories', count(*)::int FROM categories
+    UNION ALL SELECT 'media', count(*)::int FROM media
+  `)
+  console.log(`\nAfter:`)
+  for (const r of after.rows) console.log(`  ${r.c.padEnd(20)} ${r.n}`)
+
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`✓ Wipe complete. DB ready for fresh import in Phase 6.3+.`)
+  console.log(`${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -596,9 +750,11 @@ await client.connect()
 try {
   if (PHASE === 'inventory') {
     await runInventory(client)
+  } else if (PHASE === 'wipe') {
+    await runWipe(client)
   } else {
-    console.error(`\n❌ Phase "${PHASE}" not yet implemented. Only --inventory is available right now.`)
-    console.error(`   Other phases land incrementally in 6.2 … 6.7.`)
+    console.error(`\n❌ Phase "${PHASE}" not yet implemented. Available: --inventory --wipe.`)
+    console.error(`   Other phases land incrementally in 6.3 … 6.7.`)
     process.exit(1)
   }
 } finally {
