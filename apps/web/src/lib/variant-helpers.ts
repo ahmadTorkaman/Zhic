@@ -4,18 +4,30 @@ import type { PayloadProductVariant } from './payload';
 type SelectedAxes = Record<string, string>;
 
 /**
- * Persian display labels for known axis keys. Unknown axes fall back to
- * the raw key. The xlsx-import (sub-project B) must keep its `key` values
- * aligned with this map.
+ * Persian display labels for known axis keys. Aligned with the xlsx-
+ * import (sub-project B) Persian-names phase: matches the strings that
+ * `import-catalog.mts --persian-names` writes to product_variants.label.
+ * Unknown axes fall back to the raw key.
+ *
+ * Note: `footboard` was previously mapped to "پاتختی" (= nightstand)
+ * which was a typo — corrected to "تاج" (= headboard / footboard). And
+ * `size` was previously "سایز" (loanword); promoted to "اندازه" to
+ * match the rest of the Persian copy.
  */
 const AXIS_LABEL: Record<string, string> = {
-  size: 'سایز',
-  footboard: 'پاتختی',
-  doors: 'درب‌ها',
-  drawers: 'کشوها',
+  bunk_configuration: 'پیکربندی',
+  conversion: 'تبدیل',
+  door_material: 'جنس درب',
+  doors: 'تعداد درب',
+  drawers: 'تعداد کشو',
+  finish: 'روکش',
+  footboard: 'تاج',
   glass: 'شیشه',
-  width: 'عرض',
+  headboard_style: 'سبک تاج',
   pieces: 'تعداد قطعه',
+  shape: 'شکل',
+  size: 'اندازه',
+  width: 'عرض',
 };
 
 /**
@@ -25,10 +37,33 @@ const AXIS_LABEL: Record<string, string> = {
  * via toPersianDigits().
  */
 const VALUE_LABEL: Record<string, string> = {
+  // bunk_configuration
+  'bunk_configuration:bunk_with_trundle': 'دوطبقه با کشوی پایینی',
+  'bunk_configuration:full_bunk': 'دوطبقه کامل',
+  'bunk_configuration:lower_bed': 'تخت پایینی',
+  // conversion
+  'conversion:sofa': 'نیمکت',
+  'conversion:teen': 'نوجوان',
+  // door_material
+  'door_material:glass': 'شیشه',
+  'door_material:mdf': 'ام‌دی‌اف',
+  // finish
+  'finish:cream': 'کرم',
+  'finish:gray': 'خاکستری',
+  'finish:green': 'سبز',
+  'finish:two-stage': 'دومرحله‌ای',
+  // footboard
   'footboard:high': 'بلند',
   'footboard:low': 'کوتاه',
+  // glass (legacy boolean axis, kept for compatibility)
   'glass:true': 'شیشه‌دار',
   'glass:false': 'بدون شیشه',
+  // headboard_style
+  'headboard_style:new': 'جدید',
+  'headboard_style:prime': 'پرایم',
+  // shape
+  'shape:oval': 'بیضی',
+  'shape:round': 'گرد',
 };
 
 /**
@@ -123,6 +158,10 @@ export function buildValueLabel(axisKey: string, value: string): string {
   // Numeric (or numeric-string) values: render Persian digits.
   if (/^-?\d+(\.\d+)?$/.test(value)) {
     return toPersianDigits(value);
+  }
+  // Width-with-unit (e.g. "2m") → "۲ متر".
+  if (axisKey === 'width' && /^\d+(\.\d+)?m$/.test(value)) {
+    return `${toPersianDigits(value.slice(0, -1))} متر`;
   }
   return VALUE_LABEL[`${axisKey}:${value}`] ?? value;
 }

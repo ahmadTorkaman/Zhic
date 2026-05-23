@@ -82,9 +82,13 @@ describe('variantPriceRials', () => {
 
 describe('buildAxisLabel', () => {
   it('returns the Persian label for known axes', () => {
-    expect(buildAxisLabel('size')).toBe('سایز');
-    expect(buildAxisLabel('footboard')).toBe('پاتختی');
-    expect(buildAxisLabel('doors')).toBe('درب‌ها');
+    // Updated 2026-05-23 to match the Persian-names import phase
+    // (services/api/scripts/import-catalog.mts AXIS_KEY_PERSIAN).
+    expect(buildAxisLabel('size')).toBe('اندازه');
+    expect(buildAxisLabel('footboard')).toBe('تاج');
+    expect(buildAxisLabel('doors')).toBe('تعداد درب');
+    expect(buildAxisLabel('finish')).toBe('روکش');
+    expect(buildAxisLabel('conversion')).toBe('تبدیل');
   });
   it('returns the raw key for unknown axes', () => {
     expect(buildAxisLabel('mystery')).toBe('mystery');
