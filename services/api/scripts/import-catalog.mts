@@ -129,6 +129,7 @@ const { values: args } = parseArgs({
     products: { type: 'boolean', default: false },
     variants: { type: 'boolean', default: false },
     'persian-names': { type: 'boolean', default: false },
+    'bedroom-set-media': { type: 'boolean', default: false },
     apply: { type: 'boolean', default: false },
   },
 })
@@ -149,7 +150,9 @@ const PHASE = args.inventory
               ? 'variants'
               : args['persian-names']
                 ? 'persian-names'
-                : null
+                : args['bedroom-set-media']
+                  ? 'bedroom-set-media'
+                  : null
 
 if (!PHASE) {
   console.error('Usage: tsx scripts/import-catalog.mts --<phase> [--apply]')
@@ -2003,6 +2006,158 @@ async function runPersianNames(client: pg.Client) {
   console.log(`${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── BEDROOM-SET MEDIA PHASE ─────────────────────────
+
+/**
+ * Link the per-series carousel images from /home/ahmad/imports/allProducts/
+ * to each design's `sliderMedia` field. These are the tiles the
+ * /bedroom-set index DesignsSlider renders. Filenames map to design
+ * slugs with minor aliasing (luka → lukaplus, mucha → mocha) and finish
+ * suffix stripping (elizabeth-cream → elizabeth).
+ *
+ * Idempotent: re-runs update existing media records by filename, and
+ * re-set design.slider_media_id. Files that don't match any design
+ * (e.g. monte.webp had no series) are logged as unmatched.
+ */
+const ALL_PRODUCTS_DIR = path.join(IMPORTS_ROOT, 'allProducts')
+const BEDROOM_SET_MEDIA_ALIASES: Record<string, string> = {
+  luka: 'lukaplus',
+  mucha: 'mocha',
+}
+
+function webpDimensions(filePath: string): { width: number; height: number } {
+  // Minimal WebP header parser — avoids the sharp dependency cost for a
+  // 13-file one-off. Returns {0,0} on unknown / unsupported chunks; the
+  // media record still inserts, just with width=height=0 (operator can
+  // re-derive via admin if needed).
+  const buf = fs.readFileSync(filePath, { encoding: null }).subarray(0, 64)
+  const chunk = buf.subarray(12, 16).toString('ascii')
+  if (chunk === 'VP8 ') {
+    const w = (buf[26]! | (buf[27]! << 8)) & 0x3fff
+    const h = (buf[28]! | (buf[29]! << 8)) & 0x3fff
+    return { width: w, height: h }
+  }
+  if (chunk === 'VP8L') {
+    const bits = buf[21]! | (buf[22]! << 8) | (buf[23]! << 16) | (buf[24]! << 24)
+    const w = (bits & 0x3fff) + 1
+    const h = ((bits >>> 14) & 0x3fff) + 1
+    return { width: w, height: h }
+  }
+  if (chunk === 'VP8X') {
+    const w = (buf[24]! | (buf[25]! << 8) | (buf[26]! << 16)) + 1
+    const h = (buf[27]! | (buf[28]! << 8) | (buf[29]! << 16)) + 1
+    return { width: w, height: h }
+  }
+  return { width: 0, height: 0 }
+}
+
+async function runBedroomSetMedia(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`🖼️  BEDROOM-SET CAROUSEL MEDIA — ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  if (!fs.existsSync(ALL_PRODUCTS_DIR)) {
+    console.error(`❌ ${ALL_PRODUCTS_DIR} not found. Provision the allProducts folder first.`)
+    process.exit(1)
+  }
+
+  const designsRes = await client.query<{ id: number; slug: string }>(`SELECT id, slug FROM designs`)
+  const designIdBySlug = new Map(designsRes.rows.map((d) => [d.slug, d.id]))
+
+  type Plan = { fname: string; slug: string; designId: number; safeFilename: string }
+  const plan: Plan[] = []
+  const unmatched: Array<{ fname: string; tried: string }> = []
+
+  for (const fname of fs.readdirSync(ALL_PRODUCTS_DIR).sort()) {
+    if (!fname.endsWith('.webp')) continue
+    let base = fname.slice(0, -'.webp'.length)
+    for (const suf of ['-cream', '-gray', '-green', '-2staged']) {
+      if (base.endsWith(suf)) {
+        base = base.slice(0, -suf.length)
+        break
+      }
+    }
+    const slug = BEDROOM_SET_MEDIA_ALIASES[base] ?? base
+    const designId = designIdBySlug.get(slug)
+    if (designId == null) {
+      unmatched.push({ fname, tried: slug })
+      continue
+    }
+    plan.push({ fname, slug, designId, safeFilename: `bedroom-set-${slug}.webp` })
+  }
+
+  console.log(`Manifest:`)
+  console.log(`  ${plan.length} files map to a design`)
+  console.log(`  ${unmatched.length} files have no matching design`)
+
+  if (!APPLY) {
+    console.log(`\nSample (first 6):`)
+    for (const p of plan.slice(0, 6)) {
+      console.log(`  ${p.fname.padEnd(24)} → design[${p.designId}] ${p.slug}`)
+    }
+    if (unmatched.length > 0) {
+      console.log(`\nUnmatched:`)
+      for (const u of unmatched) console.log(`  ${u.fname} (tried slug="${u.tried}")`)
+    }
+    console.log(`\n🔍 DRY-RUN. Pass --apply to write.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  if (!fs.existsSync(MEDIA_DIR)) fs.mkdirSync(MEDIA_DIR, { recursive: true })
+
+  let copied = 0
+  let updated = 0
+  let inserted = 0
+  for (const p of plan) {
+    const srcPath = path.join(ALL_PRODUCTS_DIR, p.fname)
+    const dstPath = path.join(MEDIA_DIR, p.safeFilename)
+    fs.copyFileSync(srcPath, dstPath)
+    copied++
+
+    const { width, height } = webpDimensions(dstPath)
+    const size = fs.statSync(dstPath).size
+
+    // Upsert media row by filename
+    const found = await client.query<{ id: number }>(
+      `SELECT id FROM media WHERE filename = $1 LIMIT 1`,
+      [p.safeFilename],
+    )
+    let mediaId: number
+    if (found.rowCount && found.rows[0]) {
+      mediaId = found.rows[0].id
+      await client.query(
+        `UPDATE media SET filesize = $1, width = $2, height = $3, updated_at = NOW() WHERE id = $4`,
+        [size, width, height, mediaId],
+      )
+      updated++
+    } else {
+      const ins = await client.query<{ id: number }>(
+        `INSERT INTO media (filename, url, mime_type, filesize, width, height, focal_x, focal_y, created_at, updated_at)
+         VALUES ($1, $2, 'image/webp', $3, $4, $5, 50, 50, NOW(), NOW())
+         RETURNING id`,
+        [p.safeFilename, `/api/media/file/${p.safeFilename}`, size, width, height],
+      )
+      mediaId = ins.rows[0]!.id
+      inserted++
+    }
+
+    await client.query(
+      `UPDATE designs SET slider_media_id = $1, updated_at = NOW() WHERE id = $2`,
+      [mediaId, p.designId],
+    )
+  }
+
+  console.log(`\n  ✓ ${copied} files copied`)
+  console.log(`  ✓ ${inserted} media inserted, ${updated} updated`)
+  console.log(`  ✓ ${plan.length} designs linked to slider media`)
+  if (unmatched.length > 0) {
+    console.log(`\n  ⚠️  ${unmatched.length} unmatched files:`)
+    for (const u of unmatched) console.log(`     ${u.fname}`)
+  }
+  console.log(`\n${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -2026,6 +2181,8 @@ try {
     await runVariants(client)
   } else if (PHASE === 'persian-names') {
     await runPersianNames(client)
+  } else if (PHASE === 'bedroom-set-media') {
+    await runBedroomSetMedia(client)
   } else {
     console.error(`\n❌ Phase "${PHASE}" not yet implemented.`)
     process.exit(1)
