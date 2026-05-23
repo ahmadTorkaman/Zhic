@@ -741,6 +741,230 @@ async function runWipe(client: pg.Client) {
   console.log(`${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── CATEGORIES PHASE ─────────────────────────
+
+/** Hardcoded axis_filter for the 5 SEO-promoted facet sub-leaves
+ *  (per [[zhic-products-overhaul]] locked decision). */
+const FACET_AXIS_FILTERS: Record<string, { axis: string; value: string }> = {
+  'bed/baby/convertible': { axis: 'conversion', value: 'convertible' },
+  'storage/wardrobe/single-door': { axis: 'doors', value: '1' },
+  'storage/wardrobe/double-door': { axis: 'doors', value: '2' },
+  'storage/wardrobe/triple-door': { axis: 'doors', value: '3' },
+  'storage/wardrobe/sliding': { axis: 'doors', value: 'sliding' },
+}
+
+/** Hardcoded allowed_axes defaults per leaf. The operator can refine
+ *  via admin once products land — this is a starting point that lets
+ *  Phase 6.7 create variants with sensible validation. */
+const ALLOWED_AXES_DEFAULTS: Record<string, string[]> = {
+  // beds
+  'bed/baby': ['size', 'conversion'],
+  'bed/baby/convertible': ['size'],
+  'bed/single': ['size', 'footboard'],
+  'bed/double': ['size', 'footboard'],
+  'bed/bunk': ['bunk_configuration'],
+  // table
+  'table/vanity': ['width', 'finish', 'drawers'],
+  'table/study-desk': ['width', 'finish'],
+  // storage
+  'storage/bookcase': ['width', 'finish'],
+  'storage/file-cabinet': ['drawers', 'finish'],
+  'storage/wardrobe': ['doors', 'finish'],
+  'storage/wardrobe/single-door': ['finish'],
+  'storage/wardrobe/double-door': ['finish'],
+  'storage/wardrobe/triple-door': ['finish', 'glass'],
+  'storage/wardrobe/sliding': ['finish'],
+  // display
+  'display/display-cabinet': ['width', 'finish'],
+  'display/console': ['drawers', 'finish'],
+  // mirror
+  'mirror/standing-mirror': ['size', 'finish'],
+  'mirror/table-mirror': ['size'],
+  'mirror/wall-mirror': ['size'],
+  // seating
+  'seating/vanity-chair': ['fabric', 'finish'],
+  'seating/study-chair': ['fabric', 'finish'],
+  'seating/loveseat': ['fabric'],
+  // complement
+  'complement/bed-box': ['size'],
+  'complement/bed-guard': ['size'],
+  'complement/bed-jack': ['size'],
+  'complement/changing-table': ['finish'],
+  'complement/changing-top': ['finish'],
+  'complement/wall-shelf': ['width', 'finish'],
+  // nightstand
+  'nightstand': ['drawers', 'finish'],
+}
+
+type CategorySeed = {
+  url: string
+  segments: string[]
+  slug: string
+  name: string
+  description: string | null
+  parentPath: string | null
+  depth: number
+  axisFilter: { axis: string; value: string } | null
+  allowedAxes: string[]
+}
+
+function parseCategoriesTree(): CategorySeed[] {
+  const rows = readCategoriesXlsx()
+  const seeds: CategorySeed[] = []
+  for (const row of rows) {
+    if (!row.categories_url) continue
+    const rawUrl = row.categories_url.trim().replace(/\/$/, '') // drop trailing slash
+    // Only /bedroom-furniture/* — skip the /bedroom-set/* rows
+    if (!rawUrl.startsWith('/bedroom-furniture')) continue
+    // Skip the root /bedroom-furniture itself (the page index, not a Category record)
+    if (rawUrl === '/bedroom-furniture') continue
+
+    const inside = rawUrl.replace(/^\/bedroom-furniture\//, '')
+    const segments = inside.split('/').filter(Boolean)
+    if (segments.length === 0) continue
+    const slug = segments[segments.length - 1]!
+    const parentPath = segments.length > 1 ? segments.slice(0, -1).join('/') : null
+    const persianName = row.farsi_name?.trim() ?? slug
+
+    seeds.push({
+      url: rawUrl,
+      segments,
+      slug,
+      name: persianName,
+      description: row.product_types?.trim() ?? null,
+      parentPath,
+      depth: segments.length,
+      axisFilter: FACET_AXIS_FILTERS[inside] ?? null,
+      allowedAxes: ALLOWED_AXES_DEFAULTS[inside] ?? [],
+    })
+  }
+  // Sort by depth ASC so parents are inserted before children.
+  seeds.sort((a, b) => a.depth - b.depth)
+  return seeds
+}
+
+async function runCategories(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`🌳 CATEGORIES — Phase 6.3 ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  const seeds = parseCategoriesTree()
+  console.log(`Parsed ${seeds.length} category nodes from xlsx (sorted by depth):`)
+  console.log(
+    `  depth-1: ${seeds.filter((s) => s.depth === 1).length} top-level parents`,
+  )
+  console.log(`  depth-2: ${seeds.filter((s) => s.depth === 2).length} leaves`)
+  console.log(`  depth-3: ${seeds.filter((s) => s.depth === 3).length} facet sub-leaves`)
+  console.log(`  facet (axis_filter set): ${seeds.filter((s) => s.axisFilter).length}`)
+  console.log(`  with allowed_axes:      ${seeds.filter((s) => s.allowedAxes.length > 0).length}`)
+
+  // Check we're starting from a clean slate
+  const existing = await client.query<{ id: number; slug: string }>(
+    `SELECT id, slug FROM categories`,
+  )
+  if (existing.rowCount && existing.rowCount > 0) {
+    console.log(
+      `\n⚠️  ${existing.rowCount} category records already exist. The seed inserts new — slug conflicts will throw.`,
+    )
+    console.log(`   Existing slugs: ${existing.rows.map((r) => r.slug).join(', ')}`)
+  }
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN — sample of what would be inserted:`)
+    for (const s of seeds.slice(0, 8)) {
+      console.log(
+        `  [${s.depth}] slug=${s.slug.padEnd(20)} parent=${(s.parentPath ?? '(none)').padEnd(20)} name=${s.name}` +
+        (s.axisFilter ? ` filter={${s.axisFilter.axis}:${s.axisFilter.value}}` : '') +
+        (s.allowedAxes.length ? ` axes=[${s.allowedAxes.join(',')}]` : ''),
+      )
+    }
+    if (seeds.length > 8) console.log(`  ... and ${seeds.length - 8} more`)
+    console.log(`\nPass --apply to insert. No writes performed.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`✍️  INSERTING IN TRANSACTION`)
+  console.log(`${'─'.repeat(70)}`)
+
+  await client.query('BEGIN')
+  try {
+    // Track slug → id for parent resolution.
+    const slugToId = new Map<string, number>()
+    // Also need to resolve by FULL PATH because we have wardrobe (a leaf-parent at storage/wardrobe)
+    // AND potentially other ambiguities. Use full-path lookup.
+    const pathToId = new Map<string, number>()
+
+    let inserted = 0
+    let withAxes = 0
+    let withFilter = 0
+
+    for (const s of seeds) {
+      const parentId = s.parentPath ? pathToId.get(s.parentPath) ?? null : null
+
+      // Insert the category row
+      const axisFilterJson = s.axisFilter ? JSON.stringify(s.axisFilter) : null
+      const r = await client.query<{ id: number }>(
+        `INSERT INTO categories (
+          name, slug, parent_id, axis_filter,
+          created_at, updated_at
+        ) VALUES ($1, $2, $3, $4::jsonb, NOW(), NOW())
+        RETURNING id`,
+        [s.name, s.slug, parentId, axisFilterJson],
+      )
+      const newId = r.rows[0]!.id
+      slugToId.set(s.slug, newId)
+      const fullPath = s.segments.join('/')
+      pathToId.set(fullPath, newId)
+
+      // Insert allowed_axes child rows if any
+      if (s.allowedAxes.length > 0) {
+        for (let i = 0; i < s.allowedAxes.length; i++) {
+          await client.query(
+            `INSERT INTO categories_allowed_axes ("_order", "_parent_id", id, value)
+             VALUES ($1, $2, $3, $4)`,
+            [i, newId, `${newId}-axis-${i}`, s.allowedAxes[i]],
+          )
+        }
+        withAxes++
+      }
+      if (s.axisFilter) withFilter++
+
+      inserted++
+    }
+
+    await client.query('COMMIT')
+    console.log(`  ✓ Inserted ${inserted} categories (${withAxes} with allowed_axes, ${withFilter} facet sub-leaves with axis_filter)`)
+  } catch (e: any) {
+    await client.query('ROLLBACK')
+    console.error(`\n✗ Transaction aborted: ${e.message || e}\n`)
+    throw e
+  }
+
+  // Verification queries
+  const counts = await client.query<{ depth: string; n: number }>(`
+    WITH RECURSIVE t AS (
+      SELECT id, slug, parent_id, 1 AS depth FROM categories WHERE parent_id IS NULL
+      UNION ALL
+      SELECT c.id, c.slug, c.parent_id, t.depth + 1 FROM categories c JOIN t ON c.parent_id = t.id
+    )
+    SELECT depth::text, count(*)::int as n FROM t GROUP BY depth ORDER BY depth
+  `)
+  console.log(`\nAfter (tree depths):`)
+  for (const r of counts.rows) console.log(`  depth ${r.depth}: ${r.n} categories`)
+
+  const facets = await client.query<{ slug: string; axis_filter: unknown }>(
+    `SELECT slug, axis_filter FROM categories WHERE axis_filter IS NOT NULL ORDER BY slug`,
+  )
+  console.log(`\nFacet sub-leaves (axis_filter set):`)
+  for (const r of facets.rows) console.log(`  ${r.slug.padEnd(20)} ${JSON.stringify(r.axis_filter)}`)
+
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`✓ Categories seeded. Phase 6.4 (--designs) lands next.`)
+  console.log(`${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -752,9 +976,11 @@ try {
     await runInventory(client)
   } else if (PHASE === 'wipe') {
     await runWipe(client)
+  } else if (PHASE === 'categories') {
+    await runCategories(client)
   } else {
-    console.error(`\n❌ Phase "${PHASE}" not yet implemented. Available: --inventory --wipe.`)
-    console.error(`   Other phases land incrementally in 6.3 … 6.7.`)
+    console.error(`\n❌ Phase "${PHASE}" not yet implemented. Available: --inventory --wipe --categories.`)
+    console.error(`   Other phases land incrementally in 6.4 … 6.7.`)
     process.exit(1)
   }
 } finally {
