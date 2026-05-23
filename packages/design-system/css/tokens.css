@@ -102,15 +102,15 @@
 
   /* Chrome
      Tracks the bottom edge of the fixed site header (used for pt offsets +
-     sticky tops below the header). Updated 2026-05-23: tightened header
-     padding (md:py-3 → md:py-2; top-3/py-2 → top-2/py-1.5 on mobile) so
-     both desktop bar AND mobile floating pill resolve to ~48px visual
-     reach. Token follows. Bump in lockstep with SiteHeader.tsx. */
-  --header-height: 3rem;
+     sticky tops below the header). Updated 2026-05-23: SiteHeader now
+     uses an explicit h-[60px] desktop / h-[44px] mobile (with top-2
+     offset → 52px visual reach on mobile). Token matches the desktop
+     bar exactly; mobile gets a small breathing buffer. */
+  --header-height: 3.75rem; /* 60px */
 }
 
 @media (max-width: 767px) {
   :root {
-    --header-height: 3rem; /* 48px — clears the floating pill on mobile (8px top + ~40px pill = 48px) */
+    --header-height: 3.25rem; /* 52px — 8px top offset + 44px pill = 52px visual reach */
   }
 }
