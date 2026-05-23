@@ -37,7 +37,7 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
   return (
     <>
       <header
-        className={`fixed top-3 inset-x-3 z-[var(--z-header)] rounded-full py-2 md:top-0 md:inset-x-0 md:rounded-none md:py-3 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${chromeClass}`}
+        className={`fixed top-2 inset-x-3 z-[var(--z-header)] rounded-full py-1.5 md:top-0 md:inset-x-0 md:rounded-none md:py-2 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${chromeClass}`}
       >
         <Container>
           {/*
