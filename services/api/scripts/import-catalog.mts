@@ -128,6 +128,7 @@ const { values: args } = parseArgs({
     media: { type: 'boolean', default: false },
     products: { type: 'boolean', default: false },
     variants: { type: 'boolean', default: false },
+    'persian-names': { type: 'boolean', default: false },
     apply: { type: 'boolean', default: false },
   },
 })
@@ -146,7 +147,9 @@ const PHASE = args.inventory
             ? 'products'
             : args.variants
               ? 'variants'
-              : null
+              : args['persian-names']
+                ? 'persian-names'
+                : null
 
 if (!PHASE) {
   console.error('Usage: tsx scripts/import-catalog.mts --<phase> [--apply]')
@@ -1690,6 +1693,142 @@ async function runVariants(client: pg.Client) {
   console.log(`${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── PERSIAN-NAMES PHASE ─────────────────────────
+
+/**
+ * Map xlsx piece-type slug → Persian product-name prefix.
+ * Curated for product naming (shorter / cleaner than the raw category
+ * name which can be a long descriptive phrase like
+ * "تخت نوزاد دومظوره (نوزاد نوجوان، کاناپه ای)").
+ */
+const PIECE_TYPE_PERSIAN: Record<string, string> = {
+  'baby-bed': 'تخت نوزاد',
+  'single-bed': 'تخت یک نفره',
+  'double-bed': 'تخت دونفره',
+  'bunk-bed': 'تخت دوطبقه',
+  'convertible-bed': 'تخت نوزاد دومنظوره',
+  'nightstand': 'پاتختی',
+  'vanity': 'میز آرایش',
+  'study-desk': 'میز تحریر',
+  'bookcase': 'کتابخانه',
+  'file': 'فایل',
+  'wardrobe': 'کمد',
+  'sliding-wardrobe': 'کمد ریلی',
+  'combined-wardrobe': 'کمد ترکیبی',
+  'display-cabinet': 'ویترین',
+  'console': 'کنسول',
+  'standing-mirror': 'آینه قدی',
+  'table-mirror': 'آینه رومیزی',
+  'wall-mirror': 'آینه دیواری',
+  'vanity-chair': 'صندلی میز آرایش',
+  'study-chair': 'صندلی میز تحریر',
+  'loveseat': 'لاوست',
+  'bed-box': 'باکس تخت',
+  'bed-guard': 'حفاظ تخت',
+  'bed-jack': 'جک کفی تخت',
+  'changing-table': 'میز تعویض',
+  'changing-top': 'صفحه تعویض',
+  'wall-shelf': 'شلف دیواری',
+}
+
+async function runPersianNames(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`🌐 PERSIAN-NAMES — ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  // Get all products joined with their design name. The xlsx piece-type
+  // is encoded in the product slug as `<design-slug>-<piece-type>`, so
+  // we strip the design slug off the front to recover it.
+  const rows = await client.query<{
+    id: number
+    slug: string
+    name: string
+    design_id: number
+    design_slug: string
+    design_name: string
+  }>(`
+    SELECT p.id, p.slug, p.name, p.design_id, d.slug AS design_slug, d.name AS design_name
+    FROM products p
+    JOIN designs d ON d.id = p.design_id
+    ORDER BY p.id
+  `)
+  console.log(`Loaded ${rows.rowCount} products with designs joined.`)
+
+  const updates: Array<{ id: number; oldName: string; newName: string }> = []
+  const skipped: Array<{ id: number; slug: string; reason: string }> = []
+
+  for (const r of rows.rows) {
+    const prefix = `${r.design_slug}-`
+    if (!r.slug.startsWith(prefix)) {
+      skipped.push({ id: r.id, slug: r.slug, reason: `slug doesn't start with ${prefix}` })
+      continue
+    }
+    const xlsxType = r.slug.slice(prefix.length)
+    const persianPiece = PIECE_TYPE_PERSIAN[xlsxType]
+    if (!persianPiece) {
+      skipped.push({ id: r.id, slug: r.slug, reason: `no Persian mapping for type '${xlsxType}'` })
+      continue
+    }
+    const newName = `${persianPiece} ${r.design_name}`
+    if (newName === r.name) continue // already set
+    updates.push({ id: r.id, oldName: r.name, newName })
+  }
+
+  console.log(`\n${updates.length} products to rename, ${skipped.length} skipped.`)
+  if (skipped.length > 0 && skipped.length <= 10) {
+    for (const s of skipped) {
+      console.log(`  skip ${s.slug}: ${s.reason}`)
+    }
+  }
+
+  if (updates.length > 0) {
+    console.log(`\nSample (first 8):`)
+    for (const u of updates.slice(0, 8)) {
+      console.log(`  ${u.oldName.padEnd(36)} → ${u.newName}`)
+    }
+  }
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN. Pass --apply to write.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`✍️  UPDATING ${updates.length} product names`)
+  console.log(`${'─'.repeat(70)}`)
+
+  let updated = 0
+  let errors = 0
+  for (const u of updates) {
+    try {
+      await client.query(`UPDATE products SET name = $1, updated_at = NOW() WHERE id = $2`, [
+        u.newName,
+        u.id,
+      ])
+      updated++
+    } catch (e: any) {
+      errors++
+      console.error(`  ✗ id=${u.id}: ${e.message || e}`)
+    }
+  }
+
+  console.log(`\n  ✓ ${updated} products renamed, ${errors} errors`)
+
+  // Verify sample
+  const sample = await client.query<{ slug: string; name: string }>(
+    `SELECT slug, name FROM products ORDER BY random() LIMIT 6`,
+  )
+  console.log(`\nRandom sample after update:`)
+  for (const r of sample.rows) {
+    console.log(`  ${r.slug.padEnd(36)} ${r.name}`)
+  }
+
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`✓ Persian names applied.`)
+  console.log(`${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -1711,6 +1850,8 @@ try {
     await runProducts(client)
   } else if (PHASE === 'variants') {
     await runVariants(client)
+  } else if (PHASE === 'persian-names') {
+    await runPersianNames(client)
   } else {
     console.error(`\n❌ Phase "${PHASE}" not yet implemented.`)
     process.exit(1)
