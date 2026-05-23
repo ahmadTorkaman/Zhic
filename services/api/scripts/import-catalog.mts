@@ -1613,71 +1613,101 @@ async function runVariants(client: pg.Client) {
 
       const attrs = parseAttributes(c.row.attributes)
 
-      // Derive finish from the row's media filename (D4 heuristic). Looks
-      // for -cream-/-gray-/-green- in the filename.
-      let finish: string | null = null
-      const mediaFile = c.row.media_files?.trim() ?? null
-      if (mediaFile) {
-        finish = finishFromMedia('', mediaFile)
+      // xlsx `media_files` is SEMICOLON-separated (not comma — found the
+      // hard way). e.g. "parla-double-bed-160-cream.webp; parla-double-
+      // bed-160-green.webp; parla-double-bed-160-v2-cream.webp; …" lists
+      // 4 files across 2 finishes. Split and group by detected finish so
+      // each finish becomes its own variant — that's the "color variant"
+      // axis the operator expects to see in the picker.
+      const mediaFiles = (c.row.media_files ?? '')
+        .split(/[;,]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+
+      const filesByFinish = new Map<string, string[]>()
+      for (const fname of mediaFiles) {
+        const f = finishFromMedia('', fname) ?? '_default'
+        if (!filesByFinish.has(f)) filesByFinish.set(f, [])
+        filesByFinish.get(f)!.push(fname)
+      }
+      const realFinishes = [...filesByFinish.keys()].filter((f) => f !== '_default')
+
+      // Build the variant set:
+      //  - no finishes detected → 1 variant with just xlsx attrs
+      //  - 1+ finishes detected → one variant per finish (with finish axis)
+      const subVariants: Array<{ axes: Record<string, string>; mediaFile: string | null }> = []
+      if (realFinishes.length === 0) {
+        subVariants.push({ axes: { ...attrs }, mediaFile: mediaFiles[0] ?? null })
+      } else {
+        for (const finish of realFinishes) {
+          subVariants.push({
+            axes: { ...attrs, finish },
+            mediaFile: filesByFinish.get(finish)?.[0] ?? null,
+          })
+        }
       }
 
-      const axes: Record<string, string> = { ...attrs }
-      if (finish) axes.finish = finish
+      let subIdx = 0
+      for (const sv of subVariants) {
+        // SKU — slug-like and unique per variant
+        const productSlug = `${c.row.series}-${c.row.type}`
+        const axesPart = Object.entries(sv.axes)
+          .map(([k, v]) => `${k}-${v}`)
+          .join('-')
+        const sku = axesPart ? `${productSlug}-${axesPart}` : `${productSlug}-${c.idx}-${subIdx}`
 
-      // SKU — slug-like and unique per variant.
-      const productSlug = `${c.row.series}-${c.row.type}`
-      const axesPart = Object.entries(axes)
-        .map(([k, v]) => `${k}-${v}`)
-        .join('-')
-      const sku = axesPart ? `${productSlug}-${axesPart}` : `${productSlug}-${c.idx}`
+        if (existingSkus.has(sku)) {
+          skipped++
+          subIdx++
+          continue
+        }
 
-      if (existingSkus.has(sku)) {
-        skipped++
-        continue
-      }
+        // Image lookup — uses the FIRST file for this finish (not the whole
+        // semicolon-separated string — the previous bug).
+        let imageId: number | null = null
+        if (sv.mediaFile) {
+          imageId = byOriginalFilename.get(sv.mediaFile) ?? mediaMap.byFilename[sv.mediaFile] ?? null
+        }
+        if (imageId != null) withImage++
 
-      // Image: look up by filename
-      let imageId: number | null = null
-      if (mediaFile) {
-        imageId = byOriginalFilename.get(mediaFile) ?? mediaMap.byFilename[mediaFile] ?? null
-      }
-      if (imageId != null) withImage++
+        // Label: keyed Persian summary. Real translation happens later in
+        // the --persian-names phase; this is the bootstrap form.
+        const label = Object.entries(sv.axes)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(' · ') || 'پیش‌فرض'
 
-      // Label: human-readable axes summary
-      const label = Object.entries(axes)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join(' · ') || 'پیش‌فرض'
-
-      const r = await client.query<{ id: number }>(
-        `INSERT INTO product_variants (
-          product_id, sku, label, price_delta_rials, availability,
-          image_id, display_order, created_at, updated_at
-        ) VALUES ($1, $2, $3, 0, $4, $5, $6, NOW(), NOW())
-        RETURNING id`,
-        [
-          productId, sku, label,
-          c.row.visible === 'yes' ? 'in_stock' : 'made_to_order',
-          imageId, c.idx,
-        ],
-      )
-      const variantId = r.rows[0]!.id
-      existingSkus.add(sku)
-
-      // Axes child rows (product_variants_axes has key + value)
-      let axisIdx = 0
-      for (const [k, v] of Object.entries(axes)) {
-        await client.query(
-          `INSERT INTO product_variants_axes ("_order", "_parent_id", id, key, value)
-           VALUES ($1, $2, $3, $4, $5)`,
-          [axisIdx, variantId, `${variantId}-axis-${axisIdx}`, k, String(v)],
+        const r = await client.query<{ id: number }>(
+          `INSERT INTO product_variants (
+            product_id, sku, label, price_delta_rials, availability,
+            image_id, display_order, created_at, updated_at
+          ) VALUES ($1, $2, $3, 0, $4, $5, $6, NOW(), NOW())
+          RETURNING id`,
+          [
+            productId, sku, label,
+            c.row.visible === 'yes' ? 'in_stock' : 'made_to_order',
+            imageId, c.idx * 10 + subIdx,
+          ],
         )
-        axisIdx++
-        axesRows++
-      }
+        const variantId = r.rows[0]!.id
+        existingSkus.add(sku)
 
-      created++
-      if (created % 100 === 0) {
-        console.log(`  … ${created} variants created, ${skipped} skipped, ${errors} errors`)
+        // Axes child rows
+        let axisIdx = 0
+        for (const [k, v] of Object.entries(sv.axes)) {
+          await client.query(
+            `INSERT INTO product_variants_axes ("_order", "_parent_id", id, key, value)
+             VALUES ($1, $2, $3, $4, $5)`,
+            [axisIdx, variantId, `${variantId}-axis-${axisIdx}`, k, String(v)],
+          )
+          axisIdx++
+          axesRows++
+        }
+
+        created++
+        if (created % 100 === 0) {
+          console.log(`  … ${created} variants created, ${skipped} skipped, ${errors} errors`)
+        }
+        subIdx++
       }
     } catch (e: any) {
       errors++

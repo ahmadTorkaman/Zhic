@@ -22,8 +22,13 @@ describe('resolveVariant', () => {
   it('returns null when no variant matches', () => {
     expect(resolveVariant(sample, { size: '999', footboard: 'high' })).toBeNull();
   });
-  it('returns null when selection has wrong axis count', () => {
-    expect(resolveVariant(sample, { size: '120' })).toBeNull();
+  it('partial selection returns the first variant matching the selected keys', () => {
+    // Updated 2026-05-23: relaxed from exact-count match to "every selected
+    // key matches" — handles real-world heterogeneous variant axis sets
+    // (e.g. parla-double-bed has size:140 with 1 axis + size:160+finish
+    // with 2 axes).
+    const out = resolveVariant(sample, { size: '120' });
+    expect(out?.sku).toBe('A-120-H'); // first variant matching size:120
   });
   it('returns the first match deterministically when duplicates exist', () => {
     const dup = [...sample, { id: 99, product: 10, sku: 'DUP', axes: [{ key: 'size', value: '120' }, { key: 'footboard', value: 'high' }], priceDeltaRials: 0, displayOrder: 99 }];

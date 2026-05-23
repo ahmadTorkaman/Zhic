@@ -67,18 +67,37 @@ const VALUE_LABEL: Record<string, string> = {
 };
 
 /**
- * Find the variant matching a complete axis selection. Returns null if
- * no variant matches OR if the selection has the wrong number of axes.
+ * Find the variant matching the selected axes. A variant matches if every
+ * KEY in `selectedAxes` is present on the variant with the same value.
+ *
+ * Why not exact-count match: the catalog's variant axis sets are
+ * heterogeneous within a product. e.g. parla-double-bed has variants
+ * size:140 (1 axis), size:160+finish:cream (2 axes), size:160+finish:green
+ * (2 axes), size:180 (1 axis). With the previous exact-count logic, picking
+ * size=160 from the picker yielded null (variant has 2 axes, selection has
+ * 1), so the hero never updated and the price stayed at the base.
+ *
+ * Trade-off: when multiple variants would match a partial selection (e.g.
+ * the user selected just size:160 and both finish:cream and finish:green
+ * are candidates), we return the first one in array order (the picker
+ * sorts by displayOrder before passing in, so this is deterministic).
+ * The picker's chip-active state is computed from `selectedAxes` directly,
+ * not from this function — so a single chip is highlighted in the size
+ * group, and the finish group separately shows both cream and green as
+ * pickable.
  */
 export function resolveVariant(
   variants: PayloadProductVariant[],
   selectedAxes: SelectedAxes,
 ): PayloadProductVariant | null {
   const targetKeys = Object.keys(selectedAxes);
+  if (targetKeys.length === 0) return null;
   return (
     variants.find((v) => {
-      if (v.axes.length !== targetKeys.length) return false;
-      return v.axes.every((a) => selectedAxes[a.key] === a.value);
+      return targetKeys.every((k) => {
+        const a = v.axes.find((a) => a.key === k);
+        return a !== undefined && a.value === selectedAxes[k];
+      });
     }) ?? null
   );
 }
