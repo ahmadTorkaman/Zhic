@@ -893,8 +893,16 @@ export async function fetchDesign(
 }
 
 export async function fetchAllDesigns(): Promise<PayloadDesign[]> {
+  // The /bedroom-set carousel only shows designs that have a slider image
+  // ready. Designs without sliderMedia (and without heroMedia or gallery
+  // fallback) would render as a generic SVG placeholder — operator wants
+  // them hidden from the carousel until real imagery is uploaded.
+  //
+  // The `sliderMedia` exists filter handles 13 of 26 designs currently
+  // without imagery. When the operator adds a sliderMedia image for one,
+  // it appears in the carousel automatically (5-min revalidate).
   const res = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?limit=100&sort=name&depth=2',
+    '/api/designs?limit=100&sort=name&depth=2&where[sliderMedia][exists]=true',
     'designs',
   );
   return res?.docs ?? [];
