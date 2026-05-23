@@ -1731,6 +1731,65 @@ const PIECE_TYPE_PERSIAN: Record<string, string> = {
   'wall-shelf': 'شلف دیواری',
 }
 
+// ── Variant axis key/value Persian map (used by --persian-names) ──
+
+const AXIS_KEY_PERSIAN: Record<string, string> = {
+  bunk_configuration: 'پیکربندی',
+  conversion: 'تبدیل',
+  door_material: 'جنس درب',
+  doors: 'تعداد درب',
+  drawers: 'تعداد کشو',
+  finish: 'روکش',
+  footboard: 'تاج',
+  headboard_style: 'سبک تاج',
+  pieces: 'تعداد قطعه',
+  shape: 'شکل',
+  size: 'اندازه',
+  width: 'عرض',
+}
+
+const AXIS_VALUE_PERSIAN: Record<string, Record<string, string>> = {
+  bunk_configuration: {
+    bunk_with_trundle: 'دوطبقه با کشوی پایینی',
+    full_bunk: 'دوطبقه کامل',
+    lower_bed: 'تخت پایینی',
+  },
+  conversion: { sofa: 'نیمکت', teen: 'نوجوان' },
+  door_material: { glass: 'شیشه', mdf: 'ام‌دی‌اف' },
+  finish: { cream: 'کرم', gray: 'خاکستری', green: 'سبز', 'two-stage': 'دومرحله‌ای' },
+  footboard: { high: 'بلند', low: 'کوتاه' },
+  headboard_style: { new: 'جدید', prime: 'پرایم' },
+  shape: { oval: 'بیضی', round: 'گرد' },
+  // Numeric axes (doors/drawers/pieces/size/width) get Persian digits via
+  // toPersianDigits below.
+}
+
+const LATIN_TO_PERSIAN_DIGIT: Record<string, string> = {
+  '0': '۰', '1': '۱', '2': '۲', '3': '۳', '4': '۴',
+  '5': '۵', '6': '۶', '7': '۷', '8': '۸', '9': '۹',
+}
+
+function toPersianDigits(s: string): string {
+  return s.replace(/[0-9]/g, (d) => LATIN_TO_PERSIAN_DIGIT[d] ?? d)
+}
+
+function persianAxisValue(key: string, value: string): string {
+  const lookup = AXIS_VALUE_PERSIAN[key]?.[value]
+  if (lookup) return lookup
+  // Numeric or unmapped → just Persian-digit it. "2m" → "۲ متر"
+  if (value.endsWith('m') && /^\d/.test(value)) {
+    return `${toPersianDigits(value.slice(0, -1))} متر`
+  }
+  return toPersianDigits(value)
+}
+
+function buildVariantLabelPersian(axes: Array<{ key: string; value: string }>): string {
+  if (axes.length === 0) return 'پیش‌فرض'
+  return axes
+    .map((a) => `${AXIS_KEY_PERSIAN[a.key] ?? a.key}: ${persianAxisValue(a.key, a.value)}`)
+    .join(' · ')
+}
+
 async function runPersianNames(client: pg.Client) {
   console.log(`\n${'═'.repeat(70)}`)
   console.log(`🌐 PERSIAN-NAMES — ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
@@ -1815,17 +1874,93 @@ async function runPersianNames(client: pg.Client) {
 
   console.log(`\n  ✓ ${updated} products renamed, ${errors} errors`)
 
-  // Verify sample
-  const sample = await client.query<{ slug: string; name: string }>(
-    `SELECT slug, name FROM products ORDER BY random() LIMIT 6`,
-  )
-  console.log(`\nRandom sample after update:`)
-  for (const r of sample.rows) {
-    console.log(`  ${r.slug.padEnd(36)} ${r.name}`)
+  // ─────────────────── Variant labels ───────────────────
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`Variant labels`)
+  console.log(`${'─'.repeat(70)}`)
+
+  // Fetch every variant + its axes in a single query
+  const variantRows = await client.query<{
+    id: number
+    sku: string
+    label: string | null
+    axis_key: string | null
+    axis_value: string | null
+    axis_order: number | null
+  }>(`
+    SELECT v.id, v.sku, v.label,
+           a.key AS axis_key, a.value AS axis_value, a."_order" AS axis_order
+    FROM product_variants v
+    LEFT JOIN product_variants_axes a ON a."_parent_id" = v.id
+    ORDER BY v.id, a."_order"
+  `)
+
+  // Group axes by variant id
+  const variantAxes = new Map<number, { sku: string; oldLabel: string | null; axes: Array<{ key: string; value: string }> }>()
+  for (const r of variantRows.rows) {
+    if (!variantAxes.has(r.id)) {
+      variantAxes.set(r.id, { sku: r.sku, oldLabel: r.label, axes: [] })
+    }
+    if (r.axis_key && r.axis_value) {
+      variantAxes.get(r.id)!.axes.push({ key: r.axis_key, value: r.axis_value })
+    }
   }
 
+  console.log(`Loaded ${variantAxes.size} variants with their axes.`)
+
+  const variantUpdates: Array<{ id: number; oldLabel: string | null; newLabel: string }> = []
+  for (const [id, v] of variantAxes.entries()) {
+    const newLabel = buildVariantLabelPersian(v.axes)
+    if (newLabel === v.oldLabel) continue
+    variantUpdates.push({ id, oldLabel: v.oldLabel, newLabel })
+  }
+  console.log(`${variantUpdates.length} variant labels to rewrite.`)
+
+  if (variantUpdates.length > 0) {
+    console.log(`\nSample (first 8):`)
+    for (const u of variantUpdates.slice(0, 8)) {
+      console.log(`  ${(u.oldLabel ?? '(null)').padEnd(40)} → ${u.newLabel}`)
+    }
+  }
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN (variants). Already wrote product names if --apply.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  let vUpdated = 0
+  let vErrors = 0
+  for (const u of variantUpdates) {
+    try {
+      await client.query(`UPDATE product_variants SET label = $1, updated_at = NOW() WHERE id = $2`, [
+        u.newLabel,
+        u.id,
+      ])
+      vUpdated++
+    } catch (e: any) {
+      vErrors++
+      console.error(`  ✗ variant id=${u.id}: ${e.message || e}`)
+    }
+  }
+
+  console.log(`\n  ✓ ${vUpdated} variant labels updated, ${vErrors} errors`)
+
+  // Verify sample
+  const sample = await client.query<{ slug: string; name: string }>(
+    `SELECT slug, name FROM products ORDER BY random() LIMIT 4`,
+  )
+  console.log(`\nRandom product sample:`)
+  for (const r of sample.rows) console.log(`  ${r.slug.padEnd(36)} ${r.name}`)
+
+  const vSample = await client.query<{ sku: string; label: string }>(
+    `SELECT sku, label FROM product_variants ORDER BY random() LIMIT 6`,
+  )
+  console.log(`\nRandom variant sample:`)
+  for (const r of vSample.rows) console.log(`  ${r.sku.padEnd(44)} ${r.label}`)
+
   console.log(`\n${'═'.repeat(70)}`)
-  console.log(`✓ Persian names applied.`)
+  console.log(`✓ Persian names + variant labels applied.`)
   console.log(`${'═'.repeat(70)}\n`)
 }
 
