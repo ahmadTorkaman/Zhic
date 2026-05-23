@@ -84,22 +84,43 @@ export function resolveVariant(
 }
 
 /**
- * Build the picker's axis groups. Order follows `allowedAxes` (which
- * comes from the product's category). Values are deduped from the
- * variant data and preserve their first-seen order.
+ * Build the picker's axis groups. Order follows `allowedAxes` first
+ * (the canonical order from the category), then appends any axis keys
+ * the variants ACTUALLY use that aren't in allowedAxes — handles two
+ * common drift cases:
+ *
+ *  (a) Variant has an axis (e.g. `finish` derived by the D4 heuristic)
+ *      that the category's allowed_axes didn't list. Show it anyway —
+ *      the variant exists, the user should be able to choose it.
+ *
+ *  (b) allowedAxes lists an axis (e.g. `footboard`) but no variant
+ *      provides a value for it. Drop the empty group rather than render
+ *      a label with no chips.
+ *
+ * Values per axis are deduped and preserve first-seen order.
  */
 export function deriveAxisOptions(
   variants: PayloadProductVariant[],
   allowedAxes: string[],
 ): { key: string; values: string[] }[] {
-  return allowedAxes.map((key) => ({
-    key,
-    values: dedupe(
-      variants.flatMap((v) =>
-        v.axes.filter((a) => a.key === key).map((a) => a.value),
+  const variantKeys = new Set<string>();
+  for (const v of variants) for (const a of v.axes) variantKeys.add(a.key);
+
+  const orderedKeys: string[] = [...allowedAxes];
+  for (const key of variantKeys) {
+    if (!orderedKeys.includes(key)) orderedKeys.push(key);
+  }
+
+  return orderedKeys
+    .map((key) => ({
+      key,
+      values: dedupe(
+        variants.flatMap((v) =>
+          v.axes.filter((a) => a.key === key).map((a) => a.value),
+        ),
       ),
-    ),
-  }));
+    }))
+    .filter((group) => group.values.length > 0);
 }
 
 function dedupe<T>(arr: T[]): T[] {

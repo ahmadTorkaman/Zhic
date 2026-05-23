@@ -38,15 +38,31 @@ describe('deriveAxisOptions', () => {
     expect(out[0]!.values).toEqual(['120', '160']);
     expect(out[1]!.values).toEqual(['high', 'low']);
   });
-  it('drops axes not in allowedAxes', () => {
+  it('includes variant axes not in allowedAxes (appended after allowed order)', () => {
+    // Updated 2026-05-23: deriveAxisOptions now UNIONS allowedAxes with the
+    // axes variants actually have. This tolerates real-world data drift
+    // (D4 finish heuristic adding `finish` to variants whose category's
+    // allowed_axes didn't list it).
     const variants: PayloadProductVariant[] = [
       { id: 1, product: 10, sku: 'X', axes: [{ key: 'size', value: '120' }, { key: 'mystery', value: 'foo' }], displayOrder: 0 },
     ];
     const out = deriveAxisOptions(variants, ['size']);
-    expect(out.map((a) => a.key)).toEqual(['size']);
+    expect(out.map((a) => a.key)).toEqual(['size', 'mystery']);
   });
-  it('returns empty array when allowedAxes is empty', () => {
-    expect(deriveAxisOptions(sample, [])).toEqual([]);
+  it('falls back to variant axes when allowedAxes is empty', () => {
+    // Same reason as above — variants drive the UI when category is unhelpful.
+    expect(deriveAxisOptions(sample, []).map((a) => a.key)).toEqual(['size', 'footboard']);
+  });
+  it('drops axis groups that have zero values', () => {
+    // allowedAxes lists `footboard` but no variant has a footboard axis →
+    // render only the size group. Without this filter the picker would
+    // show a label with no chips beneath it (broken-looking).
+    const variants: PayloadProductVariant[] = [
+      { id: 1, product: 10, sku: 'X', axes: [{ key: 'size', value: '140' }], displayOrder: 0 },
+      { id: 2, product: 10, sku: 'Y', axes: [{ key: 'size', value: '160' }], displayOrder: 1 },
+    ];
+    const out = deriveAxisOptions(variants, ['size', 'footboard']);
+    expect(out.map((a) => a.key)).toEqual(['size']);
   });
 });
 
