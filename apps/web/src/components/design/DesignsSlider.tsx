@@ -406,7 +406,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
             ))}
           </div>
           <div className="zh-designs-skip">
-            <Link href="/products">همه‌ی محصولات</Link>
+            <Link href="/bedroom-furniture">همه‌ی محصولات</Link>
           </div>
         </div>
 

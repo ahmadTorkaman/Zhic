@@ -37,7 +37,7 @@ export function HomeHero({
           {subheading}
         </p>
         <div className="flex flex-col gap-4 md:flex-row md:flex-wrap">
-          <Button as="a" href="/products" variant="primary" size="lg">مشاهده‌ی محصولات</Button>
+          <Button as="a" href="/bedroom-furniture" variant="primary" size="lg">مشاهده‌ی محصولات</Button>
           <Button as="a" href="/contact?reason=quote" variant="accent" size="lg">ثبت استعلام</Button>
         </div>
         {/* Scroll hint — desktop only */}

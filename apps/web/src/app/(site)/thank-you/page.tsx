@@ -24,7 +24,7 @@ export default function ThankYouPage() {
             <Button as="a" href="/" variant="primary" size="md">
               بازگشت به خانه
             </Button>
-            <Button as="a" href="/products" variant="ghost" size="md">
+            <Button as="a" href="/bedroom-furniture" variant="ghost" size="md">
               مشاهده‌ی محصولات
             </Button>
           </div>

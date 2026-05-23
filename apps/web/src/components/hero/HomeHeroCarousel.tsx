@@ -59,7 +59,7 @@ export function HomeHeroCarousel({
         <BlurInText as="h1" className="zh-hhc__heading">{heading}</BlurInText>
         <BlurInText as="p" className="zh-hhc__sub">{subheading}</BlurInText>
         <div className="zh-hhc__cta-row">
-          <Button as="a" href="/products" variant="primary" size="lg">
+          <Button as="a" href="/bedroom-furniture" variant="primary" size="lg">
             مشاهده‌ی محصولات
           </Button>
         </div>

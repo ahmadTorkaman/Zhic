@@ -35,7 +35,7 @@ export function PiecesMegaMenu({ data, pathname }: PiecesMegaMenuProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuId = useId();
-  const active = pathname?.startsWith('/products') ?? false;
+  const active = pathname?.startsWith('/bedroom-furniture') ?? false;
 
   useEffect(() => {
     if (!open) return;
@@ -98,7 +98,7 @@ export function PiecesMegaMenu({ data, pathname }: PiecesMegaMenuProps) {
                     return (
                       <li key={p.value}>
                         <Link
-                          href={`/products?type=${p.value}`}
+                          href={`/bedroom-furniture/${p.value}`}
                           onClick={() => setOpen(false)}
                         >
                           <span>{p.label}</span>
@@ -109,7 +109,7 @@ export function PiecesMegaMenu({ data, pathname }: PiecesMegaMenuProps) {
                   })}
                 </ul>
               )}
-              <Link href="/products" className="zh-pieces-cta" onClick={() => setOpen(false)}>
+              <Link href="/bedroom-furniture" className="zh-pieces-cta" onClick={() => setOpen(false)}>
                 همه‌ی قطعات <span className="zh-pieces-arrow" aria-hidden />
               </Link>
             </div>
