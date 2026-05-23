@@ -63,29 +63,26 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
                   <path d="M2 4H14M2 8H14M2 12H14" strokeLinecap="round" />
                 </svg>
               </button>
-              {/* Desktop: brand with forest underline */}
+              {/* Desktop: logo SVG (no underline — the logo itself carries the brand mark) */}
               <Link
                 href="/"
-                className="relative hidden text-h4 font-black text-charcoal transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:inline-block"
+                aria-label="ژیک — صفحه‌ی اصلی"
+                className="hidden transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:inline-flex"
               >
-                ژیک
-                {/* forest underline — matches .pill-header .brand::after in mockup */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute [inset-inline:4px] -bottom-[3px] h-[2px] rounded-[1px] bg-forest"
-                />
+                <img src="/zhic-logo.svg" alt="ژیک" className="h-7 w-auto" />
               </Link>
             </div>
 
             {/* ── Column 2 ── center column: justify-self-center */}
             {/* Mobile: brand centered. Desktop: nav centered. */}
             <div className="justify-self-center">
-              {/* Mobile brand */}
+              {/* Mobile brand — logo SVG */}
               <Link
                 href="/"
-                className="text-body font-black text-charcoal transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:hidden"
+                aria-label="ژیک — صفحه‌ی اصلی"
+                className="inline-flex transition-opacity duration-[var(--dur-hover)] hover:opacity-80 md:hidden"
               >
-                ژیک
+                <img src="/zhic-logo.svg" alt="ژیک" className="h-6 w-auto" />
               </Link>
               {/* Desktop nav */}
               <nav aria-label="اصلی" className="hidden items-center gap-7 text-small text-stone md:flex">
