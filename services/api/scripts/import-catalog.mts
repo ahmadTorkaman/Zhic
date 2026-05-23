@@ -130,6 +130,7 @@ const { values: args } = parseArgs({
     variants: { type: 'boolean', default: false },
     'persian-names': { type: 'boolean', default: false },
     'bedroom-set-media': { type: 'boolean', default: false },
+    'hide-imageless-products': { type: 'boolean', default: false },
     apply: { type: 'boolean', default: false },
   },
 })
@@ -152,7 +153,9 @@ const PHASE = args.inventory
                 ? 'persian-names'
                 : args['bedroom-set-media']
                   ? 'bedroom-set-media'
-                  : null
+                  : args['hide-imageless-products']
+                    ? 'hide-imageless-products'
+                    : null
 
 if (!PHASE) {
   console.error('Usage: tsx scripts/import-catalog.mts --<phase> [--apply]')
@@ -2158,6 +2161,71 @@ async function runBedroomSetMedia(client: pg.Client) {
   console.log(`\n${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── HIDE IMAGELESS PRODUCTS ─────────────────────────
+
+/**
+ * Flip status = 'draft' on every published product that has no gallery
+ * media. Operator-requested 2026-05-23: "in each series, any of them
+ * without media should be set invisible too" — the imageless products
+ * inside otherwise-visible series clutter the catalog with empty cards.
+ *
+ * Idempotent — only updates products currently `published`. Re-running
+ * after an operator uploads gallery media is fine; products with media
+ * stay published, the rest stay draft.
+ */
+async function runHideImagelessProducts(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`🙈 HIDE IMAGELESS PRODUCTS — ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  const before = await client.query<{ status: string; n: number }>(
+    `SELECT status, count(*)::int AS n FROM products GROUP BY status ORDER BY status`,
+  )
+  console.log(`Before:`)
+  for (const r of before.rows) console.log(`  ${r.status.padEnd(12)} ${r.n}`)
+
+  const candidates = await client.query<{ id: number; slug: string }>(`
+    SELECT id, slug
+    FROM products p
+    WHERE p.status = 'published'
+      AND NOT EXISTS (
+        SELECT 1 FROM products_rels pr
+        WHERE pr.parent_id = p.id AND pr.path = 'gallery' AND pr.media_id IS NOT NULL
+      )
+    ORDER BY slug
+  `)
+  console.log(`\n${candidates.rowCount} published products have no gallery media.`)
+  if (candidates.rowCount && candidates.rowCount <= 30) {
+    for (const r of candidates.rows.slice(0, 15)) {
+      console.log(`  ${r.slug}`)
+    }
+    if (candidates.rowCount > 15) console.log(`  ... and ${candidates.rowCount - 15} more`)
+  }
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN. Pass --apply to flip status='draft' on these.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  const upd = await client.query(`
+    UPDATE products SET status = 'draft', updated_at = NOW()
+    WHERE status = 'published'
+      AND NOT EXISTS (
+        SELECT 1 FROM products_rels pr
+        WHERE pr.parent_id = products.id AND pr.path = 'gallery' AND pr.media_id IS NOT NULL
+      )
+  `)
+  console.log(`\n  ✓ ${upd.rowCount} products flipped to draft`)
+
+  const after = await client.query<{ status: string; n: number }>(
+    `SELECT status, count(*)::int AS n FROM products GROUP BY status ORDER BY status`,
+  )
+  console.log(`\nAfter:`)
+  for (const r of after.rows) console.log(`  ${r.status.padEnd(12)} ${r.n}`)
+  console.log(`\n${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -2183,6 +2251,8 @@ try {
     await runPersianNames(client)
   } else if (PHASE === 'bedroom-set-media') {
     await runBedroomSetMedia(client)
+  } else if (PHASE === 'hide-imageless-products') {
+    await runHideImagelessProducts(client)
   } else {
     console.error(`\n❌ Phase "${PHASE}" not yet implemented.`)
     process.exit(1)
