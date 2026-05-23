@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/products · catalog hub — mockup</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-sand-2:   #DDD3C7;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-forest-deep: #455A47;
+    --color-gold:     #C49A6C;
+    --color-gold-deep: #9A754A;
+
+    --tracking-eye: 0.18em;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --header-h: 64px;
+    --container-pad: clamp(16px, 4vw, 64px);
+    --max-w: 1440px;
+    --sidebar-w: 296px;
+
+    --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+    --space-4: 16px; --space-5: 24px; --space-6: 32px;
+    --space-7: 48px; --space-8: 64px; --space-9: 96px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body { min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; }
+  ul, ol { list-style: none; }
+
+  /* ─────────────────────────────────────────────── pill header ─── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    z-index: 100;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 18px;
+    gap: 16px;
+  }
+  .pill-header .brand {
+    font-weight: 900;
+    font-size: 17px;
+    color: var(--color-charcoal);
+    position: relative;
+    justify-self: start;
+  }
+  .pill-header nav { justify-self: center; }
+  .pill-header .icons { justify-self: end; }
+  .pill-header .brand::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    inset-inline: 4px;
+    height: 2px;
+    background: var(--color-forest);
+    border-radius: 1px;
+  }
+  .pill-header nav { display: none; }
+  .pill-header .icons { display: flex; gap: 4px; align-items: center; }
+  .pill-header .icon-btn {
+    width: 36px; height: 36px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    color: var(--color-stone);
+    border-radius: 50%;
+    transition: color .2s var(--ease-out-soft), background .2s var(--ease-out-soft);
+  }
+  .pill-header .icon-btn:hover { color: var(--color-ink); background: rgba(232, 224, 216, 0.4); }
+  .pill-header .icon-btn svg { width: 18px; height: 18px; }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: var(--header-h); border-inline: 0; border-top: 0; padding: 0 32px; }
+    .pill-header nav { display: flex; justify-content: center; gap: 28px; font-size: 14px; color: var(--color-charcoal); }
+    .pill-header nav a:hover { color: var(--color-forest); }
+    .pill-header nav a.active { color: var(--color-ink); font-weight: 700; }
+  }
+
+  /* ─────────────────────────────────────────────── main shell ─── */
+  .shell {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+  }
+  .top {
+    padding-top: calc(var(--header-h) + 32px);
+  }
+  .crumb {
+    font-size: 12px;
+    color: var(--color-stone);
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .crumb a { color: var(--color-stone); transition: color .2s var(--ease-out-soft); }
+  .crumb a:hover { color: var(--color-forest); }
+  .crumb .sep { color: var(--color-sand-2); }
+  .crumb .now { color: var(--color-charcoal); font-weight: 700; }
+
+  .page-title {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 18px;
+  }
+
+  /* editorial intro */
+  .intro {
+    max-width: 720px;
+    padding-block: 4px 16px;
+  }
+  .intro p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--color-charcoal);
+    margin-bottom: 14px;
+  }
+  .intro p:last-child { margin-bottom: 0; }
+  .intro strong { font-weight: 700; color: var(--color-ink); }
+  .intro .meta-row {
+    display: flex; gap: 28px;
+    padding-block: 16px;
+    border-top: 1px solid var(--color-sand);
+    border-bottom: 1px solid var(--color-sand);
+    margin-top: 28px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .intro .meta-row .stat { display: flex; flex-direction: column; gap: 4px; }
+  .intro .meta-row .num {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .intro .meta-row .lbl {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+  }
+
+  /* ─────────────────────────────────────────────── 2-col layout ─── */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 1024px) {
+    .layout {
+      grid-template-columns: 1fr var(--sidebar-w);
+      gap: 64px;
+    }
+  }
+  .main { min-width: 0; }
+
+  /* result bar */
+  .result-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .result-count { font-size: 13px; color: var(--color-stone); }
+  .result-count b { color: var(--color-ink); font-weight: 700; font-feature-settings: "tnum"; }
+  .active-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .active-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px 4px 10px;
+    border-radius: 9999px;
+    background: var(--color-forest);
+    color: #fff;
+    font-size: 11px;
+  }
+  .active-filter .axis {
+    color: rgba(255,255,255,0.7);
+    font-size: 10px;
+    padding-inline-end: 4px;
+  }
+  .active-filter button { color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1; padding: 0 4px; }
+  .active-filter button:hover { color: #fff; }
+  .clear-all {
+    font-size: 11px;
+    color: var(--color-forest);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 4px 8px;
+  }
+  .clear-all:hover { color: var(--color-forest-deep); }
+
+  /* product grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 16px;
+  }
+  @media (min-width: 640px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 32px 20px; } }
+  @media (min-width: 1280px) { .grid { gap: 40px 24px; } }
+  @media (max-width: 1023px) { .grid { grid-template-columns: repeat(2, 1fr) !important; } }
+  @media (max-width: 480px) { .grid { grid-template-columns: repeat(1, 1fr) !important; gap: 24px; } }
+
+  .tile {
+    display: block;
+    position: relative;
+    color: var(--color-charcoal);
+  }
+  /* quiet card — cream wash + thin sand border + 1px top inset highlight */
+  .tile-img {
+    aspect-ratio: 4/5;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(180deg, #FCFBF7 0%, #F6F2EB 100%);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 0 0 rgba(20, 17, 15, 0);
+    transition:
+      transform .35s var(--ease-out-soft),
+      box-shadow .35s var(--ease-out-soft),
+      border-color .35s var(--ease-out-soft);
+  }
+  .tile:hover .tile-img {
+    transform: translateY(-4px);
+    border-color: rgba(232, 224, 216, 0.85);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 14px 28px rgba(20, 17, 15, 0.07);
+  }
+  /* product motif — varies per piece type */
+  .tile-img::before {
+    content: '';
+    position: absolute;
+    inset: 22% 30%;
+    border-radius: 4px;
+    background: linear-gradient(170deg, rgba(95, 119, 96, 0.10) 0%, rgba(95, 119, 96, 0.02) 100%);
+    border: 1px solid rgba(140, 130, 121, 0.25);
+    box-shadow: 0 10px 22px rgba(20, 17, 15, 0.06), inset 0 0 26px rgba(255, 255, 255, 0.4);
+    transition: transform .8s var(--ease-out-soft);
+  }
+  .tile:hover .tile-img::before { transform: scale(1.02); }
+  /* shape variations */
+  .tile-img.mirror::before { inset: 18% 28%; border-radius: 50% 50% 50% 50% / 12% 12% 88% 88%; }
+  .tile-img.bed::before { inset: 38% 14%; border-radius: 4px; }
+  .tile-img.wardrobe::before { inset: 12% 24%; border-radius: 2px; aspect-ratio: 3/5; }
+  .tile-img.dresser::before { inset: 28% 18%; border-radius: 2px; }
+  .tile-img.table::before { inset: 32% 16%; border-radius: 2px; }
+  .tile-img.chair::before { inset: 18% 30%; border-radius: 2px 2px 4px 4px; }
+  .tile-img.shelf::before { inset: 12% 22%; border-radius: 0; aspect-ratio: 1/2; }
+  .tile-img.set::before { inset: 24% 12%; border-radius: 2px; }
+  .tile-img.misc::before { inset: 28% 28%; border-radius: 50%; }
+
+  .tile-meta { padding-top: 14px; padding-inline: 2px; }
+  .tile-name { font-size: 15px; font-weight: 700; color: var(--color-ink); margin-bottom: 4px; line-height: 1.4; }
+  .tile-design { font-size: 12px; color: var(--color-stone); margin-bottom: 8px; }
+  .tile-price { font-size: 14px; color: var(--color-charcoal); font-weight: 400; font-feature-settings: "tnum"; }
+  .tile-price .unit { font-size: 11px; color: var(--color-stone); margin-inline-start: 4px; }
+
+  /* pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding-block: 40px;
+    margin-top: 24px;
+    border-top: 1px solid var(--color-sand);
+  }
+  .pagination .page-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 13px;
+    color: var(--color-stone);
+    transition: all .2s var(--ease-out-soft);
+    font-feature-settings: "tnum";
+  }
+  .pagination .page-num.active { background: var(--color-ink); color: #fff; font-weight: 700; }
+  .pagination .page-num:hover:not(.active) { background: var(--color-cream); color: var(--color-ink); }
+  .pagination .nav-arrow {
+    font-size: 13px;
+    color: var(--color-stone);
+    padding: 6px 12px;
+    border-radius: 9999px;
+    border: 1px solid var(--color-sand);
+    transition: all .2s var(--ease-out-soft);
+  }
+  .pagination .nav-arrow:hover { border-color: var(--color-forest); color: var(--color-forest); }
+
+  /* ─────────────────────────────────────────────── filter sidebar ─── */
+  .sidebar { display: none; }
+  @media (min-width: 1024px) {
+    .sidebar {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+      align-self: start;
+      max-height: calc(100vh - var(--header-h) - 48px);
+      overflow-y: auto;
+      padding-bottom: 16px;
+      padding-inline-end: 4px;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--color-sand-2); border-radius: 2px; }
+  }
+  .sidebar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 16px 14px;
+    border-bottom: 1px solid var(--color-sand);
+    margin-bottom: 6px;
+  }
+  .sidebar-title {
+    font-size: 13px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .sidebar-clear {
+    font-size: 11px;
+    color: var(--color-forest);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .sidebar-clear:hover { color: var(--color-forest-deep); }
+
+  /* slim search at top */
+  .filter-search {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--color-sand);
+  }
+  .filter-search-input {
+    width: 100%;
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: 4px;
+    padding: 9px 36px 9px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--color-ink);
+    transition: border-color .2s var(--ease-out-soft);
+    position: relative;
+  }
+  .filter-search-input::placeholder { color: var(--color-stone); }
+  .filter-search-input:focus {
+    outline: none;
+    border-color: var(--color-forest);
+    background: #fff;
+  }
+  .filter-search-wrap { position: relative; }
+  .filter-search-wrap svg {
+    position: absolute;
+    inset-inline-end: 11px;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    width: 14px; height: 14px;
+    color: var(--color-stone);
+    pointer-events: none;
+  }
+
+  .filter-group {
+    padding-block: 18px;
+    border-bottom: 1px solid var(--color-sand);
+  }
+  .filter-group:last-child { border-bottom: 0; }
+  .filter-label {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .filter-label .count-active {
+    font-size: 10px;
+    background: var(--color-forest);
+    color: #fff;
+    border-radius: 9999px;
+    padding: 1px 7px;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  /* category tree + type-ahead hybrid */
+  .cat-search-wrap { position: relative; margin-bottom: 8px; }
+  .cat-search {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--color-sand);
+    padding: 8px 22px 8px 4px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--color-ink);
+    transition: border-color .2s var(--ease-out-soft);
+  }
+  .cat-search::placeholder { color: var(--color-stone); }
+  .cat-search:focus { outline: none; border-bottom-color: var(--color-forest); }
+  .cat-search-wrap svg {
+    position: absolute;
+    inset-inline-end: 4px;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    width: 13px; height: 13px;
+    color: var(--color-stone);
+    pointer-events: none;
+  }
+
+  .cat-tree { display: flex; flex-direction: column; gap: 2px; padding-top: 4px; }
+  .cat-parent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: color .2s var(--ease-out-soft);
+    position: relative;
+  }
+  .cat-parent .chev {
+    width: 12px; height: 12px;
+    transition: transform .2s var(--ease-out-soft);
+    color: var(--color-stone);
+    flex-shrink: 0;
+  }
+  .cat-parent.open .chev { transform: rotate(-90deg); }
+  .cat-parent .check {
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    border: 1px solid var(--color-sand-2);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    line-height: 1;
+    transition: all .2s var(--ease-out-soft);
+  }
+  .cat-parent.active .check {
+    background: var(--color-forest);
+    border-color: var(--color-forest);
+  }
+  .cat-parent.active .check::before { content: '✓'; }
+  .cat-parent .nm { flex: 1; }
+  .cat-parent .count {
+    font-size: 11px;
+    color: var(--color-stone);
+    font-feature-settings: "tnum";
+  }
+  .cat-parent:hover { color: var(--color-forest); }
+
+  .cat-children {
+    padding-inline-start: 24px;
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+    padding-block: 2px 6px;
+    border-inline-start: 1px solid var(--color-sand);
+    margin-inline-start: 6px;
+  }
+  .cat-parent.open + .cat-children { display: flex; }
+
+  .cat-leaf {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0 6px 10px;
+    font-size: 13px;
+    color: var(--color-charcoal);
+    cursor: pointer;
+    font-weight: 400;
+    transition: color .2s var(--ease-out-soft);
+  }
+  .cat-leaf:hover { color: var(--color-ink); }
+  .cat-leaf .check {
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    border: 1px solid var(--color-sand-2);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    transition: all .2s var(--ease-out-soft);
+  }
+  .cat-leaf.active .check {
+    background: var(--color-forest);
+    border-color: var(--color-forest);
+  }
+  .cat-leaf.active .check::before { content: '✓'; }
+  .cat-leaf.active { color: var(--color-ink); font-weight: 700; }
+  .cat-leaf .nm { flex: 1; }
+  .cat-leaf .count {
+    font-size: 11px;
+    color: var(--color-stone);
+    font-feature-settings: "tnum";
+  }
+  /* search-match highlight */
+  .cat-leaf.match { background: rgba(95, 119, 96, 0.06); border-radius: 3px; }
+  .cat-leaf.match .nm mark {
+    background: rgba(196, 154, 108, 0.32);
+    color: var(--color-ink);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
+  /* sort + standard filter options */
+  .filter-list { display: flex; flex-direction: column; gap: 2px; }
+  .filter-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 13px;
+    color: var(--color-charcoal);
+    cursor: pointer;
+    transition: color .2s var(--ease-out-soft);
+  }
+  .filter-opt:hover { color: var(--color-ink); }
+  .filter-opt .check {
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    border: 1px solid var(--color-sand-2);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    transition: all .2s var(--ease-out-soft);
+  }
+  .filter-opt.radio .check { border-radius: 50%; }
+  .filter-opt.active .check { background: var(--color-forest); border-color: var(--color-forest); }
+  .filter-opt.active .check::before { content: '✓'; }
+  .filter-opt.radio.active .check::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: #fff;
+  }
+  .filter-opt .nm { flex: 1; }
+  .filter-opt .count {
+    font-size: 11px;
+    color: var(--color-stone);
+    font-feature-settings: "tnum";
+  }
+  .filter-opt.active { color: var(--color-ink); font-weight: 700; }
+
+  /* series facet — scrollable when many */
+  .series-list {
+    max-height: 240px;
+    overflow-y: auto;
+    padding-inline-end: 4px;
+  }
+  .series-list::-webkit-scrollbar { width: 3px; }
+  .series-list::-webkit-scrollbar-thumb { background: var(--color-sand-2); border-radius: 2px; }
+  /* fade gradient at the bottom to hint at scroll */
+  .series-list-wrap { position: relative; }
+  .series-list-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    inset-inline: 0;
+    height: 24px;
+    background: linear-gradient(180deg, rgba(250,250,247,0) 0%, var(--color-ivory) 100%);
+    pointer-events: none;
+  }
+
+  /* conditional variant block — disabled state */
+  .variant-block {
+    padding-block: 18px;
+    border-bottom: 1px solid var(--color-sand);
+    opacity: 0.55;
+  }
+  .variant-block.active { opacity: 1; }
+  .variant-block .filter-label-hint {
+    font-size: 11px;
+    color: var(--color-stone);
+    font-style: italic;
+    padding-block-end: 4px;
+  }
+  .variant-block .filter-label-hint b {
+    color: var(--color-forest);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  /* ─────────────────────────────────────────── mobile filter trigger ─── */
+  .mob-filter-bar {
+    position: fixed;
+    bottom: 16px;
+    inset-inline: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 90;
+    pointer-events: none;
+  }
+  @media (min-width: 1024px) { .mob-filter-bar { display: none; } }
+  .mob-filter-btn {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    background: var(--color-ink);
+    color: #fff;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+    transition: transform .2s var(--ease-out-soft);
+  }
+  .mob-filter-btn:active { transform: scale(0.97); }
+  .mob-filter-btn .badge {
+    background: var(--color-forest);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 1px 8px;
+    min-width: 22px;
+    text-align: center;
+    font-feature-settings: "tnum";
+  }
+  .mob-filter-btn svg { width: 16px; height: 16px; }
+
+  /* mobile sheet */
+  .sheet-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(20,17,15,0.5);
+    backdrop-filter: blur(2px);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s var(--ease-out-soft);
+  }
+  .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+  .sheet {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 201;
+    background: var(--color-ivory);
+    border-radius: 18px 18px 0 0;
+    transform: translateY(100%);
+    transition: transform .35s var(--ease-out-quint);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.18);
+  }
+  .sheet.open { transform: translateY(0); }
+  .sheet-grip {
+    width: 44px; height: 4px;
+    border-radius: 2px;
+    background: var(--color-sand-2);
+    margin: 10px auto 4px;
+  }
+  .sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px 14px;
+    border-bottom: 1px solid var(--color-sand);
+  }
+  .sheet-head .title { font-size: 16px; font-weight: 900; color: var(--color-ink); }
+  .sheet-head .close { font-size: 22px; color: var(--color-stone); line-height: 1; padding: 4px 8px; }
+  .sheet-body { overflow-y: auto; padding: 8px 20px 24px; }
+  .sheet-foot {
+    padding: 14px 20px 22px;
+    border-top: 1px solid var(--color-sand);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .sheet-foot .reset {
+    padding: 14px;
+    border-radius: 4px;
+    border: 1px solid var(--color-sand-2);
+    font-size: 13px;
+    color: var(--color-charcoal);
+  }
+  .sheet-foot .apply {
+    padding: 14px;
+    border-radius: 4px;
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ─────────────────────────────── below-grid: parent tiles ─── */
+  .below-grid { margin-top: 80px; }
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-top: 64px;
+    border-top: 1px solid var(--color-sand);
+  }
+  .sec-head:first-of-type { padding-top: 0; border-top: 0; }
+  .sec-eyebrow {
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-forest);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .sec-title {
+    font-size: clamp(22px, 2.4vw, 32px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .sec-sub {
+    color: var(--color-stone);
+    font-size: 13px;
+    margin-inline-start: auto;
+  }
+  .sec-sub:hover { color: var(--color-forest); }
+
+  /* parent tiles — 7 — varying aspect */
+  .parent-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 640px) { .parent-tiles { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+  @media (min-width: 1024px) { .parent-tiles { grid-template-columns: repeat(7, 1fr); gap: 14px; } }
+  .parent-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    aspect-ratio: 3/4;
+    display: block;
+    transition: transform .6s var(--ease-out-soft);
+  }
+  .parent-tile:hover { transform: translateY(-3px); }
+  .parent-tile .bg {
+    position: absolute; inset: 0;
+    transition: transform 1.2s var(--ease-out-soft);
+  }
+  .parent-tile:hover .bg { transform: scale(1.04); }
+  /* per-parent silhouettes */
+  .parent-tile.p-mirrors .bg { background: linear-gradient(160deg, #c8a878, #6f4e2e); }
+  .parent-tile.p-beds .bg { background: linear-gradient(160deg, #9a8870, #4a3a2a); }
+  .parent-tile.p-wardrobes .bg { background: linear-gradient(160deg, #d4c4a8, #7a5d3a); }
+  .parent-tile.p-dressers .bg { background: linear-gradient(160deg, #b89c78, #5d4226); }
+  .parent-tile.p-tables .bg { background: linear-gradient(160deg, #c0a880, #6a4c2e); }
+  .parent-tile.p-shelves .bg { background: linear-gradient(160deg, #aa9476, #4a3826); }
+  .parent-tile.p-sets .bg { background: linear-gradient(160deg, #d2b48a, #7d5a36); }
+
+  .parent-tile .scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(20,17,15,0.7) 100%);
+  }
+  .parent-tile .meta {
+    position: absolute;
+    bottom: 14px;
+    inset-inline-start: 14px;
+    inset-inline-end: 14px;
+    color: #fff;
+  }
+  .parent-tile .eye {
+    font-size: 9px;
+    letter-spacing: var(--tracking-eye);
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+  }
+  .parent-tile .nm {
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-top: 4px;
+  }
+  .parent-tile .ct {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
+    font-feature-settings: "tnum";
+  }
+
+  /* series strip — horizontal scrolling */
+  .series-strip-wrap {
+    position: relative;
+    /* full-bleed within shell */
+    margin-inline: calc(-1 * var(--container-pad));
+    padding-inline: var(--container-pad);
+  }
+  .series-strip {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-block: 8px 28px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+  .series-strip::-webkit-scrollbar { height: 4px; }
+  .series-strip::-webkit-scrollbar-thumb { background: var(--color-sand-2); border-radius: 2px; }
+  .series-card {
+    flex: 0 0 180px;
+    aspect-ratio: 3/4;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    scroll-snap-align: start;
+    transition: transform .35s var(--ease-out-soft);
+  }
+  .series-card:hover { transform: translateY(-3px); }
+  .series-card .bg { position: absolute; inset: 0; transition: transform 1.2s var(--ease-out-soft); }
+  .series-card:hover .bg { transform: scale(1.05); }
+  .series-card .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(20,17,15,0.7) 100%); }
+  .series-card .meta { position: absolute; bottom: 12px; inset-inline-start: 12px; color: #fff; }
+  .series-card .meta .eye { font-size: 9px; letter-spacing: var(--tracking-eye); color: rgba(255,255,255,0.7); text-transform: uppercase; }
+  .series-card .meta .nm { font-size: 15px; font-weight: 900; line-height: 1.1; margin-top: 3px; }
+  .series-card .meta .ct { font-size: 10px; color: rgba(255,255,255,0.65); margin-top: 2px; font-feature-settings: "tnum"; }
+
+  /* color palette by series — deterministic */
+  .s-1 .bg { background: linear-gradient(160deg, #c8a878, #6f4e2e); }
+  .s-2 .bg { background: linear-gradient(160deg, #9a8870, #4a3a2a); }
+  .s-3 .bg { background: linear-gradient(160deg, #d4c4a8, #7a5d3a); }
+  .s-4 .bg { background: linear-gradient(160deg, #b89c78, #5d4226); }
+  .s-5 .bg { background: linear-gradient(160deg, #aa9476, #4a3826); }
+  .s-6 .bg { background: linear-gradient(160deg, #c0a880, #6a4c2e); }
+  .s-7 .bg { background: linear-gradient(160deg, #d2b48a, #7d5a36); }
+  .s-8 .bg { background: linear-gradient(160deg, #8e7860, #382820); }
+  .s-9 .bg { background: linear-gradient(160deg, #b09474, #5a4028); }
+  .s-10 .bg { background: linear-gradient(160deg, #c4a684, #6e4f30); }
+  .s-11 .bg { background: linear-gradient(160deg, #ad8e6c, #4e361f); }
+  .s-12 .bg { background: linear-gradient(160deg, #d6bc94, #80583a); }
+
+  /* featured products strip */
+  .featured-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 640px) { .featured-row { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+  /* uses .tile style but with gold accent line */
+  .featured-row .tile-img {
+    border: 1px solid rgba(196, 154, 108, 0.35);
+  }
+  .featured-row .tile-img::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    inset-inline: 16%;
+    height: 2px;
+    background: var(--color-gold);
+    opacity: 0;
+    transition: opacity .35s var(--ease-out-soft);
+  }
+  .featured-row .tile:hover .tile-img::after { opacity: 1; }
+  .featured-row .tile-feat {
+    font-size: 10px;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-gold-deep);
+    text-transform: uppercase;
+    font-weight: 700;
+    padding-block-end: 6px;
+  }
+
+  /* ─────────────────────────────────────────── footer placeholder ─── */
+  .footer {
+    background: var(--color-cream);
+    padding: 64px var(--container-pad) 96px;
+    color: var(--color-stone);
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px solid var(--color-sand);
+    margin-top: 96px;
+  }
+
+  /* ─────────────────────────────────────────── come-up fade-in ─── */
+  .fadeup {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .fadeup.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .fadeup { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ pill header ════════════════════════ -->
+<header class="pill-header">
+  <a href="/" class="brand">ژیک</a>
+  <nav>
+    <a href="/products" class="active">محصولات</a>
+    <a href="/designs">طرح‌ها</a>
+    <a href="/journal">روایت‌ها</a>
+    <a href="/showrooms">نمایشگاه‌ها</a>
+    <a href="/about">درباره ژیک</a>
+  </nav>
+  <div class="icons">
+    <button class="icon-btn" aria-label="جستجو">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7.5"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+    <button class="icon-btn" aria-label="علاقه‌مندی‌ها">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════ main shell ═════════════════════════ -->
+<div class="shell top">
+
+  <!-- breadcrumb -->
+  <nav class="crumb" aria-label="مسیر">
+    <a href="/">خانه</a>
+    <span class="sep">/</span>
+    <span class="now">محصولات</span>
+  </nav>
+
+  <!-- title + intro -->
+  <h1 class="page-title fadeup">محصولات ژیک</h1>
+
+  <section class="intro">
+    <p class="fadeup" style="transition-delay: 100ms">
+      ژیک <strong>۲۲۰ قطعه دست‌ساز</strong> از چوب گردو و راش می‌سازد؛ در ۲۲ مجموعه‌ی طراحی و ۳۲ نوع مبلمان.
+      از تخت‌خواب و کمد تا آینه و دراور — هر قطعه ترکیبی از خط‌های ایرانی و دقت کارگاهی است.
+    </p>
+    <p class="fadeup" style="transition-delay: 220ms">
+      اگر می‌دانید چه نوعی می‌خواهید، از طریق <a href="/categories" style="color: var(--color-forest); text-decoration: underline; text-underline-offset: 3px;">دسته‌بندی‌ها</a> یا
+      <a href="/designs" style="color: var(--color-forest); text-decoration: underline; text-underline-offset: 3px;">مجموعه‌های طراحی</a> وارد شوید.
+      یا در همین صفحه با فیلترها ترکیبی از طرح، چوب و نوع بسازید.
+    </p>
+
+    <div class="meta-row fadeup" style="transition-delay: 340ms">
+      <div class="stat"><div class="num">۲۲۰</div><div class="lbl">قطعه</div></div>
+      <div class="stat"><div class="num">۲۲</div><div class="lbl">مجموعه</div></div>
+      <div class="stat"><div class="num">۳۲</div><div class="lbl">نوع مبلمان</div></div>
+      <div class="stat"><div class="num">۵</div><div class="lbl">نوع چوب</div></div>
+    </div>
+  </section>
+
+  <!-- ════════════════ 2-col layout: main + sidebar ════════════════ -->
+  <div class="layout">
+
+    <!-- ════════════════ main column ════════════════ -->
+    <main class="main">
+
+      <!-- result bar with active filter chips -->
+      <div class="result-bar">
+        <span class="result-count">نمایش <b>۴۲</b> از <b>۲۲۰</b> محصول</span>
+        <div class="active-filters">
+          <span class="active-filter"><span class="axis">طرح</span>گندم<button aria-label="حذف">×</button></span>
+          <span class="active-filter"><span class="axis">طرح</span>باروت<button aria-label="حذف">×</button></span>
+          <span class="active-filter"><span class="axis">چوب</span>گردو<button aria-label="حذف">×</button></span>
+          <button class="clear-all">پاک کردن همه</button>
+        </div>
+      </div>
+
+      <!-- grid -->
+      <section class="grid" aria-label="محصولات">
+        <a class="tile" href="#">
+          <div class="tile-img mirror"></div>
+          <div class="tile-meta">
+            <div class="tile-name">آینه دیواری گندم</div>
+            <div class="tile-design">طرح گندم · گردو</div>
+            <div class="tile-price">۲۸٫۵۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img bed"></div>
+          <div class="tile-meta">
+            <div class="tile-name">تخت‌خواب گندم</div>
+            <div class="tile-design">طرح گندم · گردو</div>
+            <div class="tile-price">۸۴٫۲۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img wardrobe"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد سه‌درب گندم</div>
+            <div class="tile-design">طرح گندم · گردو</div>
+            <div class="tile-price">۱۲۲٫۵۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img dresser"></div>
+          <div class="tile-meta">
+            <div class="tile-name">دراور پنج‌کشو گندم</div>
+            <div class="tile-design">طرح گندم · گردو</div>
+            <div class="tile-price">۴۸٫۹۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img mirror"></div>
+          <div class="tile-meta">
+            <div class="tile-name">آینه دیواری باروت</div>
+            <div class="tile-design">طرح باروت · گردو</div>
+            <div class="tile-price">۳۲٫۸۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img bed"></div>
+          <div class="tile-meta">
+            <div class="tile-name">تخت‌خواب باروت</div>
+            <div class="tile-design">طرح باروت · گردو</div>
+            <div class="tile-price">۸۸٫۶۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img table"></div>
+          <div class="tile-meta">
+            <div class="tile-name">میز ناهارخوری باروت</div>
+            <div class="tile-design">طرح باروت · گردو</div>
+            <div class="tile-price">۹۲٫۴۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img chair"></div>
+          <div class="tile-meta">
+            <div class="tile-name">صندلی ناهارخوری باروت</div>
+            <div class="tile-design">طرح باروت · گردو</div>
+            <div class="tile-price">۱۸٫۲۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+        <a class="tile" href="#">
+          <div class="tile-img wardrobe"></div>
+          <div class="tile-meta">
+            <div class="tile-name">کمد دو‌درب گندم</div>
+            <div class="tile-design">طرح گندم · گردو</div>
+            <div class="tile-price">۹۸٫۲۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+          </div>
+        </a>
+      </section>
+
+      <!-- pagination -->
+      <div class="pagination" role="navigation" aria-label="صفحه‌بندی">
+        <button class="nav-arrow">→ قبلی</button>
+        <a href="#" class="page-num active">۱</a>
+        <a href="#" class="page-num">۲</a>
+        <a href="#" class="page-num">۳</a>
+        <a href="#" class="page-num">۴</a>
+        <a href="#" class="page-num">۵</a>
+        <button class="nav-arrow">بعدی ←</button>
+      </div>
+
+      <!-- ══════════ below-grid: parent tiles → series strip → featured ══════════ -->
+      <!--
+        Note: this whole "below-grid" block ONLY renders when NO filter param is
+        present. The mockup shows it always for illustration. When filtered,
+        the page ends at pagination and the editorial intro stays at top.
+      -->
+      <div class="below-grid">
+
+        <!-- parent category tiles (7) -->
+        <header class="sec-head">
+          <div>
+            <div class="sec-eyebrow fadeup">۷ دسته‌ی اصلی</div>
+            <h2 class="sec-title fadeup" style="transition-delay: 80ms">با نوع مبلمان شروع کنید</h2>
+          </div>
+          <a class="sec-sub fadeup" style="transition-delay: 160ms" href="/categories">همه‌ی دسته‌ها ←</a>
+        </header>
+
+        <div class="parent-tiles">
+          <a class="parent-tile p-mirrors" href="/categories/mirrors">
+            <div class="bg"></div>
+            <div class="scrim"></div>
+            <div class="meta"><div class="eye">دسته</div><div class="nm">آینه‌ها</div><div class="ct">۷ نوع · ۲۸ قطعه</div></div>
+          </a>
+          <a class="parent-tile p-beds" href="/categories/beds">
+            <div class="bg"></div>
+            <div class="scrim"></div>
+            <div class="meta"><div class="eye">دسته</div><div class="nm">تخت‌خواب‌ها</div><div class="ct">۴ نوع · ۳۲ قطعه</div></div>
+          </a>
+          <a class="parent-tile p-wardrobes" href="/categories/wardrobes">
+            <div class="bg"></div>
+            <div class="scrim"></div>
+            <div class="meta"><div class="eye">دسته</div><div class="nm">کمدها</div><div class="ct">۵ نوع · ۴۸ قطعه</div></div>
+          </a>
+          <a class="parent-tile p-dressers" href="/categories/dressers">
+            <div class="bg"></div>
+            <div class="scrim"></div>
+            <div class="meta"><div class="eye">دسته</div><div class="nm">دراورها</div><div class="ct">۴ نوع · ۲۶ قطعه</div></div>
+          </a>
+          <a class="parent-tile p-tables" href="/categories/tables">
+            <div class="bg"></div>
+            <div class="scrim"></div>
+            <div class="meta"><div class="eye">دسته</div><div class="nm">میز و صندلی</div><div class="ct">۶ نوع · ۴۲ قطعه</div></div>
+          </a>
+          <a class="parent-tile p-shelves" href="/categories/shelves">
+            <div class="bg"></div>
+            <div class="scrim"></div>
+            <div class="meta"><div class="eye">دسته</div><div class="nm">قفسه‌ها</div><div class="ct">۳ نوع · ۲۲ قطعه</div></div>
+          </a>
+          <a class="parent-tile p-sets" href="/categories/sets">
+            <div class="bg"></div>
+            <div class="scrim"></div>
+            <div class="meta"><div class="eye">دسته</div><div class="nm">سرویس‌ها</div><div class="ct">۳ نوع · ۲۲ قطعه</div></div>
+          </a>
+        </div>
+
+        <!-- series strip (22 designs) -->
+        <header class="sec-head">
+          <div>
+            <div class="sec-eyebrow fadeup">۲۲ مجموعه</div>
+            <h2 class="sec-title fadeup" style="transition-delay: 80ms">یا با طرح شروع کنید</h2>
+          </div>
+          <a class="sec-sub fadeup" style="transition-delay: 160ms" href="/designs">همه‌ی طرح‌ها ←</a>
+        </header>
+
+        <div class="series-strip-wrap">
+          <div class="series-strip" aria-label="مجموعه‌های طراحی">
+            <a class="series-card s-1" href="/designs/gandom">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">گندم</div><div class="ct">۱۲ قطعه</div></div>
+            </a>
+            <a class="series-card s-2" href="/designs/baloot">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">باروت</div><div class="ct">۱۸ قطعه</div></div>
+            </a>
+            <a class="series-card s-3" href="/designs/lotus">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">لوتوس</div><div class="ct">۹ قطعه</div></div>
+            </a>
+            <a class="series-card s-4" href="/designs/sento">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">سنتو</div><div class="ct">۱۴ قطعه</div></div>
+            </a>
+            <a class="series-card s-5" href="/designs/elizabeth">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">الیزابت</div><div class="ct">۱۱ قطعه</div></div>
+            </a>
+            <a class="series-card s-6" href="/designs/aramesh">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">آرامش</div><div class="ct">۷ قطعه</div></div>
+            </a>
+            <a class="series-card s-7" href="/designs/anahita">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">آناهیتا</div><div class="ct">۱۰ قطعه</div></div>
+            </a>
+            <a class="series-card s-8" href="/designs/parsa">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">پارسا</div><div class="ct">۸ قطعه</div></div>
+            </a>
+            <a class="series-card s-9" href="/designs/setareh">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">ستاره</div><div class="ct">۶ قطعه</div></div>
+            </a>
+            <a class="series-card s-10" href="/designs/sahar">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">سحر</div><div class="ct">۹ قطعه</div></div>
+            </a>
+            <a class="series-card s-11" href="/designs/yasna">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">یاسنا</div><div class="ct">۷ قطعه</div></div>
+            </a>
+            <a class="series-card s-12" href="/designs/parmis">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">پرمیس</div><div class="ct">۵ قطعه</div></div>
+            </a>
+            <a class="series-card s-1" href="/designs/golshan">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">گلشن</div><div class="ct">۸ قطعه</div></div>
+            </a>
+            <a class="series-card s-2" href="/designs/avishan">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">آویشن</div><div class="ct">۶ قطعه</div></div>
+            </a>
+            <a class="series-card s-3" href="/designs/sepehr">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">سپهر</div><div class="ct">۹ قطعه</div></div>
+            </a>
+            <a class="series-card s-4" href="/designs/roxana">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">روکسانا</div><div class="ct">۴ قطعه</div></div>
+            </a>
+            <a class="series-card s-5" href="/designs/marjan">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">مرجان</div><div class="ct">۵ قطعه</div></div>
+            </a>
+            <a class="series-card s-6" href="/designs/hasti">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">هستی</div><div class="ct">۷ قطعه</div></div>
+            </a>
+            <a class="series-card s-7" href="/designs/nilo">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">نیلو</div><div class="ct">۶ قطعه</div></div>
+            </a>
+            <a class="series-card s-8" href="/designs/tara">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">تارا</div><div class="ct">۸ قطعه</div></div>
+            </a>
+            <a class="series-card s-9" href="/designs/atrina">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">آترینا</div><div class="ct">۵ قطعه</div></div>
+            </a>
+            <a class="series-card s-10" href="/designs/diana">
+              <div class="bg"></div><div class="scrim"></div>
+              <div class="meta"><div class="eye">طرح</div><div class="nm">دیانا</div><div class="ct">۹ قطعه</div></div>
+            </a>
+          </div>
+        </div>
+
+        <!-- featured products strip (4-8) -->
+        <header class="sec-head">
+          <div>
+            <div class="sec-eyebrow fadeup">انتخاب شده</div>
+            <h2 class="sec-title fadeup" style="transition-delay: 80ms">قطعات شاخص</h2>
+          </div>
+          <span class="sec-sub fadeup" style="transition-delay: 160ms">۴ از ۲۲۰</span>
+        </header>
+
+        <div class="featured-row">
+          <a class="tile" href="#">
+            <div class="tile-feat">★ پیشنهاد ژیک</div>
+            <div class="tile-img bed"></div>
+            <div class="tile-meta">
+              <div class="tile-name">تخت‌خواب آرامش</div>
+              <div class="tile-design">طرح آرامش · گردو</div>
+              <div class="tile-price">۱۲۸٫۴۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+            </div>
+          </a>
+          <a class="tile" href="#">
+            <div class="tile-feat">★ پیشنهاد ژیک</div>
+            <div class="tile-img wardrobe"></div>
+            <div class="tile-meta">
+              <div class="tile-name">کمد چهار‌درب پارسا</div>
+              <div class="tile-design">طرح پارسا · گردو</div>
+              <div class="tile-price">۱۸۸٫۲۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+            </div>
+          </a>
+          <a class="tile" href="#">
+            <div class="tile-feat">★ پیشنهاد ژیک</div>
+            <div class="tile-img mirror"></div>
+            <div class="tile-meta">
+              <div class="tile-name">آینه قدی لوتوس</div>
+              <div class="tile-design">طرح لوتوس · راش</div>
+              <div class="tile-price">۴۲٫۸۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+            </div>
+          </a>
+          <a class="tile" href="#">
+            <div class="tile-feat">★ پیشنهاد ژیک</div>
+            <div class="tile-img dresser"></div>
+            <div class="tile-meta">
+              <div class="tile-name">دراور هفت‌کشو سنتو</div>
+              <div class="tile-design">طرح سنتو · گردو</div>
+              <div class="tile-price">۵۸٫۹۰۰٫۰۰۰ <span class="unit">تومان</span></div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- ════════════════ filter sidebar (desktop) ════════════════ -->
+    <aside class="sidebar" aria-label="فیلتر">
+
+      <div class="sidebar-head">
+        <span class="sidebar-title">فیلتر</span>
+        <button class="sidebar-clear" onclick="clearFilters()">پاک کردن همه</button>
+      </div>
+
+      <!-- slim free-text search at top -->
+      <div class="filter-search">
+        <div class="filter-search-wrap">
+          <input class="filter-search-input" type="search" placeholder="جستجو در محصولات…" value="">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- sort -->
+      <div class="filter-group">
+        <div class="filter-label">مرتب‌سازی</div>
+        <div class="filter-list" data-radio>
+          <label class="filter-opt radio active" data-toggle><span class="check"></span><span class="nm">جدیدترین</span></label>
+          <label class="filter-opt radio" data-toggle><span class="check"></span><span class="nm">قیمت: ارزان‌ترین</span></label>
+          <label class="filter-opt radio" data-toggle><span class="check"></span><span class="nm">قیمت: گران‌ترین</span></label>
+          <label class="filter-opt radio" data-toggle><span class="check"></span><span class="nm">الفبا</span></label>
+        </div>
+      </div>
+
+      <!-- category — tree + type-ahead -->
+      <div class="filter-group">
+        <div class="filter-label">دسته‌بندی <span class="count-active">۰</span></div>
+
+        <div class="cat-search-wrap">
+          <input class="cat-search" type="search" placeholder="جستجو در دسته‌ها…" value="" oninput="filterCats(this.value)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+
+        <div class="cat-tree" id="catTree">
+          <!-- mirrors -->
+          <div class="cat-parent open" data-toggle-parent>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="check"></span><span class="nm">آینه‌ها</span><span class="count">۷</span>
+          </div>
+          <div class="cat-children">
+            <label class="cat-leaf" data-leaf data-name="آینه دیواری"><span class="check"></span><span class="nm">آینه دیواری</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="آینه قدی"><span class="check"></span><span class="nm">آینه قدی</span><span class="count">۶</span></label>
+            <label class="cat-leaf" data-leaf data-name="آینه گرد"><span class="check"></span><span class="nm">آینه گرد</span><span class="count">۵</span></label>
+            <label class="cat-leaf" data-leaf data-name="آینه دراور"><span class="check"></span><span class="nm">آینه دراور</span><span class="count">۴</span></label>
+            <label class="cat-leaf" data-leaf data-name="آینه میز"><span class="check"></span><span class="nm">آینه میز</span><span class="count">۷</span></label>
+            <label class="cat-leaf" data-leaf data-name="آینه بیضی"><span class="check"></span><span class="nm">آینه بیضی</span><span class="count">۳</span></label>
+            <label class="cat-leaf" data-leaf data-name="آینه چندقاب"><span class="check"></span><span class="nm">آینه چندقاب</span><span class="count">۲</span></label>
+          </div>
+
+          <!-- beds -->
+          <div class="cat-parent" data-toggle-parent>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="check"></span><span class="nm">تخت‌خواب‌ها</span><span class="count">۴</span>
+          </div>
+          <div class="cat-children">
+            <label class="cat-leaf" data-leaf data-name="تخت دو‌نفره"><span class="check"></span><span class="nm">تخت دو‌نفره</span><span class="count">۱۲</span></label>
+            <label class="cat-leaf" data-leaf data-name="تخت یک‌نفره"><span class="check"></span><span class="nm">تخت یک‌نفره</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="تخت نوجوان"><span class="check"></span><span class="nm">تخت نوجوان</span><span class="count">۷</span></label>
+            <label class="cat-leaf" data-leaf data-name="تخت کودک"><span class="check"></span><span class="nm">تخت کودک</span><span class="count">۵</span></label>
+          </div>
+
+          <!-- wardrobes -->
+          <div class="cat-parent" data-toggle-parent>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="check"></span><span class="nm">کمدها</span><span class="count">۵</span>
+          </div>
+          <div class="cat-children">
+            <label class="cat-leaf" data-leaf data-name="کمد دو‌درب"><span class="check"></span><span class="nm">کمد دو‌درب</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="کمد سه‌درب"><span class="check"></span><span class="nm">کمد سه‌درب</span><span class="count">۱۰</span></label>
+            <label class="cat-leaf" data-leaf data-name="کمد چهار‌درب"><span class="check"></span><span class="nm">کمد چهار‌درب</span><span class="count">۶</span></label>
+            <label class="cat-leaf" data-leaf data-name="کمد ترکیبی"><span class="check"></span><span class="nm">کمد ترکیبی</span><span class="count">۱۲</span></label>
+            <label class="cat-leaf" data-leaf data-name="کمد دیواری"><span class="check"></span><span class="nm">کمد دیواری</span><span class="count">۱۲</span></label>
+          </div>
+
+          <!-- dressers -->
+          <div class="cat-parent" data-toggle-parent>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="check"></span><span class="nm">دراورها</span><span class="count">۴</span>
+          </div>
+          <div class="cat-children">
+            <label class="cat-leaf" data-leaf data-name="دراور پنج‌کشو"><span class="check"></span><span class="nm">دراور پنج‌کشو</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="دراور هفت‌کشو"><span class="check"></span><span class="nm">دراور هفت‌کشو</span><span class="count">۶</span></label>
+            <label class="cat-leaf" data-leaf data-name="دراور با آینه"><span class="check"></span><span class="nm">دراور با آینه</span><span class="count">۷</span></label>
+            <label class="cat-leaf" data-leaf data-name="دراور کشویی"><span class="check"></span><span class="nm">دراور کشویی</span><span class="count">۵</span></label>
+          </div>
+
+          <!-- tables & chairs -->
+          <div class="cat-parent" data-toggle-parent>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="check"></span><span class="nm">میز و صندلی</span><span class="count">۶</span>
+          </div>
+          <div class="cat-children">
+            <label class="cat-leaf" data-leaf data-name="میز ناهارخوری"><span class="check"></span><span class="nm">میز ناهارخوری</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="میز جلومبلی"><span class="check"></span><span class="nm">میز جلومبلی</span><span class="count">۶</span></label>
+            <label class="cat-leaf" data-leaf data-name="میز توالت"><span class="check"></span><span class="nm">میز توالت</span><span class="count">۵</span></label>
+            <label class="cat-leaf" data-leaf data-name="میز عسلی"><span class="check"></span><span class="nm">میز عسلی</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="صندلی ناهارخوری"><span class="check"></span><span class="nm">صندلی ناهارخوری</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="صندلی اداری"><span class="check"></span><span class="nm">صندلی اداری</span><span class="count">۷</span></label>
+          </div>
+
+          <!-- shelves -->
+          <div class="cat-parent" data-toggle-parent>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="check"></span><span class="nm">قفسه‌ها</span><span class="count">۳</span>
+          </div>
+          <div class="cat-children">
+            <label class="cat-leaf" data-leaf data-name="قفسه کتاب"><span class="check"></span><span class="nm">قفسه کتاب</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="قفسه دیواری"><span class="check"></span><span class="nm">قفسه دیواری</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="قفسه آویز"><span class="check"></span><span class="nm">قفسه آویز</span><span class="count">۶</span></label>
+          </div>
+
+          <!-- sets -->
+          <div class="cat-parent" data-toggle-parent>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="check"></span><span class="nm">سرویس‌ها</span><span class="count">۳</span>
+          </div>
+          <div class="cat-children">
+            <label class="cat-leaf" data-leaf data-name="سرویس خواب کامل"><span class="check"></span><span class="nm">سرویس خواب کامل</span><span class="count">۸</span></label>
+            <label class="cat-leaf" data-leaf data-name="سرویس نوزاد"><span class="check"></span><span class="nm">سرویس نوزاد</span><span class="count">۷</span></label>
+            <label class="cat-leaf" data-leaf data-name="سرویس ناهارخوری"><span class="check"></span><span class="nm">سرویس ناهارخوری</span><span class="count">۷</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- series — 22 in scrollable list, multi-select -->
+      <div class="filter-group">
+        <div class="filter-label">طرح <span class="count-active">۲</span></div>
+        <div class="series-list-wrap">
+          <div class="series-list">
+            <label class="filter-opt active" data-toggle><span class="check"></span><span class="nm">گندم</span><span class="count">۱۲</span></label>
+            <label class="filter-opt active" data-toggle><span class="check"></span><span class="nm">باروت</span><span class="count">۱۸</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">لوتوس</span><span class="count">۹</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">سنتو</span><span class="count">۱۴</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">الیزابت</span><span class="count">۱۱</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">آرامش</span><span class="count">۷</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">آناهیتا</span><span class="count">۱۰</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">پارسا</span><span class="count">۸</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">ستاره</span><span class="count">۶</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">سحر</span><span class="count">۹</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">یاسنا</span><span class="count">۷</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">پرمیس</span><span class="count">۵</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">گلشن</span><span class="count">۸</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">آویشن</span><span class="count">۶</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">سپهر</span><span class="count">۹</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">روکسانا</span><span class="count">۴</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">مرجان</span><span class="count">۵</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">هستی</span><span class="count">۷</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">نیلو</span><span class="count">۶</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">تارا</span><span class="count">۸</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">آترینا</span><span class="count">۵</span></label>
+            <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">دیانا</span><span class="count">۹</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- material -->
+      <div class="filter-group">
+        <div class="filter-label">روکش چوب <span class="count-active">۱</span></div>
+        <div class="filter-list">
+          <label class="filter-opt active" data-toggle><span class="check"></span><span class="nm">گردو</span><span class="count">۱۴۲</span></label>
+          <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">راش</span><span class="count">۶۸</span></label>
+          <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">بلوط</span><span class="count">۲۴</span></label>
+          <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">افرا</span><span class="count">۱۲</span></label>
+          <label class="filter-opt" data-toggle><span class="check"></span><span class="nm">ام‌دی‌اف روکش</span><span class="count">۸</span></label>
+        </div>
+      </div>
+
+      <!-- conditional variant block: disabled / hint when no single category selected -->
+      <div class="variant-block">
+        <div class="filter-label">ویژگی‌ها</div>
+        <p class="filter-label-hint">
+          برای فیلتر اندازه، رنگ یا ویژگی‌های دیگر، یک <b>نوع</b> از دسته‌بندی انتخاب کنید (مثلاً «تخت دو‌نفره»).
+        </p>
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ mobile filter trigger ══════════════ -->
+<div class="mob-filter-bar">
+  <button class="mob-filter-btn" onclick="openSheet()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="4" y1="6" x2="20" y2="6"/>
+      <line x1="4" y1="12" x2="14" y2="12"/>
+      <line x1="4" y1="18" x2="8" y2="18"/>
+    </svg>
+    فیلتر و مرتب‌سازی
+    <span class="badge">۳</span>
+  </button>
+</div>
+
+<!-- ════════════════════════════════════════ mobile sheet (truncated) ══════════ -->
+<div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet" role="dialog" aria-label="فیلتر و مرتب‌سازی">
+  <div class="sheet-grip" aria-hidden="true"></div>
+  <div class="sheet-head">
+    <span class="title">فیلتر و مرتب‌سازی</span>
+    <button class="close" onclick="closeSheet()" aria-label="بستن">×</button>
+  </div>
+  <div class="sheet-body">
+
+    <div class="filter-search">
+      <div class="filter-search-wrap">
+        <input class="filter-search-input" type="search" placeholder="جستجو در محصولات…" value="">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">مرتب‌سازی</div>
+      <div class="filter-list" data-radio>
+        <label class="filter-opt radio active" data-toggle><span class="check"></span><span class="nm">جدیدترین</span></label>
+        <label class="filter-opt radio" data-toggle><span class="check"></span><span class="nm">قیمت: ارزان‌ترین</span></label>
+        <label class="filter-opt radio" data-toggle><span class="check"></span><span class="nm">قیمت: گران‌ترین</span></label>
+        <label class="filter-opt radio" data-toggle><span class="check"></span><span class="nm">الفبا</span></label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">دسته‌بندی</div>
+      <div class="cat-search-wrap">
+        <input class="cat-search" type="search" placeholder="جستجو در دسته‌ها…" oninput="filterCats(this.value)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+      <!-- collapsed tree, same structure as desktop; omitted in mockup for length -->
+      <p style="padding: 14px 0; font-size: 12px; color: var(--color-stone);">
+        (همان درختواره‌ی دسکتاپ، با کشوی بازشونده برای هر دسته)
+      </p>
+    </div>
+
+  </div>
+  <div class="sheet-foot">
+    <button class="reset" onclick="clearFilters()">پاک کردن</button>
+    <button class="apply" onclick="closeSheet()">نمایش ۴۲ نتیجه</button>
+  </div>
+</div>
+
+<!-- footer placeholder -->
+<footer class="footer">© ۱۴۰۵ ژیک — مبلمان دست‌ساز چوب</footer>
+
+<script>
+  // toggle filter options (multi-select per axis except sort=radio)
+  document.querySelectorAll('[data-toggle]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const list = el.closest('[data-radio]');
+      if (list) {
+        list.querySelectorAll('.filter-opt').forEach(o => o.classList.remove('active'));
+        el.classList.add('active');
+      } else {
+        el.classList.toggle('active');
+      }
+    });
+  });
+
+  // tree: parent chevron toggles open
+  document.querySelectorAll('[data-toggle-parent]').forEach(el => {
+    el.addEventListener('click', e => {
+      // if click on the checkbox, also toggle selection; otherwise just toggle open
+      const isCheck = e.target.classList.contains('check');
+      if (!isCheck) {
+        el.classList.toggle('open');
+      } else {
+        el.classList.toggle('active');
+      }
+    });
+  });
+
+  // leaves: multi-select
+  document.querySelectorAll('[data-leaf]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      el.classList.toggle('active');
+    });
+  });
+
+  // category type-ahead: filter leaf labels matching the query
+  function filterCats(q) {
+    q = (q || '').trim();
+    const tree = document.getElementById('catTree');
+    if (!tree) return;
+    const leaves = tree.querySelectorAll('[data-leaf]');
+    if (!q) {
+      leaves.forEach(l => { l.classList.remove('match'); l.querySelector('.nm').textContent = l.dataset.name; l.style.display = ''; });
+      // collapse all but mirrors (default)
+      tree.querySelectorAll('[data-toggle-parent]').forEach((p, i) => {
+        if (i === 0) p.classList.add('open');
+        else p.classList.remove('open');
+      });
+      return;
+    }
+    // expand all parents
+    tree.querySelectorAll('[data-toggle-parent]').forEach(p => p.classList.add('open'));
+    leaves.forEach(l => {
+      const name = l.dataset.name;
+      if (name.includes(q)) {
+        l.classList.add('match');
+        l.style.display = '';
+        // highlight match
+        const idx = name.indexOf(q);
+        l.querySelector('.nm').innerHTML = name.slice(0, idx) + '<mark>' + q + '</mark>' + name.slice(idx + q.length);
+      } else {
+        l.classList.remove('match');
+        l.style.display = 'none';
+      }
+    });
+  }
+
+  function clearFilters() {
+    document.querySelectorAll('.filter-opt').forEach(o => o.classList.remove('active'));
+    document.querySelectorAll('.cat-leaf').forEach(o => o.classList.remove('active'));
+    document.querySelectorAll('.cat-parent').forEach(o => o.classList.remove('active'));
+    document.querySelectorAll('[data-radio] .filter-opt').forEach((o, i) => {
+      if (i === 0) o.classList.add('active');
+    });
+  }
+
+  function openSheet() {
+    document.getElementById('sheet').classList.add('open');
+    document.getElementById('sheetBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSheet() {
+    document.getElementById('sheet').classList.remove('open');
+    document.getElementById('sheetBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // come-up fade-in
+  (function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) { document.querySelectorAll('.fadeup').forEach(el => el.classList.add('in')); return; }
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+      }
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.fadeup').forEach(el => io.observe(el));
+  })();
+</script>
+</body>
+</html>
