@@ -965,6 +965,166 @@ async function runCategories(client: pg.Client) {
   console.log(`${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── DESIGNS PHASE ─────────────────────────
+
+type DesignSeed = {
+  slug: string
+  persianName: string
+  occupancies: string[]
+  hasPhotos: boolean // false for D1 series
+}
+
+/** Extract "<series-persian>" from the navigation farsi_name like
+ *  "سرویس خواب نوزادی پارلا" → "پارلا". Handles multi-word series like
+ *  "بلک اند وایت". */
+function extractPersianSeriesName(farsiName: string): string {
+  const words = farsiName.trim().split(/\s+/)
+  if (words.length >= 4 && words[0] === 'سرویس' && words[1] === 'خواب') {
+    return words.slice(3).join(' ')
+  }
+  return farsiName
+}
+
+function parseSeriesFromNav(): DesignSeed[] {
+  // The navigation sheet in final-organized.xlsx uses `nav_url`,
+  // `description_or_link`, `farsi_name` — NOT the same column names
+  // as the categories table in final.xlsx (which uses `categories_url`).
+  const wb = xlsx.readFile(PRODUCTS_XLSX)
+  const navRows = xlsx.utils.sheet_to_json<{
+    nav_url: string | null
+    description_or_link: string | null
+    farsi_name: string | null
+  }>(wb.Sheets['navigation']!, { defval: null, raw: true })
+
+  const occMap = new Map<string, Set<string>>()
+  const persianMap = new Map<string, string>()
+
+  for (const row of navRows) {
+    const url = row.nav_url
+    if (!url || !url.startsWith('/bedroom-set/')) continue
+    const parts = url.replace('/bedroom-set/', '').split('/')
+    if (parts.length !== 2) continue
+    const [occupancy, slug] = parts as [string, string]
+    if (!['baby', 'teen', 'double', 'bunk'].includes(occupancy)) continue
+
+    if (!occMap.has(slug)) occMap.set(slug, new Set())
+    occMap.get(slug)!.add(occupancy)
+
+    if (!persianMap.has(slug) && row.farsi_name) {
+      persianMap.set(slug, extractPersianSeriesName(row.farsi_name))
+    }
+  }
+
+  const seeds: DesignSeed[] = []
+  for (const [slug, occs] of occMap.entries()) {
+    seeds.push({
+      slug,
+      persianName: persianMap.get(slug) ?? slug,
+      occupancies: [...occs].sort(),
+      hasPhotos: !SERIES_WITHOUT_PHOTOS.has(slug),
+    })
+  }
+  // Sort: D1 hidden series last for clarity in logs
+  seeds.sort((a, b) => {
+    if (a.hasPhotos !== b.hasPhotos) return a.hasPhotos ? -1 : 1
+    return a.slug.localeCompare(b.slug)
+  })
+  return seeds
+}
+
+async function runDesigns(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`🎨 DESIGNS — Phase 6.4 ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  const seeds = parseSeriesFromNav()
+  console.log(`Parsed ${seeds.length} series from /bedroom-set/* nav rows:`)
+  console.log(`  ${seeds.filter((s) => s.hasPhotos).length} with photos (will seed normally)`)
+  console.log(`  ${seeds.filter((s) => !s.hasPhotos).length} without photos (D1 = no media yet, seed anyway)`)
+
+  // Group counts
+  const occCounts: Record<string, number> = { baby: 0, teen: 0, double: 0, bunk: 0 }
+  for (const s of seeds) for (const o of s.occupancies) occCounts[o]!++
+  console.log(`\nOccupancy distribution:`)
+  for (const [occ, n] of Object.entries(occCounts)) console.log(`  ${occ.padEnd(8)} ${n} series`)
+
+  // Existing check
+  const existing = await client.query<{ slug: string }>(`SELECT slug FROM designs`)
+  if (existing.rowCount && existing.rowCount > 0) {
+    console.log(
+      `\n⚠️  ${existing.rowCount} design records already exist (slugs: ${existing.rows.map((r) => r.slug).join(', ')})`,
+    )
+  }
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN — sample of what would be inserted:`)
+    for (const s of seeds.slice(0, 8)) {
+      console.log(
+        `  ${s.slug.padEnd(15)} ${s.persianName.padEnd(20)} occupancies=[${s.occupancies.join(',')}]${s.hasPhotos ? '' : ' (D1)'}`,
+      )
+    }
+    if (seeds.length > 8) console.log(`  ... and ${seeds.length - 8} more`)
+    console.log(`\nPass --apply to insert. No writes performed.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`✍️  INSERTING IN TRANSACTION`)
+  console.log(`${'─'.repeat(70)}`)
+
+  await client.query('BEGIN')
+  try {
+    let inserted = 0
+    let occRows = 0
+
+    for (const s of seeds) {
+      const r = await client.query<{ id: number }>(
+        `INSERT INTO designs (name, slug, created_at, updated_at)
+         VALUES ($1, $2, NOW(), NOW())
+         RETURNING id`,
+        [s.persianName, s.slug],
+      )
+      const designId = r.rows[0]!.id
+
+      // Insert occupancies child rows
+      for (let i = 0; i < s.occupancies.length; i++) {
+        await client.query(
+          `INSERT INTO designs_occupancies ("order", parent_id, id, value)
+           VALUES ($1, $2, $3, $4)`,
+          [i, designId, `${designId}-occ-${i}`, s.occupancies[i]],
+        )
+        occRows++
+      }
+      inserted++
+    }
+
+    await client.query('COMMIT')
+    console.log(`  ✓ Inserted ${inserted} designs + ${occRows} designs_occupancies rows`)
+  } catch (e: any) {
+    await client.query('ROLLBACK')
+    console.error(`\n✗ Transaction aborted: ${e.message || e}\n`)
+    throw e
+  }
+
+  // Verify by sampling
+  const verify = await client.query<{ slug: string; name: string; n: number }>(`
+    SELECT d.slug, d.name, count(o.value)::int as n
+    FROM designs d
+    LEFT JOIN designs_occupancies o ON o.parent_id = d.id
+    GROUP BY d.id, d.slug, d.name
+    ORDER BY d.slug
+  `)
+  console.log(`\nAll ${verify.rowCount} seeded designs:`)
+  for (const r of verify.rows) {
+    console.log(`  ${r.slug.padEnd(15)} ${r.name.padEnd(20)} (${r.n} occupancies)`)
+  }
+
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`✓ Designs seeded. Phase 6.5 (--media) lands next.`)
+  console.log(`${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -978,9 +1138,11 @@ try {
     await runWipe(client)
   } else if (PHASE === 'categories') {
     await runCategories(client)
+  } else if (PHASE === 'designs') {
+    await runDesigns(client)
   } else {
-    console.error(`\n❌ Phase "${PHASE}" not yet implemented. Available: --inventory --wipe --categories.`)
-    console.error(`   Other phases land incrementally in 6.4 … 6.7.`)
+    console.error(`\n❌ Phase "${PHASE}" not yet implemented. Available: --inventory --wipe --categories --designs.`)
+    console.error(`   Other phases land incrementally in 6.5 … 6.7.`)
     process.exit(1)
   }
 } finally {
