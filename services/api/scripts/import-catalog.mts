@@ -927,13 +927,22 @@ async function runCategories(client: pg.Client) {
       const fullPath = s.segments.join('/')
       pathToId.set(fullPath, newId)
 
-      // Insert allowed_axes child rows if any
+      // Insert allowed_axes child rows if any.
+      //
+      // Gotcha: Payload v3 reads hasMany-text fields from a UNIFIED
+      // `<collection>_texts` table keyed by `path`, NOT from a
+      // `<collection>_<fieldname>` table. The migration created
+      // `categories_allowed_axes` but Payload's runtime SQL queries
+      // `categories_texts WHERE path = 'allowed_axes'`. Writing to the
+      // wrong table is silently ignored on read — caught the hard way
+      // on 2026-05-23 when the PDP variant picker wouldn't render
+      // because every category returned allowed_axes:[] over REST.
       if (s.allowedAxes.length > 0) {
         for (let i = 0; i < s.allowedAxes.length; i++) {
           await client.query(
-            `INSERT INTO categories_allowed_axes ("_order", "_parent_id", id, value)
-             VALUES ($1, $2, $3, $4)`,
-            [i, newId, `${newId}-axis-${i}`, s.allowedAxes[i]],
+            `INSERT INTO categories_texts ("order", parent_id, path, text)
+             VALUES ($1, $2, 'allowed_axes', $3)`,
+            [i, newId, s.allowedAxes[i]],
           )
         }
         withAxes++
