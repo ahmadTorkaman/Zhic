@@ -127,6 +127,7 @@ const { values: args } = parseArgs({
     designs: { type: 'boolean', default: false },
     media: { type: 'boolean', default: false },
     products: { type: 'boolean', default: false },
+    variants: { type: 'boolean', default: false },
     apply: { type: 'boolean', default: false },
   },
 })
@@ -143,7 +144,9 @@ const PHASE = args.inventory
           ? 'media'
           : args.products
             ? 'products'
-            : null
+            : args.variants
+              ? 'variants'
+              : null
 
 if (!PHASE) {
   console.error('Usage: tsx scripts/import-catalog.mts --<phase> [--apply]')
@@ -1510,6 +1513,183 @@ async function runProducts(client: pg.Client) {
   console.log(`${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── VARIANTS PHASE ─────────────────────────
+
+async function runVariants(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`🔀 VARIANTS — Phase 6.7 ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  if (!fs.existsSync('/tmp/product-ids.json')) {
+    console.error(`❌ /tmp/product-ids.json not found — run --products --apply first.`)
+    process.exit(1)
+  }
+  const { productIdsBySeriesType } = JSON.parse(
+    fs.readFileSync('/tmp/product-ids.json', 'utf8'),
+  ) as { productIdsBySeriesType: Record<string, number> }
+
+  const mediaMap = JSON.parse(fs.readFileSync(MEDIA_MAP_PATH, 'utf8')) as {
+    byFilename: Record<string, number>
+    byRelPath: Record<string, number>
+  }
+
+  const { products: xlsxProducts } = readProductsXlsx()
+  console.log(`Xlsx rows: ${xlsxProducts.length}`)
+
+  // Group by (series, type) — each row in a group is one variant of that product.
+  const groups = new Map<string, XlsxProductRow[]>()
+  for (const r of xlsxProducts) {
+    if (!r.series || r.series === '-' || !r.type) continue
+    const key = `${r.series}|${r.type}`
+    if (!groups.has(key)) groups.set(key, [])
+    groups.get(key)!.push(r)
+  }
+
+  // Only products with MULTIPLE rows OR non-null attributes need variants.
+  // Single-row product with no attributes = single SKU, no variant needed.
+  const variantCandidates: Array<{ key: string; row: XlsxProductRow; idx: number }> = []
+  for (const [key, rows] of groups.entries()) {
+    if (rows.length === 1 && !rows[0]!.attributes) continue
+    for (let i = 0; i < rows.length; i++) {
+      variantCandidates.push({ key, row: rows[i]!, idx: i })
+    }
+  }
+  console.log(`Variant candidates: ${variantCandidates.length} (rows with attrs or in multi-row groups)`)
+
+  if (!APPLY) {
+    console.log(`\nSample (first 5):`)
+    for (const c of variantCandidates.slice(0, 5)) {
+      const attrs = parseAttributes(c.row.attributes)
+      console.log(`  ${c.key} [#${c.idx}] attrs=${JSON.stringify(attrs)} media=${c.row.media_files ?? '(none)'}`)
+    }
+    console.log(`\n🔍 DRY-RUN — would create ${variantCandidates.length} variants.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`✍️  CREATING ${variantCandidates.length} variants`)
+  console.log(`${'─'.repeat(70)}`)
+
+  // Idempotency: pre-load existing variant SKUs.
+  const existing = await client.query<{ sku: string }>(`SELECT sku FROM product_variants`)
+  const existingSkus = new Set(existing.rows.map((r) => r.sku))
+
+  let created = 0
+  let skipped = 0
+  let errors = 0
+  let axesRows = 0
+  let withImage = 0
+
+  // Build an original-filename → media_id map. Where multiple files share the
+  // bare name (post-collision rename), we can't disambiguate from filename
+  // alone, so we accept the first match — variant images for those few rows
+  // may be wrong; operator refines via admin if needed.
+  const byOriginalFilename = new Map<string, number>()
+  for (const [relPath, id] of Object.entries(mediaMap.byRelPath)) {
+    const bare = path.basename(relPath)
+    if (!byOriginalFilename.has(bare)) byOriginalFilename.set(bare, id)
+  }
+
+  for (const c of variantCandidates) {
+    try {
+      const productId = productIdsBySeriesType[c.key]
+      if (productId == null) {
+        skipped++
+        continue
+      }
+
+      const attrs = parseAttributes(c.row.attributes)
+
+      // Derive finish from the row's media filename (D4 heuristic). Looks
+      // for -cream-/-gray-/-green- in the filename.
+      let finish: string | null = null
+      const mediaFile = c.row.media_files?.trim() ?? null
+      if (mediaFile) {
+        finish = finishFromMedia('', mediaFile)
+      }
+
+      const axes: Record<string, string> = { ...attrs }
+      if (finish) axes.finish = finish
+
+      // SKU — slug-like and unique per variant.
+      const productSlug = `${c.row.series}-${c.row.type}`
+      const axesPart = Object.entries(axes)
+        .map(([k, v]) => `${k}-${v}`)
+        .join('-')
+      const sku = axesPart ? `${productSlug}-${axesPart}` : `${productSlug}-${c.idx}`
+
+      if (existingSkus.has(sku)) {
+        skipped++
+        continue
+      }
+
+      // Image: look up by filename
+      let imageId: number | null = null
+      if (mediaFile) {
+        imageId = byOriginalFilename.get(mediaFile) ?? mediaMap.byFilename[mediaFile] ?? null
+      }
+      if (imageId != null) withImage++
+
+      // Label: human-readable axes summary
+      const label = Object.entries(axes)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(' · ') || 'پیش‌فرض'
+
+      const r = await client.query<{ id: number }>(
+        `INSERT INTO product_variants (
+          product_id, sku, label, price_delta_rials, availability,
+          image_id, display_order, created_at, updated_at
+        ) VALUES ($1, $2, $3, 0, $4, $5, $6, NOW(), NOW())
+        RETURNING id`,
+        [
+          productId, sku, label,
+          c.row.visible === 'yes' ? 'in_stock' : 'made_to_order',
+          imageId, c.idx,
+        ],
+      )
+      const variantId = r.rows[0]!.id
+      existingSkus.add(sku)
+
+      // Axes child rows (product_variants_axes has key + value)
+      let axisIdx = 0
+      for (const [k, v] of Object.entries(axes)) {
+        await client.query(
+          `INSERT INTO product_variants_axes ("_order", "_parent_id", id, key, value)
+           VALUES ($1, $2, $3, $4, $5)`,
+          [axisIdx, variantId, `${variantId}-axis-${axisIdx}`, k, String(v)],
+        )
+        axisIdx++
+        axesRows++
+      }
+
+      created++
+      if (created % 100 === 0) {
+        console.log(`  … ${created} variants created, ${skipped} skipped, ${errors} errors`)
+      }
+    } catch (e: any) {
+      errors++
+      if (errors <= 5) console.error(`  ✗ ${c.key}[${c.idx}]: ${e.message || e}`)
+    }
+  }
+
+  console.log(`\n  ✓ ${created} variants created, ${skipped} skipped, ${errors} errors`)
+  console.log(`  ✓ ${axesRows} axes rows, ${withImage} variants linked to specific media`)
+
+  // Verify
+  const verify = await client.query<{ c: string; n: number }>(`
+    SELECT 'variants' AS c, count(*)::int AS n FROM product_variants
+    UNION ALL SELECT 'axes', count(*)::int FROM product_variants_axes
+    UNION ALL SELECT 'with_image', count(*)::int FROM product_variants WHERE image_id IS NOT NULL
+  `)
+  console.log(`\nVerification:`)
+  for (const r of verify.rows) console.log(`  ${r.c}: ${r.n}`)
+
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`✓ Variants seeded. Final smoke + D2 outlier cleanup next.`)
+  console.log(`${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -1529,6 +1709,8 @@ try {
     await runMedia(client)
   } else if (PHASE === 'products') {
     await runProducts(client)
+  } else if (PHASE === 'variants') {
+    await runVariants(client)
   } else {
     console.error(`\n❌ Phase "${PHASE}" not yet implemented.`)
     process.exit(1)
