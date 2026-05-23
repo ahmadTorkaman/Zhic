@@ -36,8 +36,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
+import sharp from 'sharp'
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url))
+const MEDIA_DIR = path.resolve(SCRIPT_DIR, '..', 'media')
+const MEDIA_MAP_PATH = '/tmp/media-map.json'
 
 // ───────────────────────── Constants ─────────────────────────
 
@@ -1125,6 +1128,388 @@ async function runDesigns(client: pg.Client) {
   console.log(`${'═'.repeat(70)}\n`)
 }
 
+// ───────────────────────── MEDIA PHASE ─────────────────────────
+
+/** Build the upload manifest. Files with name collisions across folders
+ *  get a folder prefix; standalone names keep their original filename
+ *  (which already encodes the series). */
+function buildMediaManifest(): Array<FsFile & { safeFilename: string }> {
+  const files = scanFs()
+  const nameCount = new Map<string, number>()
+  for (const f of files) nameCount.set(f.filename, (nameCount.get(f.filename) ?? 0) + 1)
+
+  return files.map((f) => {
+    let safe = f.filename
+    if (nameCount.get(f.filename)! > 1) {
+      // Disambiguate with the folder + subfolder context.
+      const prefix = f.subfolder ? `${f.folder}-${f.subfolder}-` : `${f.folder}-`
+      safe = prefix + f.filename
+    }
+    return { ...f, safeFilename: safe }
+  })
+}
+
+async function runMedia(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`📦 MEDIA — Phase 6.5 ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  const manifest = buildMediaManifest()
+  const collisions = manifest.filter((f) => f.safeFilename !== f.filename)
+  console.log(`Manifest: ${manifest.length} files`)
+  console.log(`  filename collisions resolved: ${collisions.length}`)
+  if (collisions.length > 0 && collisions.length <= 10) {
+    for (const c of collisions.slice(0, 5)) {
+      console.log(`    ${c.relPath} → ${c.safeFilename}`)
+    }
+  }
+
+  // Idempotency: pre-load existing filenames so re-runs skip uploaded files.
+  const existing = await client.query<{ id: number; filename: string }>(
+    `SELECT id, filename FROM media WHERE filename IS NOT NULL`,
+  )
+  const existingByName = new Map<string, number>()
+  for (const r of existing.rows) existingByName.set(r.filename, r.id)
+  console.log(`  ${existingByName.size} media records already exist (idempotent skip)`)
+
+  const toUpload = manifest.filter((f) => !existingByName.has(f.safeFilename))
+  console.log(`  ${toUpload.length} new uploads needed`)
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN — would upload ${toUpload.length} files to ${MEDIA_DIR}.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  // Ensure media dir exists
+  if (!fs.existsSync(MEDIA_DIR)) fs.mkdirSync(MEDIA_DIR, { recursive: true })
+
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`✍️  UPLOADING ${toUpload.length} files`)
+  console.log(`${'─'.repeat(70)}`)
+
+  // Build mapping that includes existing files too — Phase 6.6 needs the
+  // full filename → media_id lookup.
+  const mediaMap: Record<string, number> = {}
+  for (const [filename, id] of existingByName) {
+    mediaMap[filename] = id
+  }
+  // Map by ORIGINAL relPath too for products-phase lookup
+  const relPathMap: Record<string, number> = {}
+
+  let inserted = 0
+  let skipped = 0
+  let errors = 0
+  const t0 = Date.now()
+
+  // Process sequentially in a single transaction — simpler than parallel
+  // for ~600 small inserts at sub-second total time.
+  await client.query('BEGIN')
+  try {
+    for (let i = 0; i < manifest.length; i++) {
+      const f = manifest[i]!
+      try {
+        // Skip if already uploaded
+        const existingId = existingByName.get(f.safeFilename)
+        if (existingId != null) {
+          relPathMap[f.relPath] = existingId
+          mediaMap[f.safeFilename] = existingId
+          skipped++
+          continue
+        }
+
+        // Copy file
+        const targetPath = path.join(MEDIA_DIR, f.safeFilename)
+        fs.copyFileSync(f.absPath, targetPath)
+        const stat = fs.statSync(targetPath)
+
+        // Read dimensions
+        const meta = await sharp(targetPath).metadata()
+
+        // Insert media row
+        const r = await client.query<{ id: number }>(
+          `INSERT INTO media (
+            filename, url, mime_type, filesize, width, height,
+            focal_x, focal_y, created_at, updated_at
+          ) VALUES ($1, $2, 'image/webp', $3, $4, $5, 50, 50, NOW(), NOW())
+          RETURNING id`,
+          [
+            f.safeFilename,
+            `/api/media/file/${f.safeFilename}`,
+            stat.size,
+            meta.width ?? 0,
+            meta.height ?? 0,
+          ],
+        )
+        const id = r.rows[0]!.id
+        relPathMap[f.relPath] = id
+        mediaMap[f.safeFilename] = id
+        inserted++
+
+        if ((inserted + skipped) % 50 === 0) {
+          const dt = ((Date.now() - t0) / 1000).toFixed(1)
+          console.log(`  … ${inserted} inserted, ${skipped} skipped, ${errors} errors (${dt}s)`)
+        }
+      } catch (e: any) {
+        errors++
+        console.error(`  ✗ ${f.relPath}: ${e.message || e}`)
+      }
+    }
+
+    await client.query('COMMIT')
+  } catch (e: any) {
+    await client.query('ROLLBACK')
+    console.error(`\n✗ Transaction aborted: ${e.message || e}\n`)
+    throw e
+  }
+
+  const dt = ((Date.now() - t0) / 1000).toFixed(1)
+  console.log(`\n  ✓ ${inserted} inserted, ${skipped} skipped, ${errors} errors in ${dt}s`)
+
+  // Persist the map for Phase 6.6
+  fs.writeFileSync(
+    MEDIA_MAP_PATH,
+    JSON.stringify(
+      {
+        timestamp: new Date().toISOString(),
+        byFilename: mediaMap,
+        byRelPath: relPathMap,
+      },
+      null,
+      2,
+    ),
+  )
+  console.log(`  ✓ Wrote media map → ${MEDIA_MAP_PATH}`)
+  console.log(`${'═'.repeat(70)}`)
+  console.log(`✓ Media uploaded. Phase 6.6 (--products) lands next.`)
+  console.log(`${'═'.repeat(70)}\n`)
+}
+
+// ───────────────────────── PRODUCTS PHASE ─────────────────────────
+
+/** Map xlsx piece-type → Categories slug (matches what 6.3 inserted). */
+const PIECE_TYPE_TO_SLUG: Record<string, string> = {
+  'baby-bed': 'baby',
+  'single-bed': 'single',
+  'double-bed': 'double',
+  'bunk-bed': 'bunk',
+  'convertible-bed': 'convertible',
+  'nightstand': 'nightstand',
+  'vanity': 'vanity',
+  'study-desk': 'study-desk',
+  'bookcase': 'bookcase',
+  'file': 'file-cabinet', // xlsx uses 'file', tree uses 'file-cabinet'
+  'wardrobe': 'wardrobe',
+  'sliding-wardrobe': 'sliding',
+  'combined-wardrobe': 'wardrobe', // D2: fold into wardrobe
+  'display-cabinet': 'display-cabinet',
+  'console': 'console',
+  'standing-mirror': 'standing-mirror',
+  'table-mirror': 'table-mirror',
+  'wall-mirror': 'wall-mirror',
+  'vanity-chair': 'vanity-chair',
+  'study-chair': 'study-chair',
+  'loveseat': 'loveseat',
+  'bed-box': 'bed-box',
+  'bed-guard': 'bed-guard',
+  'bed-jack': 'bed-jack',
+  'changing-table': 'changing-table',
+  'changing-top': 'changing-top',
+  'wall-shelf': 'wall-shelf',
+}
+
+/** Parse the xlsx `attributes` column ("size=140,footboard=high") into a record. */
+function parseAttributes(attrs: string | null): Record<string, string> {
+  if (!attrs) return {}
+  const out: Record<string, string> = {}
+  for (const pair of attrs.split(',')) {
+    const [k, v] = pair.split('=')
+    if (k && v) out[k.trim()] = v.trim()
+  }
+  return out
+}
+
+async function runProducts(client: pg.Client) {
+  console.log(`\n${'═'.repeat(70)}`)
+  console.log(`📦 PRODUCTS — Phase 6.6 ${APPLY ? '✍️  APPLY MODE' : '🔍 DRY-RUN'}`)
+  console.log(`${'═'.repeat(70)}\n`)
+
+  // Load media map from 6.5
+  let mediaMap: { byFilename: Record<string, number>; byRelPath: Record<string, number> }
+  if (!fs.existsSync(MEDIA_MAP_PATH)) {
+    console.error(`❌ ${MEDIA_MAP_PATH} not found — run --media --apply first.`)
+    process.exit(1)
+  }
+  mediaMap = JSON.parse(fs.readFileSync(MEDIA_MAP_PATH, 'utf8'))
+  console.log(`Loaded media map: ${Object.keys(mediaMap.byFilename).length} filenames`)
+
+  // Read xlsx products sheet
+  const { products: xlsxProducts } = readProductsXlsx()
+  console.log(`Xlsx rows: ${xlsxProducts.length}`)
+
+  // Pre-fetch designs + categories
+  const designs = await client.query<{ id: number; slug: string }>(
+    `SELECT id, slug FROM designs`,
+  )
+  const designBySlug = new Map(designs.rows.map((d) => [d.slug, d.id]))
+
+  const cats = await client.query<{ id: number; slug: string }>(
+    `SELECT id, slug FROM categories`,
+  )
+  const catBySlug = new Map(cats.rows.map((c) => [c.slug, c.id]))
+
+  // Group xlsx rows by (series, type) since multiple rows = variants of same product
+  type Grouped = { series: string; type: string; rows: XlsxProductRow[] }
+  const groups = new Map<string, Grouped>()
+  for (const r of xlsxProducts) {
+    const series = r.series ?? '-'
+    const type = r.type ?? ''
+    const key = `${series}|${type}`
+    if (!groups.has(key)) groups.set(key, { series, type, rows: [] })
+    groups.get(key)!.rows.push(r)
+  }
+  console.log(`Grouped into ${groups.size} distinct (series, piece-type) combinations = product records`)
+
+  // Sample
+  console.log(`\nSample groupings (first 3):`)
+  let sampleI = 0
+  for (const g of groups.values()) {
+    if (sampleI >= 3) break
+    console.log(`  ${g.series}/${g.type}: ${g.rows.length} variant row(s)`)
+    sampleI++
+  }
+
+  if (!APPLY) {
+    console.log(`\n🔍 DRY-RUN — would create ${groups.size} products + ${xlsxProducts.length} variants.`)
+    console.log(`${'═'.repeat(70)}\n`)
+    return
+  }
+
+  console.log(`\n${'─'.repeat(70)}`)
+  console.log(`✍️  CREATING ${groups.size} products`)
+  console.log(`${'─'.repeat(70)}`)
+
+  let created = 0
+  let skipped = 0
+  let errors = 0
+  let galleryRefs = 0
+  const productIdsBySeriesType: Record<string, number> = {}
+
+  // Pre-fetch existing slugs for idempotency.
+  const existingSlugs = await client.query<{ id: number; slug: string }>(
+    `SELECT id, slug FROM products`,
+  )
+  const productBySlug = new Map(existingSlugs.rows.map((r) => [r.slug, r.id]))
+
+  // No outer transaction — per-row error in PG poisons the rest of the txn.
+  // Each INSERT is its own implicit txn; we use slug-based idempotency for
+  // re-runs.
+  for (const [key, g] of groups.entries()) {
+    try {
+      if (g.series === '-') {
+        // D3: series-less rows (bed-jack accessories) — Products.design is
+        // NOT NULL in the legacy schema. Defer per operator decision.
+        skipped++
+        continue
+      }
+      const designId = designBySlug.get(g.series)
+      if (designId == null) {
+        throw new Error(`design not found: ${g.series}`)
+      }
+
+      const categorySlug = PIECE_TYPE_TO_SLUG[g.type]
+      if (!categorySlug) throw new Error(`no category mapping for piece_type: ${g.type}`)
+      const categoryId = catBySlug.get(categorySlug)
+      if (categoryId == null) throw new Error(`category not found: ${categorySlug}`)
+
+      const name = `${g.series} ${g.type}`
+      const slug = `${g.series}-${g.type}`
+
+      // Idempotency: skip if slug already exists.
+      const existingId = productBySlug.get(slug)
+      if (existingId != null) {
+        productIdsBySeriesType[key] = existingId
+        skipped++
+        continue
+      }
+
+      // Base price: first row with a price; else 0 (operator refines later).
+      // base_price_rials is NOT NULL in the schema — D3 inquiry-only products
+      // get 0 here and operator updates via admin.
+      const firstPrice = g.rows.find((r) => r.price_rial)?.price_rial ?? 0
+      const anyVisible = g.rows.some((r) => r.visible === 'yes')
+
+      const r = await client.query<{ id: number }>(
+        `INSERT INTO products (
+          name, slug, design_id, piece_type, sku,
+          base_price_rials, availability, lead_time_days,
+          status, inquiry_enabled,
+          created_at, updated_at
+        ) VALUES ($1, $2, $3, NULL, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+        RETURNING id`,
+        [
+          name, slug, designId, slug,
+          firstPrice, anyVisible ? 'in_stock' : 'made_to_order',
+          14, anyVisible ? 'published' : 'draft', true,
+        ],
+      )
+      const productId = r.rows[0]!.id
+      productIdsBySeriesType[key] = productId
+      productBySlug.set(slug, productId)
+
+      // Link category via products_rels
+      await client.query(
+        `INSERT INTO products_rels ("order", parent_id, path, categories_id)
+         VALUES (1, $1, 'categoryIds', $2)`,
+        [productId, categoryId],
+      )
+
+      // Gallery: link media files whose path starts with this series and whose
+      // basename contains the piece-type token. Tolerates folder finish-variants
+      // (series=elizabeth maps to folders elizabeth-cream/, elizabeth-gray/).
+      const seriesPaths = Object.keys(mediaMap.byRelPath).filter((p) => {
+        const folder = p.split('/')[0]!
+        return folder === g.series || folder.startsWith(`${g.series}-`)
+      })
+      const galleryFiles: number[] = []
+      for (const relPath of seriesPaths) {
+        const fname = path.basename(relPath)
+        if (fname.includes(g.type)) {
+          galleryFiles.push(mediaMap.byRelPath[relPath]!)
+        }
+      }
+      for (let i = 0; i < galleryFiles.length; i++) {
+        await client.query(
+          `INSERT INTO products_rels ("order", parent_id, path, media_id)
+           VALUES ($1, $2, 'gallery', $3)`,
+          [i + 2, productId, galleryFiles[i]], // order starts at 2 (1 = category)
+        )
+        galleryRefs++
+      }
+
+      created++
+      if (created % 50 === 0) {
+        console.log(`  … ${created} created, ${skipped} skipped, ${errors} errors, ${galleryRefs} gallery refs`)
+      }
+    } catch (e: any) {
+      errors++
+      console.error(`  ✗ ${key}: ${e.message || e}`)
+    }
+  }
+
+  // Save product IDs for Phase 6.7 (variants)
+  fs.writeFileSync(
+    '/tmp/product-ids.json',
+    JSON.stringify({ productIdsBySeriesType }, null, 2),
+  )
+
+  console.log(`\n  ✓ ${created} products created, ${errors} errors`)
+  console.log(`  ✓ Wrote product IDs → /tmp/product-ids.json`)
+  console.log(`${'═'.repeat(70)}`)
+  console.log(`✓ Products seeded. Phase 6.7 (--variants) lands next (TODO).`)
+  console.log(`${'═'.repeat(70)}\n`)
+}
+
 // ───────────────────────── Main ─────────────────────────
 
 const dbUri = readDatabaseUri()
@@ -1140,9 +1525,12 @@ try {
     await runCategories(client)
   } else if (PHASE === 'designs') {
     await runDesigns(client)
+  } else if (PHASE === 'media') {
+    await runMedia(client)
+  } else if (PHASE === 'products') {
+    await runProducts(client)
   } else {
-    console.error(`\n❌ Phase "${PHASE}" not yet implemented. Available: --inventory --wipe --categories --designs.`)
-    console.error(`   Other phases land incrementally in 6.5 … 6.7.`)
+    console.error(`\n❌ Phase "${PHASE}" not yet implemented.`)
     process.exit(1)
   }
 } finally {
