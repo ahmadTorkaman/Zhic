@@ -18,11 +18,72 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-05-21 |
-| Current phase | Package 1, Month 1 |
-| Current session | `/designs` rebuilt as a horizontal filmstrip + glassmorph pedestal (v14). Replaces the prior Big Carousel polish (superseded 2026-05-21). Hand-rolled scroll-jacked filmstrip — wheel + touch + keyboard drive a continuous `virtualProgress`, cards scale/blur with distance, glass pedestal appears only when settled, top-row dots show all 18 designs, word-stagger + dia-shine on the focused name. shadcn init scaffolding pulled in (components.json, lib/utils, ui/button + ui/carousel + ui/blur-fade) for future use even though the final filmstrip is hand-rolled. Branch + design tokens unchanged. |
-| Active branch | `staging` |
+| Last updated | 2026-05-25 |
+| Current phase | Package 1, Month 1 — **app code complete; go-live infra (7.1) outstanding** |
+| Current session | Catalog live (285 products / 206 variants / 26 designs / 36 categories) on `feat/pre-import-refactors`. `/bedroom-set/[slug]` hero now reuses each set's carousel media (`sliderMedia` → header, GIF/video-aware); a scroll-driven hero treatment is in design (mockup `/docs/bedroom-set-hero-scroll-mockup.html`: full-bleed contain fit + stage handoff + blur-in name settling ~10vh high — not yet in `DesignHero`). Package 1 remaining captured in new §"Package 1 — remaining to deliver". |
+| Active branch | `feat/pre-import-refactors` (13 ahead of `staging`, not pushed/merged) |
 | Main branch | `main` (not yet updated — PRs still open) |
+
+---
+
+## Package 1 — remaining to deliver
+
+All application code is shipped (Phases 1–6 ✅) and the real catalog is live on
+the box. What's left is **go-live infra (Session 7.1) + catalog content mop-up +
+verification** — not feature code. Synthesized 2026-05-25 from
+`package1-month1.md` exit criteria + `handoff-2026-05-24.md`.
+
+### Exit-criteria scorecard (`package1-month1.md` §"Month 1 exit criteria")
+
+| # | Criterion | State |
+| --- | --- | --- |
+| 1 | `zhicwood.com` live, all core + editorial pages | 🟡 pages done; serving on raw IP `80.240.31.146` over HTTP, no prod domain |
+| 2 | design-system + `@zhic/ui` | ✅ |
+| 3 | inquiry form + city SMS routing | 🟡 code done; `SMS_DRY_RUN` only, no real-cred send (FU-5.1-e) |
+| 4 | non-dev edit → live ≤10 min | 🟡 admin works; 5-min ISR only, `revalidateTag` webhook unbuilt (FU-3.1-e) |
+| 5 | hosting: VPS / TLS / Abr Arvan / Plausible / SMS.ir | 🔴 VPS only; TLS, Abr Arvan (S3 keys empty), Plausible all missing |
+| 6 | `staging.zhicwood.com` (pw-protected) | 🔴 superseded by 3-tier topology (`zhic.ir` review, noindex) |
+| 7 | Gitea + Gitea Actions pipeline | 🔴 not built |
+
+### A. Infra & go-live — Session 7.1 (critical path)
+
+- [ ] Resolve domain (blocks TLS) — 3-tier: `zhic.ir` review (noindex) + `zhicwood.com/.co` prod, operator-gated promotion
+- [ ] Caddy reverse proxy + auto-TLS (Let's Encrypt)
+- [ ] Abr Arvan S3 object storage with real creds (`S3_*` empty today) + CDN; flip media URLs off the raw Payload server
+- [ ] Plausible (self-hosted analytics)
+- [ ] Gitea Actions self-hosted runner + prod `payload migrate && next build` deploy script; `push:true` → `prodMigrations` for prod
+- [ ] npm mirror config on VPS + runner (open decision #7)
+- [ ] Re-test `Users.auth.useSessions` + re-evaluate the 3 pnpm patches once HTTPS lands (FU-7.1-a/b/c)
+
+### B. Ship the catalog branch
+
+- [ ] Review + push + merge `feat/pre-import-refactors` (13 commits ahead of `staging` — this is the catalog itself; don't merge unreviewed)
+
+### C. Catalog content mop-up (admin UI; `handoff-2026-05-24` §7)
+
+- [ ] Carousel images — 13/26 series have one. Upload for 6 published (`baloot, celine, jacqueline, sento, shaylin, verna`); decide the 7 image-less (`adrian, catherine, classic, eliza, nikan, roco, romantic`)
+- [ ] D3 series-less rows (2 bed-jacks + ~3 `_other_items`) — assign a house "ژیک" design or make `products.design_id` nullable
+- [ ] Variant→image precision on ~5–10 of the 14 collision filenames
+- [ ] Move Journal: primary nav → footer (deferred Phase-4 cleanup in `navLinks.ts`)
+- [ ] Orphan `monte.webp`; drop legacy `piece_type` column; fix `seed.ts` `allowed_axes` bug (writes `categories_allowed_axes`; Payload reads `categories_texts`)
+
+### D. Verification owed (criteria say "verified")
+
+- [ ] SMS.ir sandbox end-to-end (real send to a manager)
+- [ ] Cross-browser QA (Chrome/Firefox/Safari, mobile+desktop) + real Iranian ISP test (no VPN)
+- [ ] Lighthouse/CWV budgets + JSON-LD CI validation (FU-6.1-b/c)
+- [ ] Sample content for client demo (largely satisfied by the real catalog)
+
+### E. Open decisions still pending
+
+- [ ] OD-logo-lockup (Persian / Latin / stacked wordmark) — affects header + OG images
+- [ ] OD-latin-face (minor; Ayandeh covers Latin today)
+
+### Suggested order
+
+1. Decide domain (unblocks A) → 2. Merge catalog branch (B) → 3. Caddy+TLS → Abr Arvan → Gitea Actions → Plausible (A) → 4. Verify: SMS, revalidate webhook, ISP/cross-browser, Lighthouse (C/D) → 5. Content polish: carousel images, journal-nav, logo (C/E).
+
+**Out of scope (Pkg 2+):** cart/checkout/ZarinPal, accounts/auth, search, sale pricing, reviews, 3D `model-viewer`, CRM editorial workflow, stock levels.
 
 ---
 
