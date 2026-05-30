@@ -9,7 +9,8 @@ export const metadata = {
 
 export default async function DesignsIndexPage() {
   const designs = await fetchAllDesigns();
-  // The slider owns the entire viewport (fixed positioning) and handles its
-  // own breadcrumb + skip-link chrome in the top row; no surrounding Container.
+  // The slider takes one viewport of height (in normal flow) and handles its
+  // own breadcrumb + skip-link chrome. Add additional sections below as
+  // siblings to <DesignsSlider> — the page scrolls past the slider naturally.
   return <DesignsSlider designs={designs} />;
 }

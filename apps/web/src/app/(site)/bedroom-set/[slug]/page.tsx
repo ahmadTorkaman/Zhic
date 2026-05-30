@@ -10,6 +10,10 @@ import { fetchDesign, fetchProducts, fetchDesignsByOccupancy } from '@/lib/paylo
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+  /** `?age=baby|teen|double|bunk` — within-design occupancy filter.
+   *  Set when the user clicks an occupancy card on the slider. Anything
+   *  not matching the 4 reserved slugs is dropped silently. */
+  searchParams: Promise<{ age?: string }>;
 };
 
 /** The 4 reserved occupancy slugs that branch to the occupancy-hub view
@@ -75,9 +79,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function BedroomSetSlugPage({ params }: PageProps) {
+export default async function BedroomSetSlugPage({ params, searchParams }: PageProps) {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
+  const sp = await searchParams;
+  const ageRaw = typeof sp.age === 'string' ? sp.age : undefined;
+  const ageFilter: OccupancySlug | undefined =
+    ageRaw && isOccupancySlug(ageRaw) ? ageRaw : undefined;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // OCCUPANCY HUB BRANCH
@@ -154,22 +162,52 @@ export default async function BedroomSetSlugPage({ params }: PageProps) {
             ) : (
               <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-7">
                 {designs.map((d) => {
-                  const cover = d.heroMedia ?? d.gallery?.[0] ?? null;
+                  // Fallback chain mirrors the detail-page hero (heroMedia ??
+                  // sliderMedia ?? gallery[0]). sliderMedia is the carousel
+                  // slot used by /bedroom-set; for most designs it's the only
+                  // populated media field, and it can be a GIF or video.
+                  const cover = d.heroMedia ?? d.sliderMedia ?? d.gallery?.[0] ?? null;
+                  const isVideo = cover?.mimeType?.startsWith('video/') ?? false;
                   return (
                     <a
                       key={d.id}
                       href={`/bedroom-set/${d.slug}`}
                       className="group block"
                     >
-                      <div
-                        className="aspect-[5/6] overflow-hidden rounded transition-transform duration-700 hover:-translate-y-1"
-                        style={{
-                          background: cover?.url
-                            ? `linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(20,17,15,0.55) 100%), url(${cover.url}) center/cover`
-                            : 'var(--color-cream)',
-                        }}
-                      >
-                        {!cover?.url && (
+                      <div className="relative aspect-[5/6] overflow-hidden rounded bg-cream transition-transform duration-700 hover:-translate-y-1">
+                        {cover?.url ? (
+                          <>
+                            {isVideo ? (
+                              <video
+                                src={cover.url}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                preload="metadata"
+                                aria-hidden
+                                className="absolute inset-0 h-full w-full object-cover"
+                              />
+                            ) : (
+                              <img
+                                src={cover.url}
+                                alt=""
+                                loading="lazy"
+                                className="absolute inset-0 h-full w-full object-cover"
+                              />
+                            )}
+                            {/* Dark scrim from middle to bottom so the design
+                                name (rendered below the card) reads against
+                                bright media. */}
+                            <div
+                              aria-hidden
+                              className="absolute inset-0"
+                              style={{
+                                background: 'linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(20,17,15,0.55) 100%)',
+                              }}
+                            />
+                          </>
+                        ) : (
                           <div className="flex h-full items-center justify-center text-[12px] uppercase tracking-[0.18em] text-stone">
                             به‌زودی
                           </div>
@@ -251,14 +289,18 @@ export default async function BedroomSetSlugPage({ params }: PageProps) {
   // ═══════════════════════════════════════════════════════════════════════════
   const [design, productsPage] = await Promise.all([
     fetchDesign(slug),
-    fetchProducts({ design: slug, page: 1 }),
+    fetchProducts({ design: slug, page: 1, occupancies: ageFilter }),
   ]);
 
   if (!design) {
     notFound();
   }
 
-  const heroMedia = design.heroMedia ?? design.gallery?.[0] ?? null;
+  // Each set's carousel image (sliderMedia, the bedroom-set-<slug>.webp) is the
+  // per-set picture; use it as the detail-page hero when no explicit heroMedia
+  // is set, so the page matches its carousel slide. Operator can still override
+  // by uploading a dedicated heroMedia.
+  const heroMedia = design.heroMedia ?? design.sliderMedia ?? design.gallery?.[0] ?? null;
   const moodboardImages = design.gallery ?? [];
 
   return (
@@ -291,8 +333,29 @@ export default async function BedroomSetSlugPage({ params }: PageProps) {
           <p className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
             مجموعه
           </p>
+          {ageFilter ? (
+            <div className="mb-6 flex items-center gap-3">
+              <span className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-stone">
+                فیلتر:
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-forest-dark px-4 py-1.5 text-small font-bold text-ivory">
+                {OCCUPANCY_PERSIAN[ageFilter].title.replace('سرویس خواب ', '')}
+                <a
+                  href={`/bedroom-set/${slug}`}
+                  aria-label="حذف فیلتر"
+                  className="text-ivory/80 transition-colors hover:text-ivory"
+                >
+                  ×
+                </a>
+              </span>
+            </div>
+          ) : null}
           {productsPage.docs.length === 0 ? (
-            <p className="py-9 text-center text-stone">به‌زودی محصولات این طرح اضافه می‌شود.</p>
+            <p className="py-9 text-center text-stone">
+              {ageFilter
+                ? 'برای این گروه سنی هنوز قطعه‌ای ثبت نشده.'
+                : 'به‌زودی محصولات این طرح اضافه می‌شود.'}
+            </p>
           ) : (
             <ProductGrid products={productsPage.docs} />
           )}

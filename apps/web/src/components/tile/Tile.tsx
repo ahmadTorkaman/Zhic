@@ -40,16 +40,16 @@ export function Tile({
   hover = 'soft', className = '', aspectClassName = '',
 }: TileProps) {
   const wrapperBg = hover === 'full'
-    ? 'border border-transparent bg-cream group-hover:border-sand group-hover:bg-ivory group-hover:shadow-card transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)]'
+    ? 'border border-sand rounded-tr-[28px] group-hover:bg-cream group-hover:shadow-card transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)]'
     : 'bg-cream';
 
   return (
     <a
       href={href}
-      className={`group block transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:-translate-y-[3px] ${className}`}
+      className={`group block transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:translate-y-[var(--hover-lift-card)] ${className}`}
     >
       <Aspect ratio={aspect} className={`mb-4 ${wrapperBg} ${aspectClassName}`}>
-        <div className="absolute inset-0 transition-transform duration-[1200ms] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
+        <div className="absolute inset-0 transition-transform duration-[var(--dur-glacial)] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
           {image}
         </div>
         {badge ? (

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type { PayloadDesign } from '@/lib/payload';
 import './designs-slider.css';
 
@@ -12,6 +13,27 @@ export type DesignsSliderProps = {
 const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
 const toPersian = (n: number | string) =>
   String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[Number(d)] ?? d);
+
+/** Persian labels for the four occupancy hubs the chip row links to. */
+const OCCUPANCY_CHIP_LABEL: Record<
+  NonNullable<PayloadDesign['occupancies']>[number],
+  string
+> = {
+  baby: 'نوزاد',
+  teen: 'نوجوان',
+  double: 'دونفره',
+  bunk: 'دوطبقه',
+};
+
+/** Canonical render order for the occupancy cards (age ascending → bunk last)
+ *  so different designs surface their cards consistently regardless of how
+ *  Payload stored the array. */
+const OCCUPANCY_ORDER: NonNullable<PayloadDesign['occupancies']> = [
+  'baby',
+  'teen',
+  'double',
+  'bunk',
+];
 
 function getEyebrow(d: PayloadDesign): string {
   switch (d.age_group) {
@@ -108,6 +130,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
   // progress is React state (sync with React tree); progressRef shadows it
   // so event handlers + animation loops can read the current value without
   // depending on closure capture.
+  const router = useRouter();
   const [progress, setProgress] = React.useState(0);
   const [isScrubbing, setIsScrubbing] = React.useState(false);
   const [focused, setFocused] = React.useState(0);
@@ -128,6 +151,11 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
 
   // DOM refs
   const stageRef = React.useRef<HTMLDivElement | null>(null);
+  // True if the user crossed the 8px touch threshold during the current
+  // gesture — distinguishes a real swipe (skip click) from a tap (navigate).
+  // isScrubbing alone can't do this: it goes true on every touchstart, so
+  // pure taps would always be classified as drags.
+  const draggedRef = React.useRef(false);
   const cardRefs = React.useRef<(HTMLDivElement | null)[]>([]);
   const textRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -236,44 +264,9 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
     }, 180);
   }, [N, animateTo]);
 
-  // Lock body scroll while the slider is mounted — the stage is fixed and
-  // owns the viewport; the rest of the page must not scroll.
-  React.useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, []);
-
-  // Wheel input (mouse wheel + trackpad horizontal scroll). Both axes drive
-  // the same virtualProgress. Direction is REVERSED per v14: wheel down /
-  // trackpad right = back; wheel up / trackpad left = forward.
-  React.useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    const WHEEL_SENSITIVITY = 600;
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (snapAnimRef.current !== null) {
-        cancelAnimationFrame(snapAnimRef.current);
-        snapAnimRef.current = null;
-      }
-      setIsScrubbing(true);
-      const delta = e.deltaY + e.deltaX;
-      const newP = Math.max(
-        0,
-        Math.min(N - 1, progressRef.current - delta / WHEEL_SENSITIVITY),
-      );
-      progressRef.current = newP;
-      setProgress(newP);
-      scheduleSnap();
-    };
-    stage.addEventListener('wheel', onWheel, { passive: false });
-    return () => {
-      stage.removeEventListener('wheel', onWheel);
-    };
-  }, [N, scheduleSnap]);
+  // (Body-scroll lock + wheel-scrub removed: the slider now sits in normal
+  // page flow as a one-viewport-tall section so the user can scroll past it
+  // to content beneath. Carousel navigation: touch swipe, dots, keyboard.)
 
   // Touch input — horizontal swipe drives virtualProgress directly (no
   // velocity decay; release triggers scheduleSnap). Swipe RIGHT advances.
@@ -293,6 +286,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       touchStartY = t.clientY;
       touchStartProgress = progressRef.current;
       touchAxis = null;
+      draggedRef.current = false; // reset for the new gesture
       setIsScrubbing(true);
       if (snapAnimRef.current !== null) {
         cancelAnimationFrame(snapAnimRef.current);
@@ -307,6 +301,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       if (touchAxis === null) {
         if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
           touchAxis = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+          draggedRef.current = true; // a real drag, not a tap
         }
       }
       e.preventDefault();
@@ -383,6 +378,16 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
         ref={stageRef}
         className="zh-designs-stage"
         aria-label="گالری طرح‌های ژیک"
+        onClick={(e) => {
+          // Skip if this gesture was a swipe, not a tap.
+          if (draggedRef.current) return;
+          // Don't swallow clicks on real interactive children (dots, links,
+          // CTA buttons — they own their own behavior).
+          if ((e.target as HTMLElement).closest('a, button')) return;
+          if (focusedSlug) {
+            router.push(`/bedroom-set/${encodeURIComponent(focusedSlug)}`);
+          }
+        }}
       >
         <div className="zh-designs-top">
           <nav className="zh-designs-breadcrumb" aria-label="مسیر">
@@ -458,9 +463,6 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
 
         <div ref={textRef} className="zh-designs-text" data-state="entering">
           <div className="zh-designs-text-top">
-            <div className="zh-designs-eyebrow">
-              {staggeredWords(getEyebrow(focusedDesign))}
-            </div>
             <div className="zh-designs-name">
               <span className="zh-designs-name-shine">{focusedDesign.name}</span>
             </div>
@@ -468,28 +470,36 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
               {focusedTagline ? staggeredWords(focusedTagline) : null}
             </div>
           </div>
-          <div className="zh-designs-text-cta">
-            <Link
-              href={`/bedroom-set/${encodeURIComponent(focusedSlug)}`}
-              className="zh-designs-cta"
-              aria-label={`دیدن کامل طرح ${focusedDesign.name}`}
-            >
-              <span>دیدن کامل طرح {focusedDesign.name}</span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden
-              >
-                <path
-                  d="M9 6L15 12L9 18"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
-          </div>
+          {/* Occupancy cards — positioned beneath the focused card. Surfaces
+              designs that span more than one set type (e.g. an adult design
+              that also has a teen version). Each card links to the matching
+              /bedroom-set/{occupancy} hub. Suppressed when the design has
+              0–1 entries (nothing to "also" with). */}
+          {(focusedDesign.occupancies?.length ?? 0) > 1 ? (
+            <div className="zh-designs-text-bottom">
+              <div className="zh-designs-occupancy-cards">
+                {[...focusedDesign.occupancies!]
+                  .sort(
+                    (a, b) =>
+                      OCCUPANCY_ORDER.indexOf(a) - OCCUPANCY_ORDER.indexOf(b),
+                  )
+                  .map((o, i) => (
+                    <Link
+                      key={o}
+                      // Within-design filter: navigates to this design's PDP
+                      // narrowed to the chosen occupancy via ?age=. The PDP
+                      // reads searchParams and passes the filter to Payload.
+                      href={`/bedroom-set/${encodeURIComponent(focusedSlug)}?age=${o}`}
+                      className="zh-designs-occupancy-card"
+                      style={{ ['--i' as never]: i }}
+                    >
+                      <span className="zh-designs-occupancy-card__label">سرویس</span>
+                      <span className="zh-designs-occupancy-card__name">{OCCUPANCY_CHIP_LABEL[o]}</span>
+                    </Link>
+                  ))}
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="zh-designs-bottom">

@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Container } from '@zhic/ui';
 import { FOOTER_COLUMNS, FOOTER_LEGAL, FOOTER_COPYRIGHT_LINE } from './footerLinks';
 import { FooterContactStrip, type SocialLink } from './FooterContactStrip';
@@ -7,11 +10,20 @@ import type { PayloadSiteConfig } from '@/lib/payload';
 const VALID_SOCIAL_PLATFORMS: ReadonlyArray<SocialLink['platform']> =
   ['instagram', 'telegram', 'whatsapp', 'aparat', 'youtube', 'linkedin', 'pinterest'];
 
+/** Routes where the footer (contact strip + nav columns + legal) is hidden.
+ *  (Was used for /bedroom-set when its slider was position:fixed and would
+ *  overlap the footer. The slider now sits in normal flow as a one-viewport
+ *  section, so the footer renders naturally beneath when scrolled.) */
+const FOOTER_HIDDEN_ROUTES = new Set<string>([]);
+
 export type SiteFooterProps = {
   siteConfig?: PayloadSiteConfig | null;
 };
 
 export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
+  const pathname = usePathname();
+  if (pathname && FOOTER_HIDDEN_ROUTES.has(pathname)) return null;
+
   const socials = (siteConfig?.socials ?? []).filter((s): s is SocialLink =>
     VALID_SOCIAL_PLATFORMS.includes(s.platform as SocialLink['platform']),
   );
@@ -28,7 +40,7 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
         />
 
         <div
-          className="mb-8 mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4 md:gap-7 border-t pt-9"
+          className="mb-6 mt-7 grid grid-cols-2 gap-5 md:mb-8 md:mt-10 md:grid-cols-4 md:gap-7 border-t pt-7 md:pt-9"
           style={{ borderTopColor: 'rgba(250, 250, 247, 0.1)' }}
         >
           {FOOTER_COLUMNS.map((col) => (
