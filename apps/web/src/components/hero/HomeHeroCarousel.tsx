@@ -59,7 +59,7 @@ export function HomeHeroCarousel({
         <BlurInText as="h1" className="zh-hhc__heading">{heading}</BlurInText>
         <BlurInText as="p" className="zh-hhc__sub">{subheading}</BlurInText>
         <div className="zh-hhc__cta-row">
-          <Button as="a" href="/bedroom-furniture" variant="primary" size="lg">
+          <Button as="a" href="/bedroom-set" variant="primary" size="lg">
             مشاهده‌ی محصولات
           </Button>
         </div>
@@ -74,7 +74,10 @@ export function HomeHeroCarousel({
         <div className="zh-hhc__viewport">
           <div
             className="zh-hhc__track"
-            style={{ transform: `translateX(${-idx * 100}%)` }}
+            // RTL: flex children flow visually right-to-left, so slide N sits
+            // to the LEFT of slide 0. To bring it into view we translate the
+            // track to the RIGHT (positive translateX), not left.
+            style={{ transform: `translateX(${idx * 100}%)` }}
           >
             {slides.map((s, i) => {
               const inner = (

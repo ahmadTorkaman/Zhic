@@ -31,7 +31,7 @@ export function HomeBrandStatement({
   aboutHref = '/about',
 }: HomeBrandStatementProps) {
   return (
-    <section className="relative overflow-hidden bg-forest-dark py-9 text-ivory md:py-11">
+    <section className="relative overflow-hidden bg-forest-dark py-7 text-ivory md:py-11">
       {/* Caramel radial glow in bottom-start corner (RTL: start = right visually) */}
       <div
         aria-hidden
@@ -39,14 +39,15 @@ export function HomeBrandStatement({
         style={{ background: 'radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%)' }}
       />
       <Container>
-        <div className="grid items-center gap-[var(--space-10)] md:grid-cols-[2fr_3fr]">
-          {/* Mobile: horizontal ticker (row + overflow scroll). Desktop: vertical column. */}
-          <div className="flex flex-row gap-[var(--space-5)] overflow-x-auto pb-[var(--space-4)] [scrollbar-width:none] md:flex-col md:gap-[var(--space-7)] md:overflow-visible md:pb-0">
-            {stats.map((s, i) => (
-              <div key={i} className="min-w-[140px] shrink-0 md:min-w-0 md:shrink">
-                <StatBlock value={s.value} suffix={s.suffix} label={s.label} />
-              </div>
-            ))}
+        <div className="grid items-center gap-[var(--space-6)] md:grid-cols-[2fr_3fr] md:gap-[var(--space-10)]">
+          {/* Numbers live in a dark glass card. Mobile: compact 3-col grid.
+              Desktop: vertical column (the asymmetric-luxury stats stack). */}
+          <div className="glass-card-dark rounded-md p-[var(--space-5)] md:p-[var(--space-6)]">
+            <div className="grid grid-cols-3 gap-[var(--space-4)] md:flex md:flex-col md:gap-[var(--space-6)]">
+              {stats.map((s, i) => (
+                <StatBlock key={i} value={s.value} suffix={s.suffix} label={s.label} />
+              ))}
+            </div>
           </div>
           <div>
             <BlurInText as="div" className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-gold">

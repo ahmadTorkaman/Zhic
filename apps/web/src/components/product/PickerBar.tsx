@@ -36,11 +36,51 @@ export function PickerBar({ product, variants, allowedAxes, onInquiry }: PickerB
   const [displayedPrice, setDisplayedPrice] = useState(priceDisplay);
   const initialRender = useRef(true);
   const priceRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
 
   // Slide up on first paint via requestAnimationFrame
   useEffect(() => {
     const id = requestAnimationFrame(() => setInView(true));
     return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Park the picker above the footer contact section (.zh-fcs) on scroll.
+  // `bottom` is set DIRECTLY on the element (no CSS variable indirection) so
+  // there's nothing in the cascade that could swallow the update.
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+
+    const baseBottom = window.matchMedia('(max-width: 767px)').matches ? 12 : 16;
+    let raf = 0;
+
+    const update = () => {
+      raf = 0;
+      // Park above the dark footer wrapper (bg-forest-dark pb-6 pt-9), not
+      // just .zh-fcs — the footer's pt-9 = 48px of padding above the contact
+      // section is part of the footer too and the bar should clear that too.
+      const footer = document.querySelector<HTMLElement>('footer');
+      if (!footer) {
+        bar.style.bottom = `${baseBottom}px`;
+        return;
+      }
+      const rect = footer.getBoundingClientRect();
+      const intrusion = Math.max(0, window.innerHeight - rect.top);
+      bar.style.bottom = `${baseBottom + intrusion}px`;
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   // Cross-fade the price on selection change: old visible → fade out → swap text → fade in.
@@ -75,9 +115,19 @@ export function PickerBar({ product, variants, allowedAxes, onInquiry }: PickerB
 
   return (
     <div
+      ref={barRef}
       className={`${styles.bar} ${inView ? styles.in : ''}`}
       role="region"
       aria-label="انتخاب واریانت"
+      // Inline glass — set here (not in CSS module) so the build pipeline
+      // can't strip the unprefixed `backdrop-filter` and we get a guaranteed
+      // 70% ivory + 64px blur regardless of what LightningCSS does. Values
+      // come from the shared chrome-glass tokens (tokens.css) via var().
+      style={{
+        backgroundColor: 'var(--glass-bg-chrome)',
+        backdropFilter: 'blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome))',
+        WebkitBackdropFilter: 'blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome))',
+      }}
     >
       {axisOptions.length > 0 ? (
         <div className={styles.axes}>

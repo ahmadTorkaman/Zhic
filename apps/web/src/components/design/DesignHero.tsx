@@ -1,5 +1,5 @@
 import { PayloadImage } from '@/components/PayloadImage';
-import type { PayloadMedia } from '@/lib/payload';
+import { mediaUrl, type PayloadMedia } from '@/lib/payload';
 
 export type DesignHeroProps = {
   heroMedia: PayloadMedia | null;
@@ -9,15 +9,35 @@ export type DesignHeroProps = {
 };
 
 export function DesignHero({ heroMedia, name, tagline, eyebrow }: DesignHeroProps) {
+  // The header media comes from the set's carousel slot (sliderMedia), which is
+  // a GIF or short video. Animated GIFs (image/gif) animate natively in <img>;
+  // true videos need a <video> tag, mirroring the carousel's mime check.
+  const isVideo = heroMedia?.mimeType?.startsWith('video/') ?? false;
+
   return (
     <section className="flex flex-col items-center gap-8 pb-12 pt-[calc(var(--header-height)+var(--space-5))]">
       {heroMedia ? (
         <div className="w-full max-w-[720px]">
-          <PayloadImage
-            media={heroMedia}
-            alt={name}
-            fallbackText="تصویر به‌زودی"
-          />
+          {isVideo ? (
+            <video
+              src={mediaUrl(heroMedia) ?? undefined}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-label={name}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <PayloadImage
+              media={heroMedia}
+              alt={name}
+              loading="eager"
+              fetchPriority="high"
+              fallbackText="تصویر به‌زودی"
+            />
+          )}
         </div>
       ) : null}
 

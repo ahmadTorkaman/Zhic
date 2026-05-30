@@ -2,11 +2,14 @@
   display: grid;
   grid-template-columns: 1fr;
   background: var(--color-ivory);
+  /* Mobile: push the carousel below the floating pill navbar (52px visual reach).
+     Desktop overrides this with its own padding-top inside the @media block. */
+  padding-top: var(--header-height);
 }
 
 /* Mobile: media on top (order-1), text below (order-2). */
 .zh-hhc__text { order: 2; padding: var(--space-6) var(--space-5); display: flex; flex-direction: column; justify-content: center; }
-.zh-hhc__media { order: 1; position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-top-right-radius: 96px; }
+.zh-hhc__media { order: 1; position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-top-right-radius: 96px; }
 
 /* Desktop: split 50/50, total hero 16:9, text on the start (RTL: right). */
 @media (min-width: 768px) {

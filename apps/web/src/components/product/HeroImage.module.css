@@ -3,11 +3,27 @@
 .frame { position: relative; inline-size: 100%; block-size: 100%; }
 .layer {
   position: absolute;
-  inset: 0;
-  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Inset gives the borderless silhouette breathing room from the cinematic
+     band's edges so it reads as a framed product, not a full-bleed crop. */
+  inset: clamp(16px, 3vw, 56px);
+  /* 280ms matches the JS fade-out timer in HeroImage.tsx: variant change →
+     opacity 1→0 over 280ms → swap img + restore .visible → opacity 0→1. */
+  transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.layer img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+/* contain (not cover) keeps the full silhouette visible on mega-wide screens.
+   The cream backdrop around it acts as a luxury picture frame. */
+.layer img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
 .layer.base { opacity: 1; }
+/* Hide the cover/base whenever the overlay has a real variant image to show,
+   so a cover silhouette of a different shape doesn't peek out around the
+   variant. Base is only visible when there is no variant image at all. */
+.layer.baseHidden { opacity: 0; }
 .layer.overlay { opacity: 0; }
 .layer.overlay.visible { opacity: 1; }
 
