@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/designs — Big Carousel mockup</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eye:   0.14em;
+    --dur-hover:      240ms;
+    --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Carousel scale knobs — tuned for "Big" mode */
+    --tile-scale-focused: 1.35;   /* focused tile blows up beyond its grid slot */
+    --tile-scale-dim:     0.55;   /* side tiles shrink hard */
+    --tile-opacity-dim:   0.40;
+    --tile-blur-dim:      3px;
+    --spill-pct:          26%;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Floating pill header (same as production) ──────────────────────── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    font-weight: 900;
+    color: var(--color-charcoal);
+    font-size: 14px;
+  }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: 64px; border-inline: 0; border-top: 0; }
+  }
+
+  /* ── Page header (very quiet, just like production) ─────────────────── */
+  .page { padding-top: 72px; }
+  @media (min-width: 768px) { .page { padding-top: 88px; } }
+  .container {
+    max-width: 1480px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3vw, 32px);
+  }
+  .breadcrumb {
+    color: var(--color-stone);
+    font-size: 12px;
+    padding-block: 14px 8px;
+  }
+  .breadcrumb a:hover { color: var(--color-charcoal); }
+  .breadcrumb-sep { margin-inline: 6px; opacity: 0.5; }
+  .title-block {
+    text-align: center;
+    padding-block: 4px 12px;
+  }
+  .title-block h1 {
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* ── Big carousel section ───────────────────────────────────────────── */
+  .slider-section {
+    position: relative;
+    padding-block: 36px 16px;
+    user-select: none;
+    /* Add vertical breathing room — focused tile is much bigger now */
+    min-height: 60vh;
+  }
+  .slider-viewport {
+    position: relative;
+    overflow: visible;        /* let the focused tile bleed past edges; the page hides overflow-x */
+    margin-inline: clamp(16px, 3vw, 40px);
+  }
+  .slider-track {
+    display: flex;
+    gap: clamp(8px, 1.2vw, 18px);
+    transition: transform 850ms var(--ease-out-quint);
+    will-change: transform;
+  }
+
+  /* Each tile has equal layout width (3 visible model), but visual size
+     comes from transform: scale. Focused tile scales UP past its slot,
+     dim tiles scale DOWN inside their slot. */
+  .slider-tile {
+    flex: 0 0 calc((100% - 2 * clamp(8px, 1.2vw, 18px)) / 3);
+    aspect-ratio: 1 / 1;
+    position: relative;
+    cursor: pointer;
+    opacity: var(--tile-opacity-dim);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    transform: scale(var(--tile-scale-dim));
+    filter: blur(var(--tile-blur-dim));
+    transform-origin: 50% 50%;
+    transition:
+      opacity        750ms var(--ease-out-soft),
+      transform      750ms var(--ease-out-quint),
+      filter         750ms var(--ease-out-soft),
+      border-color   650ms var(--ease-out-soft),
+      border-radius  650ms var(--ease-out-soft),
+      box-shadow     650ms var(--ease-out-soft);
+  }
+
+  .tile-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
+    transition: inset 800ms var(--ease-out-quint),
+                border-radius 650ms var(--ease-out-soft);
+  }
+  .tile-bg::after {
+    /* Faux GIF "pulse" hint */
+    content: '';
+    position: absolute;
+    inset-block-start: 18px; inset-inline-end: 18px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--color-forest);
+    box-shadow: 0 0 0 0 rgba(95, 119, 96, 0.5);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(95, 119, 96, 0); }
+    50%      { box-shadow: 0 0 0 8px rgba(95, 119, 96, 0.20); }
+  }
+
+  .tile-eyebrow {
+    position: absolute;
+    inset-inline-start: 24px;
+    inset-block-start: 22px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-forest);
+    font-weight: 700;
+    z-index: 1;
+  }
+  .tile-watermark {
+    position: absolute;
+    inset-inline-end: 6%;
+    inset-block-end: 6%;
+    font-size: clamp(80px, 12vw, 180px);
+    line-height: 1;
+    color: var(--color-ivory);
+    opacity: 0.7;
+    font-weight: 900;
+    pointer-events: none;
+  }
+
+  /* Focused tile — scaled UP past its layout slot, sharp, fully opaque,
+     gains the card chrome + right-edge GIF spill. z-index lift puts it
+     above the dim neighbors that it visually overlaps. */
+  .slider-tile.is-focused {
+    opacity: 1;
+    z-index: 5;
+    border: 1px solid var(--color-sand);
+    border-radius: 10px;
+    box-shadow: 0 24px 60px rgba(20, 17, 15, 0.14),
+                0 6px 16px rgba(20, 17, 15, 0.06);
+    transform: scale(var(--tile-scale-focused));
+    filter: blur(0);
+  }
+  .slider-tile.is-focused .tile-bg {
+    right: calc(-1 * var(--spill-pct));
+    border-radius: 10px 0 0 10px;
+  }
+
+  /* ── Arrows — bigger and more confident in this mode ────────────────── */
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(48px, 5vw, 64px);
+    height: clamp(48px, 5vw, 64px);
+    border-radius: 50%;
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 8px 22px rgba(20, 17, 15, 0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover);
+    z-index: 10;
+    color: var(--color-charcoal);
+  }
+  .slider-arrow:hover {
+    background: var(--color-cream);
+    border-color: var(--color-stone);
+    box-shadow: 0 10px 26px rgba(20, 17, 15, 0.14);
+  }
+  .slider-arrow.prev { right: clamp(-4px, 0.5vw, 8px); }
+  .slider-arrow.next { left:  clamp(-4px, 0.5vw, 8px); }
+  .slider-arrow svg { width: 50%; height: 50%; }
+
+  /* ── Caption — pulled UP over the focused card's bottom edge ──────────
+     The focused tile bleeds downward (scale 1.35), and the caption now
+     overlays that bleed instead of being pushed below it. z-index 20 puts
+     it above the focused tile (z-index 5). Negative margin-top pulls it
+     up into the slider area. */
+  .caption {
+    text-align: center;
+    position: relative;
+    z-index: 20;
+    margin-top: clamp(-160px, -10vw, -100px);
+    padding-block: 0 12px;
+    min-height: 130px;
+    pointer-events: none;   /* let arrow / tile clicks pass through */
+  }
+  .caption-name {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 1.05;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+    transition: opacity 750ms var(--ease-out-soft);
+    /* Subtle paper-glow behind the text so it stays legible on top of any
+       GIF the card might be showing. */
+    text-shadow: 0 1px 0 rgba(250, 250, 247, 0.7),
+                 0 2px 24px rgba(250, 250, 247, 0.85);
+  }
+  .caption-tagline {
+    font-size: clamp(13px, 1.3vw, 17px);
+    color: var(--color-stone);
+    font-weight: 300;
+    line-height: 1.6;
+    transition: opacity 750ms var(--ease-out-soft);
+    text-shadow: 0 1px 0 rgba(250, 250, 247, 0.8);
+  }
+  .caption.is-changing .caption-name,
+  .caption.is-changing .caption-tagline { opacity: 0.3; }
+
+  /* ── Indicator ──────────────────────────────────────────────────────── */
+  .indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding-block: 12px 40px;
+  }
+  .dots {
+    display: flex; gap: 8px; flex-wrap: wrap; max-width: 480px; justify-content: center;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--color-sand);
+    cursor: pointer;
+    border: 0; padding: 0;
+    transition: background-color var(--dur-hover), transform var(--dur-hover);
+  }
+  .dot:hover { background: var(--color-stone); }
+  .dot.is-focused { background: var(--color-charcoal); transform: scale(1.5); }
+  .counter {
+    font-size: 12px;
+    color: var(--color-stone);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Mobile: even more dominant center, less of the sides ───────────── */
+  @media (max-width: 768px) {
+    :root {
+      --tile-scale-focused: 1.45;
+      --tile-scale-dim:     0.42;
+      --tile-opacity-dim:   0.30;
+      --spill-pct:          22%;
+    }
+    .slider-section { padding-block: 12px 8px; min-height: 0; }
+    .slider-viewport { margin-inline: 0; }
+    .slider-track { gap: 6px; }
+    .slider-arrow { display: none; }
+    .tile-eyebrow { font-size: 9px; inset-inline-start: 14px; inset-block-start: 12px; }
+    .tile-name { font-size: 16px; inset-inline-start: 14px; inset-block-end: 12px; }
+    .tile-watermark { font-size: 80px; }
+    .caption { padding-block: 28px 8px; min-height: 100px; }
+    .caption-name { font-size: 30px; margin-bottom: 6px; }
+    .caption-tagline { font-size: 13px; }
+    .indicator { padding-block: 8px 28px; }
+  }
+
+  /* Stage tag */
+  .stage-tag {
+    position: fixed;
+    bottom: 16px;
+    inset-inline-end: 16px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+
+  /* When this class is set on the section, kill every animatable transition
+     across the whole subtree — used during the silent jump so the track,
+     tile, and tile-bg properties teleport instead of animating. !important
+     beats any inline-style or property-specific transition rules. */
+  .slider-section.is-jumping .slider-track,
+  .slider-section.is-jumping .slider-tile,
+  .slider-section.is-jumping .tile-bg,
+  .slider-section.is-jumping .caption-name,
+  .slider-section.is-jumping .caption-tagline {
+    transition: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slider-track, .slider-tile, .tile-bg,
+    .caption-name, .caption-tagline { transition: none; }
+    .slider-tile { transform: none; filter: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="pill-header">ژیک</div>
+
+<main class="page">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="مسیر">
+      <a href="#">خانه</a><span class="breadcrumb-sep">/</span>طرح‌ها
+    </nav>
+    <div class="title-block">
+      <h1>طرح‌ها</h1>
+    </div>
+  </div>
+
+  <section class="slider-section" aria-label="گالری طرح‌ها">
+    <button class="slider-arrow prev" type="button" aria-label="طرح قبلی" id="prevBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="slider-arrow next" type="button" aria-label="طرح بعدی" id="nextBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="slider-viewport">
+      <div class="slider-track" id="track"></div>
+    </div>
+
+    <div class="caption" id="caption" aria-live="polite">
+      <div class="caption-name" id="captionName">گندم</div>
+      <div class="caption-tagline" id="captionTagline">گرم، برای خواب کودکانه</div>
+    </div>
+
+    <div class="indicator">
+      <div class="dots" id="dots" role="tablist"></div>
+      <div class="counter" id="counter">۱ از ۸</div>
+    </div>
+  </section>
+</main>
+
+<div class="stage-tag">پیش‌نمایش — <span>Big Carousel</span></div>
+
+<script>
+  const DESIGNS = [
+    { slug: 'gandom',     name: 'گندم',    tagline: 'گرم، برای خواب کودکانه' },
+    { slug: 'parla',      name: 'پارلا',    tagline: 'سادگی پایدار' },
+    { slug: 'jacqueline', name: 'ژاکلین',  tagline: 'ظرافت کلاسیک' },
+    { slug: 'caroline',   name: 'کارولین',  tagline: 'فضای آرام' },
+    { slug: 'lotus',      name: 'لوتوس',    tagline: 'آرامش گیاهی' },
+    { slug: 'luka',       name: 'لوکا',     tagline: 'هندسه‌ی دقیق' },
+    { slug: 'sento',      name: 'سنتو',     tagline: 'سکوت ژاپنی' },
+    { slug: 'elegans',    name: 'الگانس',   tagline: 'شکوه کم‌حرف' }
+  ];
+
+  const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+  const toPersian = n => String(n).replace(/[0-9]/g, d => PERSIAN_DIGITS[+d]);
+
+  const track = document.getElementById('track');
+  const dots = document.getElementById('dots');
+  const caption = document.getElementById('caption');
+  const captionName = document.getElementById('captionName');
+  const captionTagline = document.getElementById('captionTagline');
+  const counter = document.getElementById('counter');
+
+  // ── Infinite loop via clone tiles ────────────────────────────────────
+  // We render an EXTENDED array: [last N_CLONES, ...DESIGNS, first N_CLONES].
+  // When focused lands on a clone, after the slide transition completes we
+  // silently jump to the real-equivalent index, with all transitions killed
+  // via the .is-jumping class. Generous clone padding (4) so mashing through
+  // multiple clicks before the jump fires never reaches the array edge.
+  const N_CLONES = 4;
+  const N = DESIGNS.length;
+  const EXTENDED = [
+    ...DESIGNS.slice(N - N_CLONES),
+    ...DESIGNS,
+    ...DESIGNS.slice(0, N_CLONES),
+  ];
+  const TRANSITION_MS = 1000;        // longest CSS transition is 850ms — small buffer
+
+  const realIndexOf = ext => ((ext - N_CLONES) % N + N) % N;
+  const isCloneIndex = ext => ext < N_CLONES || ext >= N_CLONES + N;
+
+  EXTENDED.forEach((d, extIdx) => {
+    const tile = document.createElement('div');
+    tile.className = 'slider-tile';
+    tile.dataset.extIndex = extIdx;
+    tile.dataset.real = realIndexOf(extIdx);
+    if (isCloneIndex(extIdx)) tile.dataset.clone = '';
+    tile.innerHTML = `
+      <div class="tile-bg"></div>
+      <span class="tile-eyebrow">طرح</span>
+      <span class="tile-watermark" aria-hidden>ژ</span>
+    `;
+    tile.addEventListener('click', () => {
+      if (extIdx !== focused) {
+        focused = extIdx;
+        render();
+        scheduleJumpIfNeeded();
+      }
+    });
+    track.appendChild(tile);
+  });
+
+  DESIGNS.forEach((d, realIdx) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot';
+    dot.dataset.index = realIdx;
+    dot.addEventListener('click', () => {
+      focused = N_CLONES + realIdx;
+      render();
+    });
+    dots.appendChild(dot);
+  });
+
+  // Start at the first REAL design (skip the head clones)
+  let focused = N_CLONES;
+  let jumpTimer = null;
+
+  // Track transform + focused class are split from caption fade so the
+  // silent jump can re-apply transform/class without triggering the caption
+  // animation (the real index doesn't change during a silent jump).
+  //
+  // Use offsetWidth / offsetLeft to get LAYOUT dimensions — these ignore
+  // transforms. (getBoundingClientRect() returns the SCALED rect, which
+  // would give a different slot for tile0 if it happened to be a dim tile
+  // at scale 0.55 vs the focused tile at 1.35, breaking centering.)
+  const section = document.querySelector('.slider-section');
+  function applyTransform() {
+    const tile0 = track.children[0];
+    const tile1 = track.children[1];
+    const tileWidth = tile0.offsetWidth;
+    const slot = Math.abs(tile1.offsetLeft - tile0.offsetLeft);
+    const viewportWidth = track.parentElement.offsetWidth;
+    const shift = focused * slot - (viewportWidth - tileWidth) / 2;
+    track.style.transform = `translateX(${shift}px)`;
+  }
+  function applyFocusedClasses() {
+    Array.from(track.children).forEach((el, i) => el.classList.toggle('is-focused', i === focused));
+    const real = realIndexOf(focused);
+    Array.from(dots.children).forEach((el, i) => el.classList.toggle('is-focused', i === real));
+  }
+  function fadeCaption() {
+    caption.classList.add('is-changing');
+    setTimeout(() => {
+      const real = realIndexOf(focused);
+      const d = DESIGNS[real];
+      captionName.textContent = d.name;
+      captionTagline.textContent = d.tagline;
+      counter.textContent = `${toPersian(real + 1)} از ${toPersian(N)}`;
+      caption.classList.remove('is-changing');
+    }, 220);
+  }
+  function render() {
+    applyTransform();
+    applyFocusedClasses();
+    fadeCaption();
+  }
+
+  function performSilentJump() {
+    if (!isCloneIndex(focused)) return;
+    const realFocused = realIndexOf(focused) + N_CLONES;
+
+    // Belt + suspenders: engage the .is-jumping class AND null out inline
+    // transitions on every animatable descendant. The class uses !important
+    // to beat any inherited rule; the inline style is a safety net in case
+    // some browser cascade quirk lets a transition slip through.
+    section.classList.add('is-jumping');
+    const allAnimated = track.querySelectorAll('.slider-tile, .tile-bg');
+    track.style.transition = 'none';
+    allAnimated.forEach(el => { el.style.transition = 'none'; });
+
+    focused = realFocused;
+    applyTransform();
+    applyFocusedClasses();
+    // Caption is unchanged — real index didn't move
+
+    // Force reflow so the no-transition state is committed before re-enabling
+    void track.offsetWidth;
+
+    // Two animation frames before re-enabling, so the jumped state has fully
+    // painted in the previous frame before transitions re-arm
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        section.classList.remove('is-jumping');
+        track.style.transition = '';
+        allAnimated.forEach(el => { el.style.transition = ''; });
+      });
+    });
+  }
+
+  // Fire the silent jump exactly when the track's transform transition
+  // completes — more reliable than a setTimeout that can drift if the
+  // browser delays the timer (slow tab, GC, etc.). Keep a setTimeout as a
+  // fallback in case `transitionend` doesn't dispatch (e.g., a follow-up
+  // click interrupted the transition).
+  function scheduleJumpIfNeeded() {
+    clearTimeout(jumpTimer);
+    if (!isCloneIndex(focused)) return;
+
+    let fired = false;
+    const fire = () => {
+      if (fired) return;
+      fired = true;
+      track.removeEventListener('transitionend', onEnd);
+      clearTimeout(jumpTimer);
+      performSilentJump();
+    };
+    const onEnd = e => {
+      if (e.target !== track) return;          // ignore tile transform events
+      if (e.propertyName !== 'transform') return;
+      fire();
+    };
+    track.addEventListener('transitionend', onEnd);
+    jumpTimer = setTimeout(fire, TRANSITION_MS);
+  }
+
+  function go(delta) {
+    // Hard-wrap if the user mashes past the clone padding
+    focused += delta;
+    if (focused < 0) focused += N;
+    else if (focused >= EXTENDED.length) focused -= N;
+    render();
+    scheduleJumpIfNeeded();
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => go(+1));
+
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft')  go(+1);
+    if (e.key === 'ArrowRight') go(-1);
+  });
+
+  let touchStartX = 0;
+  const viewport = document.querySelector('.slider-viewport');
+  viewport.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  viewport.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 40) return;
+    // Cards follow the finger
+    if (dx < 0) go(-1); else go(+1);
+  });
+
+  window.addEventListener('load', render);
+  window.addEventListener('resize', render);
+  setTimeout(render, 0);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Card Nav — Zhic mobile</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eye:   0.14em;
+    --dur-hover:      240ms;
+    --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-cream);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;          /* Lock the body — the overlay handles scrolling */
+  }
+
+  /* ── Phone frame (mockup container) ─────────────────────────────────── */
+  .phone-frame {
+    width: min(420px, 100vw);
+    height: min(900px, 100vh);
+    margin: 0 auto;
+    background: var(--color-ivory);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--color-sand), 0 30px 60px rgba(20, 17, 15, 0.12);
+  }
+  @media (min-width: 600px) {
+    body { padding: 24px 0; min-height: auto; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .phone-frame { border-radius: 36px; height: min(880px, calc(100vh - 48px)); }
+  }
+
+  /* ── Fake page background (under the nav) ───────────────────────────── */
+  .page-stage {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, var(--color-cream) 0%, var(--color-ivory) 60%);
+    padding: 80px 24px 40px;
+    text-align: center;
+    color: var(--color-stone);
+    z-index: 0;
+  }
+  .page-stage h1 {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--color-ink);
+    margin-bottom: 8px;
+    opacity: 0.08;
+    letter-spacing: -0.02em;
+  }
+  .page-stage p {
+    opacity: 0.6;
+    font-size: 13px;
+  }
+
+  /* ── Floating pill header (matches Zhic mobile chrome) ──────────────── */
+  .pill {
+    position: absolute;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    padding-inline: 16px;
+    z-index: 50;
+    font-weight: 900;
+    color: var(--color-charcoal);
+  }
+  .pill .brand { font-size: 14px; }
+  .pill .spacer { flex: 1; }
+  .pill .hamburger {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+  }
+  .pill .hamburger span {
+    position: absolute;
+    inset-inline: 4px;
+    height: 2px;
+    background: var(--color-charcoal);
+    border-radius: 2px;
+    transition: transform 320ms var(--ease-out-quint),
+                top 240ms var(--ease-out-quint) 80ms,
+                opacity 200ms;
+  }
+  .pill .hamburger span:nth-child(1) { top: 8px; }
+  .pill .hamburger span:nth-child(2) { top: 13px; }
+  .pill .hamburger span:nth-child(3) { top: 18px; }
+  /* Morph to X when nav is open */
+  body.nav-open .pill .hamburger span:nth-child(1) {
+    top: 13px;
+    transform: rotate(45deg);
+    transition: top 240ms var(--ease-out-quint), transform 320ms var(--ease-out-quint) 240ms;
+  }
+  body.nav-open .pill .hamburger span:nth-child(2) {
+    opacity: 0;
+  }
+  body.nav-open .pill .hamburger span:nth-child(3) {
+    top: 13px;
+    transform: rotate(-45deg);
+    transition: top 240ms var(--ease-out-quint), transform 320ms var(--ease-out-quint) 240ms;
+  }
+
+  /* ── Nav overlay (the Card Nav itself) ──────────────────────────────── */
+  .nav-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--color-ivory);
+    z-index: 40;
+    padding: 76px 16px 24px;
+    overflow-y: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms var(--ease-out-soft);
+  }
+  body.nav-open .nav-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Subtle ژ watermark behind the cards */
+  .nav-overlay::before {
+    content: 'ژ';
+    position: absolute;
+    inset-block-end: -40px;
+    inset-inline-end: -20px;
+    font-size: 320px;
+    font-weight: 900;
+    color: var(--color-sand);
+    opacity: 0.5;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  .nav-eyebrow {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-forest);
+    font-weight: 700;
+    margin-bottom: 18px;
+    padding-inline-start: 4px;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 400ms 80ms, transform 500ms 80ms var(--ease-out-quint);
+  }
+  body.nav-open .nav-eyebrow {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .nav-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Each nav item is a Card. Default (closed) state = off-screen right + invisible.
+     Open state animates in with staggered delay computed from --i. */
+  .nav-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--color-charcoal);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(-40px);   /* RTL: cards enter from the leading-edge side (right) */
+    transition: opacity 600ms var(--ease-out-quint),
+                transform 600ms var(--ease-out-quint),
+                background-color var(--dur-hover) var(--ease-out-soft),
+                border-color var(--dur-hover) var(--ease-out-soft),
+                color var(--dur-hover) var(--ease-out-soft);
+    transition-delay: 0ms;          /* overridden when nav-open */
+  }
+  body.nav-open .nav-card {
+    opacity: 1;
+    transform: translateX(0);
+    transition-delay: calc(var(--i) * 60ms + 120ms);
+  }
+  /* Active state — luxury inversion */
+  .nav-card:active,
+  .nav-card.is-current {
+    background: var(--color-charcoal);
+    border-color: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+  .nav-card:active .nav-card-num,
+  .nav-card.is-current .nav-card-num { color: var(--color-gold); }
+  .nav-card:active .nav-card-en,
+  .nav-card.is-current .nav-card-en { color: var(--color-stone); }
+  .nav-card:active .nav-card-arrow,
+  .nav-card.is-current .nav-card-arrow { color: var(--color-ivory); }
+
+  /* Number column (Latin digits, 2-char wide, mono feel) */
+  .nav-card-num {
+    font-size: 10px;
+    color: var(--color-stone);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+    margin-inline-end: 4px;
+    transition: color var(--dur-hover);
+  }
+
+  /* Title block */
+  .nav-card-titles {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .nav-card-fa {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .nav-card-en {
+    font-size: 10px;
+    color: var(--color-stone);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eye);
+    font-weight: 700;
+    transition: color var(--dur-hover);
+  }
+
+  /* Arrow chevron — points outward (in RTL, leading = right, so arrow points left to indicate "go forward") */
+  .nav-card-arrow {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    color: var(--color-stone);
+    transition: color var(--dur-hover), transform var(--dur-hover);
+  }
+  .nav-card:hover .nav-card-arrow,
+  .nav-card:active .nav-card-arrow {
+    transform: translateX(-4px);   /* In RTL, "forward" = leftward */
+  }
+
+  /* Footer mini-row (search + lang) */
+  .nav-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-pill {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--color-cream);
+    border: 1px solid var(--color-sand);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--color-stone);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 500ms var(--ease-out-quint),
+                transform 500ms var(--ease-out-quint),
+                background-color var(--dur-hover);
+  }
+  body.nav-open .nav-pill {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 540ms;
+  }
+  .nav-pill svg { width: 14px; height: 14px; }
+  .nav-pill:hover { background: var(--color-sand); }
+
+  /* ── Open / close button (mockup convenience) ───────────────────────── */
+  .ctrl {
+    position: fixed;
+    bottom: 14px;
+    inset-inline-end: 14px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 10px 16px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 200;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .ctrl span { color: var(--color-gold); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-overlay, .nav-card, .nav-eyebrow, .nav-pill,
+    .pill .hamburger span { transition: opacity 0ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+
+  <!-- Fake page beneath the nav (for context) -->
+  <div class="page-stage" aria-hidden>
+    <h1 style="margin-top: 200px;">ژیک</h1>
+    <p>صفحه‌ی فرضی پشت منو</p>
+  </div>
+
+  <!-- Floating pill header -->
+  <div class="pill">
+    <span class="brand">ژیک</span>
+    <span class="spacer"></span>
+    <button class="hamburger" id="hamBtn" aria-label="منو" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Card Nav overlay -->
+  <nav class="nav-overlay" id="navOverlay" aria-hidden="true">
+    <div class="nav-eyebrow">منو · MENU</div>
+
+    <div class="nav-cards">
+      <a href="#" class="nav-card is-current" style="--i: 0">
+        <span class="nav-card-num">۰۱</span>
+        <div class="nav-card-titles">
+          <span class="nav-card-fa">محصولات</span>
+          <span class="nav-card-en">Products</span>
+        </div>
+        <svg class="nav-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+          <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <a href="#" class="nav-card" style="--i: 1">
+        <span class="nav-card-num">۰۲</span>
+        <div class="nav-card-titles">
+          <span class="nav-card-fa">طرح‌ها</span>
+          <span class="nav-card-en">Designs</span>
+        </div>
+        <svg class="nav-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+          <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <a href="#" class="nav-card" style="--i: 2">
+        <span class="nav-card-num">۰۳</span>
+        <div class="nav-card-titles">
+          <span class="nav-card-fa">مجلات</span>
+          <span class="nav-card-en">Journal</span>
+        </div>
+        <svg class="nav-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+          <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <a href="#" class="nav-card" style="--i: 3">
+        <span class="nav-card-num">۰۴</span>
+        <div class="nav-card-titles">
+          <span class="nav-card-fa">نمایشگاه‌ها</span>
+          <span class="nav-card-en">Showrooms</span>
+        </div>
+        <svg class="nav-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+          <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <a href="#" class="nav-card" style="--i: 4">
+        <span class="nav-card-num">۰۵</span>
+        <div class="nav-card-titles">
+          <span class="nav-card-fa">درباره‌ی ما</span>
+          <span class="nav-card-en">About</span>
+        </div>
+        <svg class="nav-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+          <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <a href="#" class="nav-card" style="--i: 5">
+        <span class="nav-card-num">۰۶</span>
+        <div class="nav-card-titles">
+          <span class="nav-card-fa">تماس</span>
+          <span class="nav-card-en">Contact</span>
+        </div>
+        <svg class="nav-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+          <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="nav-footer">
+      <button class="nav-pill" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+          <circle cx="11" cy="11" r="7" stroke-linecap="round"/>
+          <path d="M21 21l-4.3-4.3" stroke-linecap="round"/>
+        </svg>
+        جست‌وجو
+      </button>
+      <button class="nav-pill" type="button" style="flex: 0 0 auto;">EN</button>
+    </div>
+  </nav>
+
+</div>
+
+<button class="ctrl" id="ctrlBtn">باز/بسته کردن منو — تست <span>(Tap)</span></button>
+
+<script>
+  const body = document.body;
+  const hamBtn = document.getElementById('hamBtn');
+  const ctrlBtn = document.getElementById('ctrlBtn');
+  const overlay = document.getElementById('navOverlay');
+
+  function toggle() {
+    const open = body.classList.toggle('nav-open');
+    hamBtn.setAttribute('aria-expanded', String(open));
+    overlay.setAttribute('aria-hidden', String(!open));
+  }
+
+  hamBtn.addEventListener('click', toggle);
+  ctrlBtn.addEventListener('click', toggle);
+
+  // Open on load so the reveal animation plays for the first time
+  setTimeout(() => {
+    body.classList.add('nav-open');
+    hamBtn.setAttribute('aria-expanded', 'true');
+    overlay.setAttribute('aria-hidden', 'false');
+  }, 200);
+
+  // Esc closes (matches existing Zhic dialog behavior)
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && body.classList.contains('nav-open')) toggle();
+  });
+</script>
+
+</body>
+</html>

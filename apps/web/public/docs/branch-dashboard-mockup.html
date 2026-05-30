@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ژیک — میز کار شعبه · داشبورد (mockup)</title>
+<style>
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-light.ttf')   format('truetype');font-weight:300;font-display:swap;}
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-regular.ttf') format('truetype');font-weight:400;font-display:swap;}
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-bold.ttf')    format('truetype');font-weight:700;font-display:swap;}
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-black.ttf')   format('truetype');font-weight:900;font-display:swap;}
+  :root{--ivory:#FAFAF7;--cream:#F5F0EB;--sand:#E8E0D8;--stone:#8C8279;--charcoal:#2C2825;--ink:#14110F;--forest:#5F7760;--gold:#C49A6C;--ease:cubic-bezier(0.22,1,0.36,1);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Ayandeh',system-ui,sans-serif;background:var(--ivory);color:var(--charcoal);}
+
+  .top{display:flex;align-items:center;gap:16px;padding:12px clamp(16px,3vw,32px);background:#fff;border-block-end:1px solid var(--sand);position:sticky;top:0;z-index:20;}
+  .brand{font-weight:900;font-size:1.3rem;color:var(--ink);}
+  .brand::after{content:'';display:block;height:2px;width:60%;background:var(--forest);margin-top:1px;border-radius:2px;}
+  .ws{font-weight:700;font-size:.95rem;color:var(--ink);}
+  .ctx{display:flex;align-items:center;gap:7px;color:var(--stone);font-size:.82rem;}
+  .ctx .pin{width:7px;height:7px;border-radius:50%;background:var(--forest);}
+  .spacer{flex:1;}
+  .seg{display:flex;border:1px solid var(--sand);border-radius:999px;overflow:hidden;font-size:.78rem;}
+  .seg button{border:0;background:#fff;color:var(--charcoal);padding:7px 14px;cursor:pointer;font:inherit;font-size:.78rem;}
+  .seg button.on{background:var(--forest);color:#fff;}
+  .avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.8rem;color:#fff;background:var(--forest);}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:20px clamp(16px,3vw,32px) 60px;}
+  .h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;}
+  h1{font-size:1.5rem;font-weight:900;color:var(--ink);letter-spacing:-.02em;}
+  .range{font-size:.8rem;color:var(--stone);}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
+  @media(max-width:880px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .kpi{background:#fff;border:1px solid var(--sand);border-radius:14px;padding:15px 16px;}
+  .kpi .lbl{font-size:.72rem;color:var(--stone);font-weight:700;letter-spacing:.04em;}
+  .kpi .val{font-size:1.65rem;font-weight:900;color:var(--ink);margin-top:6px;font-variant-numeric:tabular-nums;line-height:1;}
+  .kpi .sub{font-size:.7rem;color:var(--stone);margin-top:5px;}
+  .kpi .delta{font-size:.72rem;font-weight:700;}
+  .up{color:var(--forest);} .down{color:#B4654A;}
+
+  .cols{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start;}
+  @media(max-width:880px){.cols{grid-template-columns:1fr;}}
+  .card{background:#fff;border:1px solid var(--sand);border-radius:14px;padding:18px;}
+  .card + .card{margin-top:18px;}
+  .card h2{font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);margin-bottom:14px;}
+
+  /* bars */
+  .bar-row{display:grid;grid-template-columns:120px 1fr 56px;gap:10px;align-items:center;margin:9px 0;font-size:.84rem;}
+  .bar-row .nm{color:var(--ink);font-weight:700;}
+  .track{height:9px;background:var(--cream);border-radius:999px;overflow:hidden;}
+  .fill{height:100%;border-radius:999px;background:var(--forest);}
+  .fill.gold{background:var(--gold);}
+  .bar-row .v{text-align:left;color:var(--stone);font-variant-numeric:tabular-nums;}
+
+  /* funnel chips */
+  .funnel{display:flex;gap:8px;flex-wrap:wrap;}
+  .stage{flex:1;min-width:80px;background:var(--cream);border:1px solid var(--sand);border-radius:10px;padding:10px;text-align:center;}
+  .stage .n{font-size:1.3rem;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .stage .s{font-size:.68rem;color:var(--stone);margin-top:3px;}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  th{text-align:right;font-size:.7rem;color:var(--stone);font-weight:700;padding:8px 6px;border-block-end:1px solid var(--sand);letter-spacing:.04em;}
+  td{padding:11px 6px;border-block-end:1px solid var(--sand);font-variant-numeric:tabular-nums;}
+  tr:last-child td{border-block-end:0;}
+  td.nm{font-weight:700;color:var(--ink);font-variant-numeric:normal;}
+  .pill{font-size:.72rem;border-radius:999px;padding:2px 9px;background:color-mix(in srgb,var(--forest) 12%,#fff);color:var(--forest);font-weight:700;}
+  .mini{display:inline-block;width:60px;height:7px;background:var(--cream);border-radius:999px;overflow:hidden;vertical-align:middle;}
+  .mini i{display:block;height:100%;background:var(--gold);}
+
+  .spark{width:100%;height:54px;}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">ژیک</div>
+  <div class="ws">میز کار</div>
+  <div class="ctx"><span class="pin"></span> <span id="ctx">شعبه قم</span></div>
+  <div class="spacer"></div>
+  <div class="seg" id="viewSeg">
+    <button data-v="branch" class="on">داشبورد شعبه</button>
+    <button data-v="hq">داشبورد مدیرکل (همه‌ی شعب)</button>
+  </div>
+  <div class="avatar">م</div>
+</div>
+
+<div class="wrap">
+  <!-- ===== BRANCH VIEW ===== -->
+  <section id="view-branch">
+    <div class="h"><h1>داشبورد شعبه قم</h1><span class="range">۳۰ روز گذشته</span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">لیدهای باز</div><div class="val">۲۳</div><div class="sub"><span class="up">▲ ۵</span> نسبت به ماه قبل</div></div>
+      <div class="kpi"><div class="lbl">نرخ تبدیل لید→سفارش</div><div class="val">۳۱٪</div><div class="sub"><span class="up">▲ ۴٪</span></div></div>
+      <div class="kpi"><div class="lbl">میانگین زمان بستن</div><div class="val">۴.۲<span style="font-size:.8rem"> روز</span></div><div class="sub"><span class="up">▼ ۰.۸ روز</span></div></div>
+      <div class="kpi"><div class="lbl">فروش این ماه</div><div class="val">۸۴۰<span style="font-size:.7rem"> م.ت</span></div><div class="sub"><span class="up">▲ ۱۲٪</span></div></div>
+      <div class="kpi"><div class="lbl">سفارش‌های باز</div><div class="val">۱۱</div><div class="sub">۳ در انتظار بیعانه</div></div>
+    </div>
+
+    <div class="cols">
+      <div>
+        <div class="card">
+          <h2>قیف لیدها — استعلام قیمت</h2>
+          <div class="funnel">
+            <div class="stage"><div class="n">۸</div><div class="s">جدید</div></div>
+            <div class="stage"><div class="n">۵</div><div class="s">تماس</div></div>
+            <div class="stage"><div class="n">۳</div><div class="s">پیش‌فاکتور</div></div>
+            <div class="stage"><div class="n">۶</div><div class="s">موفق</div></div>
+            <div class="stage"><div class="n">۴</div><div class="s">ناموفق</div></div>
+          </div>
+          <h2 style="margin-top:18px">قیف لیدها — بازدید شوروم</h2>
+          <div class="funnel">
+            <div class="stage"><div class="n">۴</div><div class="s">جدید</div></div>
+            <div class="stage"><div class="n">۳</div><div class="s">تماس</div></div>
+            <div class="stage"><div class="n">۲</div><div class="s">رزرو</div></div>
+            <div class="stage"><div class="n">۲</div><div class="s">انجام‌شده</div></div>
+            <div class="stage"><div class="n">۵</div><div class="s">موفق</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>پرفروش‌ترین طرح‌ها</h2>
+          <div class="bar-row"><span class="nm">پارلا</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="v">۱۴</span></div>
+          <div class="bar-row"><span class="nm">کارولین</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="v">۹</span></div>
+          <div class="bar-row"><span class="nm">موکا</span><span class="track"><span class="fill" style="width:50%"></span></span><span class="v">۷</span></div>
+          <div class="bar-row"><span class="nm">الیزابت</span><span class="track"><span class="fill" style="width:36%"></span></span><span class="v">۵</span></div>
+          <div class="bar-row"><span class="nm">الگانس</span><span class="track"><span class="fill" style="width:28%"></span></span><span class="v">۴</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>روند فروش (هفتگی)</h2>
+          <svg class="spark" viewBox="0 0 300 54" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#5F7760" stroke-width="2" points="0,40 50,34 100,38 150,22 200,26 250,14 300,10"/>
+            <polyline fill="rgba(95,119,96,.08)" stroke="none" points="0,40 50,34 100,38 150,22 200,26 250,14 300,10 300,54 0,54"/>
+          </svg>
+        </div>
+        <div class="card">
+          <h2>عملکرد فروشنده‌ها</h2>
+          <table>
+            <tr><th>فروشنده</th><th>برداشته</th><th>موفق</th><th>فروش (م.ت)</th></tr>
+            <tr><td class="nm">سارا</td><td>۱۸</td><td>۹</td><td>۴۲۰</td></tr>
+            <tr><td class="nm">علی</td><td>۱۴</td><td>۶</td><td>۳۱۰</td></tr>
+            <tr><td class="nm">رضا</td><td>۹</td><td>۳</td><td>۱۱۰</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HQ VIEW ===== -->
+  <section id="view-hq" class="hidden">
+    <div class="h"><h1>داشبورد مدیرکل — همه‌ی شعب</h1><span class="range">۳۰ روز گذشته · ۱۹ شعبه</span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">فروش کل</div><div class="val">۴.۲<span style="font-size:.7rem"> میلیارد ت</span></div><div class="sub"><span class="up">▲ ۹٪</span></div></div>
+      <div class="kpi"><div class="lbl">لیدهای باز (کل)</div><div class="val">۱۴۸</div><div class="sub"><span class="down">▲ ۱۲</span> نیازمند پیگیری</div></div>
+      <div class="kpi"><div class="lbl">نرخ تبدیل میانگین</div><div class="val">۲۸٪</div><div class="sub"><span class="up">▲ ۲٪</span></div></div>
+      <div class="kpi"><div class="lbl">سفارش‌های باز</div><div class="val">۷۳</div><div class="sub">در ۱۹ شعبه</div></div>
+      <div class="kpi"><div class="lbl">بهترین شعبه</div><div class="val" style="font-size:1.1rem">قم</div><div class="sub">بالاترین نرخ تبدیل</div></div>
+    </div>
+
+    <div class="card">
+      <h2>جدول شعب</h2>
+      <table>
+        <tr><th>شعبه</th><th>فروش (م.ت)</th><th></th><th>نرخ تبدیل</th><th>لید باز</th><th>بهترین فروشنده</th></tr>
+        <tr><td class="nm">همدان — طالقانی (مرکزی)</td><td>۹۸۰</td><td><span class="mini"><i style="width:100%"></i></span></td><td><span class="pill">۳۴٪</span></td><td>۱۹</td><td>نازنین</td></tr>
+        <tr><td class="nm">قم</td><td>۸۴۰</td><td><span class="mini"><i style="width:86%"></i></span></td><td><span class="pill">۳۱٪</span></td><td>۲۳</td><td>سارا</td></tr>
+        <tr><td class="nm">مشهد</td><td>۷۱۰</td><td><span class="mini"><i style="width:72%"></i></span></td><td><span class="pill">۲۹٪</span></td><td>۱۷</td><td>کاوه</td></tr>
+        <tr><td class="nm">تبریز</td><td>۵۲۰</td><td><span class="mini"><i style="width:53%"></i></span></td><td><span class="pill">۲۵٪</span></td><td>۱۴</td><td>رامین</td></tr>
+        <tr><td class="nm">رشت</td><td>۴۴۰</td><td><span class="mini"><i style="width:45%"></i></span></td><td><span class="pill">۲۶٪</span></td><td>۱۲</td><td>مونا</td></tr>
+        <tr><td class="nm">اصفهان</td><td>۳۹۰</td><td><span class="mini"><i style="width:40%"></i></span></td><td><span class="pill">۲۳٪</span></td><td>۱۰</td><td>پیمان</td></tr>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+  document.getElementById('viewSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    document.querySelectorAll('#viewSeg button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+    var v=b.dataset.v;
+    document.getElementById('view-branch').classList.toggle('hidden', v!=='branch');
+    document.getElementById('view-hq').classList.toggle('hidden', v!=='hq');
+    document.getElementById('ctx').textContent = v==='branch' ? 'شعبه قم' : 'همه‌ی شعب';
+  });
+</script>
+</body>
+</html>

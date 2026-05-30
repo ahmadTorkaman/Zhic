@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/designs — rebuild v2 (in-place card replacement)</title>
+<style>
+  @font-face { font-family: 'Ayandeh'; font-weight: 300; src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 400; src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 700; src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap; }
+  @font-face { font-family: 'Ayandeh'; font-weight: 900; src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap; }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eye:   0.14em;
+    --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    height: 100%;
+    overflow: hidden;     /* the page itself never scrolls — the stage owns the viewport */
+  }
+
+  /* ── Pill header ─────────────────────────────────────────────────── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    font-weight: 900;
+    color: var(--color-charcoal);
+    font-size: 14px;
+  }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: 64px; border-inline: 0; border-top: 0; }
+  }
+
+  /* ── Stage ────────────────────────────────────────────────────────
+     The stage is the full viewport. Cards live inside; they replace
+     each other in place. JS drives a `--progress` CSS var (0..N-1) that
+     scrubs the image + text transitions continuously. */
+  .stage {
+    position: fixed;
+    inset: 0;
+    padding-top: 72px;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;   /* claim touch gestures for our handlers */
+    user-select: none;
+  }
+  @media (min-width: 768px) {
+    .stage { padding-top: 88px; }
+  }
+
+  /* ── Top row: breadcrumb + counter + progress + label ──────────────── */
+  .stage-top {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(12px, 3vw, 32px);
+    padding-block: 8px 0;
+    padding-inline: clamp(16px, 4vw, 48px);
+    max-width: 1480px;
+    margin-inline: auto;
+    width: 100%;
+    color: var(--color-stone);
+    font-size: 12px;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+  }
+  .stage-breadcrumb {
+    text-align: start;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--color-stone);
+  }
+  .stage-breadcrumb a { color: inherit; text-decoration: none; }
+  .stage-breadcrumb a:hover { color: var(--color-charcoal); }
+  .stage-counter {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+  .stage-counter .current { color: var(--color-ink); font-size: 14px; }
+  .stage-counter .total   { color: var(--color-stone); opacity: 0.6; }
+  .stage-counter .progress {
+    display: block;
+    width: clamp(80px, 12vw, 180px);
+    height: 1px;
+    background: var(--color-sand);
+    position: relative;
+    overflow: hidden;
+  }
+  .stage-counter .progress > i {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: var(--color-charcoal);
+    width: 0%;
+  }
+  .stage-skip {
+    text-align: end;
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+  }
+  .stage-skip a {
+    color: var(--color-stone);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-block-end: 2px;
+    transition: color 240ms, border-color 240ms;
+  }
+  .stage-skip a:hover { color: var(--color-charcoal); border-color: var(--color-stone); }
+
+  /* ── Image stack (all designs stacked; opacity/blur scrubbed by JS) ── */
+  .image-stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .image-slot {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* opacity, filter, transform set inline by JS based on distance from progress */
+    will-change: opacity, transform, filter;
+    pointer-events: none;
+  }
+  .image-slot svg {
+    width: clamp(280px, 56vw, 760px);
+    height: auto;
+    max-height: 60vh;
+  }
+
+  /* ── Text overlay (single text block, content swaps at midpoint) ──── */
+  .stage-text {
+    text-align: center;
+    padding-inline: clamp(16px, 4vw, 48px);
+    padding-block: 0 16px;
+    z-index: 2;
+    pointer-events: none;
+    /* opacity/blur/translateY set by JS — they track the fractional progress */
+    will-change: opacity, transform, filter;
+  }
+  .stage-eyebrow {
+    font-size: 11px;
+    color: var(--color-forest);
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .stage-name {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    margin-bottom: 12px;
+  }
+  .stage-tagline {
+    font-size: clamp(13px, 1.3vw, 16px);
+    color: var(--color-charcoal);
+    font-weight: 300;
+    line-height: 1.55;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .stage-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    color: var(--color-charcoal);
+    padding: 11px 22px;
+    border: 1px solid var(--color-charcoal);
+    border-radius: 9999px;
+    text-decoration: none;
+    pointer-events: auto;
+    transition: background-color 240ms var(--ease-out-soft), color 240ms var(--ease-out-soft);
+  }
+  .stage-cta:hover { background: var(--color-charcoal); color: var(--color-ivory); }
+  .stage-cta svg { width: 10px; height: 10px; }
+
+  /* ── Scroll prompt (the cue that tells the user what to do) ───────── */
+  .scroll-prompt {
+    text-align: center;
+    padding-block: 0 28px;
+    color: var(--color-stone);
+    font-size: 11px;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.75;
+    transition: opacity 400ms var(--ease-out-soft);
+  }
+  .scroll-prompt[data-hidden="true"] { opacity: 0; }
+  .scroll-prompt .chev {
+    width: 20px;
+    height: 20px;
+    color: var(--color-stone);
+    animation: chev-bounce 1.6s var(--ease-out-soft) infinite;
+  }
+  @keyframes chev-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.55; }
+    50%      { transform: translateY(6px); opacity: 1; }
+  }
+
+  /* ── Mobile tweaks ───────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .stage-top { padding-inline: 16px; grid-template-columns: 1fr auto 1fr; gap: 8px; }
+    .stage-breadcrumb { display: none; }
+    .stage-skip { font-size: 10px; }
+    .image-slot svg { width: 84vw; max-height: 44vh; }
+    .stage-name { font-size: clamp(28px, 9vw, 44px); }
+    .stage-tagline { font-size: 13px; }
+    .stage-cta { padding: 10px 18px; font-size: 10px; }
+    .scroll-prompt { padding-block: 0 18px; }
+  }
+
+  /* Reduced motion — kill the chevron bounce, no transition on text/image */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-prompt .chev { animation: none; }
+  }
+
+  /* Stage tag */
+  .stage-tag {
+    position: fixed;
+    bottom: 12px;
+    inset-inline-end: 12px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.78;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+</style>
+</head>
+<body>
+
+<div class="pill-header">ژیک</div>
+
+<main class="stage" id="stage" aria-label="گالری طرح‌های ژیک">
+
+  <!-- Top: breadcrumb · counter+progress · skip -->
+  <div class="stage-top">
+    <nav class="stage-breadcrumb" aria-label="مسیر"><a href="#">خانه</a> / طرح‌ها</nav>
+    <div class="stage-counter" aria-live="polite">
+      طرح <span class="current" id="counterCurrent">۰۱</span>
+      <span class="progress" aria-hidden><i id="progressFill"></i></span>
+      <span class="total" id="counterTotal">/ ۰۶</span>
+    </div>
+    <div class="stage-skip"><a href="#" id="skipLink">مشاهده‌ی همه‌ی طرح‌ها</a></div>
+  </div>
+
+  <!-- Image stack -->
+  <div class="image-stack" id="imageStack" aria-live="polite"></div>
+
+  <!-- Text overlay (single, content swaps at midpoint) -->
+  <div class="stage-text" id="stageText">
+    <div class="stage-eyebrow" id="stageEyebrow">طرح ژیک · کلکسیون بهار ۱۴۰۵</div>
+    <div class="stage-name" id="stageName">گندم</div>
+    <div class="stage-tagline" id="stageTagline">گرم، برای خواب کودکانه. ترکیب کامل از تخت پایه‌کوتاه، پاتختی، و دراور.</div>
+    <a href="#" class="stage-cta" id="stageCta">
+      <span id="stageCtaLabel">دیدن کامل طرح گندم</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+
+  <!-- Scroll prompt -->
+  <div class="scroll-prompt" id="scrollPrompt">
+    <span>اسکرول کنید برای طرح بعدی</span>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M6 9L12 15L18 9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+</main>
+
+<div class="stage-tag">پیش‌نمایش — <span>Designs Rebuild v2</span></div>
+
+<script>
+  // ── Mock data ─────────────────────────────────────────────────────
+  const DESIGNS = [
+    { slug: 'gandom',     name: 'گندم',     eyebrow: 'طرح ژیک · کلکسیون بهار ۱۴۰۵', tagline: 'گرم، برای خواب کودکانه. ترکیب کامل از تخت پایه‌کوتاه، پاتختی، و دراور.', tone: '#C49A6C', shadow: '#8B6F47' },
+    { slug: 'parla',      name: 'پارلا',    eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'سادگی پایدار. خطوط مستقیم، چوب گردوی روشن، رنگ‌های خنثی.',            tone: '#8C8279', shadow: '#4A463F' },
+    { slug: 'jacqueline', name: 'ژاکلین',   eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'ظرافت کلاسیک. خط‌های منحنی و فینیش گردوی تیره با لمس طلایی.',          tone: '#B88B7E', shadow: '#6B4A3F' },
+    { slug: 'lotus',      name: 'لوتوس',    eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'آرامش گیاهی. تخت پایه‌کوتاه، چوب بلوط، رنگ‌مایه‌ی سبز خزه‌ای.',         tone: '#5F7760', shadow: '#2C3D2E' },
+    { slug: 'sento',      name: 'سنتو',     eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'سکوت ژاپنی. تخت پلتفرم پایین، چوب گردوی تیره، خط‌های افقی محض.',       tone: '#8B6F4E', shadow: '#3F2E1F' },
+    { slug: 'elegans',    name: 'الگانس',   eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'شکوه کم‌حرف. تخت بلند، نمای صاف چوب راش، لمس طلای کم‌رنگ.',             tone: '#C49A6C', shadow: '#7A5A33' },
+  ];
+  const N = DESIGNS.length;
+
+  const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+  const toPersian = (n) => String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[+d]);
+  const padTwo = (n) => String(n).padStart(2, '0');
+
+  // ── Build image stack ─────────────────────────────────────────────
+  const imageStack = document.getElementById('imageStack');
+  DESIGNS.forEach((d) => {
+    const slot = document.createElement('div');
+    slot.className = 'image-slot';
+    slot.innerHTML = `
+      <svg viewBox="0 0 720 380" aria-hidden role="img">
+        <g transform="translate(40 60)">
+          <rect x="0" y="0" width="110" height="260" rx="6" fill="${d.tone}"/>
+          <rect x="6" y="6" width="98" height="248" rx="3" fill="none" stroke="${d.shadow}" stroke-width="1.2" opacity="0.5"/>
+          <line x1="55" y1="20" x2="55" y2="240" stroke="${d.shadow}" stroke-width="1.5" opacity="0.45"/>
+        </g>
+        <g transform="translate(170 200)">
+          <rect x="0" y="0" width="140" height="120" rx="5" fill="${d.tone}"/>
+          <line x1="0" y1="40" x2="140" y2="40" stroke="${d.shadow}" stroke-width="1" opacity="0.45"/>
+          <line x1="0" y1="80" x2="140" y2="80" stroke="${d.shadow}" stroke-width="1" opacity="0.45"/>
+        </g>
+        <g transform="translate(330 130)">
+          <rect x="0" y="0" width="320" height="80" rx="4" fill="${d.tone}"/>
+          <rect x="20" y="80" width="280" height="50" rx="6" fill="${d.shadow}" opacity="0.25"/>
+          <rect x="30" y="84" width="260" height="42" rx="4" fill="#FFFFFF" opacity="0.85"/>
+          <rect x="60" y="90" width="80" height="22" rx="4" fill="${d.tone}" opacity="0.5"/>
+          <rect x="160" y="90" width="80" height="22" rx="4" fill="${d.tone}" opacity="0.5"/>
+          <rect x="0" y="130" width="320" height="22" rx="3" fill="${d.tone}"/>
+        </g>
+        <g transform="translate(670 220)">
+          <rect x="0" y="0" width="40" height="100" rx="3" fill="${d.tone}"/>
+        </g>
+        <ellipse cx="380" cy="345" rx="320" ry="12" fill="${d.shadow}" opacity="0.10"/>
+      </svg>
+    `;
+    imageStack.appendChild(slot);
+  });
+
+  // ── State: virtualProgress is 0..N-1, fractional ──────────────────
+  // It's driven by wheel/touch input. When input stops, we snap-animate
+  // to the nearest integer (so the user always lands on a clean card).
+  let virtualProgress = 0;
+  let textIndex = 0;            // which design's text is currently shown
+  let snapTimer = null;
+  let snapAnim = null;
+  let promptHidden = false;
+
+  const stage = document.getElementById('stage');
+  const text = document.getElementById('stageText');
+  const eyebrowEl = document.getElementById('stageEyebrow');
+  const nameEl = document.getElementById('stageName');
+  const taglineEl = document.getElementById('stageTagline');
+  const ctaLabelEl = document.getElementById('stageCtaLabel');
+  const counterCurrent = document.getElementById('counterCurrent');
+  const counterTotal = document.getElementById('counterTotal');
+  const progressFill = document.getElementById('progressFill');
+  const scrollPrompt = document.getElementById('scrollPrompt');
+  const imageSlots = imageStack.querySelectorAll('.image-slot');
+
+  counterTotal.textContent = '/ ' + toPersian(padTwo(N));
+
+  function setTextContent(i) {
+    const d = DESIGNS[i];
+    eyebrowEl.textContent = d.eyebrow;
+    nameEl.textContent = d.name;
+    taglineEl.textContent = d.tagline;
+    ctaLabelEl.textContent = 'دیدن کامل طرح ' + d.name;
+    textIndex = i;
+  }
+
+  function render() {
+    // Image stack: each slot's opacity/blur/scale follows its distance from progress.
+    // At distance 0 it's fully focused, at distance >= 1 it's fully hidden.
+    imageSlots.forEach((slot, i) => {
+      const dist = Math.abs(i - virtualProgress);
+      const clamped = Math.min(1, dist);
+      const opacity = 1 - clamped;
+      const blur = clamped * 10;
+      const scale = 1 - clamped * 0.05;
+      slot.style.opacity = opacity.toFixed(3);
+      slot.style.filter = `blur(${blur.toFixed(2)}px)`;
+      slot.style.transform = `scale(${scale.toFixed(3)})`;
+    });
+
+    // Text: fraction = distance from nearest integer in [0, 0.5].
+    // We snap text to the NEAREST design — when crossing 0.5, swap content.
+    const nearest = Math.round(virtualProgress);
+    if (nearest !== textIndex && nearest >= 0 && nearest < N) setTextContent(nearest);
+
+    // Text opacity/blur follows the distance from the nearest integer.
+    // At fraction 0 → fully sharp; at fraction 0.5 → fully blurred.
+    const fractionFromNearest = Math.abs(virtualProgress - nearest);   // 0..0.5
+    const textProgress = Math.min(1, fractionFromNearest * 2);          // 0..1
+    const textOpacity = 1 - textProgress;
+    const textBlur = textProgress * 14;
+    const textTranslate = textProgress * 22;
+    text.style.opacity = textOpacity.toFixed(3);
+    text.style.filter = `blur(${textBlur.toFixed(2)}px)`;
+    // Translate-Y direction depends on whether we're moving forward or back
+    const direction = virtualProgress > nearest ? -1 : 1;
+    text.style.transform = `translateY(${(direction * textTranslate).toFixed(1)}px)`;
+
+    // Counter + progress bar
+    counterCurrent.textContent = toPersian(padTwo(nearest + 1));
+    const overall = Math.max(0, Math.min(1, virtualProgress / (N - 1)));
+    progressFill.style.width = (overall * 100).toFixed(1) + '%';
+
+    // Hide the scroll prompt once user has engaged (any virtualProgress > 0.15)
+    if (!promptHidden && virtualProgress > 0.15) {
+      promptHidden = true;
+      scrollPrompt.dataset.hidden = 'true';
+    } else if (promptHidden && virtualProgress < 0.05) {
+      promptHidden = false;
+      scrollPrompt.dataset.hidden = 'false';
+    }
+  }
+
+  function scheduleSnap() {
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => {
+      const target = Math.max(0, Math.min(N - 1, Math.round(virtualProgress)));
+      animateTo(target);
+    }, 180);
+  }
+
+  function animateTo(target) {
+    if (snapAnim) cancelAnimationFrame(snapAnim);
+    const from = virtualProgress;
+    const distance = target - from;
+    const duration = Math.min(700, Math.max(300, Math.abs(distance) * 600));
+    const start = performance.now();
+    const easeOutQuint = (t) => 1 - Math.pow(1 - t, 5);
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      virtualProgress = from + distance * easeOutQuint(t);
+      render();
+      if (t < 1) snapAnim = requestAnimationFrame(tick);
+      else snapAnim = null;
+    };
+    snapAnim = requestAnimationFrame(tick);
+  }
+
+  // ── Wheel input ────────────────────────────────────────────────────
+  // Wheel events are intercepted: each WHEEL_SENSITIVITY worth of deltaY
+  // moves virtualProgress by 1. Page never scrolls.
+  const WHEEL_SENSITIVITY = 600;
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (snapAnim) { cancelAnimationFrame(snapAnim); snapAnim = null; }
+    // RTL: scroll-down still means "next" (semantic forward through the catalog)
+    virtualProgress = Math.max(0, Math.min(N - 1, virtualProgress + e.deltaY / WHEEL_SENSITIVITY));
+    render();
+    scheduleSnap();
+  }, { passive: false });
+
+  // ── Touch input (swipe up/down on the stage) ──────────────────────
+  let touchStartY = 0;
+  let touchStartProgress = 0;
+  const TOUCH_SENSITIVITY = 220;
+  stage.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+    touchStartProgress = virtualProgress;
+    if (snapAnim) { cancelAnimationFrame(snapAnim); snapAnim = null; }
+  }, { passive: true });
+  stage.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const dy = touchStartY - e.touches[0].clientY;     // swipe up → positive → next
+    virtualProgress = Math.max(0, Math.min(N - 1, touchStartProgress + dy / TOUCH_SENSITIVITY));
+    render();
+  }, { passive: false });
+  stage.addEventListener('touchend', () => {
+    scheduleSnap();
+  });
+
+  // ── Keyboard ─────────────────────────────────────────────────────
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault();
+      animateTo(Math.min(N - 1, Math.round(virtualProgress) + 1));
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault();
+      animateTo(Math.max(0, Math.round(virtualProgress) - 1));
+    } else if (e.key === 'Home') {
+      e.preventDefault(); animateTo(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); animateTo(N - 1);
+    }
+  });
+
+  // Initial render
+  setTextContent(0);
+  render();
+</script>
+
+</body>
+</html>

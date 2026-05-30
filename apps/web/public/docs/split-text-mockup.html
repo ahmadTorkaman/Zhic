@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SplitText — Ayandeh × Zhic</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  .page-head {
+    max-width: 860px;
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+  .page-head h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--color-ink);
+    margin-bottom: 8px;
+  }
+  .page-head p {
+    font-size: 14px;
+    color: var(--color-stone);
+    line-height: 1.7;
+  }
+  .page-head code {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    background: var(--color-sand);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  .ctrl-btn, .ctrl-input {
+    border: 1px solid var(--color-sand);
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 240ms, border-color 240ms, color 240ms;
+  }
+  .ctrl-input {
+    cursor: text;
+    min-width: 280px;
+    font-weight: 400;
+    text-align: center;
+  }
+  .ctrl-btn:hover { background: var(--color-cream); }
+  .ctrl-btn.is-primary {
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+    border-color: var(--color-charcoal);
+  }
+  .ctrl-btn.is-primary:hover { background: var(--color-ink); }
+
+  /* ── Demo cards ─────────────────────────────────────────────────────── */
+  .demo-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  @media (min-width: 900px) {
+    .demo-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .demo {
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: 12px;
+    padding: 56px 32px 28px;
+    position: relative;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .demo-label {
+    position: absolute;
+    top: 14px;
+    inset-inline-start: 18px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-forest);
+    font-weight: 700;
+  }
+  .demo-warn {
+    position: absolute;
+    top: 14px;
+    inset-inline-end: 18px;
+    font-size: 10px;
+    color: var(--color-gold);
+    font-weight: 700;
+  }
+  .demo-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: 28px;
+    overflow: hidden;
+  }
+  .demo-text {
+    font-weight: 900;
+    color: var(--color-ink);
+    text-align: center;
+    line-height: 1.2;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -0.01em;
+  }
+  .demo-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--color-cream);
+    padding-top: 14px;
+    gap: 12px;
+  }
+  .demo-spec {
+    font-size: 11px;
+    color: var(--color-stone);
+    font-family: 'Courier New', monospace;
+  }
+  .replay-btn {
+    border: 0;
+    background: transparent;
+    color: var(--color-forest);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background-color 240ms;
+  }
+  .replay-btn:hover { background: var(--color-cream); }
+
+  /* ── Split text animation primitives ────────────────────────────────── */
+  .st-piece {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+    opacity: 0;  /* hidden until .is-running adds animation */
+  }
+  /* Use opacity:0 only when armed, not when at rest */
+  .demo[data-armed] .st-piece {
+    opacity: 0;
+  }
+  /* When running, each piece gets its delay via --i */
+  .demo.is-running .st-piece {
+    animation-name: var(--anim);
+    animation-duration: var(--dur, 800ms);
+    animation-delay: calc(var(--i) * var(--stagger, 80ms));
+    animation-timing-function: var(--ease-out-quint);
+    animation-fill-mode: forwards;
+  }
+  /* Space between word pieces */
+  .st-word + .st-word { margin-inline-start: 0.28em; }
+
+  /* ── Animation keyframes ────────────────────────────────────────────── */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes blur-in {
+    from { opacity: 0; filter: blur(18px); }
+    to   { opacity: 1; filter: blur(0); }
+  }
+  @keyframes scale-pop {
+    from { opacity: 0; transform: scale(0.4); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes rotate-x {
+    from { opacity: 0; transform: perspective(600px) rotateX(-80deg); transform-origin: 50% 100%; }
+    to   { opacity: 1; transform: perspective(600px) rotateX(0); transform-origin: 50% 100%; }
+  }
+  @keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes mask-up {
+    from { opacity: 0; transform: translateY(110%); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* Mask-up wants its container to clip — wrap pieces in .st-mask */
+  .st-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    line-height: 1.2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo.is-running .st-piece {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
+  .stage-tag {
+    position: fixed;
+    bottom: 16px;
+    inset-inline-end: 16px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1>SplitText × آینده × ژیک</h1>
+  <p>
+    شش حالت انیمیشن متن، رندر شده با فونت آینده (سلف‌هاست) و رنگ‌های برند.<br>
+    متن یا عبارت دلخواه را تایپ کنید و یکی از پیش‌نمایش‌ها را بزنید تا روی تمام کارت‌ها اعمال شود.
+  </p>
+</header>
+
+<div class="controls">
+  <input class="ctrl-input" id="textInput" value="هر طرح، یک زبان" aria-label="متن نمونه">
+  <button class="ctrl-btn" data-preset="ژیک">ژیک</button>
+  <button class="ctrl-btn" data-preset="طرح‌ها">طرح‌ها</button>
+  <button class="ctrl-btn" data-preset="از چوب، برای زندگی">از چوب، برای زندگی</button>
+  <button class="ctrl-btn" data-preset="صنایع چوبی ژیک">صنایع چوبی ژیک</button>
+  <button class="ctrl-btn is-primary" id="replayAll">پخش همه</button>
+</div>
+
+<div class="demo-grid" id="demoGrid">
+
+  <!-- 1. Fade-up by word -->
+  <div class="demo"
+       data-anim="fade-up" data-split="word"
+       style="--anim: fade-up; --dur: 800ms; --stagger: 90ms;">
+    <span class="demo-label">۱ — Fade Up · Word</span>
+    <div class="demo-stage"><div class="demo-text" data-target></div></div>
+    <div class="demo-footer">
+      <span class="demo-spec">split: words · stagger: 90ms · y: 40→0 · opacity: 0→1</span>
+      <button class="replay-btn" type="button">⟲ پخش</button>
+    </div>
+  </div>
+
+  <!-- 2. Blur-in by word -->
+  <div class="demo"
+       data-anim="blur-in" data-split="word"
+       style="--anim: blur-in; --dur: 900ms; --stagger: 110ms;">
+    <span class="demo-label">۲ — Blur In · Word</span>
+    <div class="demo-stage"><div class="demo-text" data-target></div></div>
+    <div class="demo-footer">
+      <span class="demo-spec">split: words · stagger: 110ms · blur: 18→0 · opacity: 0→1</span>
+      <button class="replay-btn" type="button">⟲ پخش</button>
+    </div>
+  </div>
+
+  <!-- 3. Mask-up by word -->
+  <div class="demo"
+       data-anim="mask-up" data-split="word-masked"
+       style="--anim: mask-up; --dur: 750ms; --stagger: 80ms;">
+    <span class="demo-label">۳ — Mask Up · Word</span>
+    <div class="demo-stage"><div class="demo-text" data-target></div></div>
+    <div class="demo-footer">
+      <span class="demo-spec">split: words · stagger: 80ms · y: 110%→0 inside clip</span>
+      <button class="replay-btn" type="button">⟲ پخش</button>
+    </div>
+  </div>
+
+  <!-- 4. Scale-pop by word -->
+  <div class="demo"
+       data-anim="scale-pop" data-split="word"
+       style="--anim: scale-pop; --dur: 700ms; --stagger: 85ms;">
+    <span class="demo-label">۴ — Scale · Word</span>
+    <div class="demo-stage"><div class="demo-text" data-target></div></div>
+    <div class="demo-footer">
+      <span class="demo-spec">split: words · stagger: 85ms · scale: 0.4→1</span>
+      <button class="replay-btn" type="button">⟲ پخش</button>
+    </div>
+  </div>
+
+  <!-- 5. Rotate-X by word -->
+  <div class="demo"
+       data-anim="rotate-x" data-split="word"
+       style="--anim: rotate-x; --dur: 900ms; --stagger: 100ms;">
+    <span class="demo-label">۵ — Flip Up · Word</span>
+    <div class="demo-stage"><div class="demo-text" data-target></div></div>
+    <div class="demo-footer">
+      <span class="demo-spec">split: words · stagger: 100ms · rotateX: -80°→0°</span>
+      <button class="replay-btn" type="button">⟲ پخش</button>
+    </div>
+  </div>
+
+  <!-- 6. Fade-up by CHARACTER (Persian rendering warning) -->
+  <div class="demo"
+       data-anim="fade-up" data-split="char"
+       style="--anim: fade-up; --dur: 600ms; --stagger: 40ms;">
+    <span class="demo-label">۶ — Fade Up · Char</span>
+    <span class="demo-warn">⚠ shaping</span>
+    <div class="demo-stage"><div class="demo-text" data-target></div></div>
+    <div class="demo-footer">
+      <span class="demo-spec">split: chars · stagger: 40ms · ⚠ Persian shaping breaks</span>
+      <button class="replay-btn" type="button">⟲ پخش</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="stage-tag"><span>SplitText</span> · آینده · پیش‌نمایش</div>
+
+<script>
+  const input = document.getElementById('textInput');
+  const grid = document.getElementById('demoGrid');
+  const replayAll = document.getElementById('replayAll');
+
+  // Split text into "pieces" with --i index. Different strategies per demo.
+  function render(demo, text) {
+    const target = demo.querySelector('[data-target]');
+    const split = demo.dataset.split;
+    target.innerHTML = '';
+
+    if (split === 'word') {
+      const words = text.split(/\s+/).filter(Boolean);
+      words.forEach((w, i) => {
+        const span = document.createElement('span');
+        span.className = 'st-piece st-word';
+        span.style.setProperty('--i', i);
+        span.textContent = w;
+        target.appendChild(span);
+      });
+    } else if (split === 'word-masked') {
+      // For mask-up: wrap each word in a clip mask, animate the inner piece up
+      const words = text.split(/\s+/).filter(Boolean);
+      words.forEach((w, i) => {
+        const mask = document.createElement('span');
+        mask.className = 'st-mask st-word';
+        const inner = document.createElement('span');
+        inner.className = 'st-piece';
+        inner.style.setProperty('--i', i);
+        inner.textContent = w;
+        mask.appendChild(inner);
+        target.appendChild(mask);
+      });
+    } else if (split === 'char') {
+      // Char-level: split chars but keep ZWNJ tied to its neighbor so shaping
+      // has a better chance of holding. Spaces get a normal text-node so
+      // word boundaries stay natural.
+      const chars = Array.from(text);
+      let i = 0;
+      chars.forEach(c => {
+        if (c === ' ') {
+          target.appendChild(document.createTextNode(' '));
+          return;
+        }
+        const span = document.createElement('span');
+        span.className = 'st-piece';
+        span.style.setProperty('--i', i++);
+        span.textContent = c;
+        target.appendChild(span);
+      });
+    }
+  }
+
+  function play(demo) {
+    demo.classList.remove('is-running');
+    // Force reflow so the animation restarts
+    void demo.offsetWidth;
+    demo.classList.add('is-running');
+  }
+
+  function renderAll(text) {
+    grid.querySelectorAll('.demo').forEach(d => {
+      render(d, text);
+      d.setAttribute('data-armed', '');
+    });
+  }
+
+  function playAll() {
+    grid.querySelectorAll('.demo').forEach(play);
+  }
+
+  // Per-card replay
+  grid.addEventListener('click', e => {
+    const btn = e.target.closest('.replay-btn');
+    if (!btn) return;
+    const demo = btn.closest('.demo');
+    render(demo, input.value);
+    play(demo);
+  });
+
+  // Preset chips
+  document.querySelectorAll('.ctrl-btn[data-preset]').forEach(b => {
+    b.addEventListener('click', () => {
+      input.value = b.dataset.preset;
+      renderAll(input.value);
+      playAll();
+    });
+  });
+
+  // Replay all
+  replayAll.addEventListener('click', () => {
+    renderAll(input.value);
+    playAll();
+  });
+
+  // Live edit re-renders without auto-playing (so the user sees the static
+  // text); they hit "پخش همه" to fire the animation.
+  input.addEventListener('input', () => {
+    renderAll(input.value);
+  });
+
+  // Initial paint + play
+  renderAll(input.value);
+  setTimeout(playAll, 200);
+</script>
+
+</body>
+</html>

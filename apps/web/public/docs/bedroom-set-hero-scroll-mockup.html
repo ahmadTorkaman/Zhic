@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zhic — /bedroom-set/[slug] scroll hero (mockup)</title>
+<style>
+  /* ── Fonts (served from the live site at /fonts) ───────────────── */
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-light.ttf')   format('truetype'); font-weight:300; font-display:swap; }
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-regular.ttf') format('truetype'); font-weight:400; font-display:swap; }
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-bold.ttf')    format('truetype'); font-weight:700; font-display:swap; }
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-black.ttf')   format('truetype'); font-weight:900; font-display:swap; }
+
+  :root {
+    --color-ivory:#FAFAF7; --color-cream:#F5F0EB; --color-sand:#E8E0D8;
+    --color-stone:#8C8279; --color-charcoal:#2C2825; --color-ink:#14110F;
+    --color-forest:#5F7760; --color-gold:#C49A6C;
+    --ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+    --ease-out-quint:cubic-bezier(0.16,1,0.3,1);
+    --header-h:72px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { background:var(--color-ivory); }
+  body { font-family:'Ayandeh',system-ui,sans-serif; color:var(--color-charcoal); background:var(--color-ivory); }
+
+  /* fake site header so the proportions read true */
+  .site-header {
+    position:fixed; inset-block-start:0; inset-inline:0; height:var(--header-h); z-index:60;
+    display:flex; align-items:center; justify-content:space-between; padding:0 clamp(20px,4vw,56px);
+    background:linear-gradient(to bottom, rgba(250,250,247,.9), rgba(250,250,247,0));
+    backdrop-filter:blur(2px);
+  }
+  .site-header .logo { font-weight:900; font-size:1.4rem; color:var(--color-ink); letter-spacing:-.01em; }
+  .site-header .logo::after { content:''; display:block; height:2px; width:60%; background:var(--color-forest); margin-top:2px; border-radius:2px; }
+  .site-header nav { display:flex; gap:28px; font-size:.82rem; color:var(--color-charcoal); }
+  .site-header nav span { opacity:.7; }
+
+  /* ── Scroll-driven hero ───────────────────────────────────────── */
+  .scrolly { position:relative; height:220vh; }      /* pin range = 120vh of scroll */
+  .pin {
+    position:sticky; inset-block-start:0; height:100vh; overflow:hidden;
+    display:grid; place-items:center; background:var(--color-ivory);
+  }
+
+  .hero-img {
+    position:absolute; inset:0; will-change:opacity, transform;
+    /* full-bleed container; the whole webp is FIT inside it (contain), letterboxed on ivory */
+    background-size:contain; background-repeat:no-repeat; background-position:center; transform-origin:center;
+  }
+
+  /* the eyebrow that sits on the photo from the very first frame */
+  .hero-overlay {
+    position:absolute; inset-block-start:calc(var(--header-h) + 18px); inset-inline:0;
+    text-align:center; z-index:3; will-change:opacity;
+  }
+  .hero-overlay .eye {
+    color:var(--color-charcoal); font-weight:700; font-size:.74rem; letter-spacing:.22em; text-transform:uppercase;
+  }
+
+  /* the title block that rises as the image fades */
+  .hero-title { position:relative; z-index:4; text-align:center; will-change:opacity, transform; padding:0 24px; }
+  .hero-title .kicker { color:var(--color-forest); font-weight:700; font-size:.8rem; letter-spacing:.2em; text-transform:uppercase; margin-bottom:14px; }
+  .hero-title h1 { color:var(--color-ink); font-weight:900; font-size:clamp(3rem,9vw,7rem); line-height:.98; letter-spacing:-.03em; }
+  .hero-title .rule { height:2px; width:0; background:var(--color-forest); margin:22px auto 18px; border-radius:2px; }
+  .hero-title .tag { color:var(--color-stone); font-weight:300; font-size:clamp(1rem,1.6vw,1.3rem); max-width:42ch; margin:0 auto; line-height:1.7; }
+
+  /* variant B: keep a faint ivory "stage" pedestal under where the image was */
+  .pin[data-reveal="stage"] .pedestal {
+    position:absolute; inset-block-end:16%; inset-inline:0; height:40px; z-index:2;
+    background:radial-gradient(ellipse at center, rgba(139,111,71,.14), transparent 70%);
+    will-change:opacity;
+  }
+  .pin[data-reveal="quiet"] .pedestal { display:none; }
+
+  /* image-as-letters flash (variant C) lives as a duplicate clipped title */
+  .hero-title .clip {
+    position:absolute; inset:0; display:grid; place-items:center;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    background-size:cover; background-position:center; pointer-events:none;
+  }
+  .hero-title h1 { position:relative; }
+
+  .scroll-hint {
+    position:absolute; inset-block-end:30px; inset-inline:0; text-align:center; z-index:5;
+    color:var(--color-stone); font-size:.74rem; letter-spacing:.14em; will-change:opacity;
+  }
+  .scroll-hint .arrow { display:block; width:10px; height:10px; margin:8px auto 0; border-inline-end:1.5px solid currentColor; border-block-end:1.5px solid currentColor; transform:rotate(45deg); animation:bob 1.6s var(--ease-out-soft) infinite; }
+  @keyframes bob { 0%,100%{transform:rotate(45deg) translateY(0);} 50%{transform:rotate(45deg) translateY(4px);} }
+
+  /* ── After the pin: story strip + product grid ────────────────── */
+  .after { position:relative; z-index:10; background:var(--color-ivory); }
+  .story { max-width:760px; margin:0 auto; padding:clamp(60px,9vw,120px) 24px; text-align:center; }
+  .story .eye { color:var(--color-forest); font-weight:700; font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; }
+  .story p { color:var(--color-charcoal); font-weight:300; font-size:clamp(1.1rem,2vw,1.5rem); line-height:1.8; margin-top:18px; }
+
+  .collection { max-width:1200px; margin:0 auto; padding:0 24px clamp(80px,10vw,140px); }
+  .collection .eye { color:var(--color-forest); font-weight:700; font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; margin-bottom:28px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(18px,2.4vw,34px); }
+  @media(max-width:760px){ .grid{grid-template-columns:1fr 1fr;} .site-header nav{display:none;} }
+  .card .ph { aspect-ratio:4/5; background:var(--color-cream); border-radius:6px; display:grid; place-items:center; color:var(--color-sand); font-size:2rem; }
+  .card .name { margin-top:14px; font-weight:700; color:var(--color-ink); }
+  .card .price { color:var(--color-stone); font-size:.86rem; margin-top:4px; }
+
+  /* ── Mockup control panel (not part of the design) ────────────── */
+  .panel {
+    position:fixed; inset-block-start:50%; inset-inline-start:14px; transform:translateY(-50%);
+    z-index:200; background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+    border:1px solid var(--color-sand); border-radius:12px; padding:14px; width:212px;
+    box-shadow:0 18px 50px rgba(20,17,15,.16); font-size:.78rem; direction:ltr; text-align:left;
+  }
+  .panel h4 { font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--color-stone); margin:10px 0 6px; }
+  .panel h4:first-child{ margin-top:0; }
+  .panel .row { display:flex; gap:6px; flex-wrap:wrap; }
+  .panel button { flex:1 1 auto; border:1px solid var(--color-sand); background:#fff; color:var(--color-charcoal); border-radius:7px; padding:6px 8px; cursor:pointer; font:inherit; font-size:.72rem; transition:all .15s; }
+  .panel button.on { background:var(--color-forest); border-color:var(--color-forest); color:#fff; }
+  .panel .hint { color:var(--color-stone); font-size:.68rem; line-height:1.5; margin-top:10px; }
+  .panel .top { position:fixed; inset-block-start:14px; inset-inline-start:14px; transform:none; }
+  @media(max-width:760px){ .panel{ inset-block-start:auto; inset-block-end:14px; transform:none; width:auto; inset-inline:14px; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-hint .arrow { animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">ژیک</div>
+  <nav><span>سرویس خواب</span><span>محصولات</span><span>ژورنال</span><span>شوروم‌ها</span></nav>
+</header>
+
+<!-- scroll-driven hero -->
+<section class="scrolly" id="scrolly">
+  <div class="pin" id="pin" data-reveal="stage">
+    <div class="hero-img" id="heroImg"></div>
+    <div class="pedestal" id="pedestal"></div>
+
+    <div class="hero-overlay" id="heroEye"><div class="eye">طرح ژیک · سرویس بزرگسال</div></div>
+
+    <div class="hero-title" id="heroTitle">
+      <div class="kicker">طرح</div>
+      <h1>کارولین<span class="clip" id="clip"></span></h1>
+      <div class="rule" id="rule"></div>
+      <div class="tag">سطرهای آرام گردوی ایرانی؛ هماهنگی‌ای که سال‌ها کنار شما می‌ماند.</div>
+    </div>
+
+    <div class="scroll-hint" id="hint"><span>برای دیدن طرح اسکرول کنید</span><span class="arrow"></span></div>
+  </div>
+</section>
+
+<!-- payoff: story + products -->
+<main class="after">
+  <section class="story">
+    <div class="eye">داستان طرح</div>
+    <p>کارولین از یک ایده‌ی ساده آغاز شد: اتاقی که با شما بزرگ می‌شود. هر قطعه از گردوی ماسیو، با اتصالاتی که نسل‌ها دوام می‌آورند.</p>
+  </section>
+  <section class="collection">
+    <div class="eye">مجموعه</div>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<!-- mockup controls -->
+<aside class="panel">
+  <h4>Reveal style</h4>
+  <div class="row" id="revealRow">
+    <button data-reveal="quiet">Quiet rise</button>
+    <button data-reveal="stage" class="on">Stage handoff</button>
+  </div>
+  <h4>Image motion</h4>
+  <div class="row" id="motionRow">
+    <button data-motion="static" class="on">Static fade</button>
+    <button data-motion="zoom">Subtle zoom-out</button>
+  </div>
+  <h4>Photo</h4>
+  <div class="row" id="photoRow">
+    <button data-img="caroline" class="on">Caroline</button>
+    <button data-img="elegance">Elegance</button>
+    <button data-img="mocha">Mocha</button>
+  </div>
+  <div class="hint">Scroll down: the photo holds in place and fades out while the name rises with a forest underline. Keep scrolling → the collection.</div>
+</aside>
+
+<script>
+  var API = 'http://80.240.31.146:3001/api/media/file/';
+  var heroImg = document.getElementById('heroImg');
+  var clip = document.getElementById('clip');
+  var pin = document.getElementById('pin');
+  var title = document.getElementById('heroTitle');
+  var rule = document.getElementById('rule');
+  var hint = document.getElementById('hint');
+  var heroEye = document.getElementById('heroEye');
+  var pedestal = document.getElementById('pedestal');
+  var scrolly = document.getElementById('scrolly');
+
+  var state = { reveal:'stage', motion:'static', img:'caroline' };
+
+  function setImg(slug){
+    var url = API + 'bedroom-set-' + slug + '.webp';
+    heroImg.style.backgroundImage = 'url("'+url+'")';
+    clip.style.backgroundImage = 'url("'+url+'")';
+  }
+  setImg(state.img);
+
+  // smoothstep
+  function ss(a,b,t){ t=Math.min(1,Math.max(0,(t-a)/(b-a))); return t*t*(3-2*t); }
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ticking = false;
+
+  function render(){
+    ticking = false;
+    var rect = scrolly.getBoundingClientRect();
+    var pinDist = scrolly.offsetHeight - window.innerHeight;   // 120vh
+    var p = Math.min(1, Math.max(0, (-rect.top) / pinDist));    // 0..1 over the pin
+
+    if (reduce){ heroImg.style.opacity=0.0; title.style.opacity=1; title.style.transform='translateY(-10vh)'; title.style.filter='none'; rule.style.width='120px'; hint.style.opacity=0; heroEye.style.opacity=0; return; }
+
+    // image fades flat in place over 0 → 0.55
+    var imgFade = 1 - ss(0, 0.55, p);
+    heroImg.style.opacity = imgFade;
+    heroEye.style.opacity = imgFade;
+    pedestal.style.opacity = (state.reveal==='stage') ? (1-imgFade)*0.9 : 0;
+    // image is zoomed out a little (floats on the stage) and STATIC — it just
+    // fades; no scale animation. (zoom mode drifts a touch further, kept for A/B)
+    heroImg.style.transform = (state.motion==='zoom')
+      ? ('scale(' + (1 - 0.04*ss(0,0.7,p)) + ')')
+      : 'none';
+
+    // title rises 0.42 → 0.98 and settles a bit ABOVE center (~ -10vh),
+    // toward a header position rather than dead-center.
+    var tp = ss(0.42, 0.98, p);
+    title.style.opacity = tp;
+    title.style.transform = 'translateY(calc(-10vh + ' + ((1-tp)*44) + 'px))';
+    // text BLURS in as it rises (matches the site's BlurInText motion)
+    title.style.filter = 'blur(' + ((1-tp)*14) + 'px)';
+    rule.style.width = (tp*120) + 'px';
+
+    // image-into-letters flash disabled — "quiet rise" stays clean.
+    clip.style.opacity = 0;
+
+    // hint fades out almost immediately
+    hint.style.opacity = 1 - ss(0, 0.12, p);
+  }
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(render); } }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', render);
+  render();
+
+  // controls
+  function wire(rowId, key, cb){
+    document.getElementById(rowId).addEventListener('click', function(e){
+      var b = e.target.closest('button'); if(!b) return;
+      [].forEach.call(this.children, function(c){ c.classList.remove('on'); });
+      b.classList.add('on'); state[key] = b.dataset[Object.keys(b.dataset)[0]]; cb && cb(); render();
+    });
+  }
+  wire('revealRow','reveal', function(){ pin.dataset.reveal = state.reveal; });
+  wire('motionRow','motion');
+  wire('photoRow','img', function(){ setImg(state.img); });
+
+  // build placeholder product grid
+  var names=['تخت کارولین','کمد کارولین','میز آرایش','پاتختی','صندلی','کتابخانه'];
+  var grid=document.getElementById('grid');
+  names.forEach(function(n,i){
+    var d=document.createElement('div'); d.className='card';
+    d.innerHTML='<div class="ph">▦</div><div class="name">'+n+'</div><div class="price">از ۴۸٬۰۰۰٬۰۰۰ تومان</div>';
+    grid.appendChild(d);
+  });
+</script>
+</body>
+</html>

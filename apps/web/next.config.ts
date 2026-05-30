@@ -28,6 +28,30 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      // Media lives on the Payload API (services/api) on loopback :3001, whose
+      // port is NOT reachable from browsers. Proxy media through the storefront
+      // origin so it's served same-origin from :3000. The API builds media URLs
+      // with NEXT_PUBLIC_SERVER_URL set to the storefront origin (not :3001).
+      // Scoped to /api/media so the storefront's own /api/* routes are untouched.
+      { source: '/api/media/:path*', destination: 'http://127.0.0.1:3001/api/media/:path*' },
+    ];
+  },
+  async headers() {
+    return [
+      // Media files are UUID-named (content-addressed), so they never mutate —
+      // safe to cache for a year. Payload's media response has no Cache-Control,
+      // which made the browser re-download all media on every navigation/refresh.
+      // Applied to the proxied path so the headers ride the rewrite.
+      {
+        source: '/api/media/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: '/invoices', destination: '/invoices/index.html', permanent: false },

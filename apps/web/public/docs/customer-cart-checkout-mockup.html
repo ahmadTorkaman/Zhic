@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ژیک — سبد خرید (mockup)</title>
+<style>
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-light.ttf')   format('truetype');font-weight:300;font-display:swap;}
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-regular.ttf') format('truetype');font-weight:400;font-display:swap;}
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-bold.ttf')    format('truetype');font-weight:700;font-display:swap;}
+  @font-face{font-family:'Ayandeh';src:url('/fonts/ayandeh-black.ttf')   format('truetype');font-weight:900;font-display:swap;}
+  :root{--ivory:#FAFAF7;--cream:#F5F0EB;--sand:#E8E0D8;--stone:#8C8279;--charcoal:#2C2825;--ink:#14110F;--forest:#5F7760;--gold:#C49A6C;--ease:cubic-bezier(0.22,1,0.36,1);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Ayandeh',system-ui,sans-serif;background:var(--ivory);color:var(--charcoal);}
+
+  /* storefront header */
+  .hd{display:flex;align-items:center;gap:30px;padding:18px clamp(16px,5vw,64px);border-block-end:1px solid var(--sand);}
+  .logo{font-weight:900;font-size:1.6rem;color:var(--ink);}
+  .logo::after{content:'';display:block;height:2px;width:62%;background:var(--forest);margin-top:1px;border-radius:2px;}
+  .nav{display:flex;gap:26px;font-size:.86rem;color:var(--charcoal);}
+  .nav span{opacity:.75;}
+  .sp{flex:1;}
+  .cart-ic{font-size:.84rem;color:var(--forest);font-weight:700;}
+
+  .shell{max-width:1120px;margin:0 auto;padding:30px clamp(16px,5vw,64px) 80px;}
+  /* stepper */
+  .steps{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:34px;flex-wrap:wrap;}
+  .step{display:flex;align-items:center;gap:9px;font-size:.84rem;color:var(--stone);}
+  .step .num{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--sand);display:grid;place-items:center;font-size:.78rem;}
+  .step.on{color:var(--ink);font-weight:700;}
+  .step.on .num{border-color:var(--forest);background:var(--forest);color:#fff;}
+  .step .bar{width:36px;height:1px;background:var(--sand);}
+
+  h1{font-size:1.9rem;font-weight:900;color:var(--ink);letter-spacing:-.02em;margin-bottom:22px;}
+  .grid{display:grid;grid-template-columns:1fr 380px;gap:30px;align-items:start;}
+  @media(max-width:860px){.grid{grid-template-columns:1fr;}}
+
+  .item{display:grid;grid-template-columns:120px 1fr auto;gap:18px;padding:20px 0;border-block-end:1px solid var(--sand);}
+  .item:first-child{padding-top:0;}
+  .thumb{aspect-ratio:4/3;border-radius:10px;background-size:cover;background-position:center;background-color:var(--cream);}
+  .it-nm{font-weight:700;font-size:1.05rem;color:var(--ink);}
+  .it-series{font-size:.78rem;color:var(--forest);font-weight:700;letter-spacing:.04em;margin-bottom:4px;}
+  .chips{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap;}
+  .vchip{font-size:.7rem;background:var(--cream);border:1px solid var(--sand);border-radius:999px;padding:3px 10px;color:var(--charcoal);}
+  .it-qty{display:inline-flex;align-items:center;border:1px solid var(--sand);border-radius:999px;margin-top:13px;}
+  .it-qty button{border:0;background:none;width:30px;height:30px;cursor:pointer;font-size:1.05rem;color:var(--charcoal);}
+  .it-qty span{min-width:32px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;}
+  .it-right{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;}
+  .it-price{font-weight:900;font-size:1.05rem;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .it-unit{font-size:.72rem;color:var(--stone);font-variant-numeric:tabular-nums;}
+  .rm{border:0;background:none;color:var(--stone);cursor:pointer;font-size:.74rem;}
+  .rm:hover{color:#B4654A;}
+
+  .summary{position:sticky;top:24px;background:var(--cream);border:1px solid var(--sand);border-radius:16px;padding:24px;}
+  .summary h2{font-size:1.05rem;font-weight:900;color:var(--ink);margin-bottom:16px;}
+  .row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;font-size:.92rem;}
+  .row .v{font-variant-numeric:tabular-nums;}
+  .row.muted{color:var(--stone);font-size:.84rem;}
+  .pay{border-block-start:1px solid var(--sand);margin-top:10px;padding-top:16px;display:flex;justify-content:space-between;align-items:baseline;}
+  .pay .lbl{font-weight:700;color:var(--ink);}
+  .pay .v{font-weight:900;font-size:1.6rem;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .toman{font-size:.72rem;color:var(--stone);}
+  .checkout{display:block;width:100%;border:0;background:var(--forest);color:#fff;border-radius:12px;padding:15px;font:inherit;font-weight:700;font-size:1rem;cursor:pointer;margin-top:18px;transition:.15s var(--ease);text-align:center;}
+  .checkout:hover{background:#4e6450;}
+  .secure{display:flex;align-items:center;justify-content:center;gap:7px;font-size:.74rem;color:var(--stone);margin-top:13px;}
+  .secure .lock{width:9px;height:8px;border:1.5px solid var(--stone);border-radius:2px;position:relative;}
+  .secure .lock::before{content:'';position:absolute;inset-block-start:-4px;inset-inline-start:1.5px;width:4px;height:5px;border:1.5px solid var(--stone);border-block-end:0;border-start-start-radius:4px;border-start-end-radius:4px;}
+  .cont{display:block;text-align:center;margin-top:14px;font-size:.82rem;color:var(--stone);text-decoration:none;border-block-start:0;}
+  .cont:hover{color:var(--forest);}
+</style>
+</head>
+<body>
+<header class="hd">
+  <div class="logo">ژیک</div>
+  <nav class="nav"><span>سرویس خواب</span><span>محصولات</span><span>ژورنال</span><span>شوروم‌ها</span></nav>
+  <div class="sp"></div>
+  <div class="cart-ic">سبد خرید (۳)</div>
+</header>
+
+<div class="shell">
+  <div class="steps">
+    <div class="step on"><span class="num">۱</span> سبد خرید</div><span class="bar"></span>
+    <div class="step"><span class="num">۲</span> آدرس</div><span class="bar"></span>
+    <div class="step"><span class="num">۳</span> ارسال</div><span class="bar"></span>
+    <div class="step"><span class="num">۴</span> پرداخت</div>
+  </div>
+
+  <h1>سبد خرید</h1>
+
+  <div class="grid">
+    <div id="items"></div>
+
+    <aside class="summary">
+      <h2>خلاصه‌ی سفارش</h2>
+      <div class="row"><span>جمع اقلام</span><span class="v" id="subtotal">—</span></div>
+      <div class="row muted"><span>هزینه‌ی ارسال</span><span class="v">در مرحله‌ی بعد</span></div>
+      <div class="pay"><span class="lbl">مبلغ قابل پرداخت</span><span class="v" id="total">—</span></div>
+      <div class="toman" style="text-align:left">تومان</div>
+      <button class="checkout">ادامه و تکمیل آدرس ←</button>
+      <div class="secure"><span class="lock"></span> پرداخت امن از طریق درگاه زرین‌پال</div>
+      <a class="cont" href="#">← ادامه‌ی خرید</a>
+    </aside>
+  </div>
+</div>
+
+<script>
+  var API='http://80.240.31.146:3001/api/media/file/';
+  var FA='۰۱۲۳۴۵۶۷۸۹';
+  function fa(n){return String(n).replace(/[0-9]/g,function(d){return FA[+d];});}
+  function money(n){return fa(n.toLocaleString('en-US'));}
+
+  var CART=[
+    {series:'پارلا', nm:'تخت دونفره پارلا', v:['سایز ۱۶۰','گردوی طبیعی'], price:48000000, qty:1, img:'bedroom-set-parla.webp'},
+    {series:'کارولین', nm:'میز آرایش کارولین', v:['آینه‌دار'], price:21000000, qty:1, img:'bedroom-set-caroline.webp'},
+    {series:'موکا', nm:'پاتختی موکا', v:['کرم'], price:8500000, qty:2, img:'bedroom-set-mocha.webp'}
+  ];
+
+  window.step=function(i,d){CART[i].qty=Math.max(1,CART[i].qty+d);render();};
+  window.rm=function(i){CART.splice(i,1);render();};
+
+  function render(){
+    document.getElementById('items').innerHTML=CART.map(function(l,i){
+      return '<div class="item">'
+        +'<div class="thumb" style="background-image:url(\''+API+l.img+'\')"></div>'
+        +'<div><div class="it-series">'+l.series+'</div><div class="it-nm">'+l.nm+'</div>'
+        +'<div class="chips">'+l.v.map(function(x){return '<span class="vchip">'+x+'</span>';}).join('')+'</div>'
+        +'<div class="it-qty"><button onclick="step('+i+',1)">+</button><span>'+fa(l.qty)+'</span><button onclick="step('+i+',-1)">−</button></div></div>'
+        +'<div class="it-right"><div class="it-price">'+money(l.price*l.qty)+'</div>'
+        +'<div class="it-unit">'+money(l.price)+' / واحد</div>'
+        +'<button class="rm" onclick="rm('+i+')">حذف</button></div>'
+        +'</div>';
+    }).join('') || '<p style="color:var(--stone)">سبد شما خالی است.</p>';
+    var sub=CART.reduce(function(s,l){return s+l.price*l.qty;},0);
+    document.getElementById('subtotal').textContent=money(sub);
+    document.getElementById('total').textContent=money(sub);
+  }
+  render();
+</script>
+</body>
+</html>

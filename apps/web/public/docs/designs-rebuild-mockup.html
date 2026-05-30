@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/designs — rebuild mockup (scroll-pinned editorial stage)</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eye:   0.14em;
+    --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Pill header ─────────────────────────────────────────────────────── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    font-weight: 900;
+    color: var(--color-charcoal);
+    font-size: 14px;
+  }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: 64px; border-inline: 0; border-top: 0; }
+  }
+
+  /* ── Lead-in section (before the scroll-pinned stage) ───────────────── */
+  .lead-in {
+    min-height: 60vh;
+    padding-top: 88px;
+    padding-inline: clamp(16px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 8vh;
+    max-width: 1280px;
+    margin-inline: auto;
+  }
+  .breadcrumb {
+    color: var(--color-stone);
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+  .breadcrumb a:hover { color: var(--color-charcoal); }
+  .lead-eyebrow {
+    font-size: 11px;
+    color: var(--color-forest);
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .lead-h1 {
+    font-size: clamp(36px, 5vw, 72px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    max-width: 720px;
+    margin-bottom: 18px;
+  }
+  .lead-sub {
+    font-size: clamp(15px, 1.4vw, 19px);
+    color: var(--color-stone);
+    font-weight: 300;
+    max-width: 540px;
+    line-height: 1.6;
+  }
+  .lead-scroll-hint {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-stone);
+    font-size: 12px;
+    letter-spacing: var(--tracking-eye);
+  }
+  .lead-scroll-hint::before {
+    content: ''; display: block; height: 1px; width: 56px; background: var(--color-sand);
+  }
+
+  /* ── Scroll stage ─────────────────────────────────────────────────────
+     The .stage-track is the long-scroll container — it's tall so the page
+     scrolls through chapters. The .stage-pin inside is sticky-positioned to
+     the viewport so the centerpiece stays still while scroll progresses.
+
+     CHAPTER_HEIGHT × N designs = total track height. JS reads scrollY and
+     computes which chapter is active + the in-chapter progress, then drives
+     opacity/blur/translate on text and crossfades the image. */
+  .stage-track {
+    position: relative;
+    /* set by JS to N * 100vh */
+  }
+  .stage-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* ── Stage chrome: chapter counter + brand watermark ─────────────────── */
+  .stage-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 80px 0;
+    padding-inline: clamp(16px, 4vw, 48px);
+    max-width: 1480px;
+    margin-inline: auto;
+    width: 100%;
+    color: var(--color-stone);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+  }
+  .stage-meta-counter { font-variant-numeric: tabular-nums; }
+  .stage-meta-counter .current { color: var(--color-ink); font-size: 14px; }
+  .stage-meta-counter .total   { color: var(--color-stone); opacity: 0.6; }
+  .stage-progress {
+    flex: 1;
+    height: 1px;
+    background: var(--color-sand);
+    margin-inline: clamp(24px, 4vw, 48px);
+    position: relative;
+    overflow: hidden;
+  }
+  .stage-progress > i {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: var(--color-charcoal);
+    width: 0%;
+    transition: width 200ms var(--ease-out-soft);
+  }
+
+  /* ── Image stack — all designs stacked, current opacity:1, rest 0 ────── */
+  .stage-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .image-slot {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(1.04);
+    transition:
+      opacity   1100ms var(--ease-out-soft),
+      transform 1100ms var(--ease-out-quint),
+      filter    1100ms var(--ease-out-soft);
+    filter: blur(8px);
+    pointer-events: none;
+  }
+  .image-slot[data-state="entering"] { opacity: 0; transform: scale(1.04); filter: blur(8px); }
+  .image-slot[data-state="active"]   { opacity: 1; transform: scale(1.00); filter: blur(0); }
+  .image-slot[data-state="leaving"]  { opacity: 0; transform: scale(0.96); filter: blur(8px); }
+
+  /* Stand-in for the borderless webp — a soft silhouette of a bedroom set.
+     Each design gets a different color treatment. In production this <svg>
+     gets replaced by <img src={design.heroMedia.url} />. */
+  .image-slot svg {
+    width: clamp(280px, 56vw, 820px);
+    height: auto;
+    max-height: 70vh;
+  }
+
+  /* ── Text overlays — eyebrow, name, tagline. Positioned around the
+     image. Blur in/out + opacity + translate-Y for the editorial feel. ── */
+  .stage-text-top {
+    text-align: center;
+    padding-inline: clamp(16px, 4vw, 48px);
+    margin-top: -24px;
+    z-index: 2;
+  }
+  .stage-text-bottom {
+    text-align: center;
+    padding-inline: clamp(16px, 4vw, 48px);
+    padding-bottom: 64px;
+    z-index: 2;
+  }
+  .text-slot {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(28px);
+    transition:
+      opacity 700ms var(--ease-out-soft),
+      filter  700ms var(--ease-out-soft),
+      transform 700ms var(--ease-out-quint);
+    pointer-events: none;
+  }
+  .text-slot[data-state="active"]  { opacity: 1; filter: blur(0); transform: translateY(0); }
+  .text-slot[data-state="leaving"] { opacity: 0; filter: blur(14px); transform: translateY(-22px); }
+  .text-slot[data-state="entering"]{ opacity: 0; filter: blur(14px); transform: translateY(28px); }
+
+  .stage-eyebrow {
+    font-size: 11px;
+    color: var(--color-forest);
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stage-name {
+    font-size: clamp(56px, 10vw, 144px);
+    font-weight: 900;
+    color: var(--color-ink);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 0;
+  }
+  .stage-tagline {
+    font-size: clamp(15px, 1.5vw, 20px);
+    color: var(--color-charcoal);
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 580px;
+    margin: 0 auto 18px;
+  }
+  .stage-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    color: var(--color-charcoal);
+    padding: 14px 26px;
+    border: 1px solid var(--color-charcoal);
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: background-color 240ms var(--ease-out-soft), color 240ms var(--ease-out-soft);
+  }
+  .stage-cta:hover { background: var(--color-charcoal); color: var(--color-ivory); }
+  .stage-cta svg { width: 12px; height: 12px; }
+
+  /* ── Mobile — image gets smaller share, text dominates ─────────────── */
+  @media (max-width: 768px) {
+    .stage-pin { grid-template-rows: auto 1fr auto auto; }
+    .stage-meta { padding-block: 70px 0; }
+    .stage-meta-counter .current { font-size: 13px; }
+    .stage-progress { margin-inline: 16px; }
+    .image-slot svg { width: 84vw; max-height: 48vh; }
+    .stage-name { font-size: clamp(42px, 14vw, 72px); margin-top: 0; }
+    .stage-tagline { font-size: 14px; margin-bottom: 12px; }
+    .stage-text-top { margin-top: -16px; }
+    .stage-text-bottom { padding-bottom: 48px; }
+  }
+
+  /* ── Closing section (after the stage releases) ──────────────────────── */
+  .closing {
+    padding: 12vh clamp(16px, 4vw, 48px);
+    max-width: 1280px;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .closing h2 {
+    font-size: clamp(28px, 4vw, 56px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 18px;
+  }
+  .closing p {
+    color: var(--color-stone);
+    font-size: clamp(14px, 1.3vw, 17px);
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+  .closing a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    text-transform: uppercase;
+    color: var(--color-ivory);
+    background: var(--color-charcoal);
+    padding: 16px 28px;
+    border-radius: 9999px;
+    text-decoration: none;
+  }
+  .closing a:hover { background: var(--color-ink); }
+
+  /* Reduced motion: kill all the transitions, jump-cut between chapters. */
+  @media (prefers-reduced-motion: reduce) {
+    .image-slot, .text-slot { transition: none; }
+    .image-slot { filter: none; transform: none; }
+    .text-slot  { filter: none; transform: none; }
+  }
+
+  /* Stage tag */
+  .stage-tag {
+    position: fixed;
+    bottom: 16px;
+    inset-inline-end: 16px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+</style>
+</head>
+<body>
+
+<div class="pill-header">ژیک</div>
+
+<!-- ── Lead-in (scroll-into) ─────────────────────────────────────────── -->
+<section class="lead-in">
+  <nav class="breadcrumb" aria-label="مسیر"><a href="#">خانه</a> / طرح‌ها</nav>
+  <div class="lead-eyebrow">۱۸ طرح · ساخت ایران</div>
+  <h1 class="lead-h1">
+    هر طرح، یک زبان طراحی برای فضای خواب.
+  </h1>
+  <p class="lead-sub">
+    اسکرول کنید — طرح‌های ژیک یکی پس از دیگری رخ می‌نمایند، با ترکیب کامل: تخت، پاتختی، کمد، دراور.
+  </p>
+  <div class="lead-scroll-hint">برای دیدن طرح‌ها به پایین اسکرول کنید</div>
+</section>
+
+<!-- ── The scroll-pinned editorial stage ──────────────────────────────── -->
+<section class="stage-track" id="track" aria-label="گالری طرح‌های ژیک">
+  <div class="stage-pin">
+
+    <!-- Meta row: chapter counter + progress bar -->
+    <div class="stage-meta">
+      <div class="stage-meta-counter">
+        طرح <span class="current" id="counterCurrent">۰۱</span><span class="total"> / <span id="counterTotal">۰۶</span></span>
+      </div>
+      <div class="stage-progress" aria-hidden><i id="progressFill"></i></div>
+      <div class="stage-meta-counter" id="counterLabel" style="font-weight:400;text-transform:none;letter-spacing:0">سرویس‌خواب کودکانه</div>
+    </div>
+
+    <!-- Image stack (all designs stacked, JS toggles data-state) -->
+    <div class="stage-image" id="imageStack"></div>
+
+    <!-- Top text (eyebrow + name) -->
+    <div class="stage-text-top">
+      <div class="text-slot" id="topSlot" data-state="active">
+        <div class="stage-eyebrow" id="topEyebrow">طرح ژیک · کلکسیون بهار ۱۴۰۵</div>
+        <div class="stage-name" id="topName">گندم</div>
+      </div>
+    </div>
+
+    <!-- Bottom text (tagline + CTA) -->
+    <div class="stage-text-bottom">
+      <div class="text-slot" id="bottomSlot" data-state="active">
+        <div class="stage-tagline" id="bottomTagline">گرم، برای خواب کودکانه. ترکیب کامل از تخت پایه‌کوتاه، پاتختی، و دراور.</div>
+        <a href="#" class="stage-cta" id="bottomCta">
+          دیدن کامل طرح
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+            <path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Closing section (after the stage releases) ───────────────────────── -->
+<section class="closing">
+  <h2>هنوز فقط شش طرح را دیدید.</h2>
+  <p>کل کاتالوگ ۱۸ طرح دارد. به همه‌شان نگاه کنید یا مستقیم با مشاور تماس بگیرید.</p>
+  <a href="#">مشاهده‌ی همه‌ی طرح‌ها</a>
+</section>
+
+<div class="stage-tag">پیش‌نمایش — <span>Designs Rebuild</span></div>
+
+<script>
+  // ── Mock design data ─────────────────────────────────────────────────
+  // In production these come from Payload. Each has a borderless image (the
+  // bedroom set on transparent bg). For the mockup we use SVG silhouettes —
+  // a low-detail bed + nightstand + wardrobe trio colored per design.
+  const DESIGNS = [
+    { slug: 'gandom',     name: 'گندم',     eyebrow: 'طرح ژیک · کلکسیون بهار ۱۴۰۵', tagline: 'گرم، برای خواب کودکانه. ترکیب کامل از تخت پایه‌کوتاه، پاتختی، و دراور.',          tone: '#C49A6C', shadow: '#8B6F47' },
+    { slug: 'parla',      name: 'پارلا',    eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'سادگی پایدار. خطوط مستقیم، چوب گردوی روشن، رنگ‌های خنثی.',                   tone: '#8C8279', shadow: '#4A463F' },
+    { slug: 'jacqueline', name: 'ژاکلین',   eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'ظرافت کلاسیک. خط‌های منحنی و فینیش گردوی تیره با لمس طلایی.',                  tone: '#B88B7E', shadow: '#6B4A3F' },
+    { slug: 'lotus',      name: 'لوتوس',    eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'آرامش گیاهی. تخت پایه‌کوتاه، چوب بلوط، رنگ‌مایه‌ی سبز خزه‌ای.',                  tone: '#5F7760', shadow: '#2C3D2E' },
+    { slug: 'sento',      name: 'سنتو',     eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'سکوت ژاپنی. تخت پلتفرم پایین، چوب گردوی تیره، خط‌های افقی محض.',                  tone: '#8B6F4E', shadow: '#3F2E1F' },
+    { slug: 'elegans',    name: 'الگانس',   eyebrow: 'طرح ژیک · سرویس بزرگسال',     tagline: 'شکوه کم‌حرف. تخت بلند، نمای صاف چوب راش، لمس طلای کم‌رنگ.',                       tone: '#C49A6C', shadow: '#7A5A33' },
+  ];
+  const N = DESIGNS.length;
+
+  const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+  const toPersian = (n) => String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[+d]);
+  const padTwo = (n) => String(n).padStart(2, '0');
+
+  // Each "chapter" is one viewport tall of scroll. The first chapter has the
+  // first design fully visible from scroll-start; transitions happen at the
+  // boundary between chapters.
+  const CHAPTER_VH = 100;
+
+  // ── Build the image stack ────────────────────────────────────────────
+  const imageStack = document.getElementById('imageStack');
+  DESIGNS.forEach((d, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'image-slot';
+    slot.dataset.state = i === 0 ? 'active' : 'entering';
+    // SVG: a stylized bedroom set silhouette — bed + nightstand + tall wardrobe.
+    // The "transparent bg" of a real webp = the svg's background is the page.
+    slot.innerHTML = `
+      <svg viewBox="0 0 720 380" aria-hidden role="img" aria-label="ترکیب کامل طرح ${d.name}">
+        <!-- Wardrobe (tall, right side in LTR svg = visual left in RTL but rendered as-is) -->
+        <g transform="translate(40 60)">
+          <rect x="0" y="0" width="110" height="260" rx="6" fill="${d.tone}" />
+          <rect x="6" y="6" width="98" height="248" rx="3" fill="none" stroke="${d.shadow}" stroke-width="1.2" opacity="0.5"/>
+          <line x1="55" y1="20" x2="55" y2="240" stroke="${d.shadow}" stroke-width="1.5" opacity="0.45"/>
+          <circle cx="42" cy="130" r="2.5" fill="${d.shadow}"/>
+          <circle cx="68" cy="130" r="2.5" fill="${d.shadow}"/>
+        </g>
+        <!-- Dresser -->
+        <g transform="translate(170 200)">
+          <rect x="0" y="0" width="140" height="120" rx="5" fill="${d.tone}"/>
+          <line x1="0" y1="40" x2="140" y2="40" stroke="${d.shadow}" stroke-width="1" opacity="0.45"/>
+          <line x1="0" y1="80" x2="140" y2="80" stroke="${d.shadow}" stroke-width="1" opacity="0.45"/>
+          <circle cx="70" cy="20" r="2.5" fill="${d.shadow}"/>
+          <circle cx="70" cy="60" r="2.5" fill="${d.shadow}"/>
+          <circle cx="70" cy="100" r="2.5" fill="${d.shadow}"/>
+        </g>
+        <!-- Bed (low platform, dominant centerpiece) -->
+        <g transform="translate(330 130)">
+          <!-- Headboard -->
+          <rect x="0" y="0" width="320" height="80" rx="4" fill="${d.tone}"/>
+          <!-- Mattress -->
+          <rect x="20" y="80" width="280" height="50" rx="6" fill="${d.shadow}" opacity="0.25"/>
+          <rect x="30" y="84" width="260" height="42" rx="4" fill="#FFFFFF" opacity="0.85"/>
+          <!-- Pillows -->
+          <rect x="60" y="90" width="80" height="22" rx="4" fill="${d.tone}" opacity="0.5"/>
+          <rect x="160" y="90" width="80" height="22" rx="4" fill="${d.tone}" opacity="0.5"/>
+          <!-- Base/legs -->
+          <rect x="0" y="130" width="320" height="22" rx="3" fill="${d.tone}"/>
+          <rect x="12" y="152" width="14" height="20" fill="${d.shadow}"/>
+          <rect x="294" y="152" width="14" height="20" fill="${d.shadow}"/>
+        </g>
+        <!-- Nightstand -->
+        <g transform="translate(670 220)">
+          <rect x="0" y="0" width="40" height="100" rx="3" fill="${d.tone}"/>
+          <line x1="0" y1="40" x2="40" y2="40" stroke="${d.shadow}" stroke-width="1" opacity="0.45"/>
+          <circle cx="20" cy="20" r="2" fill="${d.shadow}"/>
+          <circle cx="20" cy="60" r="2" fill="${d.shadow}"/>
+        </g>
+        <!-- Floor shadow -->
+        <ellipse cx="380" cy="345" rx="320" ry="12" fill="${d.shadow}" opacity="0.10"/>
+      </svg>
+    `;
+    imageStack.appendChild(slot);
+  });
+
+  // ── Track height: N chapters × 100vh ──────────────────────────────────
+  const track = document.getElementById('track');
+  track.style.height = `${N * CHAPTER_VH}vh`;
+
+  // ── Scroll-driven update ──────────────────────────────────────────────
+  const topSlot      = document.getElementById('topSlot');
+  const bottomSlot   = document.getElementById('bottomSlot');
+  const topEyebrow   = document.getElementById('topEyebrow');
+  const topName      = document.getElementById('topName');
+  const bottomTagline= document.getElementById('bottomTagline');
+  const bottomCta    = document.getElementById('bottomCta');
+  const counterCurrent = document.getElementById('counterCurrent');
+  const counterTotal   = document.getElementById('counterTotal');
+  const counterLabel = document.getElementById('counterLabel');
+  const progressFill = document.getElementById('progressFill');
+  const imageSlots = imageStack.querySelectorAll('.image-slot');
+
+  counterTotal.textContent = toPersian(padTwo(N));
+
+  let currentIndex = 0;
+  let textChangeTimer = null;
+  const CHANGE_DEBOUNCE_MS = 140;
+
+  function applyDesign(i) {
+    const d = DESIGNS[i];
+
+    // Image stack: previous goes leaving, new goes active, others entering
+    imageSlots.forEach((slot, idx) => {
+      if (idx === i) slot.dataset.state = 'active';
+      else if (idx === currentIndex) slot.dataset.state = 'leaving';
+      else slot.dataset.state = 'entering';
+    });
+
+    // Text: blur OUT old, swap content, blur IN new
+    topSlot.dataset.state = 'leaving';
+    bottomSlot.dataset.state = 'leaving';
+    clearTimeout(textChangeTimer);
+    textChangeTimer = setTimeout(() => {
+      topEyebrow.textContent = d.eyebrow;
+      topName.textContent = d.name;
+      bottomTagline.textContent = d.tagline;
+      bottomCta.firstChild.textContent = 'دیدن کامل طرح ' + d.name;
+      counterCurrent.textContent = toPersian(padTwo(i + 1));
+      counterLabel.textContent = '/designs/' + d.slug;
+      topSlot.dataset.state = 'entering';
+      bottomSlot.dataset.state = 'entering';
+      // next frame: enter → active
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        topSlot.dataset.state = 'active';
+        bottomSlot.dataset.state = 'active';
+      }));
+    }, CHANGE_DEBOUNCE_MS);
+
+    currentIndex = i;
+  }
+
+  function update() {
+    const rect = track.getBoundingClientRect();
+    const trackTop = rect.top + window.scrollY;
+    const trackHeight = track.offsetHeight;
+    const scrollY = window.scrollY;
+    const vp = window.innerHeight;
+
+    // How far through the track are we (clamped)
+    // We want the FIRST chapter to count from the moment the track scrolls
+    // into view. Use the top of the track as origin.
+    const scrollIntoTrack = scrollY - trackTop;
+    const chapterPx = vp; // 100vh per chapter
+    const progress = scrollIntoTrack / chapterPx;
+
+    // Out-of-range: keep first/last active
+    let index;
+    if (progress < 0) index = 0;
+    else if (progress >= N) index = N - 1;
+    else index = Math.floor(progress);
+
+    // Overall progress bar: 0..1 across the whole stage
+    const overall = Math.max(0, Math.min(1, scrollIntoTrack / (trackHeight - vp)));
+    progressFill.style.width = `${overall * 100}%`;
+
+    if (index !== currentIndex) applyDesign(index);
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => { update(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>/designs — Big Carousel v2 (polished)</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eye:   0.14em;
+    --dur-hover:      240ms;
+    --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --tile-scale-focused: 1.35;
+    --tile-scale-dim:     0.55;
+    --tile-opacity-dim:   0.40;
+    --tile-blur-dim:      3px;
+    --spill-pct:          22%;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── Floating pill header ───────────────────────────────────────────── */
+  .pill-header {
+    position: fixed;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    font-weight: 900;
+    color: var(--color-charcoal);
+    font-size: 14px;
+  }
+  @media (min-width: 768px) {
+    .pill-header { top: 0; inset-inline: 0; border-radius: 0; height: 64px; border-inline: 0; border-top: 0; }
+  }
+
+  /* ── Page chrome ────────────────────────────────────────────────────── */
+  .page { padding-top: 72px; }
+  @media (min-width: 768px) { .page { padding-top: 88px; } }
+  .container {
+    max-width: 1280px;       /* tightened from 1480 — keeps the focused-tile bleed visually inside */
+    margin-inline: auto;
+    padding-inline: clamp(16px, 3vw, 32px);
+  }
+  .breadcrumb {
+    color: var(--color-stone);
+    font-size: 12px;
+    padding-block: 14px 8px;
+  }
+  .breadcrumb a:hover { color: var(--color-charcoal); }
+  .breadcrumb-sep { margin-inline: 6px; opacity: 0.5; }
+  .title-block {
+    text-align: center;
+    padding-block: 4px 12px;
+  }
+  .title-block h1 {
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 900;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* ── Slider section ─────────────────────────────────────────────────── */
+  /* FIX 1: width — `overflow: clip` locally contains the visual bleed of the
+     scaled focused tile, without resorting to body-level overflow hacks.
+     `overflow-clip-margin` lets the focused tile's box shadow / spill render
+     a few px past the section edge without triggering scroll. */
+  .slider-section {
+    position: relative;
+    padding-block: 36px 16px;
+    user-select: none;
+    min-height: 60vh;
+    overflow-x: clip;
+    overflow-y: visible;
+    overflow-clip-margin: 24px;
+  }
+  .slider-viewport {
+    position: relative;
+    overflow: visible;
+    margin-inline: clamp(16px, 3vw, 40px);
+  }
+  .slider-track {
+    display: flex;
+    gap: clamp(8px, 1.2vw, 18px);
+    transition: transform 850ms var(--ease-out-quint);
+    will-change: transform;
+  }
+
+  /* ── Tile (dim by default; focused class overrides) ─────────────────── */
+  .slider-tile {
+    flex: 0 0 calc((100% - 2 * clamp(8px, 1.2vw, 18px)) / 3);
+    aspect-ratio: 1 / 1;
+    position: relative;
+    cursor: pointer;
+    opacity: var(--tile-opacity-dim);
+    border: 0;
+    background: transparent;
+    overflow: visible;
+    transform: scale(var(--tile-scale-dim));
+    filter: blur(var(--tile-blur-dim));
+    transform-origin: 50% 50%;
+    transition:
+      opacity        750ms var(--ease-out-soft),
+      transform      750ms var(--ease-out-quint),
+      filter         750ms var(--ease-out-soft),
+      box-shadow     650ms var(--ease-out-soft);
+  }
+
+  .tile-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    border-radius: 0;
+    transition:
+      inset 800ms var(--ease-out-quint),
+      border-radius 650ms var(--ease-out-soft);
+  }
+  /* Per-tile bg gradients — represents what each design's GIF would feel like.
+     In production this <div> is replaced by the actual GIF/video element. */
+  .slider-tile[data-mood="wheat"]   .tile-bg { background: linear-gradient(135deg, #E8D4B0 0%, #C4A172 60%, #8B6F47 100%); }
+  .slider-tile[data-mood="rose"]    .tile-bg { background: linear-gradient(135deg, #E8C9C0 0%, #B88B7E 60%, #6B4A3F 100%); }
+  .slider-tile[data-mood="stone"]   .tile-bg { background: linear-gradient(135deg, #D4D0C8 0%, #8C8279 60%, #4A463F 100%); }
+  .slider-tile[data-mood="forest"]  .tile-bg { background: linear-gradient(135deg, #B8C5A8 0%, #5F7760 60%, #2C3D2E 100%); }
+  .slider-tile[data-mood="sand"]    .tile-bg { background: linear-gradient(135deg, #EDE0CC 0%, #C49A6C 60%, #8B6034 100%); }
+  .slider-tile[data-mood="slate"]   .tile-bg { background: linear-gradient(135deg, #C5C8CC 0%, #7A828A 60%, #3F454C 100%); }
+  .slider-tile[data-mood="walnut"]  .tile-bg { background: linear-gradient(135deg, #C9B89A 0%, #8B6F4E 60%, #3F2E1F 100%); }
+  .slider-tile[data-mood="gold"]    .tile-bg { background: linear-gradient(135deg, #EAD7A8 0%, #C49A6C 60%, #7A5A33 100%); }
+
+  /* ── Tile chrome (richer cards) ────────────────────────────────────────
+     FIX 3: every tile carries identity — number, name, swatches, material.
+     Chrome fades in only on the focused tile (the side tiles stay quiet so
+     the focused one dominates without competition). */
+  .tile-chrome {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 400ms var(--ease-out-soft) 0ms;
+  }
+  .slider-tile.is-focused .tile-chrome {
+    opacity: 1;
+    transition-delay: 280ms;   /* let the scale-up land before chrome arrives */
+  }
+
+  .tile-number {
+    position: absolute;
+    inset-inline-start: 22px;
+    inset-block-start: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-ivory);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 2px rgba(20, 17, 15, 0.4);
+  }
+  .tile-number .total {
+    opacity: 0.55;
+    font-weight: 400;
+    margin-inline-start: 4px;
+  }
+
+  .tile-material {
+    position: absolute;
+    inset-inline-end: 22px;
+    inset-block-start: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-ivory);
+    background: rgba(250, 250, 247, 0.14);
+    border: 1px solid rgba(250, 250, 247, 0.32);
+    border-radius: 9999px;
+    padding: 4px 10px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .tile-swatches {
+    position: absolute;
+    inset-inline-start: 22px;
+    inset-block-end: 22px;
+    display: flex;
+    gap: 5px;
+  }
+  .tile-swatches > span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1px solid rgba(250, 250, 247, 0.6);
+    box-shadow: 0 1px 2px rgba(20, 17, 15, 0.25);
+  }
+
+  .tile-name {
+    position: absolute;
+    inset-inline-end: 22px;
+    inset-block-end: 18px;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--color-ivory);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 3px rgba(20, 17, 15, 0.45);
+  }
+
+  /* ── Focused tile chrome (card border + spill) ───────────────────────── */
+  .slider-tile.is-focused {
+    opacity: 1;
+    z-index: 5;
+    box-shadow:
+      0 24px 60px rgba(20, 17, 15, 0.16),
+      0 6px 16px rgba(20, 17, 15, 0.08),
+      inset 0 0 0 1px rgba(250, 250, 247, 0.12);
+    transform: scale(var(--tile-scale-focused));
+    filter: blur(0);
+    border-radius: 10px;
+  }
+  .slider-tile.is-focused .tile-bg {
+    right: calc(-1 * var(--spill-pct));
+    border-radius: 10px 0 0 10px;
+  }
+
+  /* ── Arrows ─────────────────────────────────────────────────────────── */
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(48px, 5vw, 60px);
+    height: clamp(48px, 5vw, 60px);
+    border-radius: 50%;
+    background: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 8px 22px rgba(20, 17, 15, 0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--dur-hover), border-color var(--dur-hover), box-shadow var(--dur-hover);
+    z-index: 10;
+    color: var(--color-charcoal);
+  }
+  .slider-arrow:hover {
+    background: var(--color-cream);
+    border-color: var(--color-stone);
+    box-shadow: 0 10px 26px rgba(20, 17, 15, 0.14);
+  }
+  .slider-arrow.prev { right: clamp(-4px, 0.5vw, 8px); }
+  .slider-arrow.next { left:  clamp(-4px, 0.5vw, 8px); }
+  .slider-arrow svg { width: 50%; height: 50%; }
+
+  /* ── Caption ────────────────────────────────────────────────────────── */
+  /* Trimmed: name moves onto the tile, so the caption block only carries
+     the tagline + counter. Less competing typography. */
+  .caption {
+    text-align: center;
+    position: relative;
+    z-index: 20;
+    margin-top: clamp(-120px, -8vw, -70px);
+    padding-block: 0 8px;
+    min-height: 80px;
+    pointer-events: none;
+  }
+  .caption-tagline {
+    font-size: clamp(15px, 1.4vw, 19px);
+    color: var(--color-charcoal);
+    font-weight: 300;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    transition: opacity 350ms var(--ease-out-soft);
+    max-width: 480px;
+    margin-inline: auto;
+  }
+  .caption.is-changing .caption-tagline { opacity: 0.25; }
+
+  /* ── Indicator ──────────────────────────────────────────────────────── */
+  .indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding-block: 16px 40px;
+  }
+  .dots {
+    display: flex; gap: 8px; flex-wrap: wrap; max-width: 480px; justify-content: center;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--color-sand);
+    cursor: pointer;
+    border: 0; padding: 0;
+    transition: background-color var(--dur-hover), transform var(--dur-hover);
+  }
+  .dot:hover { background: var(--color-stone); }
+  .dot.is-focused { background: var(--color-charcoal); transform: scale(1.5); }
+  .counter {
+    font-size: 12px;
+    color: var(--color-stone);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Mobile ─────────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    :root {
+      --tile-scale-focused: 1.45;
+      --tile-scale-dim:     0.42;
+      --tile-opacity-dim:   0.30;
+      --spill-pct:          18%;
+    }
+    .slider-section { padding-block: 12px 8px; min-height: 0; }
+    .slider-viewport { margin-inline: 0; }
+    .slider-track { gap: 6px; }
+    .slider-arrow { display: none; }
+    .tile-number { font-size: 9px; inset-inline-start: 14px; inset-block-start: 12px; }
+    .tile-material { display: none; }  /* too cramped on phone scale */
+    .tile-name { font-size: 14px; inset-inline-end: 14px; inset-block-end: 12px; }
+    .tile-swatches { inset-inline-start: 14px; inset-block-end: 14px; gap: 4px; }
+    .tile-swatches > span { width: 7px; height: 7px; }
+    .caption { padding-block: 24px 8px; min-height: 60px; margin-top: clamp(-80px, -14vw, -50px); }
+    .caption-tagline { font-size: 13px; }
+    .indicator { padding-block: 8px 28px; }
+  }
+
+  /* ── Wrap-blink (FIX 2: honest loop boundary) ──────────────────────────
+     When index wraps from N-1 → 0 (or 0 → N-1) we use this class on the
+     SECTION for ~500ms: dim the focused, kill the slide transition so the
+     teleport is instant, then restore. No clone-tile contortion, no fragile
+     transitionend filtering. */
+  .slider-section.is-wrapping .slider-track {
+    transition: none;
+  }
+  .slider-section.is-wrapping .slider-tile.is-focused {
+    opacity: 0.0;
+    transition: opacity 220ms var(--ease-out-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slider-track, .slider-tile, .tile-bg, .tile-chrome,
+    .caption-tagline { transition: none; }
+    .slider-tile { transform: none; filter: none; }
+  }
+
+  /* ── Stage tag ──────────────────────────────────────────────────────── */
+  .stage-tag {
+    position: fixed;
+    bottom: 16px;
+    inset-inline-end: 16px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 8px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+    z-index: 200;
+  }
+  .stage-tag span { color: var(--color-gold); }
+</style>
+</head>
+<body>
+
+<div class="pill-header">ژیک</div>
+
+<main class="page">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="مسیر">
+      <a href="#">خانه</a><span class="breadcrumb-sep">/</span>طرح‌ها
+    </nav>
+    <div class="title-block">
+      <h1>طرح‌ها</h1>
+    </div>
+  </div>
+
+  <section class="slider-section" aria-label="گالری طرح‌ها" id="section">
+    <button class="slider-arrow prev" type="button" aria-label="طرح قبلی" id="prevBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M9 6L15 12L9 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="slider-arrow next" type="button" aria-label="طرح بعدی" id="nextBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+        <path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="slider-viewport" id="viewport">
+      <div class="slider-track" id="track"></div>
+    </div>
+
+    <div class="caption" id="caption" aria-live="polite">
+      <div class="caption-tagline" id="captionTagline">گرم، برای خواب کودکانه</div>
+    </div>
+
+    <div class="indicator">
+      <div class="dots" id="dots" role="tablist"></div>
+      <div class="counter" id="counter">۱ از ۸</div>
+    </div>
+  </section>
+</main>
+
+<div class="stage-tag">پیش‌نمایش — <span>Big Carousel v2</span></div>
+
+<script>
+  // Mock data — each design carries its mood (for the bg gradient), a 3-color
+  // accent palette (the swatches), and a material tag. In production these
+  // come from Payload — Designs gain optional `mood`, `accentColors[]`, and
+  // `material` fields, with name + tagline already present.
+  const DESIGNS = [
+    { slug: 'gandom',     name: 'گندم',    tagline: 'گرم، برای خواب کودکانه',          mood: 'wheat',  material: 'گردو',  swatches: ['#E8D4B0', '#C4A172', '#8B6F47'] },
+    { slug: 'parla',      name: 'پارلا',   tagline: 'سادگی پایدار',                    mood: 'stone',  material: 'بلوط',  swatches: ['#D4D0C8', '#8C8279', '#4A463F'] },
+    { slug: 'jacqueline', name: 'ژاکلین',  tagline: 'ظرافت کلاسیک',                    mood: 'rose',   material: 'گردو',  swatches: ['#E8C9C0', '#B88B7E', '#6B4A3F'] },
+    { slug: 'caroline',   name: 'کارولین', tagline: 'فضای آرام',                       mood: 'sand',   material: 'راش',   swatches: ['#EDE0CC', '#C49A6C', '#8B6034'] },
+    { slug: 'lotus',      name: 'لوتوس',   tagline: 'آرامش گیاهی',                     mood: 'forest', material: 'بلوط',  swatches: ['#B8C5A8', '#5F7760', '#2C3D2E'] },
+    { slug: 'luka',       name: 'لوکا',    tagline: 'هندسه‌ی دقیق',                   mood: 'slate',  material: 'گردو',  swatches: ['#C5C8CC', '#7A828A', '#3F454C'] },
+    { slug: 'sento',      name: 'سنتو',    tagline: 'سکوت ژاپنی',                      mood: 'walnut', material: 'گردو',  swatches: ['#C9B89A', '#8B6F4E', '#3F2E1F'] },
+    { slug: 'elegans',    name: 'الگانس',  tagline: 'شکوه کم‌حرف',                    mood: 'gold',   material: 'راش',   swatches: ['#EAD7A8', '#C49A6C', '#7A5A33'] },
+  ];
+
+  const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+  const toPersian = (n) => String(n).replace(/[0-9]/g, (d) => PERSIAN_DIGITS[+d]);
+  const padTwo = (n) => String(n).padStart(2, '0');
+
+  const track       = document.getElementById('track');
+  const dots        = document.getElementById('dots');
+  const section     = document.getElementById('section');
+  const viewport    = document.getElementById('viewport');
+  const caption     = document.getElementById('caption');
+  const captionTag  = document.getElementById('captionTagline');
+  const counter     = document.getElementById('counter');
+
+  // Build tiles
+  DESIGNS.forEach((d, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'slider-tile';
+    tile.dataset.mood = d.mood;
+    tile.dataset.index = i;
+    tile.innerHTML = `
+      <div class="tile-bg"></div>
+      <div class="tile-chrome">
+        <span class="tile-number">${toPersian(padTwo(i + 1))}<span class="total"> / ${toPersian(padTwo(DESIGNS.length))}</span></span>
+        <span class="tile-material">${d.material}</span>
+        <div class="tile-swatches">
+          ${d.swatches.map((c) => `<span style="background:${c}"></span>`).join('')}
+        </div>
+        <span class="tile-name">${d.name}</span>
+      </div>
+    `;
+    tile.addEventListener('click', () => {
+      if (i === focused) return;
+      go(i - focused);
+    });
+    track.appendChild(tile);
+  });
+
+  // Build dots
+  DESIGNS.forEach((d, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot';
+    dot.addEventListener('click', () => goTo(i));
+    dots.appendChild(dot);
+  });
+
+  const N = DESIGNS.length;
+  let focused = 0;
+
+  function applyTransform() {
+    const tile0 = track.children[0];
+    const tile1 = track.children[1];
+    if (!tile0 || !tile1) return;
+    const tileWidth = tile0.offsetWidth;
+    const slot = Math.abs(tile1.offsetLeft - tile0.offsetLeft);
+    const viewportWidth = viewport.offsetWidth;
+    const shift = focused * slot - (viewportWidth - tileWidth) / 2;
+    track.style.transform = `translateX(${shift}px)`;
+  }
+
+  function applyFocusedClasses() {
+    Array.from(track.children).forEach((el, i) => el.classList.toggle('is-focused', i === focused));
+    Array.from(dots.children).forEach((el, i) => el.classList.toggle('is-focused', i === focused));
+  }
+
+  function fadeCaption() {
+    caption.classList.add('is-changing');
+    setTimeout(() => {
+      const d = DESIGNS[focused];
+      captionTag.textContent = d.tagline;
+      counter.textContent = `${toPersian(focused + 1)} از ${toPersian(N)}`;
+      caption.classList.remove('is-changing');
+    }, 220);
+  }
+
+  function render() {
+    applyTransform();
+    applyFocusedClasses();
+    fadeCaption();
+  }
+
+  // FIX 2: simple, honest infinite loop.
+  // Normal delta: just slide.
+  // Wraparound (N-1 → 0 or 0 → N-1): brief blink — focused fades out, track
+  // teleports, focused fades back in. No clone tiles, no transitionend race.
+  function go(delta) {
+    const prev = focused;
+    let next = (focused + delta + N) % N;
+    // Distance via straight path
+    const straight = next - prev;
+    // Distance via wrap path (could be shorter if user clicks repeatedly past edge)
+    const wraps = Math.abs(straight) > Math.floor(N / 2);
+    if (wraps) {
+      section.classList.add('is-wrapping');
+      focused = next;
+      // Single rAF to commit the wrap-class + teleport, second rAF to remove it
+      requestAnimationFrame(() => {
+        applyTransform();
+        applyFocusedClasses();
+        requestAnimationFrame(() => {
+          section.classList.remove('is-wrapping');
+          fadeCaption();
+        });
+      });
+    } else {
+      focused = next;
+      render();
+    }
+  }
+
+  function goTo(targetIndex) {
+    if (targetIndex === focused) return;
+    go(targetIndex - focused);
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => go(+1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft')  go(+1);   // RTL: left = next
+    if (e.key === 'ArrowRight') go(-1);   // RTL: right = prev
+  });
+
+  let touchStartX = 0;
+  viewport.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  viewport.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 40) return;
+    if (dx < 0) go(-1); else go(+1);
+  });
+
+  window.addEventListener('load', render);
+  window.addEventListener('resize', applyTransform);
+  setTimeout(render, 0);
+</script>
+
+</body>
+</html>

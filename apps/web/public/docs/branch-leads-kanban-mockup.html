@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ژیک — میز کار شعبه · لیدها (mockup)</title>
+<style>
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-light.ttf')   format('truetype'); font-weight:300; font-display:swap; }
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-regular.ttf') format('truetype'); font-weight:400; font-display:swap; }
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-bold.ttf')    format('truetype'); font-weight:700; font-display:swap; }
+  @font-face { font-family:'Ayandeh'; src:url('/fonts/ayandeh-black.ttf')   format('truetype'); font-weight:900; font-display:swap; }
+
+  :root{
+    --ivory:#FAFAF7; --cream:#F5F0EB; --sand:#E8E0D8; --stone:#8C8279;
+    --charcoal:#2C2825; --ink:#14110F; --forest:#5F7760; --gold:#C49A6C;
+    --alert:#B4654A;
+    --ease:cubic-bezier(0.22,1,0.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{font-family:'Ayandeh',system-ui,sans-serif;background:var(--ivory);color:var(--charcoal);display:flex;flex-direction:column;}
+
+  /* ── top bar ───────────────────────────────────────── */
+  .top{display:flex;align-items:center;gap:18px;padding:12px clamp(16px,3vw,32px);background:#fff;border-block-end:1px solid var(--sand);position:sticky;top:0;z-index:20;}
+  .brand{font-weight:900;font-size:1.3rem;color:var(--ink);}
+  .brand::after{content:'';display:block;height:2px;width:60%;background:var(--forest);margin-top:1px;border-radius:2px;}
+  .ws{font-weight:700;color:var(--ink);font-size:.95rem;}
+  .ctx{display:flex;align-items:center;gap:7px;color:var(--stone);font-size:.82rem;}
+  .ctx .pin{width:7px;height:7px;border-radius:50%;background:var(--forest);}
+  .spacer{flex:1;}
+  /* view toggle */
+  .seg{display:flex;border:1px solid var(--sand);border-radius:999px;overflow:hidden;font-size:.78rem;}
+  .seg button{border:0;background:#fff;color:var(--charcoal);padding:7px 14px;cursor:pointer;font:inherit;font-size:.78rem;}
+  .seg button.on{background:var(--forest);color:#fff;}
+  .me{display:flex;align-items:center;gap:8px;}
+  .avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.8rem;color:#fff;}
+
+  /* ── reason tabs ───────────────────────────────────── */
+  .tabs{display:flex;gap:8px;padding:14px clamp(16px,3vw,32px) 0;}
+  .tab{border:1px solid var(--sand);background:#fff;border-radius:999px;padding:8px 16px;cursor:pointer;font:inherit;font-size:.84rem;color:var(--charcoal);display:flex;align-items:center;gap:8px;transition:all .15s var(--ease);}
+  .tab.on{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
+  .tab .dot{width:8px;height:8px;border-radius:50%;}
+  .tab .n{font-size:.72rem;opacity:.7;}
+
+  .hint{padding:8px clamp(16px,3vw,32px) 0;color:var(--stone);font-size:.78rem;}
+
+  /* ── board ─────────────────────────────────────────── */
+  .board{display:flex;gap:14px;padding:14px clamp(16px,3vw,32px) 28px;overflow-x:auto;flex:1;align-items:flex-start;}
+  .board.hidden{display:none;}
+  .col{flex:0 0 268px;background:var(--cream);border:1px solid var(--sand);border-radius:12px;display:flex;flex-direction:column;max-height:calc(100vh - 190px);}
+  .col-h{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-block-end:1px solid var(--sand);position:sticky;top:0;}
+  .col-h .nm{font-weight:700;font-size:.86rem;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .col-h .ct{font-size:.72rem;color:var(--stone);background:#fff;border:1px solid var(--sand);border-radius:999px;padding:2px 8px;min-width:22px;text-align:center;}
+  .col.queue{background:color-mix(in srgb,var(--gold) 9%,var(--cream));border-color:color-mix(in srgb,var(--gold) 35%,var(--sand));}
+  .col.queue .col-h .nm .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);}
+  .stk{display:flex;flex-direction:column;gap:10px;padding:12px;overflow-y:auto;min-height:60px;}
+  .stk.drag-over{background:color-mix(in srgb,var(--forest) 7%,transparent);outline:2px dashed color-mix(in srgb,var(--forest) 45%,transparent);outline-offset:-6px;border-radius:8px;}
+
+  /* ── lead card ─────────────────────────────────────── */
+  .card{background:#fff;border:1px solid var(--sand);border-radius:10px;padding:12px;cursor:grab;box-shadow:0 1px 2px rgba(20,17,15,.04);transition:box-shadow .15s var(--ease),transform .15s var(--ease);border-inline-start:3px solid var(--sand);}
+  .card:hover{box-shadow:0 8px 24px rgba(20,17,15,.10);transform:translateY(-1px);}
+  .card.dragging{opacity:.5;}
+  .card[data-reason="price"]{border-inline-start-color:var(--gold);}
+  .card[data-reason="visit"]{border-inline-start-color:var(--forest);}
+  .card.unclaimed{border-style:dashed;border-inline-start-style:solid;}
+  .c-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .c-name{font-weight:700;color:var(--ink);font-size:.92rem;}
+  .badge{font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;}
+  .badge.price{background:color-mix(in srgb,var(--gold) 18%,#fff);color:#8a6a3c;}
+  .badge.visit{background:color-mix(in srgb,var(--forest) 15%,#fff);color:var(--forest);}
+  .c-prod{font-size:.8rem;color:var(--charcoal);margin-top:6px;font-weight:300;}
+  .c-prod b{font-weight:700;}
+  .c-meta{font-size:.72rem;color:var(--stone);margin-top:4px;}
+  .c-phone{direction:ltr;text-align:right;font-variant-numeric:tabular-nums;}
+  .c-foot{display:flex;align-items:center;justify-content:space-between;margin-top:11px;gap:8px;}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;color:var(--stone);}
+  .chip .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.66rem;font-weight:700;color:#fff;}
+  .claim{border:1px solid var(--forest);color:var(--forest);background:#fff;border-radius:999px;padding:4px 11px;font:inherit;font-size:.72rem;cursor:pointer;transition:all .15s var(--ease);}
+  .claim:hover{background:var(--forest);color:#fff;}
+  .next{font-size:.68rem;display:inline-flex;align-items:center;gap:4px;color:var(--stone);}
+  .next.due{color:var(--alert);font-weight:700;}
+  .next .clk{width:6px;height:6px;border:1.5px solid currentColor;border-radius:50%;}
+
+  .card.dim{opacity:.32;filter:grayscale(.4);}
+
+  /* won/lost columns get a subtle tint */
+  .col[data-stage="won"]{background:color-mix(in srgb,var(--forest) 6%,var(--cream));}
+  .col[data-stage="lost"]{background:color-mix(in srgb,var(--stone) 8%,var(--cream));}
+
+  .panel{position:fixed;inset-block-end:14px;inset-inline-start:14px;z-index:50;background:#fff;border:1px solid var(--sand);border-radius:12px;padding:11px 14px;font-size:.72rem;color:var(--stone);box-shadow:0 16px 40px rgba(20,17,15,.14);max-width:300px;line-height:1.6;direction:rtl;}
+  .panel b{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">ژیک</div>
+  <div class="ws">میز کار شعبه</div>
+  <div class="ctx"><span class="pin"></span> شعبه قم</div>
+  <div class="spacer"></div>
+  <div class="seg" id="viewSeg">
+    <button data-view="owner" class="on">نمای مدیر شعبه</button>
+    <button data-view="seller">نمای فروشنده (سارا)</button>
+  </div>
+  <div class="me"><span class="avatar" style="background:var(--forest)">م</span></div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab on" data-reason="price"><span class="dot" style="background:var(--gold)"></span> استعلام قیمت <span class="n" id="t-price"></span></button>
+  <button class="tab" data-reason="visit"><span class="dot" style="background:var(--forest)"></span> بازدید شوروم <span class="n" id="t-visit"></span></button>
+</div>
+
+<div class="hint" id="hint">کارت‌ها را بین ستون‌ها بکشید تا مرحله تغییر کند · لیدهای «بدون متصدی» در صف مشترک‌اند — «برداشتن» را بزنید تا مال شما شود.</div>
+
+<!-- PRICE board -->
+<div class="board" id="board-price"></div>
+<!-- VISIT board -->
+<div class="board hidden" id="board-visit"></div>
+
+<aside class="panel">
+  <b>نمای مدیر شعبه</b> همه‌ی لیدهای شعبه را با متصدی هرکدام می‌بیند و می‌تواند واگذار کند.
+  <br><b>نمای فروشنده</b> فقط صف مشترک + لیدهای خودش را پررنگ می‌بیند.
+</aside>
+
+<script>
+  // ── seed data (real قم branch flavour) ─────────────────
+  var SELLERS = { sara:{n:'سارا', c:'#5F7760'}, ali:{n:'علی', c:'#C49A6C'} };
+  var CUR = 'sara'; // current seller for "claim"
+
+  var LEADS = [
+    // price funnel: new → contacted → quote → won → lost
+    {id:1, reason:'price', stage:'new',       name:'مریم احمدی',  prod:'سرویس خواب پارلا', detail:'سایز ۱۶۰', phone:'0912 345 6789', assignee:null,   next:null},
+    {id:2, reason:'price', stage:'new',       name:'سعید قاسمی',  prod:'تخت کارولین',      detail:'دو‌نفره',  phone:'0913 220 1144', assignee:null,   next:null},
+    {id:3, reason:'price', stage:'contacted', name:'رضا کریمی',   prod:'میز آرایش الیزابت',detail:'',         phone:'0935 887 0021', assignee:'sara', next:{t:'پیگیری فردا ۱۱:۰۰', due:false}},
+    {id:4, reason:'price', stage:'quote',     name:'نگار موسوی',  prod:'تخت کارولین',      detail:'قیمت: ۴۸٬۰۰۰٬۰۰۰ ت', phone:'0901 556 7788', assignee:'ali', next:{t:'پیگیری امروز', due:true}},
+    {id:5, reason:'price', stage:'won',       name:'بهرام نوری',  prod:'سرویس مونته',      detail:'',         phone:'0912 110 9002', assignee:'sara', next:null},
+    {id:6, reason:'price', stage:'lost',      name:'الهام صادقی', prod:'سرویس لوف',        detail:'گران بود', phone:'0938 442 1180', assignee:'ali', next:null},
+    // visit funnel: new → contacted → booked → visited → won → lost
+    {id:7, reason:'visit', stage:'new',       name:'زهرا عابدی',  prod:'بازدید عمومی',     detail:'',         phone:'0919 334 5567', assignee:null,   next:null},
+    {id:8, reason:'visit', stage:'contacted', name:'حسین رضایی',  prod:'سرویس موکا',       detail:'',         phone:'0912 778 2231', assignee:'sara', next:{t:'تماس دوم امروز', due:true}},
+    {id:9, reason:'visit', stage:'booked',    name:'مهدی اکبری',  prod:'سرویس پارلا',      detail:'بازدید فردا ۱۷:۰۰', phone:'0915 067 3517', assignee:'ali', next:{t:'بازدید فردا ۱۷:۰۰', due:false}},
+    {id:10,reason:'visit', stage:'visited',   name:'سمیرا فلاح',  prod:'سرویس الگانس',     detail:'بازدید انجام شد', phone:'0930 221 8890', assignee:'sara', next:{t:'جمع‌بندی پسفردا', due:false}},
+    {id:11,reason:'visit', stage:'won',       name:'کاوه شریفی',  prod:'سرویس کارولین',    detail:'',         phone:'0912 556 1230', assignee:'ali', next:null},
+  ];
+
+  var COLS = {
+    price:[['new','صف مشترک · جدید','queue'],['contacted','تماس گرفته‌شده',''],['quote','پیش‌فاکتور / قیمت‌دهی',''],['won','موفق',''],['lost','ناموفق','']],
+    visit:[['new','صف مشترک · جدید','queue'],['contacted','تماس گرفته‌شده',''],['booked','بازدید رزرو شد',''],['visited','بازدید انجام شد',''],['won','موفق',''],['lost','ناموفق','']]
+  };
+
+  var view = 'owner';
+
+  function av(key){ var s=SELLERS[key]; return '<span class="av" style="background:'+s.c+'">'+s.n.charAt(0)+'</span>'; }
+
+  function cardHTML(L){
+    var unclaimed = !L.assignee;
+    var foot = unclaimed
+      ? '<button class="claim" onclick="claim('+L.id+')">برداشتن</button>'
+      : '<span class="chip">'+av(L.assignee)+SELLERS[L.assignee].n+'</span>';
+    var next = L.next ? '<span class="next'+(L.next.due?' due':'')+'"><span class="clk"></span>'+L.next.t+'</span>' : '<span></span>';
+    var dim = (view==='seller' && L.assignee && L.assignee!==CUR) ? ' dim' : '';
+    return '<div class="card'+(unclaimed?' unclaimed':'')+dim+'" draggable="true" data-id="'+L.id+'" data-reason="'+L.reason+'">'
+      + '<div class="c-top"><span class="c-name">'+L.name+'</span>'
+      + '<span class="badge '+L.reason+'">'+(L.reason==='price'?'قیمت':'بازدید')+'</span></div>'
+      + '<div class="c-prod"><b>'+L.prod+'</b>'+(L.detail?' · '+L.detail:'')+'</div>'
+      + '<div class="c-meta c-phone">'+L.phone+'</div>'
+      + '<div class="c-foot">'+foot+next+'</div>'
+      + '</div>';
+  }
+
+  function render(){
+    ['price','visit'].forEach(function(reason){
+      var board=document.getElementById('board-'+reason);
+      board.innerHTML='';
+      COLS[reason].forEach(function(col){
+        var stage=col[0], title=col[1], cls=col[2];
+        var leads=LEADS.filter(function(L){return L.reason===reason && L.stage===stage;});
+        var visibleCount=leads.length;
+        var c=document.createElement('div');
+        c.className='col '+cls; c.dataset.stage=stage; c.dataset.reason=reason;
+        c.innerHTML='<div class="col-h"><span class="nm">'+(cls==='queue'?'<span class="dot"></span>':'')+title+'</span><span class="ct">'+visibleCount+'</span></div>'
+          +'<div class="stk" data-stage="'+stage+'" data-reason="'+reason+'">'+leads.map(cardHTML).join('')+'</div>';
+        board.appendChild(c);
+      });
+    });
+    document.getElementById('t-price').textContent='('+LEADS.filter(function(L){return L.reason==='price';}).length+')';
+    document.getElementById('t-visit').textContent='('+LEADS.filter(function(L){return L.reason==='visit';}).length+')';
+    wireDnD();
+  }
+
+  window.claim=function(id){ var L=LEADS.find(function(x){return x.id===id;}); L.assignee=CUR; render(); };
+
+  function wireDnD(){
+    var dragId=null;
+    document.querySelectorAll('.card').forEach(function(card){
+      card.addEventListener('dragstart',function(e){dragId=+card.dataset.id;card.classList.add('dragging');});
+      card.addEventListener('dragend',function(){card.classList.remove('dragging');});
+    });
+    document.querySelectorAll('.stk').forEach(function(stk){
+      stk.addEventListener('dragover',function(e){
+        var L=LEADS.find(function(x){return x.id===dragId;});
+        if(!L || L.reason!==stk.dataset.reason) return; // can't cross reasons
+        e.preventDefault(); stk.classList.add('drag-over');
+      });
+      stk.addEventListener('dragleave',function(){stk.classList.remove('drag-over');});
+      stk.addEventListener('drop',function(e){
+        e.preventDefault(); stk.classList.remove('drag-over');
+        var L=LEADS.find(function(x){return x.id===dragId;});
+        if(!L || L.reason!==stk.dataset.reason) return;
+        L.stage=stk.dataset.stage;
+        if(L.stage!=='new' && !L.assignee) L.assignee=CUR; // moving out of queue claims it
+        render();
+      });
+    });
+  }
+
+  // tabs
+  document.getElementById('tabs').addEventListener('click',function(e){
+    var b=e.target.closest('.tab'); if(!b) return;
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');}); b.classList.add('on');
+    var r=b.dataset.reason;
+    document.getElementById('board-price').classList.toggle('hidden', r!=='price');
+    document.getElementById('board-visit').classList.toggle('hidden', r!=='visit');
+  });
+  // view toggle
+  document.getElementById('viewSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    document.querySelectorAll('#viewSeg button').forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+    view=b.dataset.view; render();
+  });
+
+  render();
+</script>
+</body>
+</html>

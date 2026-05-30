@@ -24,26 +24,27 @@ export default async function HomePage() {
     }))
     .filter((s) => s.src.length > 0);
 
-  // Static fallback media (interior shots from Plan A's brainstorm mockup).
-  // Used until the operator seeds real images in /admin. When real data is
-  // present, the fallbacks aren't touched.
+  // Static fallback media — six-slide mix of full-room scenes + craft detail
+  // close-ups across the Jacqueline, Iron, Lotus, Shaylin, Celine, and Baloot
+  // series. Used until the operator seeds heroSlides[] on the home global.
+  // Sources live in /imports/ZhicProducts_webp/{series}/{room,detail-picture}*.webp
+  // and were resized to 1920px max-edge WebP at 88% quality.
   const FALLBACK_HERO_SLIDES: HeroSlide[] = [
-    { src: '/docs/test-media/hero-1.jpg', alt: 'فضای کاری ژیک' },
-    { src: '/docs/test-media/hero-2.jpg', alt: 'سرویس خواب گردو' },
-    { src: '/docs/test-media/hero-3.jpg', alt: 'جزئیات حکاکی' },
-    { src: '/docs/test-media/hero-4.jpg', alt: 'بافت چوب گردو' },
-    { src: '/docs/test-media/hero-5.jpg', alt: 'صحنه‌ی اتاق خواب' },
+    { src: '/hero-details/jacqueline.webp', alt: 'اتاق خواب کلاسیک با چوب سفید — ژاکلین' },
+    { src: '/hero-details/shaylin.webp',    alt: 'حکاکی دستی روی قاب آینه — شیلین' },
+    { src: '/hero-details/iron.webp',       alt: 'اتاق نوجوان مدرن با دیوار بتنی — آیرون' },
+    { src: '/hero-details/loof.webp',       alt: 'اتاق آرام با چوب طبیعی و سبز خزه‌ای — لوف' },
+    { src: '/hero-details/celine.webp',     alt: 'گل منبت‌شده روی چوب گردو — سلین' },
+    { src: '/hero-details/bw.webp',         alt: 'اتاق با دیوار آجری مشکی — بی‌دبلیو' },
+    { src: '/hero-details/lotus.webp',      alt: 'اتاق با چوب بلوط و دیوار تیره — لوتوس' },
+    { src: '/hero-details/lukaplus.webp',   alt: 'اتاق نوجوان با خط افق شهر — لوکا پلاس' },
+    { src: '/hero-details/baloot.webp',     alt: 'تختخواب نوزاد چوب طبیعی — بلوط' },
   ];
   const FALLBACK_ROOM_COVERS: Record<'kid' | 'teen' | 'adult', string> = {
     kid: '/docs/test-media/kid.jpg',
     teen: '/docs/test-media/teen.jpg',
     adult: '/docs/test-media/adult.jpg',
   };
-  const FALLBACK_SHOWROOM_COVERS = [
-    '/docs/test-media/hero-1.jpg',
-    '/docs/test-media/hero-2.jpg',
-    '/docs/test-media/hero-3.jpg',
-  ];
   const FALLBACK_JOURNAL_COVERS = [
     '/docs/test-media/hero-3.jpg',
     '/docs/test-media/hero-4.jpg',
@@ -82,16 +83,16 @@ export default async function HomePage() {
     coverUrl: a.cover?.url ?? FALLBACK_JOURNAL_COVERS[i % FALLBACK_JOURNAL_COVERS.length]!,
   }));
 
-  // Build showroom cards: max 3. Fall back to stock covers if the showroom
-  // has none.
-  const showroomCards: HomeShowroomCard[] = showrooms.slice(0, 3).map((s, i) => ({
+  // Build showroom cards: max 3. No cover → null, so the teaser renders its
+  // on-brand gradient placeholder instead of a stock photo.
+  const showroomCards: HomeShowroomCard[] = showrooms.slice(0, 3).map((s) => ({
     slug: s.slug,
     city: s.address?.city ?? s.name,
     addressLine: [s.address?.district, s.address?.street, s.address?.plaque]
       .filter((p): p is string => typeof p === 'string' && p.length > 0)
       .join('، '),
     phone: s.phone ?? undefined,
-    coverUrl: s.cover?.url ?? FALLBACK_SHOWROOM_COVERS[i % FALLBACK_SHOWROOM_COVERS.length]!,
+    coverUrl: s.cover?.url ?? null,
     isCentral: s.is_central ?? undefined,
   }));
 

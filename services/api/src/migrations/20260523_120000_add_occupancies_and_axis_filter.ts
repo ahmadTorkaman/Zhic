@@ -31,7 +31,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
     CREATE TABLE IF NOT EXISTS "designs_occupancies" (
       "order" integer NOT NULL,
       "parent_id" integer NOT NULL,
-      "id" varchar PRIMARY KEY NOT NULL,
+      "id" serial PRIMARY KEY NOT NULL,
       "value" varchar
     );
 

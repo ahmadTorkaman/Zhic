@@ -21,6 +21,22 @@ const nextConfig: NextConfig = {
   },
   // allowedDevOrigins for HMR from external IPs (only used in dev; harmless in prod)
   allowedDevOrigins: ['80.240.31.146'],
+  async headers() {
+    return [
+      // Media files are UUID-named (content-addressed) — immutable. Payload's
+      // upload handler doesn't set Cache-Control by default, so the browser
+      // re-downloaded the full ~2.5MB media payload on every navigation.
+      // Setting it here means BOTH direct :3001 and storefront-proxied :3000
+      // consumers get the long-cache. Safe forever; a content change yields
+      // a new UUID.
+      {
+        source: '/api/media/file/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+    ];
+  },
 }
 
 export default withPayload(nextConfig)

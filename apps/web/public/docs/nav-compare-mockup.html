@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Card Nav × Staggered Menu — Zhic mobile</title>
+<style>
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype'); font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh'; font-weight: 900;
+    src: url('/fonts/ayandeh-black.ttf') format('truetype'); font-display: swap;
+  }
+
+  :root {
+    --color-ivory:    #FAFAF7;
+    --color-cream:    #F5F0EB;
+    --color-sand:     #E8E0D8;
+    --color-stone:    #8C8279;
+    --color-charcoal: #2C2825;
+    --color-ink:      #14110F;
+    --color-forest:   #5F7760;
+    --color-gold:     #C49A6C;
+    --tracking-eye:   0.14em;
+    --dur-hover:      240ms;
+    --ease-out-soft:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--color-cream);
+    color: var(--color-charcoal);
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    min-height: 100vh;
+    padding: 20px 16px 96px;
+  }
+
+  /* ── Page chrome ────────────────────────────────────────────────────── */
+  .page-head {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .page-head h1 {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--color-ink);
+    margin-bottom: 4px;
+  }
+  .page-head p {
+    font-size: 13px;
+    color: var(--color-stone);
+  }
+
+  .frames {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  @media (min-width: 900px) {
+    .frames { grid-template-columns: 1fr 1fr; gap: 24px; }
+  }
+
+  .frame-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .frame-label {
+    font-size: 11px;
+    color: var(--color-forest);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eye);
+  }
+
+  .phone-frame {
+    width: min(420px, 100%);
+    height: min(780px, 78vh);
+    background: var(--color-ivory);
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 18px 40px rgba(20, 17, 15, 0.08);
+  }
+
+  /* Fake page beneath each nav */
+  .stage {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, var(--color-cream) 0%, var(--color-ivory) 60%);
+    padding-top: 200px;
+    text-align: center;
+    z-index: 0;
+  }
+  .stage-mark {
+    font-size: 80px;
+    font-weight: 900;
+    color: var(--color-ink);
+    opacity: 0.06;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Pill header (shared) ───────────────────────────────────────────── */
+  .pill {
+    position: absolute;
+    top: 12px;
+    inset-inline: 12px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-sand);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    padding-inline: 16px;
+    z-index: 50;
+    font-weight: 900;
+    color: var(--color-charcoal);
+  }
+  .pill .brand { font-size: 14px; }
+  .pill .spacer { flex: 1; }
+  .pill .hamburger {
+    width: 28px; height: 28px; border: 0; background: transparent;
+    cursor: pointer; position: relative; padding: 0;
+  }
+  .pill .hamburger span {
+    position: absolute; inset-inline: 4px; height: 2px;
+    background: var(--color-charcoal); border-radius: 2px;
+    transition: transform 320ms var(--ease-out-quint),
+                top 240ms var(--ease-out-quint) 80ms,
+                opacity 200ms;
+  }
+  .pill .hamburger span:nth-child(1) { top: 8px; }
+  .pill .hamburger span:nth-child(2) { top: 13px; }
+  .pill .hamburger span:nth-child(3) { top: 18px; }
+  .phone-frame.is-open .pill .hamburger span:nth-child(1) {
+    top: 13px; transform: rotate(45deg);
+    transition: top 240ms var(--ease-out-quint), transform 320ms var(--ease-out-quint) 240ms;
+  }
+  .phone-frame.is-open .pill .hamburger span:nth-child(2) { opacity: 0; }
+  .phone-frame.is-open .pill .hamburger span:nth-child(3) {
+    top: 13px; transform: rotate(-45deg);
+    transition: top 240ms var(--ease-out-quint), transform 320ms var(--ease-out-quint) 240ms;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     CARD NAV (cn-*)
+     ═══════════════════════════════════════════════════════════════════ */
+  .cn-overlay {
+    position: absolute; inset: 0; background: var(--color-ivory);
+    z-index: 40; padding: 76px 16px 24px; overflow-y: auto;
+    opacity: 0; pointer-events: none;
+    transition: opacity 320ms var(--ease-out-soft);
+  }
+  .is-open .cn-overlay { opacity: 1; pointer-events: auto; }
+  .cn-overlay::before {
+    content: 'ژ'; position: absolute; inset-block-end: -40px; inset-inline-end: -20px;
+    font-size: 280px; font-weight: 900; color: var(--color-sand);
+    opacity: 0.5; line-height: 1; pointer-events: none; user-select: none; z-index: 0;
+  }
+  .cn-eyebrow {
+    font-size: 10px; text-transform: uppercase; letter-spacing: var(--tracking-eye);
+    color: var(--color-forest); font-weight: 700; margin-bottom: 16px; padding-inline-start: 4px;
+    position: relative; z-index: 1;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 400ms 80ms, transform 500ms 80ms var(--ease-out-quint);
+  }
+  .is-open .cn-eyebrow { opacity: 1; transform: translateY(0); }
+  .cn-cards { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+  .cn-card {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px; background: var(--color-cream);
+    border: 1px solid var(--color-sand); border-radius: 14px;
+    text-decoration: none; color: var(--color-charcoal); cursor: pointer;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateX(-40px);
+    transition: opacity 600ms var(--ease-out-quint),
+                transform 600ms var(--ease-out-quint),
+                background-color var(--dur-hover) var(--ease-out-soft),
+                border-color var(--dur-hover) var(--ease-out-soft),
+                color var(--dur-hover) var(--ease-out-soft);
+  }
+  .is-open .cn-card {
+    opacity: 1; transform: translateX(0);
+    transition-delay: calc(var(--i) * 60ms + 120ms);
+  }
+  .cn-card:active, .cn-card.is-current {
+    background: var(--color-charcoal); border-color: var(--color-charcoal); color: var(--color-ivory);
+  }
+  .cn-card.is-current .cn-card-num { color: var(--color-gold); }
+  .cn-card.is-current .cn-card-en { color: var(--color-stone); }
+  .cn-card.is-current .cn-card-arrow { color: var(--color-ivory); }
+  .cn-card-num {
+    font-size: 10px; color: var(--color-stone); font-weight: 700;
+    letter-spacing: 0.08em; flex: 0 0 auto; font-variant-numeric: tabular-nums;
+    margin-inline-end: 4px;
+  }
+  .cn-card-titles { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cn-card-fa { font-size: 20px; font-weight: 900; line-height: 1.15; letter-spacing: -0.01em; }
+  .cn-card-en {
+    font-size: 10px; color: var(--color-stone); text-transform: uppercase;
+    letter-spacing: var(--tracking-eye); font-weight: 700;
+  }
+  .cn-card-arrow {
+    width: 18px; height: 18px; flex: 0 0 auto; color: var(--color-stone);
+    transition: transform var(--dur-hover);
+  }
+  .cn-card.is-current .cn-card-arrow { transform: translateX(-4px); }
+  .cn-footer { display: flex; gap: 10px; margin-top: 14px; position: relative; z-index: 1; }
+  .cn-pill {
+    flex: 1; padding: 12px 16px; background: var(--color-cream);
+    border: 1px solid var(--color-sand); border-radius: 9999px;
+    display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-stone);
+    cursor: pointer;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 500ms var(--ease-out-quint), transform 500ms var(--ease-out-quint);
+  }
+  .is-open .cn-pill { opacity: 1; transform: translateY(0); transition-delay: 540ms; }
+  .cn-pill svg { width: 13px; height: 13px; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     STAGGERED MENU (sm-*) — editorial/magazine TOC style.
+     Big Persian titles, each rises from below inside a clip-mask.
+     ═══════════════════════════════════════════════════════════════════ */
+  .sm-overlay {
+    position: absolute; inset: 0; background: var(--color-ivory);
+    z-index: 40; padding: 80px 22px 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 320ms var(--ease-out-soft);
+    display: flex; flex-direction: column;
+  }
+  .is-open .sm-overlay { opacity: 1; pointer-events: auto; }
+  .sm-overlay::before {
+    content: 'ژ'; position: absolute; inset-block-end: -60px; inset-inline-end: -30px;
+    font-size: 360px; font-weight: 900; color: var(--color-sand);
+    opacity: 0.45; line-height: 1; pointer-events: none; user-select: none; z-index: 0;
+  }
+  .sm-eyebrow {
+    font-size: 10px; text-transform: uppercase; letter-spacing: var(--tracking-eye);
+    color: var(--color-forest); font-weight: 700; margin-bottom: 8px;
+    position: relative; z-index: 1;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 400ms 80ms, transform 500ms 80ms var(--ease-out-quint);
+  }
+  .is-open .sm-eyebrow { opacity: 1; transform: translateY(0); }
+
+  .sm-list {
+    list-style: none;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .sm-item {
+    display: block;
+    text-decoration: none;
+    color: var(--color-charcoal);
+    border-block-end: 1px solid var(--color-sand);
+    padding-block: 14px;
+    position: relative;
+  }
+  .sm-item:last-child { border-block-end: 0; }
+
+  /* Each row has two animated pieces — the title line and the number/en line.
+     Both live in a clip mask so they rise from below. */
+  .sm-row {
+    overflow: hidden;
+    display: block;
+    line-height: 1.1;
+  }
+  .sm-row-inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    transform: translateY(110%);
+    opacity: 0;
+    transition: transform 750ms var(--ease-out-quint), opacity 600ms;
+  }
+  .is-open .sm-row-inner {
+    transform: translateY(0);
+    opacity: 1;
+    transition-delay: calc(var(--i) * 90ms + 180ms);
+  }
+  .sm-fa {
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .sm-num {
+    font-size: 10px;
+    color: var(--color-stone);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+  }
+  .sm-row-meta {
+    overflow: hidden;
+    display: block;
+    margin-top: 2px;
+  }
+  .sm-row-meta-inner {
+    transform: translateY(110%);
+    opacity: 0;
+    transition: transform 700ms var(--ease-out-quint), opacity 500ms;
+  }
+  .is-open .sm-row-meta-inner {
+    transform: translateY(0);
+    opacity: 1;
+    transition-delay: calc(var(--i) * 90ms + 280ms);
+  }
+  .sm-en {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eye);
+    color: var(--color-stone);
+    font-weight: 700;
+  }
+
+  .sm-item:hover .sm-fa,
+  .sm-item.is-current .sm-fa { color: var(--color-forest); }
+  .sm-item.is-current .sm-num { color: var(--color-gold); }
+
+  .sm-footer {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+    border-block-start: 1px solid var(--color-sand);
+    padding-top: 14px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 500ms var(--ease-out-quint), transform 500ms var(--ease-out-quint);
+  }
+  .is-open .sm-footer {
+    opacity: 1; transform: translateY(0);
+    transition-delay: 720ms;
+  }
+  .sm-footer-pill {
+    border: 0; background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 12px;
+    color: var(--color-stone); display: flex; align-items: center; gap: 8px;
+    font-weight: 700;
+  }
+  .sm-footer-pill svg { width: 13px; height: 13px; }
+
+  /* ── Control bar (mockup) ───────────────────────────────────────────── */
+  .control-bar {
+    position: fixed;
+    bottom: 14px;
+    inset-inline: 14px;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    border-radius: 9999px;
+    padding: 8px;
+    display: flex;
+    gap: 6px;
+    z-index: 200;
+    max-width: 520px;
+    margin-inline: auto;
+    box-shadow: 0 8px 24px rgba(20, 17, 15, 0.18);
+  }
+  .control-bar button {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    color: var(--color-ivory);
+    padding: 10px 14px;
+    border-radius: 9999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color var(--dur-hover);
+  }
+  .control-bar button:hover { background: rgba(250, 250, 247, 0.1); }
+  .control-bar button.is-primary {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+  .control-bar button.is-primary:hover { background: #d4ad7e; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cn-card, .cn-eyebrow, .cn-pill,
+    .sm-row-inner, .sm-row-meta-inner, .sm-eyebrow, .sm-footer,
+    .pill .hamburger span { transition: opacity 0ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1>Card Nav × Staggered Menu</h1>
+  <p>دو سبک منو، کنار هم. هم‌زمان باز و بسته‌شان کنید تا تفاوت رفتار را حس کنید.</p>
+</header>
+
+<div class="frames">
+
+  <!-- ─────────────── Phone 1: Card Nav ─────────────── -->
+  <div class="frame-wrap">
+    <div class="frame-label">CARD NAV</div>
+    <div class="phone-frame" id="cnFrame">
+      <div class="stage" aria-hidden><div class="stage-mark">ژیک</div></div>
+      <div class="pill">
+        <span class="brand">ژیک</span><span class="spacer"></span>
+        <button class="hamburger" data-toggle="cn" aria-label="منو" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+      <nav class="cn-overlay" aria-hidden="true">
+        <div class="cn-eyebrow">منو · MENU</div>
+        <div class="cn-cards">
+          <a href="#" class="cn-card is-current" style="--i: 0">
+            <span class="cn-card-num">۰۱</span>
+            <div class="cn-card-titles"><span class="cn-card-fa">محصولات</span><span class="cn-card-en">Products</span></div>
+            <svg class="cn-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#" class="cn-card" style="--i: 1">
+            <span class="cn-card-num">۰۲</span>
+            <div class="cn-card-titles"><span class="cn-card-fa">طرح‌ها</span><span class="cn-card-en">Designs</span></div>
+            <svg class="cn-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#" class="cn-card" style="--i: 2">
+            <span class="cn-card-num">۰۳</span>
+            <div class="cn-card-titles"><span class="cn-card-fa">مجلات</span><span class="cn-card-en">Journal</span></div>
+            <svg class="cn-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#" class="cn-card" style="--i: 3">
+            <span class="cn-card-num">۰۴</span>
+            <div class="cn-card-titles"><span class="cn-card-fa">نمایشگاه‌ها</span><span class="cn-card-en">Showrooms</span></div>
+            <svg class="cn-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#" class="cn-card" style="--i: 4">
+            <span class="cn-card-num">۰۵</span>
+            <div class="cn-card-titles"><span class="cn-card-fa">درباره‌ی ما</span><span class="cn-card-en">About</span></div>
+            <svg class="cn-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#" class="cn-card" style="--i: 5">
+            <span class="cn-card-num">۰۶</span>
+            <div class="cn-card-titles"><span class="cn-card-fa">تماس</span><span class="cn-card-en">Contact</span></div>
+            <svg class="cn-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><path d="M15 6L9 12L15 18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        <div class="cn-footer">
+          <button class="cn-pill" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+            جست‌وجو
+          </button>
+          <button class="cn-pill" type="button" style="flex: 0 0 auto;">EN</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ─────────────── Phone 2: Staggered Menu ─────────────── -->
+  <div class="frame-wrap">
+    <div class="frame-label">STAGGERED MENU</div>
+    <div class="phone-frame" id="smFrame">
+      <div class="stage" aria-hidden><div class="stage-mark">ژیک</div></div>
+      <div class="pill">
+        <span class="brand">ژیک</span><span class="spacer"></span>
+        <button class="hamburger" data-toggle="sm" aria-label="منو" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+      <nav class="sm-overlay" aria-hidden="true">
+        <div class="sm-eyebrow">منو · MENU</div>
+        <ul class="sm-list">
+          <li><a href="#" class="sm-item is-current" style="--i: 0">
+            <span class="sm-row"><span class="sm-row-inner"><span class="sm-fa">محصولات</span><span class="sm-num">۰۱</span></span></span>
+            <span class="sm-row-meta"><span class="sm-row-meta-inner"><span class="sm-en">Products</span></span></span>
+          </a></li>
+          <li><a href="#" class="sm-item" style="--i: 1">
+            <span class="sm-row"><span class="sm-row-inner"><span class="sm-fa">طرح‌ها</span><span class="sm-num">۰۲</span></span></span>
+            <span class="sm-row-meta"><span class="sm-row-meta-inner"><span class="sm-en">Designs</span></span></span>
+          </a></li>
+          <li><a href="#" class="sm-item" style="--i: 2">
+            <span class="sm-row"><span class="sm-row-inner"><span class="sm-fa">مجلات</span><span class="sm-num">۰۳</span></span></span>
+            <span class="sm-row-meta"><span class="sm-row-meta-inner"><span class="sm-en">Journal</span></span></span>
+          </a></li>
+          <li><a href="#" class="sm-item" style="--i: 3">
+            <span class="sm-row"><span class="sm-row-inner"><span class="sm-fa">نمایشگاه‌ها</span><span class="sm-num">۰۴</span></span></span>
+            <span class="sm-row-meta"><span class="sm-row-meta-inner"><span class="sm-en">Showrooms</span></span></span>
+          </a></li>
+          <li><a href="#" class="sm-item" style="--i: 4">
+            <span class="sm-row"><span class="sm-row-inner"><span class="sm-fa">درباره‌ی ما</span><span class="sm-num">۰۵</span></span></span>
+            <span class="sm-row-meta"><span class="sm-row-meta-inner"><span class="sm-en">About</span></span></span>
+          </a></li>
+          <li><a href="#" class="sm-item" style="--i: 5">
+            <span class="sm-row"><span class="sm-row-inner"><span class="sm-fa">تماس</span><span class="sm-num">۰۶</span></span></span>
+            <span class="sm-row-meta"><span class="sm-row-meta-inner"><span class="sm-en">Contact</span></span></span>
+          </a></li>
+        </ul>
+        <div class="sm-footer">
+          <button class="sm-footer-pill" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+            جست‌وجو
+          </button>
+          <button class="sm-footer-pill" type="button">EN · فارسی</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+</div>
+
+<div class="control-bar">
+  <button type="button" data-action="toggle-cn">Card Nav</button>
+  <button type="button" data-action="toggle-sm">Staggered</button>
+  <button type="button" data-action="toggle-both" class="is-primary">هم‌زمان</button>
+</div>
+
+<script>
+  const cnFrame = document.getElementById('cnFrame');
+  const smFrame = document.getElementById('smFrame');
+
+  function toggle(frame) {
+    const open = frame.classList.toggle('is-open');
+    const ham = frame.querySelector('.hamburger');
+    const overlay = frame.querySelector('nav');
+    ham.setAttribute('aria-expanded', String(open));
+    overlay.setAttribute('aria-hidden', String(!open));
+  }
+
+  // Per-frame hamburger
+  document.querySelectorAll('.hamburger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const which = btn.dataset.toggle;
+      toggle(which === 'cn' ? cnFrame : smFrame);
+    });
+  });
+
+  // Control bar
+  document.querySelector('[data-action="toggle-cn"]').addEventListener('click', () => toggle(cnFrame));
+  document.querySelector('[data-action="toggle-sm"]').addEventListener('click', () => toggle(smFrame));
+  document.querySelector('[data-action="toggle-both"]').addEventListener('click', () => {
+    // If they're in different states, sync to "both open"; otherwise toggle both
+    const cnOpen = cnFrame.classList.contains('is-open');
+    const smOpen = smFrame.classList.contains('is-open');
+    if (cnOpen === smOpen) {
+      toggle(cnFrame); toggle(smFrame);
+    } else {
+      // Force them both open
+      if (!cnOpen) toggle(cnFrame);
+      if (!smOpen) toggle(smFrame);
+    }
+  });
+
+  // Esc closes any open frame
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (cnFrame.classList.contains('is-open')) toggle(cnFrame);
+    if (smFrame.classList.contains('is-open')) toggle(smFrame);
+  });
+
+  // Open both on load so the staggered reveal plays
+  setTimeout(() => {
+    cnFrame.classList.add('is-open');
+    smFrame.classList.add('is-open');
+    cnFrame.querySelector('.hamburger').setAttribute('aria-expanded', 'true');
+    smFrame.querySelector('.hamburger').setAttribute('aria-expanded', 'true');
+    cnFrame.querySelector('nav').setAttribute('aria-hidden', 'false');
+    smFrame.querySelector('nav').setAttribute('aria-hidden', 'false');
+  }, 250);
+</script>
+
+</body>
+</html>
