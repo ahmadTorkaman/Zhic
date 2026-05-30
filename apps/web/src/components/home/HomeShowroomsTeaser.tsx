@@ -7,13 +7,17 @@ export type HomeShowroomCard = {
   city: string;
   addressLine: string;
   phone?: string;
-  coverUrl: string;
+  coverUrl: string | null;
   isCentral?: boolean;
 };
 
 export type HomeShowroomsTeaserProps = {
   showrooms: HomeShowroomCard[];
 };
+
+// On-brand placeholder for branches without a photo yet — sand→walnut radial,
+// matching the CategoryHero convention. The card's ::after adds the vignette.
+const PLACEHOLDER_COVER = 'var(--gradient-glow-caramel)';
 
 export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
   if (showrooms.length === 0) return null;
@@ -34,7 +38,11 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
         <div className="zh-st__grid">
           {showrooms.map((s) => (
             <Link key={s.slug} href={`/showrooms/${s.slug}`} className="zh-st__card">
-              <div className="zh-st__cover" style={{ backgroundImage: `url(${s.coverUrl})` }} aria-hidden />
+              <div
+                className="zh-st__cover"
+                style={{ backgroundImage: s.coverUrl ? `url(${s.coverUrl})` : PLACEHOLDER_COVER }}
+                aria-hidden
+              />
               <div className="zh-st__city">
                 {s.city}
                 {s.isCentral ? ' · شوروم مرکزی' : ''}

@@ -23,7 +23,10 @@ export type HomeJournalRowsProps = {
 // Speed × direction per row (matches framer.university intent).
 const SPEEDS = { 0: 0.35, 1: -0.55, 2: 0.75 } as const;
 const MAX_DESKTOP = 300;
-const MAX_PHONE = 140;
+// Phone shift bumped from 140→240 so the parallax reads as actual movement
+// instead of a tiny wiggle. With the padding-inline fix landing the cards at
+// the true viewport edges, 240px is ~⅔ of a 360px viewport — plenty visible.
+const MAX_PHONE = 240;
 
 export function HomeJournalRows({
   articles,

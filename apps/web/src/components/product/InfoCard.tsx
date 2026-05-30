@@ -8,7 +8,10 @@ export type InfoCardProps = {
 };
 
 export function InfoCard({ label, children, variant = 'default' }: InfoCardProps) {
-  const cls = variant === 'forest' ? `${styles.card} ${styles.forest}` : styles.card;
+  const cls =
+    variant === 'forest'
+      ? `glass-card ${styles.card} ${styles.forest}`
+      : `glass-card ${styles.card}`;
   return (
     <div className={cls}>
       <div className={styles.lbl}>{label}</div>

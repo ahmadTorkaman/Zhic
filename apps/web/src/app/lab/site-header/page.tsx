@@ -8,6 +8,12 @@ const EMPTY_NAV_META: NavMeta = {
   featuredProduct: null,
   featuredDesign: null,
   pieceCounts: {},
+  occupancyCounts: {
+    baby:   { designs: 0, pieces: 0 },
+    teen:   { designs: 0, pieces: 0 },
+    double: { designs: 0, pieces: 0 },
+    bunk:   { designs: 0, pieces: 0 },
+  },
 };
 
 export default function SiteHeaderDemoPage() {

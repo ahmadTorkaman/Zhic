@@ -9,6 +9,7 @@ export const duration = {
   // Storefront
   instant: '100ms',
   fast: '240ms',
+  medium: '300ms',
   base: '480ms',
   slow: '720ms',
   glacial: '1200ms',

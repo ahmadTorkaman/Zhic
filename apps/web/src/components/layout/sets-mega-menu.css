@@ -1,8 +1,7 @@
-/* Sets mega-menu (سرویس خواب) — lookbook tile grid variant.
-   Derived from products-mega-menu.css but without tabs/search;
-   .zh-sets-grid renders as cover-image tiles (4/5 aspect-ratio cards). */
+/* Sets mega-menu — Cinema variant (2026-05-23).
+   4 occupancy rows on the visual-right, glass card stack on the visual-left
+   floating over a borderless silhouette hero. */
 
-/* Trigger wrapper — `position: static` so the absolutely-positioned panel can span the header width */
 .zh-sets-wrap { position: static; }
 
 .zh-sets-trigger {
@@ -13,6 +12,7 @@
   border: 0;
   padding: 0;
   cursor: pointer;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -44,20 +44,19 @@
   transform: rotate(135deg) translateY(-1px);
 }
 
-/* Panel */
+/* Panel — position: fixed (not absolute inside header) so backdrop-filter
+   samples the viewport directly, same as the picker bar. The header sits
+   at top: 0 with h-[60px], so the panel anchors below at top: 60px. */
 .zh-sets-panel {
-  position: absolute;
+  position: fixed;
   inset-inline: 0;
-  top: 100%;
-  background: var(--color-ivory);
-  border-top: 1px solid var(--color-sand);
-  border-bottom: 1px solid var(--color-sand);
-  box-shadow: 0 16px 32px rgba(20, 17, 15, 0.06);
+  top: var(--header-height, 60px);
+  z-index: var(--z-overlay, 900);
+  border-bottom: 1px solid rgba(232, 224, 216, 0.55);
+  box-shadow: 0 24px 64px rgba(20, 17, 15, 0.12);
   opacity: 0;
-  transform: translateY(-8px);
   pointer-events: none;
-  transition: opacity var(--dur-mega) var(--ease-out-soft),
-              transform var(--dur-mega) var(--ease-out-soft);
+  transition: opacity var(--dur-dialog) var(--ease-out-soft);
 }
 
 .zh-sets-wrap:hover .zh-sets-panel,
@@ -65,117 +64,127 @@
 .zh-sets-panel[data-open="true"],
 .zh-sets-panel:hover {
   opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
 }
 
-/* Body: main content + featured aside */
-.zh-sets-body {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 3.5rem;
-  padding-block: 2.5rem 3rem;
-  align-items: start;
-}
-
-/* Main area (grid + CTA) */
-.zh-sets-main {
-  min-height: 280px;
-  max-height: calc(100vh - 10rem);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-sand) transparent;
-}
-
-/* Lookbook tile grid */
+/* Body grid: 300px labels | 1fr hero  (RTL: labels on visual right).
+   Tighter footprint than the original mega-menu — 300px labels + 440px
+   min-height feels like a dropdown, not a full-page takeover. */
 .zh-sets-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: 300px 1fr;
+  min-height: 440px;
+}
+
+/* ── Labels column ───────────────────────────────────────────── */
+.zh-sets-labels {
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  border-inline-end: 1px solid var(--color-sand);
+}
+
+.zh-sets-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: var(--tracking-eyebrow-wide, 0.12em);
+  color: var(--color-forest);
+  font-weight: 700;
+  margin-bottom: 36px;
+}
+
+.zh-sets-list {
   list-style: none;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 0;
 }
+.zh-sets-list li { list-style: none; border-block-end: 1px solid var(--color-sand); }
+.zh-sets-list li:first-child { border-block-start: 1px solid var(--color-sand); }
 
-.zh-sets-grid li { list-style: none; }
-
-.zh-sets-tile {
-  display: block;
+.zh-sets-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
   text-decoration: none;
   color: inherit;
+  transition: color var(--dur-hover) var(--ease-out-soft),
+              padding var(--dur-hover) var(--ease-out-soft);
+}
+.zh-sets-row[data-active="true"] { color: var(--color-ink); }
+.zh-sets-row:hover { padding-inline-start: 6px; }
+
+.zh-sets-num {
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  color: var(--color-stone);
+}
+
+.zh-sets-name {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--color-charcoal);
+  transition: font-weight var(--dur-base);
+}
+.zh-sets-row[data-active="true"] .zh-sets-name { font-weight: 700; }
+
+.zh-sets-arrow {
+  width: 20px;
+  height: 1px;
+  background: var(--color-stone);
   position: relative;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border-radius: 6px;
-  background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
-  transition: transform var(--dur-hover) var(--ease-out-soft);
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity var(--dur-hover) var(--ease-out-soft),
+              transform var(--dur-hover) var(--ease-out-soft);
 }
-
-.zh-sets-tile:hover { transform: translateY(-2px); }
-
-.zh-sets-tile__media {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-}
-
-.zh-sets-tile__media::after {
+.zh-sets-arrow::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(20, 17, 15, 0.55), transparent 60%);
+  inset-inline-end: 0;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-inline-end: 1px solid var(--color-stone);
+  border-block-start: 1px solid var(--color-stone);
+  transform: rotate(-135deg);
+}
+.zh-sets-row[data-active="true"] .zh-sets-arrow,
+.zh-sets-row:hover .zh-sets-arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-.zh-sets-tile__name {
-  position: absolute;
-  inset-inline-start: 14px;
-  inset-block-end: 28px;
-  color: var(--color-ivory);
-  font-weight: 700;
-  font-size: 1.05rem;
-  z-index: 1;
-}
+.zh-sets-cta-wrap { margin-top: auto; padding-top: 32px; }
 
-.zh-sets-tile__count {
-  position: absolute;
-  inset-inline-start: 14px;
-  inset-block-end: 10px;
-  color: var(--color-sand);
-  font-size: 0.8rem;
-  z-index: 1;
-}
-
-/* CTA link */
 .zh-sets-cta {
+  color: var(--color-charcoal);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-charcoal);
+  padding-bottom: 2px;
+  font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 700;
-  color: var(--color-charcoal);
-  margin-top: 1.5rem;
-  border-bottom: 1px solid var(--color-charcoal);
-  padding-bottom: 2px;
-  text-decoration: none;
   transition: color var(--dur-hover) var(--ease-out-soft),
               border-color var(--dur-hover) var(--ease-out-soft);
 }
-
 .zh-sets-cta:hover {
   color: var(--color-forest);
-  border-bottom-color: var(--color-forest);
+  border-color: var(--color-forest);
 }
 
-/* Arrow inside CTA */
-.zh-sets-arrow {
+.zh-sets-arrow-inline {
   display: inline-block;
   width: 1rem;
   height: 1px;
   background: currentColor;
   position: relative;
 }
-
-.zh-sets-arrow::before {
+.zh-sets-arrow-inline::before {
   content: '';
   position: absolute;
   inset-inline-start: -2px;
@@ -188,53 +197,117 @@
   display: block;
 }
 
-/* Featured aside */
-.zh-sets-featured {
-  border-inline-start: 1px solid var(--color-sand);
-  padding-inline-start: 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.zh-sets-featured__eyebrow {
-  font-size: 0.75rem;
-  color: var(--color-forest);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-eyebrow-wide, 0.12em);
-  margin: 0;
-  font-weight: 700;
-}
-
-.zh-sets-featured__media {
-  aspect-ratio: 4 / 3;
-  background: linear-gradient(135deg, var(--color-cream), var(--color-sand));
-  background-size: cover;
-  background-position: center;
-  border-radius: 4px;
+/* ── Hero column ─────────────────────────────────────────────── */
+.zh-sets-hero {
   position: relative;
   overflow: hidden;
+  /* Transparent so the panel's glass blur is the actual backdrop. A subtle
+     caramel radial stays as a warm highlight without competing with the
+     blur sample of the page behind. */
+  background: radial-gradient(ellipse at 70% 40%, rgba(196, 154, 108, 0.06) 0%, transparent 55%);
 }
 
-.zh-sets-featured__title {
-  font-size: 1.5rem;
+/* Borderless silhouette — full shape visible, only 16px padding */
+.zh-sets-img {
+  position: absolute;
+  inset: 16px;
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+  object-fit: contain;
+  object-position: center;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
+  pointer-events: none;
+}
+.zh-sets-img[data-active="true"] { opacity: 1; }
+
+/* Glass card stack — visual right + bottom of hero column */
+.zh-sets-cards {
+  position: absolute;
+  inset-inline-start: 40px;
+  inset-block-end: 40px;
+  z-index: 2;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.zh-sets-card-main {
+  background: rgba(250, 250, 247, 0.45);
+  border: 1px solid rgba(232, 224, 216, 0.55);
+  backdrop-filter: blur(64px) saturate(160%);
+  -webkit-backdrop-filter: blur(64px) saturate(160%);
+  padding: 24px 26px;
+  box-shadow:
+    0 24px 64px -16px rgba(20, 17, 15, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.zh-sets-card-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: var(--tracking-eyebrow-wide, 0.12em);
+  color: var(--color-forest);
   font-weight: 700;
-  line-height: 1.25;
+  margin-bottom: 12px;
+}
+.zh-sets-card-title {
+  font-size: 1.85rem;
+  font-weight: 300;
+  line-height: 1.2;
   color: var(--color-charcoal);
+  margin: 0 0 10px;
+}
+.zh-sets-card-title em {
+  font-style: normal;
+  font-weight: 700;
+}
+.zh-sets-card-tagline {
+  font-size: 0.9rem;
+  color: var(--color-charcoal);
+  opacity: 0.78;
+  line-height: 1.7;
   margin: 0;
 }
 
-.zh-sets-featured__tagline {
-  color: var(--color-stone);
-  font-size: 0.95rem;
-  margin: 0;
+.zh-sets-card-sub {
+  background: rgba(250, 250, 247, 0.35);
+  border: 1px solid rgba(232, 224, 216, 0.45);
+  backdrop-filter: blur(56px) saturate(160%);
+  -webkit-backdrop-filter: blur(56px) saturate(160%);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow:
+    0 16px 40px -16px rgba(20, 17, 15, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: background var(--dur-hover) var(--ease-out-soft),
+              border-color var(--dur-hover) var(--ease-out-soft);
 }
-
-/* Empty-state message */
-.zh-sets-empty {
-  color: var(--color-stone);
-  font-size: 0.95rem;
+.zh-sets-card-sub:hover {
+  background: rgba(95, 119, 96, 0.18);
+  border-color: rgba(95, 119, 96, 0.45);
 }
+.zh-sets-sub-stat { font-size: 0.82rem; color: var(--color-stone); }
+.zh-sets-sub-stat strong { color: var(--color-charcoal); font-weight: 700; }
+.zh-sets-sub-cta {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.zh-sets-sub-cta::after {
+  content: '';
+  width: 16px;
+  height: 1px;
+  background: currentColor;
+}
+.zh-sets-card-sub:hover .zh-sets-sub-cta { color: var(--color-forest); }
 
 /* Hide on mobile (< 768px) — mega-menu is desktop only */
 @media (max-width: 767px) {

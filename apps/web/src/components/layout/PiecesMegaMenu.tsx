@@ -1,41 +1,180 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { Container, MoneyDisplay } from '@zhic/ui';
+import { Container } from '@zhic/ui';
 import { toPersianDigits } from '@zhic/locale';
 import type { NavMeta } from '@/lib/payload';
 import './pieces-mega-menu.css';
 
-const PIECE_TYPES: Array<{ value: string; label: string }> = [
-  { value: 'bed',             label: 'تخت' },
-  { value: 'nightstand',      label: 'پاتختی' },
-  { value: 'dresser',         label: 'دراور' },
-  { value: 'closet',          label: 'کمد' },
-  { value: 'mirror',          label: 'آینه' },
-  { value: 'vanity',          label: 'میز آرایش' },
-  { value: 'display_cabinet', label: 'ویترین' },
-  { value: 'console',         label: 'کنسول' },
-  { value: 'desk',            label: 'میز تحریر' },
-  { value: 'bookcase',        label: 'کتابخانه' },
-  { value: 'chair',           label: 'صندلی' },
-  { value: 'sofa',            label: 'لاوست' },
-  { value: 'changing_table',  label: 'میز تعویض' },
-  { value: 'bracket',         label: 'براکت' },
+type PieceChild = {
+  label: string;
+  /** Canonical category slug under /bedroom-furniture/. Used to read the
+   *  product count from data.categories. */
+  slug: string;
+  href: string;
+};
+
+type PieceGroup = {
+  /** Header label shown above the children. */
+  title: string;
+  /** Optional href — if omitted, the header is a pure grouping label
+   *  (no parent page exists, e.g. کتابخانه و ویترین). */
+  href?: string;
+  /** Slug used to look up the count for the header (parent category). */
+  slug?: string;
+  /** If true, render as a single leaf row instead of header + children. */
+  leaf?: boolean;
+  children?: PieceChild[];
+};
+
+/**
+ * 3-column tree mirroring the Zhic category Map.png. Each column lists its
+ * groups top-to-bottom in Map order. Leaves and grouping nodes are mixed.
+ *
+ * The href on each link is the canonical /bedroom-furniture path for that
+ * category as it currently exists in the DB (verified 2026-05-23). Some
+ * Map nodes don't have a direct DB equivalent — see inline comments.
+ */
+const PIECES_COLUMNS: PieceGroup[][] = [
+  // ── Column 1 (visual right under RTL) ──
+  [
+    {
+      title: 'تخت خواب',
+      href: '/bedroom-furniture/bed',
+      slug: 'bed',
+      children: [
+        { label: 'نوزادی',   slug: 'baby',         href: '/bedroom-furniture/bed/baby' },
+        { label: 'یک‌نفره',  slug: 'single',       href: '/bedroom-furniture/bed/single' },
+        { label: 'دونفره',   slug: 'double',       href: '/bedroom-furniture/bed/double' },
+        { label: 'دوطبقه',   slug: 'bunk',         href: '/bedroom-furniture/bed/bunk' },
+        // convertible lives under bed/baby in the DB; surface it at the bed level for the Map's flat reading.
+        { label: 'دومنظوره', slug: 'convertible',  href: '/bedroom-furniture/bed/baby/convertible' },
+        // No dedicated "sofa-bed" category yet; loveseat is the closest piece.
+        { label: 'کاناپه‌ای', slug: 'loveseat',    href: '/bedroom-furniture/seating/loveseat' },
+      ],
+    },
+    {
+      title: 'پاتختی',
+      href: '/bedroom-furniture/nightstand',
+      slug: 'nightstand',
+      leaf: true,
+    },
+    {
+      title: 'تجهیزات جانبی تخت',
+      href: '/bedroom-furniture/complement',
+      slug: 'complement',
+      children: [
+        { label: 'حفاظ تخت',   slug: 'bed-guard',     href: '/bedroom-furniture/complement/bed-guard' },
+        { label: 'باکس تخت',   slug: 'bed-box',       href: '/bedroom-furniture/complement/bed-box' },
+        { label: 'جک کفی تخت', slug: 'bed-jack',      href: '/bedroom-furniture/complement/bed-jack' },
+        { label: 'صفحه تعویض', slug: 'changing-top',  href: '/bedroom-furniture/complement/changing-top' },
+        { label: 'میز تعویض',  slug: 'changing-table',href: '/bedroom-furniture/complement/changing-table' },
+        { label: 'شلف دیواری', slug: 'wall-shelf',    href: '/bedroom-furniture/complement/wall-shelf' },
+      ],
+    },
+  ],
+  // ── Column 2 ──
+  [
+    {
+      title: 'کمد',
+      href: '/bedroom-furniture/storage/wardrobe',
+      slug: 'wardrobe',
+      children: [
+        { label: 'کمد یک‌درب', slug: 'single-door', href: '/bedroom-furniture/storage/wardrobe/single-door' },
+        { label: 'کمد دو‌درب', slug: 'double-door', href: '/bedroom-furniture/storage/wardrobe/double-door' },
+        { label: 'کمد سه‌درب', slug: 'triple-door', href: '/bedroom-furniture/storage/wardrobe/triple-door' },
+        { label: 'کمد ریلی',   slug: 'sliding',     href: '/bedroom-furniture/storage/wardrobe/sliding' },
+      ],
+    },
+    {
+      title: 'میز',
+      href: '/bedroom-furniture/table',
+      slug: 'table',
+      children: [
+        { label: 'میز تحریر', slug: 'study-desk', href: '/bedroom-furniture/table/study-desk' },
+        { label: 'میز آرایش', slug: 'vanity',     href: '/bedroom-furniture/table/vanity' },
+        // console lives under /display in the DB, not /table — link to its canonical path.
+        { label: 'میز کنسول', slug: 'console',    href: '/bedroom-furniture/display/console' },
+      ],
+    },
+    {
+      // Grouping label — no parent page, just a header that groups two leaves.
+      title: 'کتابخانه و ویترین',
+      children: [
+        { label: 'کتابخانه', slug: 'bookcase',         href: '/bedroom-furniture/storage/bookcase' },
+        { label: 'ویترین',   slug: 'display-cabinet',  href: '/bedroom-furniture/display/display-cabinet' },
+      ],
+    },
+  ],
+  // ── Column 3 ──
+  [
+    {
+      // Grouping — file lives under /storage; no dedicated "dresser" category yet.
+      title: 'دراور و فایل',
+      children: [
+        { label: 'فایل', slug: 'file-cabinet', href: '/bedroom-furniture/storage/file-cabinet' },
+      ],
+    },
+    {
+      title: 'صندلی',
+      href: '/bedroom-furniture/seating',
+      slug: 'seating',
+      children: [
+        { label: 'صندلی آرایش', slug: 'vanity-chair', href: '/bedroom-furniture/seating/vanity-chair' },
+        { label: 'صندلی تحریر', slug: 'study-chair',  href: '/bedroom-furniture/seating/study-chair' },
+      ],
+    },
+    {
+      title: 'آینه',
+      href: '/bedroom-furniture/mirror',
+      slug: 'mirror',
+      children: [
+        { label: 'آینه قدی',    slug: 'standing-mirror', href: '/bedroom-furniture/mirror/standing-mirror' },
+        { label: 'آینه دیواری', slug: 'wall-mirror',     href: '/bedroom-furniture/mirror/wall-mirror' },
+        { label: 'آینه رومیزی', slug: 'table-mirror',    href: '/bedroom-furniture/mirror/table-mirror' },
+      ],
+    },
+  ],
 ];
 
 export type PiecesMegaMenuProps = {
   data: NavMeta;
-  /** Pathname for active-link styling on the trigger. */
   pathname: string | null;
 };
 
 export function PiecesMegaMenu({ data, pathname }: PiecesMegaMenuProps) {
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLAnchorElement>(null);
+  const closeTimerRef = useRef<number | null>(null);
   const menuId = useId();
   const active = pathname?.startsWith('/bedroom-furniture') ?? false;
+
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { if (open) setHasOpened(true); }, [open]);
+
+  // 140ms grace timer so the mouse can cross the gap between trigger and panel.
+  const cancelClose = () => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+  const scheduleClose = () => {
+    cancelClose();
+    closeTimerRef.current = window.setTimeout(() => setOpen(false), 140);
+  };
+  useEffect(() => () => cancelClose(), []);
+
+  // Build a slug → count map from NavMeta.categories for inline counts.
+  const countBySlug = new Map<string, number>();
+  for (const c of data.categories ?? []) {
+    if (c.slug) countBySlug.set(c.slug, c.productCount ?? 0);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -57,94 +196,127 @@ export function PiecesMegaMenu({ data, pathname }: PiecesMegaMenuProps) {
     };
   }, [open]);
 
-  const visibleTypes = PIECE_TYPES.filter(
-    (p) => (data.pieceCounts?.[p.value as keyof typeof data.pieceCounts] ?? 0) > 0,
+  const panel = (
+    <div
+      id={menuId}
+      className="zh-pieces-panel"
+      role="dialog"
+      aria-label="منوی مبلمان اتاق خواب"
+      data-open={open ? 'true' : undefined}
+      onMouseEnter={() => { cancelClose(); setOpen(true); }}
+      onMouseLeave={scheduleClose}
+      style={{
+        backgroundColor: 'var(--glass-bg-chrome)',
+        backdropFilter: 'blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome))',
+        WebkitBackdropFilter: 'blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome))',
+      }}
+    >
+        <Container>
+          <div className="zh-pieces-body">
+
+            <div className="zh-pieces-head">
+              <div className="zh-pieces-eyebrow">مبلمان اتاق خواب</div>
+              <div className="zh-pieces-title">
+                قطعات <em>اتاق خواب</em>
+              </div>
+            </div>
+
+            <div className="zh-pieces-cols">
+              {PIECES_COLUMNS.map((column, ci) => (
+                <div key={ci} className="zh-pieces-col">
+                  {column.map((group, gi) => {
+                    if (group.leaf) {
+                      return (
+                        <div key={gi} className="zh-piece-cat zh-piece-cat--leaf">
+                          <Link
+                            href={group.href!}
+                            className="zh-piece-cat-name"
+                            onClick={() => setOpen(false)}
+                          >
+                            <span>{group.title}</span>
+                            <span className="zh-piece-leaf-mark">— مشاهده‌ی همه</span>
+                          </Link>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={gi} className="zh-piece-cat">
+                        {group.href ? (
+                          <Link
+                            href={group.href}
+                            className="zh-piece-cat-name"
+                            onClick={() => setOpen(false)}
+                          >
+                            {group.title}
+                          </Link>
+                        ) : (
+                          <span className="zh-piece-cat-name zh-piece-cat-name--group">
+                            {group.title}
+                          </span>
+                        )}
+                        {group.children && group.children.length > 0 && (
+                          <ul className="zh-piece-sub-list">
+                            {group.children.map((child) => {
+                              const count = countBySlug.get(child.slug) ?? 0;
+                              return (
+                                <li key={child.slug}>
+                                  <Link
+                                    href={child.href}
+                                    className="zh-piece-sub-link"
+                                    onClick={() => setOpen(false)}
+                                  >
+                                    <span>{child.label}</span>
+                                    {count > 0 && (
+                                      <span className="zh-piece-sub-count">
+                                        {toPersianDigits(count)}
+                                      </span>
+                                    )}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
+            <div className="zh-pieces-foot">
+              <Link href="/bedroom-furniture" className="zh-pieces-cta" onClick={() => setOpen(false)}>
+                مشاهده‌ی همه‌ی قطعات
+                <span className="zh-pieces-arrow-inline" aria-hidden />
+              </Link>
+              <span className="zh-pieces-foot-note">
+                رنگ و نوع چوب در صفحه‌ی هر دسته فیلتر می‌شود
+              </span>
+            </div>
+
+          </div>
+        </Container>
+    </div>
   );
 
   return (
-    <div ref={wrapRef} className="zh-pieces-wrap" onMouseLeave={() => setOpen(false)}>
-      <button
+    <div ref={wrapRef} className="zh-pieces-wrap">
+      <Link
         ref={triggerRef}
-        type="button"
+        href="/bedroom-furniture"
         className="zh-pieces-trigger"
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={menuId}
         aria-current={active ? 'page' : undefined}
-        onClick={() => setOpen((v) => !v)}
-        onMouseEnter={() => setOpen(true)}
+        onMouseEnter={() => { cancelClose(); setOpen(true); }}
+        onMouseLeave={scheduleClose}
+        onClick={() => setOpen(false)}
       >
-        تخت و وسایل اتاق خواب
+        مبلمان اتاق خواب
         <span className="zh-pieces-chev" aria-hidden />
-      </button>
-
-      <div
-        id={menuId}
-        className="zh-pieces-panel"
-        role="dialog"
-        aria-label="منوی قطعات"
-        data-open={open ? 'true' : undefined}
-      >
-        <Container>
-          <div className="zh-pieces-body">
-            <div className="zh-pieces-main">
-              {visibleTypes.length === 0 ? (
-                <p className="zh-pieces-empty">هیچ قطعه‌ای پیدا نشد.</p>
-              ) : (
-                <ul className="zh-pieces-grid">
-                  {visibleTypes.map((p) => {
-                    const count =
-                      data.pieceCounts?.[p.value as keyof typeof data.pieceCounts] ?? 0;
-                    return (
-                      <li key={p.value}>
-                        <Link
-                          href={`/bedroom-furniture/${p.value}`}
-                          onClick={() => setOpen(false)}
-                        >
-                          <span>{p.label}</span>
-                          <span className="zh-pieces-count">{toPersianDigits(count)}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-              <Link href="/bedroom-furniture" className="zh-pieces-cta" onClick={() => setOpen(false)}>
-                همه‌ی قطعات <span className="zh-pieces-arrow" aria-hidden />
-              </Link>
-            </div>
-
-            {data.featuredProduct ? (
-              <aside className="zh-pieces-featured" aria-label="قطعه‌ی شاخص ماه">
-                <p className="zh-pieces-featured__eyebrow">قطعه‌ی شاخص ماه</p>
-                {data.featuredProduct.coverImageUrl && (
-                  <div
-                    className="zh-pieces-featured__media"
-                    style={{ backgroundImage: `url(${data.featuredProduct.coverImageUrl})` }}
-                    aria-hidden
-                  />
-                )}
-                <h3 className="zh-pieces-featured__title">{data.featuredProduct.name}</h3>
-                {data.featuredProduct.tagline && (
-                  <p className="zh-pieces-featured__tagline">{data.featuredProduct.tagline}</p>
-                )}
-                <div className="zh-pieces-featured__price">
-                  <MoneyDisplay rials={data.featuredProduct.basePriceRials} />
-                </div>
-                <Link
-                  href={`/products/${data.featuredProduct.slug}`}
-                  className="zh-pieces-cta"
-                  onClick={() => setOpen(false)}
-                >
-                  مشاهده‌ی محصول <span className="zh-pieces-arrow" aria-hidden />
-                </Link>
-              </aside>
-            ) : (
-              <div aria-hidden /> /* empty cell keeps the grid 2-col */
-            )}
-          </div>
-        </Container>
-      </div>
+      </Link>
+      {mounted && hasOpened ? createPortal(panel, document.body) : null}
     </div>
   );
 }

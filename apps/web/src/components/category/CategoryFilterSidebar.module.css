@@ -14,11 +14,11 @@
   .sidebar::-webkit-scrollbar-thumb { background: var(--color-sand-2, #DDD3C7); border-radius: 2px; }
 }
 .head { display: flex; align-items: center; justify-content: space-between; margin-block-end: 20px; }
-.title { font-size: 13px; letter-spacing: 0.18em; color: var(--color-stone); text-transform: uppercase; font-weight: 700; }
+.title { font-size: 13px; letter-spacing: var(--tracking-eyebrow-xwide); color: var(--color-stone); text-transform: uppercase; font-weight: 700; }
 .clear { font-size: 11px; color: var(--color-forest); text-decoration: underline; text-underline-offset: 3px; }
 .group { padding-block: 18px; border-block-end: 1px solid var(--color-sand); }
 .group:last-child { border-block-end: 0; }
-.label { font-size: 11px; letter-spacing: 0.18em; color: var(--color-stone); text-transform: uppercase; margin-block-end: 12px; font-weight: 700; }
+.label { font-size: var(--text-eyebrow-compact); letter-spacing: var(--tracking-eyebrow-xwide); color: var(--color-stone); text-transform: uppercase; margin-block-end: 12px; font-weight: 700; }
 .list { display: flex; flex-direction: column; gap: 2px; }
 .opt {
   display: flex;
@@ -28,7 +28,7 @@
   font-size: 14px;
   color: var(--color-charcoal);
   font-weight: 400;
-  transition: color .2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color var(--dur-fast) var(--ease-out-soft);
   text-decoration: none;
 }
 .opt:hover { color: var(--color-ink); }
@@ -39,13 +39,13 @@
   border: 1px solid var(--color-sand-2, #DDD3C7);
   flex-shrink: 0;
   display: inline-flex; align-items: center; justify-content: center;
-  color: #fff;
+  color: var(--color-ivory);
   font-size: 11px;
   line-height: 1;
-  transition: all .2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all var(--dur-fast) var(--ease-out-soft);
 }
 .opt.radio .check { border-radius: 50%; }
 .opt.active .check { background: var(--color-forest); border-color: var(--color-forest); }
 .opt.active .check::before { content: '✓'; }
-.opt.radio.active .check::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+.opt.radio.active .check::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--color-ivory); }
 .opt .count { margin-inline-start: auto; font-size: 11px; color: var(--color-stone); font-feature-settings: 'tnum'; }

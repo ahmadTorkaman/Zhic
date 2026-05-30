@@ -28,12 +28,12 @@
   position: absolute;
   inset-inline-start: clamp(16px, 4vw, 64px);
   inset-block-end: clamp(24px, 6vw, 56px);
-  color: #FAFAF7;
+  color: var(--color-ivory);
   max-width: min(540px, 80vw);
 }
 .eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: var(--text-eyebrow-compact);
+  letter-spacing: var(--tracking-eyebrow-xwide);
   text-transform: uppercase;
   color: rgba(255,255,255,0.75);
   font-weight: 400;
@@ -49,14 +49,14 @@
   color: rgba(255,255,255,0.55);
 }
 .title {
-  font-size: clamp(40px, 6vw, 76px);
+  font-size: var(--text-display);
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: #fff;
+  color: var(--color-ivory);
   margin-block-end: 12px;
 }
-.titleParent { font-size: clamp(44px, 7vw, 88px); }
+.titleParent { font-size: var(--text-display-lg); }
 .tagline {
   font-size: clamp(16px, 1.6vw, 20px);
   font-weight: 300;

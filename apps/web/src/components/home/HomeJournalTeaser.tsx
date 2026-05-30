@@ -87,7 +87,7 @@ export function HomeJournalTeaser({
               className="group block md:row-span-2"
             >
               <div className="relative mb-5 aspect-[3/4] overflow-hidden bg-cream">
-                <div className="absolute inset-0 transition-transform duration-[1200ms] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
+                <div className="absolute inset-0 transition-transform duration-[var(--dur-glacial)] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
                   <PayloadImage
                     media={featured.cover ?? null}
                     alt={featured.title}

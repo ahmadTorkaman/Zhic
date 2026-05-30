@@ -43,10 +43,10 @@ export function HorizontalTile({
   return (
     <a
       href={href}
-      className={`group grid items-center gap-4 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:-translate-y-[3px] ${colsClass} ${className}`}
+      className={`group grid items-center gap-4 transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] hover:translate-y-[var(--hover-lift-card)] ${colsClass} ${className}`}
     >
       <div className="relative aspect-square overflow-hidden bg-cream">
-        <div className="absolute inset-0 transition-transform duration-[1200ms] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
+        <div className="absolute inset-0 transition-transform duration-[var(--dur-glacial)] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
           {image}
         </div>
       </div>

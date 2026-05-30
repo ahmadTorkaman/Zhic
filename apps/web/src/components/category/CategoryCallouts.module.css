@@ -19,8 +19,8 @@
 }
 .parent .num { font-size: 32px; }
 .lbl {
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: var(--text-eyebrow-compact);
+  letter-spacing: var(--tracking-eyebrow-xwide);
   color: var(--color-stone);
   text-transform: uppercase;
 }

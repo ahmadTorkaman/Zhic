@@ -45,6 +45,14 @@
   --text-small--line-height: 1.7;
   --text-eyebrow: 0.75rem;
   --text-eyebrow--line-height: 1.5;
+  --text-eyebrow-compact: 0.6875rem;
+  --text-eyebrow-compact--line-height: 1.5;
+  --text-display: clamp(40px, 6vw, 76px);
+  --text-display--line-height: 1.05;
+  --text-display-lg: clamp(44px, 7vw, 88px);
+  --text-display-lg--line-height: 1.05;
+  --text-section: clamp(22px, 2.4vw, 32px);
+  --text-section--line-height: 1.2;
 
   /* Spacing scale (gap-N, p-N, m-N, etc.) */
   --spacing-1:  0.25rem;

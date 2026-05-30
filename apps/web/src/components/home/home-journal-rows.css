@@ -5,7 +5,19 @@
 .zh-jrows__lead { font-size: var(--text-body); color: var(--color-stone); font-weight: 300; line-height: 1.85; }
 
 .zh-jrows__rows { display: flex; flex-direction: column; gap: var(--space-5); margin-bottom: var(--space-7); }
-.zh-jrows__row { display: flex; flex-direction: row; gap: var(--space-5); will-change: transform; transform: translateX(0); padding-inline: max(0px, calc((100vw - var(--width-container-storefront)) / -2)); }
+/* Rows flow edge-to-edge horizontally and extend beyond the viewport so the
+   parallax has actual content to slide past. On screens wider than the
+   1440px container, we add inline padding to keep the cards aligned with the
+   storefront grid; on narrower screens (mobile/tablet) there's no padding,
+   cards run from edge to edge. */
+.zh-jrows__row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-5);
+  will-change: transform;
+  transform: translateX(0);
+  padding-inline: max(0px, calc((100vw - var(--width-container-storefront)) / 2));
+}
 
 .zh-jrows__card { flex: 0 0 auto; width: 340px; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
 @media (max-width: 767px) { .zh-jrows__card { width: 200px; } }

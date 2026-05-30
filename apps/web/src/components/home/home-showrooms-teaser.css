@@ -16,7 +16,7 @@
   .zh-st__grid { grid-template-columns: 1fr 1fr 1fr; }
 }
 .zh-st__card { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform var(--dur-hover) var(--ease-out-soft); }
-.zh-st__card:hover { transform: translateY(-2px); }
+.zh-st__card:hover { transform: translateY(var(--hover-lift-card)); }
 .zh-st__cover { aspect-ratio: 3 / 2; background-size: cover; background-position: center; margin-bottom: 0.85rem; overflow: hidden; border-top-right-radius: 20px; position: relative; }
 .zh-st__cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,17,15,0.18), transparent 60%); pointer-events: none; }
 .zh-st__city { font-size: 1.05rem; font-weight: 700; color: var(--color-ink); margin-bottom: 0.25rem; }

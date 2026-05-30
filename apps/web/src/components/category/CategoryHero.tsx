@@ -16,7 +16,7 @@ export function CategoryHero({ category, fallbackCoverUrl }: CategoryHeroProps) 
   // Placeholder when no cover and no fallback: cream-to-sand gradient with «ژ» watermark.
   const placeholderBg =
     'linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(20,17,15,0.55) 100%), ' +
-    'radial-gradient(ellipse at 70% 20%, #d8c4a3 0%, #8b6f47 55%, #3e2f1f 100%)';
+    'var(--gradient-glow-caramel)';
   const heroBg = coverUrl
     ? `linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(20,17,15,0.55) 100%), url("${coverUrl}")`
     : placeholderBg;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Container } from '@zhic/ui';
@@ -16,28 +16,26 @@ export type SiteHeaderProps = {
 
 export function SiteHeader({ navMeta }: SiteHeaderProps) {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Border layout differs between mobile pill (full border) and desktop bar (border-bottom only).
-  // Match the layout in both states so chrome activation doesn't cause a height jump.
-  const chromeClass = scrolled
-    ? 'site-header-chrome'
-    : 'bg-transparent border border-transparent md:border-x-0 md:border-t-0';
+  // Heavy-blur glass is always-on now (matches the dropdowns and picker bar).
+  // No more scroll-driven chrome toggle.
+  const chromeClass = 'site-header-chrome';
 
   // محصولات is removed from NAV_LINKS; SetsMegaMenu + PiecesMegaMenu own those entries.
 
   return (
     <>
       <header
-        className={`fixed top-2 inset-x-3 z-[var(--z-header)] flex items-center rounded-full h-[44px] md:top-0 md:inset-x-0 md:rounded-none md:h-[60px] transition-all duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] ${chromeClass}`}
+        className={`fixed top-2 inset-x-3 z-[var(--z-header)] flex items-center rounded-full h-[44px] md:top-0 md:inset-x-0 md:rounded-none md:h-[60px] ${chromeClass}`}
+        // Inline glass — literal PickerBar recipe. `transition-all` was
+        // animating backdrop-filter, which Chrome refuses to composite
+        // during interpolation. Killed it.
+        style={{
+          backgroundColor: 'var(--glass-bg-chrome)',
+          backdropFilter: 'blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome))',
+          WebkitBackdropFilter: 'blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome))',
+        }}
       >
         <Container>
           {/*

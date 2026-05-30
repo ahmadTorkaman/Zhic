@@ -10,8 +10,8 @@ export type GlassCardProps = {
   children?: ReactNode;
 };
 
-const BASE_LIGHT = 'glass-card block rounded-lg p-6';
-const BASE_DARK = 'glass-card-dark block rounded-lg p-7';
+const BASE_LIGHT = 'glass-card block rounded-md p-6';
+const BASE_DARK = 'glass-card-dark block rounded-md p-7';
 
 export function GlassCard({ tone = 'light', href, className, children }: GlassCardProps) {
   const base = tone === 'dark' ? BASE_DARK : BASE_LIGHT;

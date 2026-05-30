@@ -20,7 +20,7 @@ export function JournalFeaturedArticle({ article }: JournalFeaturedArticleProps)
       {/* Image — mobile: order-2 (stacks below text). Desktop: order-2 → column 2,
            which in RTL is the visually-left column. Matches mockup Option B. */}
       <div className="order-2 overflow-hidden bg-cream transition-shadow duration-[var(--dur-hover)] ease-[var(--ease-out-soft)] group-hover:shadow-[var(--shadow-card)] aspect-[16/9] md:aspect-[4/5]">
-        <div className="h-full w-full transition-transform duration-[1200ms] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
+        <div className="h-full w-full transition-transform duration-[var(--dur-glacial)] ease-[var(--ease-out-soft)] group-hover:scale-[1.02]">
           <PayloadImage
             media={article.cover ?? null}
             alt={article.title}

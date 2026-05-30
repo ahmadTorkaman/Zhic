@@ -13,6 +13,15 @@ export type HomeRoomsTilesProps = {
   rooms: HomeRoomTile[];
 };
 
+// Room slug → /bedroom-set/{occupancy} hub. The /rooms/[slug] route still
+// exists as an editorial landing, but the homepage tiles should drive into
+// the catalog occupancy pages.
+const ROOM_TO_OCCUPANCY: Record<'kid' | 'teen' | 'adult', 'baby' | 'teen' | 'double'> = {
+  kid:   'baby',
+  teen:  'teen',
+  adult: 'double',
+};
+
 export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
   if (rooms.length === 0) return null;
   return (
@@ -20,7 +29,7 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
       <Container>
         <div className="zh-rooms__grid">
           {rooms.map((r) => (
-            <Link key={r.slug} href={`/rooms/${r.slug}`} className="zh-rooms__tile">
+            <Link key={r.slug} href={`/bedroom-set/${ROOM_TO_OCCUPANCY[r.slug]}`} className="zh-rooms__tile">
               <ParallaxImage
                 src={r.coverUrl}
                 alt={r.name}

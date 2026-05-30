@@ -8,7 +8,7 @@
   .zh-rooms__grid { grid-template-columns: 1fr 1fr 1fr; gap: var(--space-5); }
 }
 .zh-rooms__tile { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform var(--dur-hover) var(--ease-out-soft); }
-.zh-rooms__tile:hover { transform: translateY(-2px); }
+.zh-rooms__tile:hover { transform: translateY(var(--hover-lift-card)); }
 .zh-rooms__media { aspect-ratio: 4 / 5; margin-bottom: var(--space-4); }
 @media (max-width: 767px) {
   .zh-rooms__media { aspect-ratio: 5 / 3; }

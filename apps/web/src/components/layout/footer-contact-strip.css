@@ -1,7 +1,7 @@
 .zh-fcs { padding-bottom: 3rem; border-bottom: 1px solid rgba(250,250,247,0.08); margin-bottom: 3rem; }
 .zh-fcs__head { margin-bottom: 2.5rem; max-width: 560px; }
 .zh-fcs__eyebrow { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-gold); margin-bottom: var(--space-3); }
-.zh-fcs__heading { font-size: clamp(2rem, 3vw + 0.75rem, 3rem); font-weight: 900; line-height: 1.2; color: var(--color-ivory); margin-bottom: var(--space-4); }
+.zh-fcs__heading { font-size: var(--text-h2); font-weight: 900; line-height: 1.2; color: var(--color-ivory); margin-bottom: var(--space-4); }
 .zh-fcs__lead { font-size: var(--text-body); color: var(--color-sand); font-weight: 300; line-height: 1.85; }
 
 .zh-fcs__grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }

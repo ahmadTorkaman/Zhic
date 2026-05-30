@@ -16,6 +16,12 @@
   /* Functional (app infra) */
   --color-rust:     #8B4A2B;
 
+  /* Gradients
+     Caramel→walnut glow used as the on-brand placeholder background for
+     hero/showroom cards without a photo yet. Defined once here; reference
+     via var() in inline styles. */
+  --gradient-glow-caramel: radial-gradient(ellipse at 70% 20%, #d8c4a3 0%, #8b6f47 55%, #3e2f1f 100%);
+
   /* Typography sizes */
   --text-h1:        clamp(2.5rem, 4vw + 1rem, 4rem);
   --text-h2:        clamp(2rem, 3vw + 0.75rem, 3rem);
@@ -25,6 +31,12 @@
   --text-body:      1rem;
   --text-small:     0.875rem;
   --text-eyebrow:   0.75rem;
+  --text-eyebrow-compact: 0.6875rem; /* 11px — dense category eyebrows/labels */
+  /* Storefront display/section headings — heavier, tighter than the --text-h*
+     document scale. Used by hero + section headers. */
+  --text-display:    clamp(40px, 6vw, 76px);
+  --text-display-lg: clamp(44px, 7vw, 88px);
+  --text-section:    clamp(22px, 2.4vw, 32px);
 
   /* Line heights */
   --leading-h1:      1.2;
@@ -37,8 +49,9 @@
   --leading-eyebrow: 1.5;
 
   /* Eyebrow tracking */
-  --tracking-eyebrow:      0.08em;
-  --tracking-eyebrow-wide: 0.12em;
+  --tracking-eyebrow:       0.08em;
+  --tracking-eyebrow-wide:  0.12em;
+  --tracking-eyebrow-xwide: 0.18em; /* dense uppercase category labels */
 
   /* Font */
   --font-sans: var(--font-ayandeh), 'Tahoma', sans-serif;
@@ -74,13 +87,26 @@
   --glass-blur:        24px;
   --glass-bg-dark:     rgba(250, 250, 247, 0.03);
   --glass-border-dark: rgba(250, 250, 247, 0.06);
+  /* Chrome glass — heavy-blur material shared by the scrolled site header
+     and the sticky picker bar so all chrome layers read as one surface. */
+  --glass-bg-chrome:       rgba(250, 250, 247, 0.70);
+  --glass-blur-chrome:     64px;
+  --glass-saturate-chrome: 1.4;
 
-  /* Motion */
+  /* Motion — storefront scale (mirrors packages/design-system/src/tokens/motion.ts) */
+  --dur-instant:   100ms;
+  --dur-fast:      240ms;
+  --dur-medium:    300ms;
+  --dur-base:      480ms;
+  --dur-slow:      720ms;
+  --dur-glacial:   1200ms;
   --dur-hover:     720ms;
   --dur-dialog:    600ms;
   --dur-appear:    720ms;
-  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-soft:  cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-out-soft:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-soft:     cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-expo-out:    cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Interaction */
   --hover-lift:        -2px;
