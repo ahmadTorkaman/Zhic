@@ -333,21 +333,53 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
           <p className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
             مجموعه
           </p>
-          {ageFilter ? (
-            <div className="mb-6 flex items-center gap-3">
-              <span className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-stone">
-                فیلتر:
+          {/* Age-filter chip row. Shows when the design covers any
+              occupancy. Renders an "All" chip (clears filter) + one chip
+              per occupancy the design covers, in canonical age order. The
+              active chip fills forest-dark; inactive chips are sand-
+              outlined and fill forest-dark on hover. The chip row replaces
+              the older single-active "filter pill" — its job (clearing) is
+              done by the "All" chip and its display (current filter) is
+              done by the active chip's distinct styling. */}
+          {design.occupancies && design.occupancies.length > 0 ? (
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="me-2 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-stone">
+                گروه سنی:
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-forest-dark px-4 py-1.5 text-small font-bold text-ivory">
-                {OCCUPANCY_PERSIAN[ageFilter].title.replace('سرویس خواب ', '')}
-                <a
-                  href={`/bedroom-set/${slug}`}
-                  aria-label="حذف فیلتر"
-                  className="text-ivory/80 transition-colors hover:text-ivory"
-                >
-                  ×
-                </a>
-              </span>
+              {(() => {
+                const chipBase =
+                  'inline-flex rounded-full px-4 py-1.5 text-small transition-colors';
+                const chipActive =
+                  `${chipBase} bg-forest-dark font-bold text-ivory`;
+                const chipIdle =
+                  `${chipBase} border border-sand font-medium text-charcoal hover:border-forest-dark hover:bg-forest-dark hover:text-ivory`;
+                return (
+                  <>
+                    <a
+                      href={`/bedroom-set/${slug}`}
+                      aria-current={!ageFilter ? 'true' : undefined}
+                      className={!ageFilter ? chipActive : chipIdle}
+                    >
+                      همه
+                    </a>
+                    {OCCUPANCY_SLUGS.filter((o) =>
+                      design.occupancies!.includes(o),
+                    ).map((o) => {
+                      const active = ageFilter === o;
+                      return (
+                        <a
+                          key={o}
+                          href={`/bedroom-set/${slug}?age=${o}`}
+                          aria-current={active ? 'true' : undefined}
+                          className={active ? chipActive : chipIdle}
+                        >
+                          {OCCUPANCY_PERSIAN[o].title.replace('سرویس خواب ', '')}
+                        </a>
+                      );
+                    })}
+                  </>
+                );
+              })()}
             </div>
           ) : null}
           {productsPage.docs.length === 0 ? (
