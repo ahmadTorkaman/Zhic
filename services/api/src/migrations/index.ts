@@ -11,6 +11,9 @@ import * as migration_20260522_153000_extend_inquiries_with_variant from './2026
 import * as migration_20260522_220000_add_warranty_years_to_products from './20260522_220000_add_warranty_years_to_products';
 import * as migration_20260522_221000_fix_price_delta_rials_type from './20260522_221000_fix_price_delta_rials_type';
 import * as migration_20260523_120000_add_occupancies_and_axis_filter from './20260523_120000_add_occupancies_and_axis_filter';
+import * as migration_20260529_210000_swap_subscribers_email_to_phone from './20260529_210000_swap_subscribers_email_to_phone';
+import * as migration_20260530_200000_add_after_sales_years_to_products from './20260530_200000_add_after_sales_years_to_products';
+import * as migration_20260530_220000_add_products_occupancies from './20260530_220000_add_products_occupancies';
 
 export const migrations = [
   {
@@ -77,5 +80,20 @@ export const migrations = [
     up: migration_20260523_120000_add_occupancies_and_axis_filter.up,
     down: migration_20260523_120000_add_occupancies_and_axis_filter.down,
     name: '20260523_120000_add_occupancies_and_axis_filter'
+  },
+  {
+    up: migration_20260529_210000_swap_subscribers_email_to_phone.up,
+    down: migration_20260529_210000_swap_subscribers_email_to_phone.down,
+    name: '20260529_210000_swap_subscribers_email_to_phone'
+  },
+  {
+    up: migration_20260530_200000_add_after_sales_years_to_products.up,
+    down: migration_20260530_200000_add_after_sales_years_to_products.down,
+    name: '20260530_200000_add_after_sales_years_to_products'
+  },
+  {
+    up: migration_20260530_220000_add_products_occupancies.up,
+    down: migration_20260530_220000_add_products_occupancies.down,
+    name: '20260530_220000_add_products_occupancies'
   },
 ];

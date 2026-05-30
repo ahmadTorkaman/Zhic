@@ -290,6 +290,11 @@ export type PayloadProduct = {
   availability?: ProductAvailability | null;
   leadTimeDays?: number | null;
   warrantyYears?: number | null;
+  afterSalesYears?: number | null;
+  /** Which age groups this piece serves. Drives the ?age=… filter on
+   *  /bedroom-set/[design-slug]. Null/empty = unaffected by the filter.
+   *  Plural name mirrors the auto-generated `products_occupancies` join table. */
+  occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
   dimensions?: { width?: number; height?: number; depth?: number } | null;
   gallery?: PayloadMedia[] | null;
   inquiry_enabled?: boolean | null;
@@ -361,6 +366,13 @@ export type NavFeaturedProduct = {
   coverImageUrl: string | null;
 };
 
+/** Per-occupancy summary used by the SetsMegaMenu hover hero.
+ *  Designs + pieces counted from designs.occupancies[]; both can be 0. */
+export type NavOccupancyStats = {
+  designs: number;
+  pieces: number;
+};
+
 export type NavMeta = {
   categories: NavCategory[];
   designs: NavDesign[];
@@ -368,6 +380,8 @@ export type NavMeta = {
   featuredProduct: NavFeaturedProduct | null;
   featuredDesign: NavFeaturedDesign | null;
   pieceCounts: Partial<Record<PieceTypeValue, number>>;
+  /** Aggregated stats per occupancy hub (baby/teen/double/bunk). */
+  occupancyCounts: Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats>;
 };
 
 // --- Nav meta pure helpers --------------------------------------------------
@@ -420,6 +434,7 @@ export function bucketNavCounts(
   designs: NavDesign[];
   collections: NavCollection[];
   pieceCounts: Partial<Record<PieceTypeValue, number>>;
+  occupancyCounts: Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats>;
 } {
   const categoryCount = new Map<string, number>();
   const designCount = new Map<string, number>();
@@ -464,7 +479,33 @@ export function bucketNavCounts(
       productCount: (c.products ?? []).length,
     })),
     pieceCounts: Object.fromEntries(pieceCount) as Partial<Record<PieceTypeValue, number>>,
+    occupancyCounts: bucketOccupancyCounts(designs, designCount),
   };
+}
+
+/** Count distinct designs per occupancy + sum their product counts.
+ *  designs come pre-filtered to those with sliderMedia (nav-designs query). */
+function bucketOccupancyCounts(
+  designs: PayloadDesign[],
+  designCount: Map<string, number>,
+): Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats> {
+  const stats: Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats> = {
+    baby:   { designs: 0, pieces: 0 },
+    teen:   { designs: 0, pieces: 0 },
+    double: { designs: 0, pieces: 0 },
+    bunk:   { designs: 0, pieces: 0 },
+  };
+  for (const d of designs) {
+    const occs = d.occupancies ?? [];
+    const piecesForDesign = designCount.get(d.slug) ?? 0;
+    for (const occ of occs) {
+      if (occ in stats) {
+        stats[occ].designs += 1;
+        stats[occ].pieces  += piecesForDesign;
+      }
+    }
+  }
+  return stats;
 }
 
 export type PayloadStaticPage = {
@@ -492,6 +533,8 @@ export type ProductsQuery = {
   q?: string;
   /** Filter to a single design by slug. */
   design?: string;
+  /** Filter to a single occupancy / age group. Driven by /bedroom-set/[slug]?age=. */
+  occupancies?: 'baby' | 'teen' | 'double' | 'bunk';
   /** Restrict to a specific set of product IDs. Used by facet-page renderer
    *  to AND the category filter with "products whose variant axes match". */
   productIds?: Array<string | number>;
@@ -820,6 +863,10 @@ export async function fetchProducts(
     params.append('where[or][1][tagline][contains]', query.q);
     params.append('where[or][2][shortDescription][contains]', query.q);
   }
+  if (query.occupancies) {
+    // hasMany SELECT field — `in` semantics match "contains this value".
+    params.set('where[occupancies][in]', query.occupancies);
+  }
   if (query.design) {
     params.set('where[design.slug][equals]', query.design);
   }
@@ -1123,6 +1170,7 @@ export const fetchNavMeta = unstable_cache(
       featuredProduct,
       featuredDesign,
       pieceCounts: counts.pieceCounts,
+      occupancyCounts: counts.occupancyCounts,
     };
   },
   ['nav-meta'],

@@ -17,6 +17,7 @@ export function ProductSidebar({ product }: ProductSidebarProps) {
   const designSlug = typeof product.design === 'object' && product.design ? product.design.slug : null;
   const leadTimeDays = product.leadTimeDays ?? 56;
   const warrantyYears = product.warrantyYears ?? 5;
+  const afterSalesYears = product.afterSalesYears ?? 5;
   const materials = (product.materialIds ?? []).map((m) => m.name).filter(Boolean);
 
   return (
@@ -33,6 +34,9 @@ export function ProductSidebar({ product }: ProductSidebarProps) {
       </InfoCard>
       <InfoCard label="گارانتی">
         {toPersianDigits(warrantyYears)} سال ساختار
+      </InfoCard>
+      <InfoCard label="خدمات پس از فروش">
+        {toPersianDigits(afterSalesYears)} سال
       </InfoCard>
       {materials.length > 0 ? (
         <InfoCard label="روکش‌ها">

@@ -5,8 +5,8 @@ export const Subscribers: CollectionConfig = {
   slug: 'subscribers',
   labels: { singular: 'عضو خبرنامه', plural: 'اعضای خبرنامه' },
   admin: {
-    useAsTitle: 'email',
-    defaultColumns: ['email', 'source', 'subscribedAt'],
+    useAsTitle: 'phone',
+    defaultColumns: ['phone', 'source', 'subscribedAt'],
     group: 'مشتری',
   },
   // Subscribers are written by the public /api/newsletter route (server-side).
@@ -19,14 +19,15 @@ export const Subscribers: CollectionConfig = {
   },
   fields: [
     {
-      name: 'email',
+      name: 'phone',
       type: 'text',
       required: true,
       unique: true,
-      label: 'ایمیل',
+      label: 'شماره موبایل',
+      admin: { description: 'فرمت ذخیره: 09xxxxxxxxx (نرمال‌سازی در /api/newsletter)' },
       validate: (val: unknown) => {
-        if (typeof val !== 'string' || !val.length) return 'ایمیل الزامی است';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'فرمت ایمیل نامعتبر است';
+        if (typeof val !== 'string' || !val.length) return 'شماره موبایل الزامی است';
+        if (!/^09\d{9}$/.test(val)) return 'فرمت شماره موبایل نامعتبر است (مثال: 09121234567)';
         return true;
       },
     },

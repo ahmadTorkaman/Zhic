@@ -91,6 +91,21 @@ export const Products: CollectionConfig = {
       ],
     },
     {
+      name: 'occupancies',
+      type: 'select',
+      hasMany: true,
+      label: 'گروه ست خواب',
+      options: [
+        { label: 'سرویس خواب نوزاد', value: 'baby' },
+        { label: 'سرویس خواب نوجوان', value: 'teen' },
+        { label: 'سرویس خواب دونفره', value: 'double' },
+        { label: 'سرویس خواب دوطبقه', value: 'bunk' },
+      ],
+      admin: {
+        description: 'این قطعه به کدام گروه‌(های) سنی ست تعلق دارد؟ انتخاب چند گزینه ممکن است. در PDP طرح با ?age=… فیلتر می‌شود. خالی یعنی فیلتر سنی روی این قطعه اثری ندارد.',
+      },
+    },
+    {
       name: 'categoryIds',
       type: 'relationship',
       relationTo: 'categories',
@@ -194,6 +209,17 @@ export const Products: CollectionConfig = {
       min: 0,
       admin: {
         description: 'سال‌های گارانتی ساختار. نمایش در سایدبار PDP.',
+        step: 1,
+      },
+    },
+    {
+      name: 'afterSalesYears',
+      type: 'number',
+      defaultValue: 5,
+      label: 'خدمات پس از فروش (سال)',
+      min: 0,
+      admin: {
+        description: 'سال‌های خدمات پس از فروش. نمایش در سایدبار PDP.',
         step: 1,
       },
     },
