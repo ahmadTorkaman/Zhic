@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { PayloadDesign } from '@/lib/payload';
 import './designs-slider.css';
@@ -59,6 +60,33 @@ function getMediaMime(d: PayloadDesign): string | undefined {
     d.gallery?.[0]?.mimeType ??
     undefined
   );
+}
+
+// Make a media URL optimizer-friendly for next/image. Same-origin proxied
+// media (/api/media/...) becomes a relative path so Next's LOCAL optimizer
+// handles it (no remotePattern needed); absolute S3 URLs pass through (allowed
+// via next.config remotePatterns). Source art is multi-megapixel, so serving a
+// display-sized variant is what stops the full-res decode from hitching the
+// scroll.
+function toOptimizableSrc(url: string): string {
+  const i = url.indexOf('/api/media/');
+  return i >= 0 ? url.slice(i) : url;
+}
+
+// Per-card slot width = card width + responsive gutter. Card width is
+// viewport-derived (fixed aspect-ratio), so this is recomputed on mount/resize
+// and cached — never read inside the per-frame loop, where a
+// getBoundingClientRect would force a synchronous reflow every frame. Kept at
+// module scope so it needs no memoization (React Compiler friendly).
+function computeSlot(firstCard: HTMLElement): number {
+  const cardW = firstCard.getBoundingClientRect().width;
+  const vw = window.innerWidth;
+  const gap7vw = vw * 0.07;
+  const gapPx =
+    vw < 768
+      ? Math.min(56, Math.max(28, gap7vw))
+      : Math.min(110, Math.max(48, gap7vw));
+  return cardW + gapPx;
 }
 
 export function DesignsSlider({ designs }: DesignsSliderProps) {
@@ -127,24 +155,18 @@ function staggeredWords(text: string): React.ReactNode {
 function Slider({ designs }: { designs: PayloadDesign[] }) {
   const N = designs.length;
 
-  // progress is React state (sync with React tree); progressRef shadows it
-  // so event handlers + animation loops can read the current value without
-  // depending on closure capture.
+  // progress lives ONLY in a ref. The snap loop + drag handler drive the cards
+  // imperatively from it, so it must NOT be React state — a setState per frame
+  // would reconcile the whole deck (N cards + their <video>/<img>) every tick.
+  // React state is reserved for values the JSX reads (focused, prompt, scrub),
+  // which change at discrete moments, never per frame.
   const router = useRouter();
-  const [progress, setProgress] = React.useState(0);
   const [isScrubbing, setIsScrubbing] = React.useState(false);
   const [focused, setFocused] = React.useState(0);
   const [promptHidden, setPromptHidden] = React.useState(false);
 
   const progressRef = React.useRef(0);
-  const isScrubbingRef = React.useRef(false);
   const promptHiddenRef = React.useRef(false);
-  React.useLayoutEffect(() => {
-    progressRef.current = progress;
-  }, [progress]);
-  React.useLayoutEffect(() => {
-    isScrubbingRef.current = isScrubbing;
-  }, [isScrubbing]);
   React.useLayoutEffect(() => {
     promptHiddenRef.current = promptHidden;
   }, [promptHidden]);
@@ -159,30 +181,31 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
   const cardRefs = React.useRef<(HTMLDivElement | null)[]>([]);
   const textRef = React.useRef<HTMLDivElement | null>(null);
 
+  // Cached slot width — recomputed on mount/resize via computeSlot(), read
+  // (never measured) inside the per-frame loop.
+  const metricsRef = React.useRef({ slot: 0 });
+  // Last settled integer index. Gates the discrete per-card writes (z-index,
+  // blur focus class, React focused state) so they fire on card change, not
+  // on every frame. Starts at -1 so the first render always applies them.
+  const lastNearestRef = React.useRef(-1);
+
   // Animation refs
   const snapTimerRef = React.useRef<number | null>(null);
   const snapAnimRef = React.useRef<number | null>(null);
 
-  // Imperative render — recompute every card's transform/opacity/filter from
-  // progressRef + isScrubbingRef. Called on every progress/isScrubbing tick
-  // AND on resize (to recompute the slot width).
+  // render — write each card's transform + opacity from progressRef. Called
+  // DIRECTLY from the RAF snap loop and the touch handler (not via React
+  // state), so it never reconciles. Only transform + opacity move per frame —
+  // both composite cheaply on the GPU. The depth blur is a CSS class crossfade
+  // (no per-frame filter writes), and z-index / blur class / focused state
+  // update only when the nearest integer index actually changes.
   const render = React.useCallback(() => {
-    const vp = progressRef.current;
     const cards = cardRefs.current;
     const first = cards[0];
     if (!first) return;
-
-    const cardRect = first.getBoundingClientRect();
-    const cardW = cardRect.width;
-    const vw = window.innerWidth;
-    const gap7vw = vw * 0.07;
-    const gapPx = vw < 768
-      ? Math.min(56, Math.max(28, gap7vw))
-      : Math.min(110, Math.max(48, gap7vw));
-    const slot = cardW + gapPx;
-
-    const scrubbing = isScrubbingRef.current;
-    const blurMult = scrubbing ? 1.0 : 1.8;
+    if (metricsRef.current.slot === 0) metricsRef.current.slot = computeSlot(first);
+    const slot = metricsRef.current.slot;
+    const vp = progressRef.current;
 
     for (let i = 0; i < cards.length; i++) {
       const c = cards[i];
@@ -192,18 +215,25 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       const offsetX = -dist * slot;
       const scale = Math.max(0.28, 1.22 - absDist * 0.34);
       const opacity = absDist > 1 ? 0 : Math.max(0.15, 1 - absDist * 0.32);
-      const blur = Math.min(22, absDist * 6 * blurMult);
       c.style.transform = `translate(-50%, -50%) translateX(${offsetX.toFixed(1)}px) scale(${scale.toFixed(3)})`;
       c.style.opacity = opacity.toFixed(3);
-      c.style.filter = `blur(${blur.toFixed(2)}px)`;
-      c.style.zIndex = String(Math.round(100 - absDist * 10));
     }
 
-    // Focused index changes drive the text-swap animation
+    // Discrete updates — fire on card change, not per frame.
     const nearest = Math.max(0, Math.min(N - 1, Math.round(vp)));
-    setFocused((prev) => (prev === nearest ? prev : nearest));
+    if (nearest !== lastNearestRef.current) {
+      lastNearestRef.current = nearest;
+      for (let i = 0; i < cards.length; i++) {
+        const c = cards[i];
+        if (!c) continue;
+        c.style.zIndex = String(Math.round(100 - Math.abs(i - nearest) * 10));
+        c.classList.toggle('is-dimmed', i !== nearest);
+      }
+      // Drives the text-swap animation + dot state.
+      setFocused(nearest);
+    }
 
-    // Scroll prompt hides once the user has actually advanced
+    // Scroll prompt hides once the user has actually advanced.
     const wantHidden = vp > 0.15;
     if (wantHidden !== promptHiddenRef.current) {
       promptHiddenRef.current = wantHidden;
@@ -211,10 +241,12 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
     }
   }, [N]);
 
-  // Run render on every progress / isScrubbing change + after first mount.
+  // Position the cards on mount + whenever the deck identity changes.
   React.useLayoutEffect(() => {
+    const first = cardRefs.current[0];
+    if (first) metricsRef.current.slot = computeSlot(first);
     render();
-  }, [progress, isScrubbing, render]);
+  }, [render]);
 
   // Trigger text re-enter animation whenever focused changes. Forced reflow
   // between leaving → entering re-arms the [data-state="entering"] selectors
@@ -243,7 +275,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       const t = Math.min(1, (now - startTime) / duration);
       const newP = from + distance * easeOutQuint(t);
       progressRef.current = newP;
-      setProgress(newP);
+      render();
       if (t < 1) {
         snapAnimRef.current = requestAnimationFrame(tick);
       } else {
@@ -252,7 +284,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       }
     };
     snapAnimRef.current = requestAnimationFrame(tick);
-  }, []);
+  }, [render]);
 
   const scheduleSnap = React.useCallback(() => {
     if (snapTimerRef.current !== null) {
@@ -311,7 +343,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
         Math.min(N - 1, touchStartProgress + drive / TOUCH_SENSITIVITY),
       );
       progressRef.current = newP;
-      setProgress(newP);
+      render();
     };
     const onEnd = () => {
       scheduleSnap();
@@ -325,7 +357,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
       stage.removeEventListener('touchmove', onMove);
       stage.removeEventListener('touchend', onEnd);
     };
-  }, [N, scheduleSnap]);
+  }, [N, scheduleSnap, render]);
 
   // Keyboard — ArrowRight/Up/PageUp = next, ArrowLeft/Down/PageDown/Space = prev.
   React.useEffect(() => {
@@ -359,14 +391,34 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
     };
   }, [N, animateTo]);
 
-  // Re-render card geometry on viewport resize.
+  // Re-measure + re-render card geometry on viewport resize.
   React.useEffect(() => {
-    const onResize = () => render();
+    const onResize = () => {
+      const first = cardRefs.current[0];
+      if (first) metricsRef.current.slot = computeSlot(first);
+      render();
+    };
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);
     };
   }, [render]);
+
+  // Only the focused card and its immediate neighbours decode video. An
+  // opacity:0 <video> still decodes every frame, so N autoplaying loops would
+  // saturate the device — we pause everything off-deck and play the rest.
+  React.useEffect(() => {
+    const cards = cardRefs.current;
+    for (let i = 0; i < cards.length; i++) {
+      const v = cards[i]?.querySelector('video') as HTMLVideoElement | null;
+      if (!v) continue;
+      if (Math.abs(i - focused) <= 1) {
+        void v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    }
+  }, [focused, N]);
 
   const focusedDesign = designs[focused] ?? designs[0]!;
   const focusedSlug = focusedDesign.slug ?? '';
@@ -378,6 +430,7 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
         ref={stageRef}
         className="zh-designs-stage"
         aria-label="گالری طرح‌های ژیک"
+        data-scrubbing={isScrubbing ? 'true' : 'false'}
         onClick={(e) => {
           // Skip if this gesture was a swipe, not a tap.
           if (draggedRef.current) return;
@@ -425,6 +478,11 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
             {designs.map((d, i) => {
               const mediaUrl = getMediaUrl(d);
               const mime = getMediaMime(d);
+              const isVideo = mime?.startsWith('video/');
+              const isGif = mime === 'image/gif';
+              // Eager-load the visible window (focused ±2) so the next card's
+              // media is fetched/decoded before it scrolls into view.
+              const inWindow = Math.abs(i - focused) <= 2;
               return (
                 <div
                   key={String(d.id)}
@@ -435,21 +493,33 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
                   data-i={i}
                 >
                   {mediaUrl ? (
-                    mime?.startsWith('video/') ? (
+                    isVideo ? (
                       <video
                         src={mediaUrl}
-                        autoPlay
                         loop
                         muted
                         playsInline
                         preload="metadata"
                       />
-                    ) : (
+                    ) : isGif ? (
+                      // Animated GIF — keep a plain <img> so it doesn't freeze
+                      // (next/image would optimise it to a single frame).
                       <img
                         src={mediaUrl}
                         alt=""
-                        loading={i === focused ? 'eager' : 'lazy'}
+                        loading={inWindow ? 'eager' : 'lazy'}
                         decoding="async"
+                      />
+                    ) : (
+                      // Static image — next/image serves a display-sized variant
+                      // instead of the multi-megapixel source, so the per-card
+                      // decode/raster no longer hitches the scroll.
+                      <Image
+                        src={toOptimizableSrc(mediaUrl)}
+                        alt=""
+                        fill
+                        sizes="(max-width: 768px) 80vw, 46vw"
+                        loading={inWindow ? 'eager' : 'lazy'}
                       />
                     )
                   ) : (
