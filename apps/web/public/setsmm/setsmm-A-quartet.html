@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa-IR" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<title>سرویس خواب — منوی A: کوارتت</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  :root {
+    --ivory: #FAFAF7;
+    --cream: #F5F0EB;
+    --sand: #E8E0D8;
+    --stone: #8C8279;
+    --charcoal: #2C2825;
+    --ink: #14110F;
+    --forest: #5F7760;
+    --gold: #C49A6C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+
+  /* ── Page chrome (just for visual context) ── */
+  .stage {
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--cream) 0%, #ede5db 100%);
+    padding-bottom: 60px;
+  }
+
+  .stage-label {
+    text-align: center;
+    padding: 24px 0 8px;
+    color: var(--stone);
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+  }
+  .stage-label strong { color: var(--charcoal); font-weight: 700; }
+
+  /* Fake navbar */
+  .nav {
+    position: relative;
+    height: 60px;
+    background: var(--ivory);
+    border-bottom: 1px solid var(--sand);
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .nav-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+  .nav-logo {
+    height: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .nav-logo svg { height: 100%; width: auto; }
+  .nav-list {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    color: var(--stone);
+    font-size: 0.94rem;
+  }
+  .nav-list a { text-decoration: none; color: inherit; }
+  .nav-list .active {
+    color: var(--charcoal);
+    font-weight: 700;
+    border-bottom: 1.5px solid var(--forest);
+    padding-bottom: 2px;
+  }
+  .nav-icons {
+    justify-self: end;
+    display: flex;
+    gap: 4px;
+    color: var(--stone);
+  }
+  .nav-icons span {
+    width: 32px; height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* ── DROPDOWN PANEL — variant A: Quartet ─────────────────── */
+  .panel {
+    background: var(--ivory);
+    border-top: 1px solid var(--sand);
+    border-bottom: 1px solid var(--sand);
+    box-shadow: 0 16px 32px rgba(20, 17, 15, 0.06);
+  }
+  .panel-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 56px 32px 64px;
+  }
+
+  .panel-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    color: var(--forest);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .panel-title {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--charcoal);
+    margin-bottom: 40px;
+  }
+  .panel-title em {
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .quartet {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    background: var(--cream);
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card:hover { transform: translateY(-3px); }
+
+  .card-media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card:hover .card-media { transform: scale(1.04); }
+
+  .card-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, transparent 40%, rgba(20, 17, 15, 0.70) 100%);
+  }
+
+  .card-content {
+    position: absolute;
+    inset-inline-start: 22px;
+    inset-block-end: 24px;
+    z-index: 1;
+    color: var(--ivory);
+  }
+  .card-num {
+    font-size: 0.74rem;
+    letter-spacing: 0.20em;
+    color: rgba(232, 224, 216, 0.7);
+    margin-bottom: 6px;
+  }
+  .card-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .card-meta {
+    font-size: 0.82rem;
+    color: rgba(232, 224, 216, 0.85);
+  }
+
+  /* ── footer CTA strip ── */
+  .footer {
+    text-align: center;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--sand);
+  }
+  .cta-link {
+    color: var(--charcoal);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid var(--charcoal);
+    padding-bottom: 2px;
+    font-size: 0.95rem;
+  }
+  .cta-link:hover { color: var(--forest); border-color: var(--forest); }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="stage-label">طرح A — <strong>کوارتت</strong> · ۴ کارت بزرگ، عکس‌محور، حداکثر سکوت بصری</div>
+
+    <!-- Fake navbar -->
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100" height="58" viewBox="0 0 100 58" fill="none">
+            <path d="M0.005 50.989C0.102 50.974 0.196 50.941 0.293 50.941C16.195 50.941 32.094 50.941 47.997 50.941H48.264C48.190 51.032 48.149 51.093 48.096 51.146C46.496 52.776 44.907 54.418 43.292 56.032C42.026 57.296 40.482 57.978 38.684 57.988C34.323 58.006 29.963 57.998 25.599 57.998C17.194 57.998 8.790 57.998 0.385 57.998C0.257 57.998 0.130 57.993 0.003 57.991V50.994L0.005 50.989Z" fill="#C2986B"/>
+            <path d="M53.109 0C52.505 0.588 51.907 1.178 51.300 1.764C45.345 7.524 39.390 13.281 33.434 19.039C33.358 19.112 33.261 19.163 33.175 19.224C33.192 19.254 33.210 19.282 33.226 19.313C33.330 19.313 33.434 19.313 33.539 19.313C37.355 19.313 41.173 19.297 44.988 19.318C50.923 19.348 56.252 23.623 57.579 29.378C57.839 30.503 57.895 31.644 57.954 32.789C58.076 35.186 59.884 37.325 62.241 37.855C62.689 37.956 63.155 38.017 63.613 38.017C68.884 38.027 74.154 38.025 79.424 38.025C79.513 38.025 79.602 38.025 79.717 38.025C79.717 37.893 79.717 37.786 79.717 37.680C79.717 33.866 79.727 30.050 79.712 26.236C79.704 24.231 80.405 22.541 81.836 21.135C83.367 19.629 84.882 18.106 86.406 16.591C86.474 16.523 86.548 16.454 86.653 16.355C86.665 16.457 86.678 16.523 86.678 16.586C86.678 23.600 86.691 30.617 86.673 37.632C86.665 41.007 84.452 43.693 81.151 44.385C80.674 44.484 80.178 44.519 79.691 44.519C74.021 44.530 68.351 44.575 62.681 44.509C57.763 44.453 54.148 42.173 51.828 37.857C51.795 37.796 51.761 37.738 51.695 37.617C51.687 37.771 51.680 37.857 51.680 37.941C51.680 38.934 51.680 39.930 51.680 40.924C51.675 42.948 50.106 44.522 48.076 44.522C32.146 44.522 16.218 44.522 0.288 44.522C0.191 44.522 0.097 44.492 0 44.474V31.185C0.015 31.078 0.038 30.972 0.043 30.866C0.168 28.831 0.963 27.100 2.410 25.661C3.849 24.229 5.288 22.797 6.727 21.365C8.322 19.776 10.255 18.998 12.502 18.988C14.674 18.978 16.844 18.988 19.017 18.988C19.104 18.988 19.190 18.988 19.343 18.988C19.241 19.100 19.185 19.166 19.124 19.224C16.898 21.406 14.672 23.588 12.438 25.764C12.349 25.853 12.188 25.911 12.064 25.911C10.538 25.922 9.009 25.919 7.484 25.919H7.193V37.472H51.629C51.591 37.373 51.553 37.292 51.527 37.209C51.323 36.593 51.099 35.982 50.926 35.359C50.590 34.135 50.585 32.878 50.587 31.621C50.587 31.155 50.557 30.676 50.450 30.224C49.902 27.903 47.915 26.352 45.513 26.350C40.842 26.345 36.173 26.355 31.501 26.342C30.969 26.342 30.426 26.297 29.907 26.183C26.577 25.455 24.799 22.181 25.273 19.325C25.495 17.985 26.121 16.865 27.089 15.919C31.886 11.231 36.680 6.541 41.473 1.850C42.113 1.242 42.729 0.618 43.351 0H53.109Z" fill="#5F7760"/>
+            <path d="M100 46.433C99.893 46.924 99.812 47.421 99.677 47.905C99.322 49.175 98.668 50.277 97.736 51.212C96.225 52.725 94.717 54.240 93.186 55.735C91.653 57.233 89.793 57.988 87.644 57.993C83.283 58.001 78.922 57.996 74.561 57.996C74.515 57.996 74.472 57.991 74.388 57.986C74.444 57.915 74.480 57.859 74.526 57.813C76.721 55.576 78.920 53.341 81.110 51.101C81.240 50.966 81.372 50.941 81.543 50.941C85.259 50.943 88.973 50.941 92.690 50.941C92.797 50.941 92.904 50.941 93.041 50.941V50.568C93.041 42.497 93.049 34.426 93.036 26.355C93.033 24.274 93.731 22.521 95.239 21.066C96.770 19.586 98.263 18.068 99.773 16.566C99.842 16.497 99.924 16.441 100 16.381V46.433Z" fill="#5F7760"/>
+            <path d="M99.781 0C99.424 0.370 99.073 0.745 98.711 1.110C97.394 2.433 96.072 3.751 94.750 5.071C94.075 5.745 93.296 6.262 92.404 6.609C92.353 6.629 92.302 6.647 92.254 6.672C92.241 6.677 92.236 6.698 92.218 6.726H99.789C99.712 6.814 99.669 6.875 99.615 6.928C97.988 8.555 96.363 10.187 94.730 11.809C93.428 13.101 91.851 13.773 90.015 13.776C83.346 13.783 76.678 13.778 70.009 13.781C69.948 13.781 69.887 13.781 69.767 13.781C69.857 13.679 69.908 13.613 69.969 13.555C72.180 11.345 74.393 9.138 76.601 6.926C76.739 6.786 76.874 6.726 77.073 6.726C78.871 6.733 80.669 6.733 82.470 6.726C82.590 6.726 82.745 6.677 82.827 6.596C85.007 4.432 87.183 2.263 89.355 0.091C89.381 0.066 89.399 0.035 89.422 0.005C92.876 0.005 96.327 0.005 99.781 0.005V0Z" fill="#5F7760"/>
+          </svg>
+        </div>
+        <ul class="nav-list">
+          <li><a href="#" class="active">سرویس خواب ▾</a></li>
+          <li><a href="#">مبلمان اتاق خواب ▾</a></li>
+          <li><a href="#">شعب ژیک</a></li>
+          <li><a href="#">درباره ما</a></li>
+          <li><a href="#">تماس با ما</a></li>
+        </ul>
+        <div class="nav-icons">
+          <span>🔍</span>
+          <span>♡</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Dropdown panel -->
+    <div class="panel">
+      <div class="panel-inner">
+        <div class="panel-eyebrow">سرویس خواب</div>
+        <h2 class="panel-title">برای <em>چه کسی</em> طراحی می‌کنید؟</h2>
+
+        <div class="quartet">
+          <a href="#" class="card">
+            <div class="card-media" style="background-image: url('img/mucha.webp')"></div>
+            <div class="card-content">
+              <div class="card-num">۰۱</div>
+              <div class="card-name">نوزاد</div>
+              <div class="card-meta">۸ سرویس</div>
+            </div>
+          </a>
+
+          <a href="#" class="card">
+            <div class="card-media" style="background-image: url('img/skate.webp')"></div>
+            <div class="card-content">
+              <div class="card-num">۰۲</div>
+              <div class="card-name">نوجوان</div>
+              <div class="card-meta">۶ سرویس</div>
+            </div>
+          </a>
+
+          <a href="#" class="card">
+            <div class="card-media" style="background-image: url('img/elegance.webp')"></div>
+            <div class="card-content">
+              <div class="card-num">۰۳</div>
+              <div class="card-name">دونفره</div>
+              <div class="card-meta">۱۲ سرویس</div>
+            </div>
+          </a>
+
+          <a href="#" class="card">
+            <div class="card-media" style="background-image: url('img/loof.webp')"></div>
+            <div class="card-content">
+              <div class="card-num">۰۴</div>
+              <div class="card-name">دوطبقه</div>
+              <div class="card-meta">۴ سرویس</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="footer">
+          <a href="#" class="cta-link">مشاهده‌ی همه‌ی سرویس‌ها ←</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

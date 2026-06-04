@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fa-IR" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<title>ژیک — پیش‌نمایش منوهای ناوبری</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 400;
+    src: url('/fonts/ayandeh-regular.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 700;
+    src: url('/fonts/ayandeh-bold.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ayandeh';
+    font-weight: 300;
+    src: url('/fonts/ayandeh-light.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  :root {
+    --ivory: #FAFAF7;
+    --cream: #F5F0EB;
+    --sand: #E8E0D8;
+    --stone: #8C8279;
+    --charcoal: #2C2825;
+    --ink: #14110F;
+    --forest: #5F7760;
+    --gold: #C49A6C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Ayandeh', 'Tahoma', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+
+  /* ── Page stage ───────────────────────────────────────────── */
+  .stage {
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--cream) 0%, #ede5db 100%);
+  }
+  .stage-hint {
+    text-align: center;
+    color: var(--stone);
+    font-size: 0.85rem;
+    padding: 32px 16px 0;
+    letter-spacing: 0.02em;
+  }
+  .stage-hint strong { color: var(--charcoal); font-weight: 700; }
+  .stage-body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+    color: var(--stone);
+  }
+  .stage-body h2 {
+    color: var(--charcoal);
+    font-weight: 300;
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+  }
+  .stage-body p { margin-bottom: 14px; }
+
+  /* ── Navbar ───────────────────────────────────────────────── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    height: 60px;
+    background: var(--ivory);
+    border-bottom: 1px solid var(--sand);
+    display: flex;
+    align-items: center;
+  }
+  .nav-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+  .nav-logo svg { height: 20px; width: auto; display: block; }
+
+  .nav-list {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    color: var(--stone);
+    font-size: 0.94rem;
+    align-items: center;
+  }
+  .nav-list > li { position: relative; }
+  .nav-list a, .nav-list button {
+    text-decoration: none;
+    color: inherit;
+    font: inherit;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-list a:hover, .nav-list button:hover { color: var(--charcoal); }
+  .nav-list .static.active {
+    color: var(--charcoal);
+    font-weight: 700;
+    border-bottom: 1.5px solid var(--forest);
+    padding-bottom: 2px;
+  }
+  .nav-trigger[aria-expanded="true"] { color: var(--charcoal); }
+
+  .nav-chev {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-inline-start: 1.5px solid currentColor;
+    border-block-end: 1.5px solid currentColor;
+    transform: rotate(-45deg) translateY(-1px);
+    transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-trigger[aria-expanded="true"] .nav-chev {
+    transform: rotate(135deg) translateY(-1px);
+  }
+
+  .nav-icons {
+    justify-self: end;
+    display: flex;
+    gap: 4px;
+    color: var(--stone);
+  }
+  .nav-icons span {
+    width: 32px; height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: color 400ms;
+  }
+  .nav-icons span:hover { color: var(--charcoal); background: rgba(232, 224, 216, 0.4); }
+
+  /* ── Shared panel chrome ──────────────────────────────────── */
+  .panel {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    background: var(--ivory);
+    border-top: 1px solid var(--sand);
+    border-bottom: 1px solid var(--sand);
+    box-shadow: 0 16px 32px rgba(20, 17, 15, 0.06);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .panel[data-open="true"] {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .panel-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* ── SETS DROPDOWN — Cinema variant ────────────────────────  */
+  /* ─────────────────────────────────────────────────────────── */
+
+  .sets-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    min-height: 540px;
+  }
+
+  /* labels column (visual right under RTL) */
+  .sets-labels {
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    border-inline-end: 1px solid var(--sand);
+  }
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    color: var(--forest);
+    font-weight: 700;
+    margin-bottom: 36px;
+  }
+  .sets-list { list-style: none; display: flex; flex-direction: column; }
+  .sets-list li { border-block-end: 1px solid var(--sand); }
+  .sets-list li:first-child { border-block-start: 1px solid var(--sand); }
+  .sets-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 0;
+    text-decoration: none;
+    color: inherit;
+    transition: padding 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sets-row:hover { padding-inline-start: 6px; }
+  .sets-row[data-active="true"] { color: var(--ink); }
+  .sets-num { font-size: 0.76rem; letter-spacing: 0.12em; color: var(--stone); }
+  .sets-name {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--charcoal);
+    transition: font-weight 400ms;
+  }
+  .sets-row[data-active="true"] .sets-name { font-weight: 700; }
+  .sets-arrow {
+    width: 20px;
+    height: 1px;
+    background: var(--stone);
+    position: relative;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 400ms, transform 400ms;
+  }
+  .sets-arrow::before {
+    content: '';
+    position: absolute;
+    inset-inline-end: 0;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-inline-end: 1px solid var(--stone);
+    border-block-start: 1px solid var(--stone);
+    transform: rotate(-135deg);
+  }
+  .sets-row[data-active="true"] .sets-arrow,
+  .sets-row:hover .sets-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .sets-cta-wrap { margin-top: auto; padding-top: 32px; }
+  .cta-link {
+    color: var(--charcoal);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid var(--charcoal);
+    padding-bottom: 2px;
+    font-size: 0.9rem;
+  }
+  .cta-link:hover { color: var(--forest); border-color: var(--forest); }
+
+  /* hero column (visual left under RTL) */
+  .sets-hero {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(196, 154, 108, 0.07) 0%, transparent 55%),
+      linear-gradient(180deg, var(--ivory) 0%, var(--cream) 100%);
+  }
+  .sets-img {
+    position: absolute;
+    inset: 16px;
+    width: calc(100% - 32px);
+    height: calc(100% - 32px);
+    object-fit: contain;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 720ms cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .sets-img[data-active="true"] { opacity: 1; }
+
+  .sets-cards {
+    position: absolute;
+    inset-inline-start: 40px;
+    inset-block-end: 40px;
+    z-index: 2;
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sets-card-main {
+    background: rgba(250, 250, 247, 0.55);
+    border: 1px solid rgba(232, 224, 216, 0.55);
+    backdrop-filter: blur(30px) saturate(140%);
+    -webkit-backdrop-filter: blur(30px) saturate(140%);
+    padding: 24px 26px;
+    box-shadow:
+      0 24px 64px -16px rgba(20, 17, 15, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  .sets-title {
+    font-size: 1.85rem;
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--charcoal);
+    margin: 12px 0 10px;
+  }
+  .sets-title em { font-style: normal; font-weight: 700; }
+  .sets-tagline {
+    font-size: 0.9rem;
+    color: var(--charcoal);
+    opacity: 0.78;
+    line-height: 1.7;
+  }
+  .sets-card-sub {
+    background: rgba(250, 250, 247, 0.42);
+    border: 1px solid rgba(232, 224, 216, 0.45);
+    backdrop-filter: blur(28px) saturate(140%);
+    -webkit-backdrop-filter: blur(28px) saturate(140%);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow:
+      0 16px 40px -16px rgba(20, 17, 15, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transition: background 400ms, border-color 400ms;
+  }
+  .sets-card-sub:hover {
+    background: rgba(95, 119, 96, 0.18);
+    border-color: rgba(95, 119, 96, 0.45);
+  }
+  .sub-stat { font-size: 0.82rem; color: var(--stone); }
+  .sub-stat strong { color: var(--charcoal); font-weight: 700; }
+  .sub-cta {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--charcoal);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-cta::after {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: currentColor;
+  }
+  .sets-content { display: none; }
+  .sets-content[data-active="true"] { display: block; }
+
+
+  /* ─────────────────────────────────────────────────────────── */
+  /* ── PIECES DROPDOWN — three-column category tree ─────────── */
+  /* ─────────────────────────────────────────────────────────── */
+
+  .pieces-inner {
+    padding: 52px 56px 60px;
+  }
+  .pieces-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding-block-end: 18px;
+    border-block-end: 1px solid var(--sand);
+  }
+  .pieces-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+  .pieces-title em { font-style: normal; font-weight: 300; color: var(--stone); }
+
+  .pieces-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 56px;
+  }
+
+  .piece-cat { display: flex; flex-direction: column; }
+  .piece-cat + .piece-cat { margin-block-start: 36px; }
+
+  .piece-cat-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--charcoal);
+    text-decoration: none;
+    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 400ms;
+  }
+  .piece-cat-name:hover { color: var(--forest); }
+  .piece-cat-name::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.35;
+    position: relative;
+  }
+  .piece-cat-name .leaf-mark {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+  }
+
+  .piece-sub-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .piece-sub-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    text-decoration: none;
+    color: var(--stone);
+    font-size: 0.92rem;
+    padding: 4px 0;
+    transition: color 400ms, padding 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .piece-sub-link:hover {
+    color: var(--charcoal);
+    padding-inline-start: 4px;
+  }
+  .piece-sub-count {
+    font-size: 0.74rem;
+    color: var(--stone);
+    opacity: 0.7;
+  }
+
+  .pieces-foot {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--sand);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--stone);
+    font-size: 0.84rem;
+  }
+  .pieces-foot-note { font-style: italic; }
+
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- Sticky navbar -->
+    <nav class="nav" id="nav">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo" aria-label="ژیک — صفحه‌ی اصلی">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 58" fill="none">
+            <path d="M0.005 50.989C0.102 50.974 0.196 50.941 0.293 50.941H47.997H48.264C48.190 51.032 48.149 51.093 48.096 51.146C46.496 52.776 44.907 54.418 43.292 56.032C42.026 57.296 40.482 57.978 38.684 57.988C34.323 58.006 29.963 57.998 25.599 57.998C17.194 57.998 8.790 57.998 0.385 57.998C0.257 57.998 0.130 57.993 0.003 57.991V50.994Z" fill="#C2986B"/>
+            <path d="M53.109 0L51.300 1.764C45.345 7.524 39.390 13.281 33.434 19.039L33.226 19.313C33.330 19.313 33.434 19.313 33.539 19.313H44.988C50.923 19.348 56.252 23.623 57.579 29.378C57.839 30.503 57.895 31.644 57.954 32.789C58.076 35.186 59.884 37.325 62.241 37.855C62.689 37.956 63.155 38.017 63.613 38.017H79.717V37.680V26.236C79.704 24.231 80.405 22.541 81.836 21.135C83.367 19.629 84.882 18.106 86.406 16.591L86.653 16.355V16.586V37.632C86.665 41.007 84.452 43.693 81.151 44.385C80.674 44.484 80.178 44.519 79.691 44.519H62.681C57.763 44.453 54.148 42.173 51.828 37.857L51.695 37.617V37.941V40.924C51.675 42.948 50.106 44.522 48.076 44.522H0.288L0 44.474V31.185L0.043 30.866C0.168 28.831 0.963 27.100 2.410 25.661C3.849 24.229 5.288 22.797 6.727 21.365C8.322 19.776 10.255 18.998 12.502 18.988H19.343L19.124 19.224C16.898 21.406 14.672 23.588 12.438 25.764L12.064 25.911H7.484H7.193V37.472H51.629L51.527 37.209C51.099 35.982 50.926 35.359C50.590 34.135 50.585 32.878 50.587 31.621C50.587 31.155 50.557 30.676 50.450 30.224C49.902 27.903 47.915 26.352 45.513 26.350H31.501C30.969 26.342 30.426 26.297 29.907 26.183C26.577 25.455 24.799 22.181 25.273 19.325C25.495 17.985 26.121 16.865 27.089 15.919L43.351 0H53.109Z" fill="#5F7760"/>
+            <path d="M100 46.433L99.677 47.905C99.322 49.175 98.668 50.277 97.736 51.212L93.186 55.735C91.653 57.233 89.793 57.988 87.644 57.993H74.561L74.388 57.986L74.526 57.813L81.110 51.101L81.543 50.941H92.690H93.041V50.568V26.355C93.033 24.274 93.731 22.521 95.239 21.066L99.773 16.566L100 16.381Z" fill="#5F7760"/>
+            <path d="M99.781 0L98.711 1.110C97.394 2.433 96.072 3.751 94.750 5.071C94.075 5.745 93.296 6.262 92.404 6.609L92.218 6.726H99.789L99.615 6.928C97.988 8.555 96.363 10.187 94.730 11.809C93.428 13.101 91.851 13.773 90.015 13.776H70.009H69.767L69.969 13.555L76.601 6.926L77.073 6.726H82.470L82.827 6.596L89.355 0.091L89.422 0.005H99.781Z" fill="#5F7760"/>
+          </svg>
+        </a>
+
+        <ul class="nav-list" id="navList">
+          <li data-menu="sets">
+            <button type="button" class="nav-trigger"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              data-menu-trigger="sets">
+              سرویس خواب <span class="nav-chev"></span>
+            </button>
+          </li>
+          <li data-menu="pieces">
+            <button type="button" class="nav-trigger"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              data-menu-trigger="pieces">
+              مبلمان اتاق خواب <span class="nav-chev"></span>
+            </button>
+          </li>
+          <li><a href="#" class="static">شعب ژیک</a></li>
+          <li><a href="#" class="static">درباره ما</a></li>
+          <li><a href="#" class="static">تماس با ما</a></li>
+        </ul>
+
+        <div class="nav-icons">
+          <span title="جستجو">🔍</span>
+          <span title="علاقه‌مندی">♡</span>
+        </div>
+      </div>
+
+      <!-- ── SETS DROPDOWN ─────────────────────────────────── -->
+      <div class="panel" id="panel-sets" role="dialog" aria-label="منوی سرویس خواب">
+        <div class="panel-inner">
+          <div class="sets-grid">
+
+            <div class="sets-labels">
+              <div class="eyebrow">سرویس خواب</div>
+              <ul class="sets-list">
+                <li>
+                  <a href="#" class="sets-row" data-occ="baby" onmouseenter="setActiveOcc('baby')">
+                    <span class="sets-num">۰۱</span>
+                    <span class="sets-name">نوزاد</span>
+                    <span class="sets-arrow"></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="sets-row" data-occ="teen" onmouseenter="setActiveOcc('teen')">
+                    <span class="sets-num">۰۲</span>
+                    <span class="sets-name">نوجوان</span>
+                    <span class="sets-arrow"></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="sets-row" data-active="true" data-occ="double" onmouseenter="setActiveOcc('double')">
+                    <span class="sets-num">۰۳</span>
+                    <span class="sets-name">دونفره</span>
+                    <span class="sets-arrow"></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="sets-row" data-occ="bunk" onmouseenter="setActiveOcc('bunk')">
+                    <span class="sets-num">۰۴</span>
+                    <span class="sets-name">دوطبقه</span>
+                    <span class="sets-arrow"></span>
+                  </a>
+                </li>
+              </ul>
+              <div class="sets-cta-wrap">
+                <a href="#" class="cta-link">مشاهده‌ی همه‌ی سرویس‌ها ←</a>
+              </div>
+            </div>
+
+            <div class="sets-hero">
+              <img class="sets-img" data-occ="baby"    src="/setsmm/img/mucha.webp"    alt="" />
+              <img class="sets-img" data-occ="teen"    src="/setsmm/img/skate.webp"    alt="" />
+              <img class="sets-img" data-active="true" data-occ="double" src="/setsmm/img/elegance.webp" alt="" />
+              <img class="sets-img" data-occ="bunk"    src="/setsmm/img/loof.webp"     alt="" />
+
+              <div class="sets-content" data-occ="baby">
+                <div class="sets-cards">
+                  <div class="sets-card-main">
+                    <div class="eyebrow" style="margin:0">سرویس خواب نوزاد</div>
+                    <h3 class="sets-title">آرامش <em>اولین</em> شب‌ها</h3>
+                    <p class="sets-tagline">از تخت کناری تا تختخواب تخت‌ریز، طراحی‌شده برای ماه‌های نخستین.</p>
+                  </div>
+                  <a href="#" class="sets-card-sub">
+                    <span class="sub-stat"><strong>۸</strong> سرویس · ۴۲ قطعه</span>
+                    <span class="sub-cta">مشاهده‌ی سرویس‌ها</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="sets-content" data-occ="teen">
+                <div class="sets-cards">
+                  <div class="sets-card-main">
+                    <div class="eyebrow" style="margin:0">سرویس خواب نوجوان</div>
+                    <h3 class="sets-title">فضای <em>شخصی</em> در حال تغییر</h3>
+                    <p class="sets-tagline">ساده، با امکان رشد. کمد بزرگ، میز تحریر، خوابی برای فکرکردن.</p>
+                  </div>
+                  <a href="#" class="sets-card-sub">
+                    <span class="sub-stat"><strong>۶</strong> سرویس · ۳۸ قطعه</span>
+                    <span class="sub-cta">مشاهده‌ی سرویس‌ها</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="sets-content" data-active="true" data-occ="double">
+                <div class="sets-cards">
+                  <div class="sets-card-main">
+                    <div class="eyebrow" style="margin:0">سرویس خواب دونفره</div>
+                    <h3 class="sets-title">اتاق خوابی <em>برای ماندن</em></h3>
+                    <p class="sets-tagline">ترکیبی کامل از تخت، پاتختی، کمد و آینه — هر کدام به‌اندازه‌ی قدمی به سکوت.</p>
+                  </div>
+                  <a href="#" class="sets-card-sub">
+                    <span class="sub-stat"><strong>۱۲</strong> سرویس · ۸۴ قطعه</span>
+                    <span class="sub-cta">مشاهده‌ی سرویس‌ها</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="sets-content" data-occ="bunk">
+                <div class="sets-cards">
+                  <div class="sets-card-main">
+                    <div class="eyebrow" style="margin:0">سرویس خواب دوطبقه</div>
+                    <h3 class="sets-title">دو خواب، <em>یک خاطره</em></h3>
+                    <p class="sets-tagline">برای دو خواهر، دو برادر، یا دو شب از یک تعطیلات. صرفه‌جویی بدون افت.</p>
+                  </div>
+                  <a href="#" class="sets-card-sub">
+                    <span class="sub-stat"><strong>۴</strong> سرویس · ۲۶ قطعه</span>
+                    <span class="sub-cta">مشاهده‌ی سرویس‌ها</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PIECES DROPDOWN ───────────────────────────────── -->
+      <div class="panel" id="panel-pieces" role="dialog" aria-label="منوی مبلمان اتاق خواب">
+        <div class="panel-inner">
+          <div class="pieces-inner">
+
+            <div class="pieces-head">
+              <div class="eyebrow" style="margin:0">مبلمان اتاق خواب</div>
+              <div class="pieces-title">قطعات <em>اتاق خواب</em></div>
+            </div>
+
+            <div class="pieces-cols">
+
+              <!-- Col 1: تخت خواب + پاتختی + تجهیزات جانبی -->
+              <div>
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">تخت خواب</a>
+                  <ul class="piece-sub-list">
+                    <li><a href="#" class="piece-sub-link"><span>نوزادی</span><span class="piece-sub-count">۱۴</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>یک نفره</span><span class="piece-sub-count">۲۲</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>دونفره</span><span class="piece-sub-count">۳۸</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>دوطبقه</span><span class="piece-sub-count">۱۲</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>دومنظوره</span><span class="piece-sub-count">۸</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>کاناپه‌ای</span><span class="piece-sub-count">۶</span></a></li>
+                  </ul>
+                </div>
+
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">پاتختی <span class="leaf-mark">— مشاهده‌ی همه</span></a>
+                </div>
+
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">تجهیزات جانبی تخت</a>
+                  <ul class="piece-sub-list">
+                    <li><a href="#" class="piece-sub-link"><span>حفاظ تخت</span><span class="piece-sub-count">۴</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>باکس تخت</span><span class="piece-sub-count">۶</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>لاوست</span><span class="piece-sub-count">۳</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>صفحه تعویض</span><span class="piece-sub-count">۲</span></a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Col 2: کمد + میز + کتابخانه و ویترین -->
+              <div>
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">کمد</a>
+                  <ul class="piece-sub-list">
+                    <li><a href="#" class="piece-sub-link"><span>کمد تک‌درب</span><span class="piece-sub-count">۸</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>کمد دو‌درب</span><span class="piece-sub-count">۱۸</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>کمد سه‌درب</span><span class="piece-sub-count">۲۲</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>کمد ریلی</span><span class="piece-sub-count">۹</span></a></li>
+                  </ul>
+                </div>
+
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">میز</a>
+                  <ul class="piece-sub-list">
+                    <li><a href="#" class="piece-sub-link"><span>میز تحریر</span><span class="piece-sub-count">۱۲</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>میز آرایش</span><span class="piece-sub-count">۱۶</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>میز کنسول</span><span class="piece-sub-count">۷</span></a></li>
+                  </ul>
+                </div>
+
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">کتابخانه و ویترین <span class="leaf-mark">— مشاهده‌ی همه</span></a>
+                </div>
+              </div>
+
+              <!-- Col 3: دراور و فایل + صندلی + آینه -->
+              <div>
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">دراور و فایل</a>
+                  <ul class="piece-sub-list">
+                    <li><a href="#" class="piece-sub-link"><span>دراور</span><span class="piece-sub-count">۱۴</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>فایل</span><span class="piece-sub-count">۵</span></a></li>
+                  </ul>
+                </div>
+
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">صندلی</a>
+                  <ul class="piece-sub-list">
+                    <li><a href="#" class="piece-sub-link"><span>صندلی آرایش</span><span class="piece-sub-count">۸</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>صندلی تحریر</span><span class="piece-sub-count">۶</span></a></li>
+                  </ul>
+                </div>
+
+                <div class="piece-cat">
+                  <a href="#" class="piece-cat-name">آینه</a>
+                  <ul class="piece-sub-list">
+                    <li><a href="#" class="piece-sub-link"><span>آینه قدی</span><span class="piece-sub-count">۹</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>آینه دیواری</span><span class="piece-sub-count">۱۲</span></a></li>
+                    <li><a href="#" class="piece-sub-link"><span>آینه رومیزی</span><span class="piece-sub-count">۵</span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="pieces-foot">
+              <a href="#" class="cta-link">مشاهده‌ی همه‌ی قطعات ←</a>
+              <span class="pieces-foot-note">رنگ و نوع چوب در صفحه‌ی هر دسته فیلتر می‌شود</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="stage-hint">
+      <strong>هاور کنید</strong> روی «سرویس خواب» یا «مبلمان اتاق خواب» تا منو باز شود.
+      با حرکت ماوس به خارج منو، یا کلیک خارج، بسته می‌شود.
+    </div>
+
+    <div class="stage-body">
+      <h2>پیش‌نمایش رفتار منوها</h2>
+      <p>این صفحه فقط برای دیدن باز/بسته شدن و تعامل منوها است. منوی «سرویس خواب» نسخه‌ی سینما (با کارت شیشه‌ای) را نشان می‌دهد، و منوی «مبلمان اتاق خواب» درخت کامل پیشنهادی Map.png را در سه ستون.</p>
+      <p>اعداد سمت چپ هر زیرگروه فعلاً جای‌نمایی است (تعداد محصولات بعداً از پی‌لود می‌آید). دسته‌های بدون زیرگروه (پاتختی، کتابخانه و ویترین) به‌صورت برگ مستقیم به صفحه‌ی والد لینک می‌شوند.</p>
+      <p>اگر همه‌چیز خوب است، می‌توانم همین الان <code>SetsMegaMenu.tsx</code> و <code>PiecesMegaMenu.tsx</code> را با این طراحی‌ها بازنویسی و در سایت زنده اعمال کنم.</p>
+    </div>
+  </div>
+
+<script>
+  // ── Mega-menu open/close orchestration ────────────────────────
+  const nav = document.getElementById('nav');
+  const triggers = document.querySelectorAll('[data-menu-trigger]');
+  const panels = {
+    sets: document.getElementById('panel-sets'),
+    pieces: document.getElementById('panel-pieces'),
+  };
+  let openId = null;
+  let closeTimer = null;
+
+  function openMenu(id) {
+    if (openId === id) return;
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+    openId = id;
+    Object.entries(panels).forEach(([k, el]) => {
+      el.dataset.open = k === id ? 'true' : 'false';
+    });
+    triggers.forEach((b) => {
+      b.setAttribute('aria-expanded', b.dataset.menuTrigger === id ? 'true' : 'false');
+    });
+  }
+
+  function closeMenu() {
+    openId = null;
+    Object.values(panels).forEach((el) => { el.dataset.open = 'false'; });
+    triggers.forEach((b) => b.setAttribute('aria-expanded', 'false'));
+  }
+
+  // Trigger hover/click opens its menu
+  triggers.forEach((btn) => {
+    const id = btn.dataset.menuTrigger;
+    btn.addEventListener('mouseenter', () => openMenu(id));
+    btn.addEventListener('click', () => (openId === id ? closeMenu() : openMenu(id)));
+    btn.addEventListener('focus', () => openMenu(id));
+  });
+
+  // Mouse leaving navbar (which contains triggers + panel) closes after a brief grace period
+  nav.addEventListener('mouseleave', () => {
+    if (closeTimer) clearTimeout(closeTimer);
+    closeTimer = setTimeout(closeMenu, 160);
+  });
+  nav.addEventListener('mouseenter', () => {
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+  });
+
+  // Outside click closes
+  document.addEventListener('mousedown', (e) => {
+    if (!nav.contains(e.target)) closeMenu();
+  });
+
+  // Esc closes
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  // ── Sets occupancy hover swap ─────────────────────────────────
+  function setActiveOcc(occ) {
+    document.querySelectorAll('.sets-row').forEach((el) => {
+      el.dataset.active = el.dataset.occ === occ ? 'true' : 'false';
+    });
+    document.querySelectorAll('.sets-img').forEach((el) => {
+      el.dataset.active = el.dataset.occ === occ ? 'true' : 'false';
+    });
+    document.querySelectorAll('.sets-content').forEach((el) => {
+      el.dataset.active = el.dataset.occ === occ ? 'true' : 'false';
+    });
+  }
+</script>
+</body>
+</html>
