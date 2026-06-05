@@ -6,6 +6,7 @@ import { StatBlock } from '../StatBlock';
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
+    configurable: true,
     value: (query: string) => ({
       matches: false,
       media: query,
@@ -26,6 +27,7 @@ beforeAll(() => {
   }
   Object.defineProperty(window, 'IntersectionObserver', {
     writable: true,
+    configurable: true,
     value: MockIntersectionObserver,
   });
 });
@@ -48,5 +50,7 @@ describe('<StatBlock>', () => {
     expect(root.querySelector('.text-ink')).not.toBeNull();
     expect(root.querySelector('.text-stone')).not.toBeNull();
     expect(root.textContent).toContain('قطعه مبلمان تولیدشده');
+    // CountUp exposes the target value via aria-label even before animating
+    expect(root.querySelector('[aria-label="1200+"]')).not.toBeNull();
   });
 });
