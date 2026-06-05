@@ -78,7 +78,14 @@ body {
 /* Solid ivory card meant to sit across the edge between a light and a
    dark section. Pair with .section-overlap-top as the FIRST child of
    the lower (dark) section — the negative margin pulls it up so its
-   top half floats over the previous section's background. */
+   top half floats over the previous section's background.
+   Consumer requirements:
+   1. The containing section must NOT use overflow:hidden — it would
+      clip the card that protrudes above the section boundary.
+   2. The containing section must compensate its block-start spacing:
+      the negative margin consumes the section's top padding, so any
+      content that follows the card needs its own explicit margin-top
+      to restore the intended visual gap. */
 .float-card {
   background: var(--color-ivory);
   border: 1px solid var(--color-sand);
