@@ -48,8 +48,8 @@ export function HomeBrandStatement({
         {/* Floating ivory stats card — straddles the ivory/dark boundary.
             text-charcoal resets the section's text-ivory for the light surface. */}
         <div className="float-card stat-row section-overlap-top text-charcoal">
-          {stats.map((s, i) => (
-            <StatBlock key={i} variant="divided" value={s.value} suffix={s.suffix} label={s.label} />
+          {stats.map((s) => (
+            <StatBlock key={s.label} variant="divided" value={s.value} suffix={s.suffix} label={s.label} />
           ))}
         </div>
 
