@@ -582,7 +582,7 @@ in Figma and is mirrored as Storybook stories from Package 1 onward.
 - ContactBlock
 - NewsletterBlock
 - GalleryBlock
-- **Float card** (`.float-card` + `.section-overlap-top`): solid ivory card that straddles a section boundary; first child of the lower section, pulled up by --section-overlap. Used by the homepage stats band.
+- **Float card** (`.float-card` + `.section-overlap-top` | `.section-overlap-center`): card-tier glass card (glass-bg + 24px blur, no hover lift) that straddles a section boundary. `-top` pulls it up by --section-overlap; `-center` (zero-height flex positioner) centers it exactly on the boundary at any content height. Used by the homepage stats band (centered).
 - **Stat row** (`.stat-row` / `.stat-cell`): 3-up divided stats on a light surface; hairline dividers via --color-divider-ink; pairs with StatBlock variant="divided".
 - SpecsAccordion
 - VariantPicker (size, finish, fabric)

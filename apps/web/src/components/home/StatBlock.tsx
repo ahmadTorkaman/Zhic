@@ -17,7 +17,9 @@ export function StatBlock({ value, suffix, label, variant = 'gold-border' }: Sta
         <div className="text-lead font-black leading-[var(--leading-h2)] text-ink md:text-h2">
           <CountUp value={value} suffix={suffix} />
         </div>
-        <div className="mt-1 text-small font-light text-stone">{label}</div>
+        {/* charcoal, not stone — the label half of the glass card sits
+            over the dark section and stone washes out there */}
+        <div className="mt-1 text-small font-light text-charcoal">{label}</div>
       </div>
     );
   }

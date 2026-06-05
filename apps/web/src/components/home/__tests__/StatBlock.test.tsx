@@ -40,7 +40,7 @@ describe('<StatBlock>', () => {
     expect(root.className).not.toContain('stat-cell');
   });
 
-  it('variant="divided" renders a stat-cell with ink numeral and stone label', () => {
+  it('variant="divided" renders a stat-cell with ink numeral and charcoal label', () => {
     const { container } = render(
       <StatBlock variant="divided" value={1200} suffix="+" label="قطعه مبلمان تولیدشده" />
     );
@@ -48,7 +48,7 @@ describe('<StatBlock>', () => {
     expect(root.className).toContain('stat-cell');
     expect(root.className).not.toContain('border-gold');
     expect(root.querySelector('.text-ink')).not.toBeNull();
-    expect(root.querySelector('.text-stone')).not.toBeNull();
+    expect(root.querySelector('.text-charcoal')).not.toBeNull();
     expect(root.textContent).toContain('قطعه مبلمان تولیدشده');
     // CountUp exposes the target value via aria-label even before animating
     expect(root.querySelector('[aria-label="1200+"]')).not.toBeNull();

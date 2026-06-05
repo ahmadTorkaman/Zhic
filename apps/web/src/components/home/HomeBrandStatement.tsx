@@ -45,19 +45,24 @@ export function HomeBrandStatement({
         />
       </div>
       <Container>
-        {/* Floating ivory stats card — straddles the ivory/dark boundary.
-            text-charcoal resets the section's text-ivory for the light surface. */}
-        <div className="float-card stat-row section-overlap-top text-charcoal">
-          {stats.map((s) => (
-            <StatBlock key={s.label} variant="divided" value={s.value} suffix={s.suffix} label={s.label} />
-          ))}
+        {/* Floating glass stats card — centered on the ivory/dark boundary
+            (half on each side). text-charcoal resets the section's
+            text-ivory for the light surface. */}
+        <div className="section-overlap-center">
+          <div className="float-card stat-row w-full text-charcoal">
+            {stats.map((s) => (
+              <StatBlock key={s.label} variant="divided" value={s.value} suffix={s.suffix} label={s.label} />
+            ))}
+          </div>
         </div>
 
+        {/* mt clears the card's lower half (zero-height positioner above)
+            plus the visual gap. */}
         <div
           className={
             aboutMedia
-              ? 'mt-7 grid items-center gap-[var(--space-6)] md:mt-9 md:grid-cols-[3fr_2fr] md:gap-[var(--space-10)]'
-              : 'mt-7 md:mt-9'
+              ? 'mt-9 grid items-center gap-[var(--space-6)] md:mt-10 md:grid-cols-[3fr_2fr] md:gap-[var(--space-10)]'
+              : 'mt-9 md:mt-10'
           }
         >
           <div>
