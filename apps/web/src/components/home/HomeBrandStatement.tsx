@@ -83,7 +83,7 @@ export function HomeBrandStatement({
                 </BlurInText>
               )}
             </div>
-            <Button as="a" href={aboutHref} variant="on-dark-solid" size="md">
+            <Button as="a" href={aboutHref} variant="glass-saffron" size="md">
               بیش‌تر درباره‌ی ما
             </Button>
           </div>

@@ -74,6 +74,20 @@ body {
   border-color: rgba(250, 250, 247, 0.12);
 }
 
+/* Saffron glass — warm-tinted glass surface for dark grounds (CTAs).
+   No transform on hover: transforms are avoided on blur surfaces. */
+.glass-saffron {
+  background: var(--glass-bg-saffron);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border-saffron);
+  transition: background-color var(--dur-hover) var(--ease-out-soft);
+}
+
+.glass-saffron:hover {
+  background: var(--glass-bg-saffron-hover);
+}
+
 /* ── Floating card (straddles a section boundary) ─────────────────── */
 /* Glass card meant to sit across the edge between a light and a dark
    section — card-tier glass (same material as .glass-card, no hover

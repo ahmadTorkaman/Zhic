@@ -30,3 +30,18 @@ describe('<Button variant="on-dark-solid">', () => {
     expect(container.querySelector('button')!.className).toContain('border-ivory/15');
   });
 });
+
+describe('<Button variant="glass-saffron">', () => {
+  it('renders the saffron glass recipe with ivory text', () => {
+    const { container } = render(
+      <Button as="a" href="/about" variant="glass-saffron">بیش‌تر درباره‌ی ما</Button>
+    );
+    const a = container.querySelector('a[href="/about"]')!;
+    expect(a).not.toBeNull();
+    expect(a.className).toContain('glass-saffron');
+    expect(a.className).toContain('text-ivory');
+    expect(a.className).toContain('focus-ring-invert');
+    // no hover translate — transforms are avoided on blur surfaces
+    expect(a.className).not.toContain('-translate-y-px');
+  });
+});

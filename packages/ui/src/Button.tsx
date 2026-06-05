@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from './cn';
 
-type Variant = 'primary' | 'accent' | 'ghost' | 'on-dark' | 'on-dark-solid' | 'link';
+type Variant = 'primary' | 'accent' | 'ghost' | 'on-dark' | 'on-dark-solid' | 'glass-saffron' | 'link';
 type Size = 'sm' | 'md' | 'lg';
 
 type OwnProps = {
@@ -32,6 +32,9 @@ const VARIANT_CLASSES: Record<Variant, string> = {
   ghost:     'bg-transparent border border-sand text-charcoal hover:border-charcoal',
   'on-dark': 'bg-transparent border border-ivory/15 text-ivory hover:border-gold hover:text-gold focus-ring-invert',
   'on-dark-solid': 'bg-ivory text-ink hover:bg-cream hover:-translate-y-px hover:shadow-elevated focus-ring-invert',
+  /* glass material lives in the .glass-saffron recipe (design-system base.css);
+     no hover translate — transforms are avoided on blur surfaces */
+  'glass-saffron': 'glass-saffron text-ivory focus-ring-invert',
   link:      'bg-transparent text-charcoal border-b border-sand pb-[2px] hover:border-charcoal rounded-none',
 };
 
