@@ -104,7 +104,10 @@ export default async function HomePage() {
         slides={slides}
       />
       <HomeRoomsTiles rooms={roomTiles} />
-      <HomeBrandStatement statement={home?.brand_statement ?? null} />
+      <HomeBrandStatement
+        statement={home?.brand_statement ?? null}
+        aboutMedia={home?.about_media ?? null}
+      />
       <HomeJournalRows articles={journalArticles} />
       <HomeShowroomsTeaser showrooms={showroomCards} />
     </>

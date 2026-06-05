@@ -1,7 +1,8 @@
 import { BlurInText, Button, Container } from '@zhic/ui';
 import { StatBlock } from './StatBlock';
+import { PayloadImage } from '@/components/PayloadImage';
 import { RichText } from '@/lib/richtext';
-import type { LexicalRoot } from '@/lib/payload';
+import type { LexicalRoot, PayloadMedia } from '@/lib/payload';
 
 export type BrandStat = {
   value: number;
@@ -15,6 +16,7 @@ export type HomeBrandStatementProps = {
   heading?: string;
   eyebrow?: string;
   aboutHref?: string;
+  aboutMedia?: PayloadMedia | null;
 };
 
 const DEFAULT_STATS: BrandStat[] = [
@@ -29,26 +31,35 @@ export function HomeBrandStatement({
   heading = 'از همدان، برای ایران',
   eyebrow = 'درباره‌ی ژیک',
   aboutHref = '/about',
+  aboutMedia = null,
 }: HomeBrandStatementProps) {
   return (
-    <section className="relative overflow-hidden bg-forest-dark py-7 text-ivory md:py-11">
+    /* NO overflow-hidden here — it would clip the pulled-up stats card.
+       The decorative glow is clipped by its own inset-0 wrapper instead. */
+    <section className="relative bg-forest-dark pb-7 text-ivory md:pb-11">
       {/* Caramel radial glow in bottom-start corner (RTL: start = right visually) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-[120px] -start-[120px] h-[500px] w-[500px]"
-        style={{ background: 'radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%)' }}
-      />
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute -bottom-[120px] -start-[120px] h-[500px] w-[500px]"
+          style={{ background: 'radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%)' }}
+        />
+      </div>
       <Container>
-        <div className="grid items-center gap-[var(--space-6)] md:grid-cols-[2fr_3fr] md:gap-[var(--space-10)]">
-          {/* Numbers live in a dark glass card. Mobile: compact 3-col grid.
-              Desktop: vertical column (the asymmetric-luxury stats stack). */}
-          <div className="glass-card-dark rounded-md p-[var(--space-5)] md:p-[var(--space-6)]">
-            <div className="grid grid-cols-3 gap-[var(--space-4)] md:flex md:flex-col md:gap-[var(--space-6)]">
-              {stats.map((s, i) => (
-                <StatBlock key={i} value={s.value} suffix={s.suffix} label={s.label} />
-              ))}
-            </div>
-          </div>
+        {/* Floating ivory stats card — straddles the ivory/dark boundary.
+            text-charcoal resets the section's text-ivory for the light surface. */}
+        <div className="float-card stat-row section-overlap-top text-charcoal">
+          {stats.map((s, i) => (
+            <StatBlock key={i} variant="divided" value={s.value} suffix={s.suffix} label={s.label} />
+          ))}
+        </div>
+
+        <div
+          className={
+            aboutMedia
+              ? 'mt-7 grid items-center gap-[var(--space-6)] md:mt-9 md:grid-cols-[3fr_2fr] md:gap-[var(--space-10)]'
+              : 'mt-7 md:mt-9'
+          }
+        >
           <div>
             <BlurInText as="div" className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-gold">
               {eyebrow}
@@ -67,10 +78,20 @@ export function HomeBrandStatement({
                 </BlurInText>
               )}
             </div>
-            <Button as="a" href={aboutHref} variant="on-dark" size="md">
+            <Button as="a" href={aboutHref} variant="on-dark-solid" size="md">
               بیش‌تر درباره‌ی ما
             </Button>
           </div>
+          {aboutMedia ? (
+            /* Mobile: image above the text (order-first). Desktop: second
+               grid column — in RTL that places it inline-end of the text. */
+            <div className="overflow-hidden rounded-md max-md:order-first">
+              <PayloadImage
+                media={aboutMedia}
+                className="aspect-[4/3] h-auto w-full object-cover md:aspect-auto md:h-full md:min-h-[320px]"
+              />
+            </div>
+          ) : null}
         </div>
       </Container>
     </section>
