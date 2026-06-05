@@ -1,5 +1,5 @@
-import { DesignsSlider } from '@/components/design/DesignsSlider';
-import { fetchAllDesigns } from '@/lib/payload';
+import { BedroomSetLanding } from '@/components/bedroom-set/BedroomSetLanding';
+import { DESIGNS, FEATURED_PAGES, WRITING } from '@/components/bedroom-set/placeholder-data';
 
 export const metadata = {
   title: 'طرح‌ها',
@@ -7,10 +7,6 @@ export const metadata = {
   alternates: { canonical: '/bedroom-set' },
 };
 
-export default async function DesignsIndexPage() {
-  const designs = await fetchAllDesigns();
-  // The slider takes one viewport of height (in normal flow) and handles its
-  // own breadcrumb + skip-link chrome. Add additional sections below as
-  // siblings to <DesignsSlider> — the page scrolls past the slider naturally.
-  return <DesignsSlider designs={designs} />;
+export default function BedroomSetPage() {
+  return <BedroomSetLanding designs={DESIGNS} pages={FEATURED_PAGES} writing={WRITING} />;
 }
