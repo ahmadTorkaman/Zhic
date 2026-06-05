@@ -12,7 +12,6 @@
   --color-forest:      #5F7760;
   --color-forest-dark: #2D3A2E;
   --color-gold:        #C49A6C;
-  --color-saffron:     #F4C430; /* saffron yellow — glass-tint accent on dark grounds */
   --color-overlay:     rgba(20, 17, 15, 0.6);
 
   /* Functional (app infra) */
@@ -92,11 +91,14 @@
   --glass-blur:        24px;
   --glass-bg-dark:     rgba(250, 250, 247, 0.03);
   --glass-border-dark: rgba(250, 250, 247, 0.06);
-  /* Saffron glass — warm accent tint for glass elements on dark grounds
-     (e.g. CTA buttons). Hover deepens the tint. */
-  --glass-bg-saffron:        rgba(244, 196, 48, 0.32);
-  --glass-bg-saffron-hover:  rgba(244, 196, 48, 0.48);
-  --glass-border-saffron:    rgba(244, 196, 48, 0.5);
+  /* Gold glass — warm accent tint for glass elements straddling section
+     boundaries (e.g. CTA buttons). Base is brand gold #C49A6C lifted 30%
+     toward ivory and kept strong (0.6) so the surface stays LIGHT over
+     both the dark and the ivory half — dark text works on either side
+     (same logic as the stats float-card). Hover deepens. */
+  --glass-bg-gold:        rgba(212, 183, 150, 0.6);
+  --glass-bg-gold-hover:  rgba(212, 183, 150, 0.78);
+  --glass-border-gold:    rgba(196, 154, 108, 0.55);
   /* Chrome glass — heavy-blur material shared by the scrolled site header
      and the sticky picker bar so all chrome layers read as one surface. */
   --glass-bg-chrome:       rgba(250, 250, 247, 0.70);

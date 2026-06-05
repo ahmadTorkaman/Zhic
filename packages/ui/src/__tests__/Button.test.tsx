@@ -31,15 +31,15 @@ describe('<Button variant="on-dark-solid">', () => {
   });
 });
 
-describe('<Button variant="glass-saffron">', () => {
-  it('renders the saffron glass recipe with ivory text', () => {
+describe('<Button variant="glass-gold">', () => {
+  it('renders the gold glass recipe with ink text', () => {
     const { container } = render(
-      <Button as="a" href="/about" variant="glass-saffron">بیش‌تر درباره‌ی ما</Button>
+      <Button as="a" href="/about" variant="glass-gold">بیش‌تر درباره‌ی ما</Button>
     );
     const a = container.querySelector('a[href="/about"]')!;
     expect(a).not.toBeNull();
-    expect(a.className).toContain('glass-saffron');
-    expect(a.className).toContain('text-ivory');
+    expect(a.className).toContain('glass-gold');
+    expect(a.className).toContain('text-ink');
     expect(a.className).toContain('focus-ring-invert');
     // no hover translate — transforms are avoided on blur surfaces
     expect(a.className).not.toContain('-translate-y-px');

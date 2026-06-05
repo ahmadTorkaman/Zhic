@@ -102,7 +102,6 @@ operator apps import the same token set.
 --color-ink         #14110F   near-black, used sparingly for emphasis
 --color-accent      #B8A898   brand neutral accent (warm taupe)
 --color-gold        #C49A6C   brand warm accent — once per page max
---color-saffron     #F4C430   saffron yellow — ONLY as a glass tint on dark grounds (.glass-saffron), never solid
 --color-rust        #8B4A2B   error / warning, muted
 --color-forest      #5F7760   brand primary accent, success
 --color-overlay     rgba(20, 17, 15, 0.6)   image overlays
@@ -585,7 +584,7 @@ in Figma and is mirrored as Storybook stories from Package 1 onward.
 - GalleryBlock
 - **Float card** (`.float-card` + `.section-overlap-top` | `.section-overlap-center`): card-tier glass card (glass-bg + 24px blur, no hover lift) that straddles a section boundary. `-top` pulls it up by --section-overlap; `-center` (zero-height flex positioner) centers it exactly on the boundary at any content height. Used by the homepage stats band (centered).
 - **Stat row** (`.stat-row` / `.stat-cell`): 3-up divided stats on a light surface; hairline dividers via --color-divider-ink; pairs with StatBlock variant="divided".
-- **Saffron glass** (`.glass-saffron`): warm saffron-tinted glass surface for dark grounds; hover deepens the tint (no transform — blur surface). Consumed by Button variant="glass-saffron".
+- **Gold glass** (`.glass-gold`): brand-gold (#C49A6C) tinted glass surface for elements straddling section boundaries; hover deepens the tint (no transform — blur surface). Consumed by Button variant="glass-gold" (homepage about CTA, centered on the section's bottom edge via `.section-overlap-center`).
 - SpecsAccordion
 - VariantPicker (size, finish, fabric)
 - RelatedProducts

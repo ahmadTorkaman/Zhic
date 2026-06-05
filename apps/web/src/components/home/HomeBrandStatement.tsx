@@ -36,7 +36,9 @@ export function HomeBrandStatement({
   return (
     /* NO overflow-hidden here — it would clip the pulled-up stats card.
        The decorative glow is clipped by its own inset-0 wrapper instead. */
-    <section className="relative bg-forest-dark pb-7 text-ivory md:pb-11">
+    /* No bottom padding either — the CTA positioner line must sit exactly
+       on the section's bottom edge; the about grid carries the spacing. */
+    <section className="relative bg-forest-dark text-ivory">
       {/* Caramel radial glow in bottom-start corner (RTL: start = right visually) */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
@@ -61,8 +63,8 @@ export function HomeBrandStatement({
         <div
           className={
             aboutMedia
-              ? 'mt-9 grid items-center gap-[var(--space-6)] md:mt-10 md:grid-cols-[3fr_2fr] md:gap-[var(--space-10)]'
-              : 'mt-9 md:mt-10'
+              ? 'mt-9 mb-8 grid items-center gap-[var(--space-6)] md:mt-10 md:mb-11 md:grid-cols-[3fr_2fr] md:gap-[var(--space-10)]'
+              : 'mt-9 mb-8 md:mt-10 md:mb-11'
           }
         >
           <div>
@@ -83,9 +85,6 @@ export function HomeBrandStatement({
                 </BlurInText>
               )}
             </div>
-            <Button as="a" href={aboutHref} variant="glass-saffron" size="md">
-              بیش‌تر درباره‌ی ما
-            </Button>
           </div>
           {aboutMedia ? (
             /* Mobile: image above the text (order-first). Desktop: second
@@ -97,6 +96,15 @@ export function HomeBrandStatement({
               />
             </div>
           ) : null}
+        </div>
+
+        {/* Gold glass CTA — centered on the dark/ivory BOTTOM boundary,
+            mirroring the stats card on the top edge. RTL flex-start
+            aligns it with the text column's inline-start. */}
+        <div className="section-overlap-center">
+          <Button as="a" href={aboutHref} variant="glass-gold" size="md">
+            بیش‌تر درباره‌ی ما
+          </Button>
         </div>
       </Container>
     </section>
