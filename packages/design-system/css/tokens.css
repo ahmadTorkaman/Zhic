@@ -15,6 +15,7 @@
 
   /* Functional (app infra) */
   --color-rust:     #8B4A2B;
+  --color-divider-ink: rgba(20, 17, 15, 0.08); /* hairline dividers on light surfaces */
 
   /* Gradients
      Caramel→walnut glow used as the on-brand placeholder background for
@@ -69,6 +70,9 @@
   --space-10: 8rem;
   --space-11: 12rem;
   --space-12: 16rem;
+
+  /* Section-boundary overlap — how far a floating card crosses a section edge */
+  --section-overlap: clamp(2.5rem, 6vw, 4.5rem);
 
   /* Radii */
   --radius-md:   4px;

@@ -96,6 +96,7 @@ operator apps import the same token set.
 --color-ivory       #FAFAF7   page background, canvas
 --color-cream       #F5F0EB   panels, alt sections
 --color-sand        #E8E0D8   dividers, hairlines, hover fills
+--color-divider-ink rgba(20,17,15,0.08)   hairline dividers on light surfaces (stat rows)
 --color-stone       #8C8279   secondary text, captions
 --color-charcoal    #2C2825   primary text, headlines
 --color-ink         #14110F   near-black, used sparingly for emphasis
@@ -217,6 +218,7 @@ default to a smaller scale step.
 --space-10  128px
 --space-11  192px
 --space-12  256px
+--section-overlap   clamp(2.5rem, 6vw, 4.5rem)   distance a floating card (.float-card + .section-overlap-top) crosses a section boundary
 ```
 
 - **Storefront section vertical rhythm:** `--space-11` desktop,
