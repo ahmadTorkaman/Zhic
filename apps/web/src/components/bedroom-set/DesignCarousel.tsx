@@ -85,21 +85,23 @@ export function DesignCarousel({
       if (nextLogo) nextLogo.style.opacity = '1';
       curLogoRef.current = active;
     }
+    // Designs without a name-mark hide the glass band + flip entirely (clean card).
+    const hasLogo = !!designs[active]?.logoSrc;
     const flip = flipRef.current;
     if (flip) {
       flip.style.transform = `rotateX(${flipAngle(frac).toFixed(2)}deg)`;
-      flip.style.opacity = flipOpacity(frac).toFixed(3);
+      flip.style.opacity = hasLogo ? flipOpacity(frac).toFixed(3) : '0';
     }
     const band = bandRef.current;
     if (band) {
-      band.style.opacity = bandOpacity(frac).toFixed(3);
+      band.style.opacity = hasLogo ? bandOpacity(frac).toFixed(3) : '0';
       const bb = bandBlurPx(frac);
       if (bandBlurRef.current !== bb) {
         bandBlurRef.current = bb;
         band.style.filter = `blur(${bb}px)`;
       }
     }
-  }, [N]);
+  }, [N, designs]);
 
   const render = React.useCallback(() => {
     if (slotRef.current === 0) slotRef.current = computeSlot();
@@ -332,17 +334,19 @@ export function DesignCarousel({
         <div className="zh-bs-focus">
           <div className="zh-bs-band" ref={bandRef} />
           <div className="zh-bs-flip" ref={flipRef}>
-            {designs.map((d, i) => (
-              /* eslint-disable-next-line @next/next/no-img-element -- pre-decoded logo layers */
-              <img
-                key={d.slug}
-                className="zh-bs-lg"
-                alt={d.name}
-                src={d.logoSrc}
-                style={{ opacity: i === 0 ? 1 : 0 }}
-                ref={(el) => { logoRefs.current[i] = el; }}
-              />
-            ))}
+            {designs.map((d, i) =>
+              d.logoSrc ? (
+                /* eslint-disable-next-line @next/next/no-img-element -- pre-decoded logo layers */
+                <img
+                  key={d.slug}
+                  className="zh-bs-lg"
+                  alt={d.name}
+                  src={d.logoSrc}
+                  style={{ opacity: i === 0 ? 1 : 0 }}
+                  ref={(el) => { logoRefs.current[i] = el; }}
+                />
+              ) : null,
+            )}
           </div>
         </div>
       </div>

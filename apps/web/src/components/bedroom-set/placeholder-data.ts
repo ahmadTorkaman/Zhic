@@ -24,7 +24,7 @@ export type DesignCard = {
   slug: string;
   name: string;
   cardSrc: string; // the default/base card shown for the design
-  logoSrc: string;
+  logoSrc?: string; // omitted for designs that don't have a name-mark yet
   occupancies: Occupancy[];
   // Room-type-specific cards: when a category tab is selected, the carousel
   // shows cardByOccupancy[occ] if present, else falls back to cardSrc.
@@ -70,6 +70,10 @@ export const DESIGNS: DesignCard[] = [
     occupancies: ['baby', 'teen'],
     cardByOccupancy: { baby: `${A}/loof-baby.webp` },
   },
+  // Cards from the asset drop but no name-mark yet — rendered without a flip-logo.
+  { slug: 'bw', name: 'بلک‌اند‌وایت', cardSrc: `${A}/bw.webp`, occupancies: ['teen'] },
+  { slug: 'verna', name: 'ورنا', cardSrc: `${A}/verna.webp`, occupancies: ['double', 'teen'] },
+  { slug: 'monte', name: 'مونته', cardSrc: `${A}/monte.webp`, occupancies: ['double', 'teen'] },
 ];
 
 // Decorative marketing imagery — alt is '' for now (SP1 supplies real alts).

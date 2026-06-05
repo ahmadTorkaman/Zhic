@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { cardForOccupancy, DESIGNS, FEATURED_PAGES, WRITING } from '../placeholder-data';
 
 describe('bedroom-set placeholder data', () => {
-  it('has the 7 catalog designs in order with real occupancies', () => {
+  it('has the catalog designs in order with real occupancies', () => {
     expect(DESIGNS.map((d) => d.slug)).toEqual([
       'lotus', 'parla', 'caroline', 'iron', 'jacqueline', 'lukaplus', 'loof',
+      'bw', 'verna', 'monte',
     ]);
     expect(DESIGNS[0]).toMatchObject({
       name: 'لوتوس',

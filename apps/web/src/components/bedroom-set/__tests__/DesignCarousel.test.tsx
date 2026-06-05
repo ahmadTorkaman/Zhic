@@ -23,13 +23,14 @@ beforeAll(() => {
 });
 
 describe('<DesignCarousel>', () => {
-  it('renders one card, one dot, and one logo layer per design', () => {
+  it('renders a card + dot per design, and a logo layer per design that has one', () => {
     const { container } = render(
       <DesignCarousel designs={DESIGNS} view="designs" onOpenDesign={() => {}} />,
     );
     expect(container.querySelectorAll('.zh-bs-card').length).toBe(DESIGNS.length);
     expect(container.querySelectorAll('.zh-bs-dot').length).toBe(DESIGNS.length);
-    expect(container.querySelectorAll('.zh-bs-lg').length).toBe(DESIGNS.length);
+    // bw/verna/monte have no name-mark → no logo layer
+    expect(container.querySelectorAll('.zh-bs-lg').length).toBe(DESIGNS.filter((d) => d.logoSrc).length);
   });
 
   it('has no bottom prompt row and marks the first dot active', () => {
