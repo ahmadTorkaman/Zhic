@@ -6,8 +6,7 @@ import type { DesignCard, Occupancy } from './placeholder-data';
 import { cardForOccupancy, OCCUPANCY_ORDER } from './placeholder-data';
 import { CategoryTabs } from './CategoryTabs';
 import {
-  clampIndex, slot, flipAngle, activeLogoIndex,
-  bandOpacity, bandBlurPx, flipOpacity,
+  clampIndex, slot,
   cardScale, cardOpacity, cardBlurPx, cardZIndex, isCulled,
   snapDuration, easeOutQuart,
 } from './carousel-math';
@@ -25,6 +24,8 @@ export function DesignCarousel({
 }) {
   const N = designs.length;
   const [focused, setFocused] = React.useState(0);
+  // The design that just lost focus — its logo plays the slide-up exit (-1 = none).
+  const [prevFocused, setPrevFocused] = React.useState(-1);
   // Selected room-type tab — drives which card variant each design shows.
   const [activeOccupancy, setActiveOccupancy] = React.useState<Occupancy | null>(
     () => OCCUPANCY_ORDER.find((o) => designs[0]?.occupancies.includes(o)) ?? null,
@@ -33,19 +34,14 @@ export function DesignCarousel({
   // DOM refs
   const stageRef = React.useRef<HTMLDivElement | null>(null);
   const cardRefs = React.useRef<(HTMLDivElement | null)[]>([]);
-  const logoRefs = React.useRef<(HTMLImageElement | null)[]>([]);
-  const bandRef = React.useRef<HTMLDivElement | null>(null);
-  const flipRef = React.useRef<HTMLDivElement | null>(null);
 
   // engine state (never React state — written per frame via refs)
   const progressRef = React.useRef(0);
   const rafRef = React.useRef<number | null>(null);
   const slotRef = React.useRef(0);
-  const curLogoRef = React.useRef(0);
   const lastNearRef = React.useRef(-1);
   const cardHidRef = React.useRef<boolean[]>([]);
   const cardBlurRef = React.useRef<number[]>([]);
-  const bandBlurRef = React.useRef(-1);
   const interactedRef = React.useRef(false); // true once the user drags/wheels/keys — suppresses the one-time nudge
   const viewRef = React.useRef(view);
   React.useEffect(() => { viewRef.current = view; }, [view]);
@@ -71,37 +67,6 @@ export function DesignCarousel({
     const mob = window.matchMedia('(max-width:768px)').matches;
     return slot(window.innerHeight, mob);
   }, []);
-
-  const updateGlass = React.useCallback(() => {
-    const p = clampIndex(progressRef.current, N);
-    const lo = Math.floor(p);
-    const hi = Math.min(lo + 1, N - 1);
-    const frac = p - lo;
-    const active = activeLogoIndex(lo, hi, frac);
-    if (active !== curLogoRef.current) {
-      const prevLogo = logoRefs.current[curLogoRef.current];
-      const nextLogo = logoRefs.current[active];
-      if (prevLogo) prevLogo.style.opacity = '0';
-      if (nextLogo) nextLogo.style.opacity = '1';
-      curLogoRef.current = active;
-    }
-    // Designs without a name-mark hide the glass band + flip entirely (clean card).
-    const hasLogo = !!designs[active]?.logoSrc;
-    const flip = flipRef.current;
-    if (flip) {
-      flip.style.transform = `rotateX(${flipAngle(frac).toFixed(2)}deg)`;
-      flip.style.opacity = hasLogo ? flipOpacity(frac).toFixed(3) : '0';
-    }
-    const band = bandRef.current;
-    if (band) {
-      band.style.opacity = hasLogo ? bandOpacity(frac).toFixed(3) : '0';
-      const bb = bandBlurPx(frac);
-      if (bandBlurRef.current !== bb) {
-        bandBlurRef.current = bb;
-        band.style.filter = `blur(${bb}px)`;
-      }
-    }
-  }, [N, designs]);
 
   const render = React.useCallback(() => {
     if (slotRef.current === 0) slotRef.current = computeSlot();
@@ -134,13 +99,13 @@ export function DesignCarousel({
       }
       c.style.zIndex = String(cardZIndex(ad));
     }
-    updateGlass();
     const near = clampIndex(Math.round(vp), N);
     if (near !== lastNearRef.current) {
+      setPrevFocused(lastNearRef.current);
       lastNearRef.current = near;
       setFocused(near);
     }
-  }, [N, computeSlot, updateGlass]);
+  }, [N, computeSlot]);
 
   const snapTo = React.useCallback((target: number) => {
     const t = clampIndex(Math.round(target), N);
@@ -332,18 +297,17 @@ export function DesignCarousel({
           ))}
         </div>
         <div className="zh-bs-focus">
-          <div className="zh-bs-band" ref={bandRef} />
-          <div className="zh-bs-flip" ref={flipRef}>
+          <div className="zh-bs-band" style={{ opacity: designs[focused]?.logoSrc ? 1 : 0 }} />
+          <div className="zh-bs-flip">
             {designs.map((d, i) =>
               d.logoSrc ? (
-                /* eslint-disable-next-line @next/next/no-img-element -- pre-decoded logo layers */
+                /* eslint-disable-next-line @next/next/no-img-element -- stacked layers, slide-swapped on focus change */
                 <img
                   key={d.slug}
                   className="zh-bs-lg"
                   alt={d.name}
                   src={d.logoSrc}
-                  style={{ opacity: i === 0 ? 1 : 0 }}
-                  ref={(el) => { logoRefs.current[i] = el; }}
+                  data-state={i === focused ? 'active' : i === prevFocused ? 'exit' : 'rest'}
                 />
               ) : null,
             )}

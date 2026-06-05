@@ -82,22 +82,30 @@
   position: absolute; top: 50%; left: 50%;
   width: var(--card-w); height: var(--card-h);
   transform: translate(-50%, -50%); z-index: 130; pointer-events: none;
-  display: flex; align-items: center; justify-content: center; perspective: 1400px;
+  display: flex; align-items: center; justify-content: center;
 }
 .zh-bs-band {
   position: absolute; left: 0; top: 50%; transform: translateY(-50%);
   width: 100%; height: 33.3%; border-radius: 0;
-  -webkit-backdrop-filter: blur(4px) saturate(1.08);
-  backdrop-filter: blur(4px) saturate(1.08);
+  -webkit-backdrop-filter: blur(2px) saturate(1.08);
+  backdrop-filter: blur(2px) saturate(1.08);
   background: rgba(12, 9, 7, 0.32); border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 14px 36px -14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  will-change: opacity, filter;
+  transition: opacity 0.4s ease; will-change: opacity;
 }
 .zh-bs-flip {
-  position: relative; z-index: 1; width: 86%; height: 30%;
-  transform: rotateX(0deg); will-change: transform, opacity;
+  position: relative; z-index: 1; width: 94%; height: 32%; overflow: hidden;
 }
-.zh-bs-lg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+/* Logo layers stacked in the band; the focused one slides up into view, the one
+   that lost focus slides up and out — the same replace motion as the headline. */
+.zh-bs-lg {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+  opacity: 0; transform: translateY(120%);
+  transition: transform 0.55s var(--ease-spring), opacity 0.4s ease;
+  will-change: transform, opacity;
+}
+.zh-bs-lg[data-state="active"] { opacity: 1; transform: translateY(0); }
+.zh-bs-lg[data-state="exit"] { opacity: 0; transform: translateY(-120%); }
 
 .zh-bs-toast {
   position: fixed; left: 50%; bottom: 18%; transform: translate(-50%, 8px);
@@ -118,7 +126,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .zh-bs-upcue svg { animation: none; }
-  .zh-bs-tile, .zh-bs-fhead .zh-bs-rt-el { transition: none; }
+  .zh-bs-tile, .zh-bs-fhead .zh-bs-rt-el, .zh-bs-lg { transition: none; }
 }
 
 .zh-bs-featured {
