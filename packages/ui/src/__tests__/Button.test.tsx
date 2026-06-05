@@ -22,6 +22,7 @@ describe('<Button variant="on-dark-solid">', () => {
     const a = container.querySelector('a[href="/about"]')!;
     expect(a).not.toBeNull();
     expect(a.className).toContain('bg-ivory');
+    expect(a.className).toContain('focus-ring-invert');
   });
 
   it('keeps the existing on-dark variant unchanged', () => {
