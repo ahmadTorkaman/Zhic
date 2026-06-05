@@ -57,6 +57,15 @@ export const Home: GlobalConfig = {
       label: 'بیانیه برند',
     },
     {
+      name: 'about_media',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'تصویر بخش درباره (از همدان، برای ایران)',
+      admin: {
+        description: 'اختیاری — اگر خالی باشد، بخش درباره فقط متن نمایش می‌دهد.',
+      },
+    },
+    {
       name: 'featured_designs',
       type: 'relationship',
       relationTo: 'designs',

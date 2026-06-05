@@ -1095,6 +1095,10 @@ CMS-driven page collection used for low-frequency pages (legal,
 care, shipping, atelier). Singletons for `home`, `about`, `contact`,
 `faq` are stored as documents with reserved slugs.
 
+> **Note (2026-06-05):** the implemented `home` **global** (services/api/src/globals/Home.ts)
+> additionally carries `about_media` (upload → media, optional) — the photo for the
+> homepage «از همدان، برای ایران» section. When empty the section renders text-only.
+
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |
 | `title` (L) | text | yes | |

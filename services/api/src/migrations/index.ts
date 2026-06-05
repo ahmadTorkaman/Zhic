@@ -14,6 +14,7 @@ import * as migration_20260523_120000_add_occupancies_and_axis_filter from './20
 import * as migration_20260529_210000_swap_subscribers_email_to_phone from './20260529_210000_swap_subscribers_email_to_phone';
 import * as migration_20260530_200000_add_after_sales_years_to_products from './20260530_200000_add_after_sales_years_to_products';
 import * as migration_20260530_220000_add_products_occupancies from './20260530_220000_add_products_occupancies';
+import * as migration_20260605_120000_add_home_about_media from './20260605_120000_add_home_about_media';
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20260530_220000_add_products_occupancies.up,
     down: migration_20260530_220000_add_products_occupancies.down,
     name: '20260530_220000_add_products_occupancies'
+  },
+  {
+    up: migration_20260605_120000_add_home_about_media.up,
+    down: migration_20260605_120000_add_home_about_media.down,
+    name: '20260605_120000_add_home_about_media'
   },
 ];
