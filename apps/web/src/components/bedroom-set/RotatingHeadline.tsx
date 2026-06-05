@@ -6,9 +6,11 @@ import { splitTitleWords } from './headline';
 // Ported from the mockup's buildHeadline/setHeadline. React renders an empty
 // container; this effect owns its children entirely (it never conflicts with
 // React reconciliation because the JSX has no children).
-export function RotatingHeadline({ title }: { title: string }) {
+export function RotatingHeadline({ title, active = false }: { title: string; active?: boolean }) {
   const ref = React.useRef<HTMLDivElement | null>(null);
   const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeRef = React.useRef(active);
+  React.useEffect(() => { activeRef.current = active; }, [active]);
 
   React.useEffect(() => {
     const fhead = ref.current;
@@ -36,9 +38,11 @@ export function RotatingHeadline({ title }: { title: string }) {
         }
       });
       els.forEach((e, idx) => { e.style.transitionDelay = `${idx * 70}ms`; });
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => els.forEach((e) => e.classList.add('in'))),
-      );
+      if (activeRef.current) {
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => els.forEach((e) => e.classList.add('in'))),
+        );
+      }
     };
 
     const old = Array.from(fhead.querySelectorAll<HTMLSpanElement>('.zh-bs-rt-el'));
@@ -56,6 +60,22 @@ export function RotatingHeadline({ title }: { title: string }) {
 
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [title]);
+
+  // Play (on open) / reset (on close) the entrance for the current words. The
+  // mockup animates the headline inside openFeatured(); because we SSR the
+  // content, we trigger on `active` (the overlay opening) instead of on mount.
+  React.useEffect(() => {
+    const fhead = ref.current;
+    if (!fhead) return;
+    const els = Array.from(fhead.querySelectorAll<HTMLSpanElement>('.zh-bs-rt-el'));
+    if (active) {
+      const id = requestAnimationFrame(() =>
+        requestAnimationFrame(() => els.forEach((e) => e.classList.add('in'))),
+      );
+      return () => cancelAnimationFrame(id);
+    }
+    els.forEach((e) => e.classList.remove('in'));
+  }, [active]);
 
   return <div ref={ref} className="zh-bs-fhead" aria-label={title} />;
 }

@@ -6,18 +6,21 @@ import { RotatingHeadline } from './RotatingHeadline';
 
 type View = 'designs' | 'featured';
 
-function FeaturedGrid({ page, onOpenProduct }: { page: FeaturedPage; onOpenProduct: () => void }) {
+function FeaturedGrid({ page, open, onOpenProduct }: { page: FeaturedPage; open: boolean; onOpenProduct: () => void }) {
   const tiles = [{ tile: page.hero, hero: true }, ...page.row.map((t) => ({ tile: t, hero: false }))];
   const refs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
+  // Play the rise-in when the overlay is open; reset it while closed. The grid
+  // remounts per page (key={page}), so page-to-page changes replay it too.
   React.useEffect(() => {
     const els = refs.current.filter(Boolean) as HTMLButtonElement[];
     els.forEach((el, idx) => { el.style.transitionDelay = `${idx * 90}ms`; });
+    if (!open) { els.forEach((el) => el.classList.remove('in')); return; }
     const id = requestAnimationFrame(() =>
       requestAnimationFrame(() => els.forEach((el) => el.classList.add('in'))),
     );
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [open]);
 
   return (
     <div className="zh-bs-grid">
@@ -125,9 +128,9 @@ export function FeaturedOverlay({
           <path d="M6 9 L12 15 L18 9" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <RotatingHeadline title={cur.title} />
+      <RotatingHeadline title={cur.title} active={open} />
       {/* key={page} remounts the grid so the rise-in stagger replays per page */}
-      <FeaturedGrid key={page} page={cur} onOpenProduct={onOpenProduct} />
+      <FeaturedGrid key={page} page={cur} open={open} onOpenProduct={onOpenProduct} />
       <div className="zh-bs-fdots" aria-hidden="true">
         {pages.map((_, i) => (
           <span key={i} className={`zh-bs-fdot${i === page ? ' on' : ''}`} />

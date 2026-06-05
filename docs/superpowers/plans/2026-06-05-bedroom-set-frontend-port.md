@@ -997,9 +997,11 @@ import { splitTitleWords } from './headline';
 // Ported from the mockup's buildHeadline/setHeadline. React renders an empty
 // container; this effect owns its children entirely (it never conflicts with
 // React reconciliation because the JSX has no children).
-export function RotatingHeadline({ title }: { title: string }) {
+export function RotatingHeadline({ title, active = false }: { title: string; active?: boolean }) {
   const ref = React.useRef<HTMLDivElement | null>(null);
   const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeRef = React.useRef(active);
+  React.useEffect(() => { activeRef.current = active; }, [active]);
 
   React.useEffect(() => {
     const fhead = ref.current;
@@ -1027,9 +1029,11 @@ export function RotatingHeadline({ title }: { title: string }) {
         }
       });
       els.forEach((e, idx) => { e.style.transitionDelay = `${idx * 70}ms`; });
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => els.forEach((e) => e.classList.add('in'))),
-      );
+      if (activeRef.current) {
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => els.forEach((e) => e.classList.add('in'))),
+        );
+      }
     };
 
     const old = Array.from(fhead.querySelectorAll<HTMLSpanElement>('.zh-bs-rt-el'));
@@ -1047,6 +1051,22 @@ export function RotatingHeadline({ title }: { title: string }) {
 
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [title]);
+
+  // Play (on open) / reset (on close) the entrance for the current words. The
+  // mockup animates the headline inside openFeatured(); because we SSR the
+  // content, we trigger on `active` (the overlay opening) instead of on mount.
+  React.useEffect(() => {
+    const fhead = ref.current;
+    if (!fhead) return;
+    const els = Array.from(fhead.querySelectorAll<HTMLSpanElement>('.zh-bs-rt-el'));
+    if (active) {
+      const id = requestAnimationFrame(() =>
+        requestAnimationFrame(() => els.forEach((e) => e.classList.add('in'))),
+      );
+      return () => cancelAnimationFrame(id);
+    }
+    els.forEach((e) => e.classList.remove('in'));
+  }, [active]);
 
   return <div ref={ref} className="zh-bs-fhead" aria-label={title} />;
 }
@@ -1148,18 +1168,21 @@ import { RotatingHeadline } from './RotatingHeadline';
 
 type View = 'designs' | 'featured';
 
-function FeaturedGrid({ page, onOpenProduct }: { page: FeaturedPage; onOpenProduct: () => void }) {
+function FeaturedGrid({ page, open, onOpenProduct }: { page: FeaturedPage; open: boolean; onOpenProduct: () => void }) {
   const tiles = [{ tile: page.hero, hero: true }, ...page.row.map((t) => ({ tile: t, hero: false }))];
   const refs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
+  // Play the rise-in when the overlay is open; reset it while closed. The grid
+  // remounts per page (key={page}), so page-to-page changes replay it too.
   React.useEffect(() => {
     const els = refs.current.filter(Boolean) as HTMLButtonElement[];
     els.forEach((el, idx) => { el.style.transitionDelay = `${idx * 90}ms`; });
+    if (!open) { els.forEach((el) => el.classList.remove('in')); return; }
     const id = requestAnimationFrame(() =>
       requestAnimationFrame(() => els.forEach((el) => el.classList.add('in'))),
     );
     return () => cancelAnimationFrame(id);
-  }, []);
+  }, [open]);
 
   return (
     <div className="zh-bs-grid">
@@ -1267,9 +1290,9 @@ export function FeaturedOverlay({
           <path d="M6 9 L12 15 L18 9" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <RotatingHeadline title={cur.title} />
+      <RotatingHeadline title={cur.title} active={open} />
       {/* key={page} remounts the grid so the rise-in stagger replays per page */}
-      <FeaturedGrid key={page} page={cur} onOpenProduct={onOpenProduct} />
+      <FeaturedGrid key={page} page={cur} open={open} onOpenProduct={onOpenProduct} />
       <div className="zh-bs-fdots" aria-hidden="true">
         {pages.map((_, i) => (
           <span key={i} className={`zh-bs-fdot${i === page ? ' on' : ''}`} />

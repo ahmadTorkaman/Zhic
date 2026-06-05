@@ -24,4 +24,12 @@ describe('<RotatingHeadline>', () => {
     expect(els[0]!.textContent).toBe('پرفروش‌ترین');
     expect(els[1]!.textContent).toBe('محصولات');
   });
+
+  it('plays the in-class entrance only when active (first-open animation)', () => {
+    const { container, rerender } = render(<RotatingHeadline title="پرفروش‌ترین محصولات" />);
+    const head = container.querySelector('.zh-bs-fhead')!;
+    expect(head.querySelectorAll('.zh-bs-rt-el.in').length).toBe(0);
+    rerender(<RotatingHeadline title="پرفروش‌ترین محصولات" active />);
+    expect(head.querySelectorAll('.zh-bs-rt-el.in').length).toBe(2);
+  });
 });

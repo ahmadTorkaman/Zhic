@@ -26,6 +26,7 @@ describe('<FeaturedOverlay>', () => {
     expect(container.querySelector('.zh-bs-tile.hero img')!.getAttribute('src')).toBe('/bedroom-set/lotus-banner.png');
     expect(container.querySelectorAll('.zh-bs-fdot').length).toBe(2);
     expect(container.querySelector('.zh-bs-fhead')!.getAttribute('aria-label')).toBe('پرفروش‌ترین محصولات');
+    expect(container.querySelectorAll('.zh-bs-tile.in').length).toBe(0); // closed: SSR'd but entrance not played
   });
 
   it('shows when view=featured', () => {
@@ -35,6 +36,7 @@ describe('<FeaturedOverlay>', () => {
     const root = container.querySelector('.zh-bs-featured')!;
     expect(root.className).toContain('show');
     expect(root.getAttribute('aria-hidden')).toBe('false');
+    expect(container.querySelectorAll('.zh-bs-tile.in').length).toBe(3); // open: entrance played on all tiles
   });
 
   it('fires onOpenProduct when a tile is clicked', () => {
