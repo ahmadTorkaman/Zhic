@@ -198,7 +198,7 @@
 }
 
 .zh-bs-cats {
-  position: absolute; left: 50%; bottom: clamp(84px, 12vh, 106px);
+  position: absolute; left: 50%; bottom: clamp(40px, 6.5vh, 60px);
   transform: translateX(-50%); z-index: 9; display: flex; gap: 6px;
 }
 .zh-bs-cat {

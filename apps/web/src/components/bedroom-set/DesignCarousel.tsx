@@ -332,7 +332,7 @@ export function DesignCarousel({
         </div>
       </div>
 
-      <CategoryTabs />
+      <CategoryTabs occupancies={designs[focused]?.occupancies ?? []} />
     </div>
   );
 }

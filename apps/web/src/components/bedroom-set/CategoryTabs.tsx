@@ -1,27 +1,33 @@
 'use client';
 
 import * as React from 'react';
+import { OCCUPANCY_LABELS, OCCUPANCY_ORDER, type Occupancy } from './placeholder-data';
 
-// Stub: toggles the active pill only. Real occupancy filtering/linking is SP1.
-const CATS = [
-  { key: 'newborn', label: 'نـــــوزاد' },
-  { key: 'teen', label: 'نـــــوجوان' },
-  { key: 'couple', label: 'دونـــــفره' },
-] as const;
+// Renders one pill per occupancy the focused design supports (in canonical
+// order), so the tabs change as you swipe between designs. Clicking toggles the
+// active pill — the real room-type filter is wired in SP1.
+export function CategoryTabs({ occupancies }: { occupancies: Occupancy[] }) {
+  const tabs = OCCUPANCY_ORDER.filter((o) => occupancies.includes(o));
+  const [active, setActive] = React.useState<Occupancy | null>(() => tabs[0] ?? null);
 
-export function CategoryTabs() {
-  const [active, setActive] = React.useState<string>('newborn');
+  // When the focused design changes, keep the selected room-type if it's still
+  // offered, otherwise fall back to the first available pill.
+  React.useEffect(() => {
+    const next = OCCUPANCY_ORDER.filter((o) => occupancies.includes(o));
+    setActive((cur) => (cur && next.includes(cur) ? cur : next[0] ?? null));
+  }, [occupancies]);
+
   return (
     <nav className="zh-bs-cats" aria-label="دسته‌بندی اتاق">
-      {CATS.map((c) => (
+      {tabs.map((o) => (
         <button
-          key={c.key}
+          key={o}
           type="button"
-          data-cat={c.key}
-          className={`zh-bs-cat${active === c.key ? ' on' : ''}`}
-          onClick={() => setActive(c.key)}
+          data-cat={o}
+          className={`zh-bs-cat${active === o ? ' on' : ''}`}
+          onClick={() => setActive(o)}
         >
-          {c.label}
+          {OCCUPANCY_LABELS[o]}
         </button>
       ))}
     </nav>

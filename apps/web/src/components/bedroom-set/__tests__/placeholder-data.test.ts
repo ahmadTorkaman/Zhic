@@ -10,7 +10,12 @@ describe('bedroom-set placeholder data', () => {
       name: 'لوتوس',
       cardSrc: '/bedroom-set/lotus.webp',
       logoSrc: '/bedroom-set/lotus-logo.png',
+      occupancies: ['baby', 'teen', 'double'],
     });
+  });
+
+  it('gives every design at least one occupancy (drives the category tabs)', () => {
+    expect(DESIGNS.every((d) => d.occupancies.length > 0)).toBe(true);
   });
 
   it('has the 2 featured pages with hero + 2 row tiles each', () => {
