@@ -24,6 +24,7 @@
   --color-gold:       #C49A6C;
   --color-rust:       #8B4A2B;
   --color-overlay:    rgba(20, 17, 15, 0.6);
+  --color-divider-ink: rgba(20, 17, 15, 0.08);
 
   /* Font */
   --font-sans: var(--font-ayandeh), 'Tahoma', sans-serif;
@@ -67,6 +68,7 @@
   --spacing-10: 8rem;
   --spacing-11: 12rem;
   --spacing-12: 16rem;
+  --spacing-section-overlap: clamp(2.5rem, 6vw, 4.5rem);
 
   /* Radii */
   --radius-md:   4px;

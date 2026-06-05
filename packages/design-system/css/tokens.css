@@ -3,6 +3,7 @@
   --color-ivory:    #FAFAF7;
   --color-cream:    #F5F0EB;
   --color-sand:     #E8E0D8;
+  --color-divider-ink: rgba(20, 17, 15, 0.08); /* hairline dividers on light surfaces */
   --color-stone:    #8C8279;
   --color-charcoal: #2C2825;
   --color-ink:      #14110F;
@@ -15,7 +16,6 @@
 
   /* Functional (app infra) */
   --color-rust:     #8B4A2B;
-  --color-divider-ink: rgba(20, 17, 15, 0.08); /* hairline dividers on light surfaces */
 
   /* Gradients
      Caramel→walnut glow used as the on-brand placeholder background for
