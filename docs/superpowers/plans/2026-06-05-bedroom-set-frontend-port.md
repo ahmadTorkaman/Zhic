@@ -805,7 +805,7 @@ Create `apps/web/src/components/bedroom-set/__tests__/CategoryTabs.test.tsx`:
 ```tsx
 /** @vitest-environment jsdom */
 import { describe, expect, it } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { CategoryTabs } from '../CategoryTabs';
 
 describe('<CategoryTabs>', () => {
@@ -821,7 +821,7 @@ describe('<CategoryTabs>', () => {
   it('moves the active recess to a clicked pill', () => {
     const { container } = render(<CategoryTabs />);
     const pills = container.querySelectorAll<HTMLButtonElement>('.zh-bs-cat');
-    pills[2]!.click();
+    fireEvent.click(pills[2]!);
     expect(pills[2]!.className).toContain('on');
     expect(pills[0]!.className).not.toContain('on');
   });
@@ -1082,7 +1082,7 @@ Create `apps/web/src/components/bedroom-set/__tests__/FeaturedOverlay.test.tsx`:
 ```tsx
 /** @vitest-environment jsdom */
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { FeaturedOverlay } from '../FeaturedOverlay';
 import { FEATURED_PAGES } from '../placeholder-data';
 
@@ -1124,7 +1124,7 @@ describe('<FeaturedOverlay>', () => {
     const { container } = render(
       <FeaturedOverlay pages={FEATURED_PAGES} view="featured" onClose={() => {}} onOpenProduct={onOpenProduct} />,
     );
-    container.querySelector<HTMLButtonElement>('.zh-bs-tile')!.click();
+    fireEvent.click(container.querySelector('.zh-bs-tile')!);
     expect(onOpenProduct).toHaveBeenCalledOnce();
   });
 });
@@ -1714,7 +1714,7 @@ Create `apps/web/src/components/bedroom-set/__tests__/BedroomSetLanding.test.tsx
 ```tsx
 /** @vitest-environment jsdom */
 import { beforeAll, describe, expect, it } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { BedroomSetLanding } from '../BedroomSetLanding';
 import { DESIGNS, FEATURED_PAGES, WRITING } from '../placeholder-data';
 
@@ -1755,7 +1755,7 @@ describe('<BedroomSetLanding>', () => {
     );
     const featured = container.querySelector('.zh-bs-featured')!;
     expect(featured.className).not.toContain('show');
-    container.querySelector<HTMLButtonElement>('.zh-bs-upcue')!.click();
+    fireEvent.click(container.querySelector('.zh-bs-upcue')!);
     expect(featured.className).toContain('show');
   });
 });
