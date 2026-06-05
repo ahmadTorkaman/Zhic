@@ -54,21 +54,27 @@ const { values: flags } = parseArgs({ options: { apply: { type: 'boolean', defau
 const APPLY = flags.apply === true
 
 const SRC_DIR = '/home/ahmad/imports/journals-media/journals-media'
+/** Full-size re-exports from Figma land here (same "Rectangle NN.png"
+ *  names). Preferred over SRC_DIR when present — several zip slices are
+ *  collage edge-crops (207–601px wide) that render too zoomed-in as
+ *  covers; the Figma nodes are full 898×505. */
+const FULL_DIR = '/home/ahmad/imports/journals-media/full'
 const MEDIA_DIR = path.resolve(__dirname, '..', 'media')
 
-/** rect number → article id. Targets the homepage's top-9 — the journal
- *  rows sort by publishedAt DESC (NOT by id): articles 11–19 as of
- *  2026-06-05. Pairings follow image content vs article subject. */
-const MAPPING: Array<{ rect: number; articleId: number }> = [
-  { rect: 57, articleId: 14 }, // teen room w/ bed+desk → تخت‌خوابی برای دو نسل
-  { rect: 58, articleId: 17 }, // bunk room             → اتاق دوستانه برای دو فرزند
-  { rect: 59, articleId: 16 }, // dark walnut study     → چرا چوب گردوی ایرانی؟
-  { rect: 60, articleId: 19 }, // nursery set           → روایت یک سرویس از ابتدا تا نصب
-  { rect: 61, articleId: 11 }, // white crib nursery    → راهنمای انتخاب چوب مناسب
-  { rect: 62, articleId: 18 }, // wardrobe crop         → کمد و حافظه
-  { rect: 63, articleId: 12 }, // warm calm bedroom     → طراحی اتاق خواب آرام (the Figma card's own title)
-  { rect: 64, articleId: 15 }, // carved detail crop    → هندسه‌ی منبت در طراحی امروز
-  { rect: 65, articleId: 13 }, // bright clean bedroom  → نگهداری از مبلمان چوبی
+/** rect number → article id + placement-named file (article slug, SEO).
+ *  Targets the homepage's top-9 — the journal rows sort by publishedAt
+ *  DESC (NOT by id): articles 11–19 as of 2026-06-05. Pairings follow
+ *  image content vs article subject. */
+const MAPPING: Array<{ rect: number; articleId: number; file: string }> = [
+  { rect: 57, articleId: 14, file: 'journal-tahkhab-baray-do-nasl.webp' },        // teen room w/ bed+desk
+  { rect: 58, articleId: 17, file: 'journal-otaagh-dostane-do-farzand.webp' },    // bunk room
+  { rect: 59, articleId: 16, file: 'journal-cheraa-choob-gerdoo-irani.webp' },    // dark walnut study
+  { rect: 60, articleId: 19, file: 'journal-ravayat-servis-ebteda-ta-nasb.webp' },// nursery set
+  { rect: 61, articleId: 11, file: 'journal-guide-wood-selection.webp' },         // white crib nursery
+  { rect: 62, articleId: 18, file: 'journal-komod-haafeze-sonnat.webp' },         // wardrobe crop
+  { rect: 63, articleId: 12, file: 'journal-bedroom-calm-design.webp' },          // warm calm bedroom
+  { rect: 64, articleId: 15, file: 'journal-handese-monabbat-emrooz.webp' },      // carved detail crop
+  { rect: 65, articleId: 13, file: 'journal-wood-care-guide.webp' },              // bright clean bedroom
 ]
 
 /** First --apply run (2026-06-05) targeted ids 17–25 by mistake (newest by
@@ -96,21 +102,22 @@ async function main() {
 
   if (APPLY && !fs.existsSync(MEDIA_DIR)) fs.mkdirSync(MEDIA_DIR, { recursive: true })
 
-  for (const { rect, articleId } of MAPPING) {
+  for (const { rect, articleId, file: filename } of MAPPING) {
     const article = articles.get(articleId)
     if (!article) {
       console.log(`  ✗ rect ${rect}: article ${articleId} not found — skipped`)
       continue
     }
-    const srcPath = path.join(SRC_DIR, `Rectangle ${rect}.png`)
+    // Prefer full-size Figma re-export; fall back to the zip's slice.
+    const fullPath = path.join(FULL_DIR, `Rectangle ${rect}.png`)
+    const srcPath = fs.existsSync(fullPath) ? fullPath : path.join(SRC_DIR, `Rectangle ${rect}.png`)
     if (!fs.existsSync(srcPath)) {
       console.log(`  ✗ rect ${rect}: ${srcPath} missing — skipped`)
       continue
     }
-    const filename = `journal-rect-${rect}.webp`
+    const srcKind = srcPath === fullPath ? 'full' : 'slice'
     console.log(
-      `  rect ${rect} → article ${articleId} «${article.title}»` +
-        (article.cover_id ? ` (replaces cover ${article.cover_id})` : ''),
+      `  rect ${rect} (${srcKind}) → article ${articleId} «${article.title}» as ${filename}`,
     )
     if (!APPLY) continue
 
@@ -120,21 +127,35 @@ async function main() {
     const stat = fs.statSync(targetPath)
     const meta = await sharp(targetPath).metadata()
 
-    // Upsert media row by filename (idempotent re-runs)
-    const existing = await client.query<{ id: number }>(
-      `SELECT id FROM media WHERE filename = $1`,
-      [filename],
+    // Reuse the article's current journal-cover media row when present
+    // (covers keep their media id), else upsert by filename.
+    const existing = await client.query<{ id: number; filename: string }>(
+      `SELECT id, filename FROM media
+       WHERE filename = $1
+          OR (id = $2 AND filename LIKE 'journal-%')`,
+      [filename, article.cover_id],
     )
     let mediaId: number
     if (existing.rows.length > 0) {
-      mediaId = existing.rows[0]!.id
-      await client.query(`UPDATE media SET alt = $2, filesize = $3, width = $4, height = $5, updated_at = NOW() WHERE id = $1`, [
-        mediaId,
-        article.title,
-        stat.size,
-        meta.width ?? 0,
-        meta.height ?? 0,
-      ])
+      const row = existing.rows[0]!
+      mediaId = row.id
+      // Renaming: drop the previously written file if the name changes.
+      if (row.filename !== filename) {
+        const oldPath = path.join(MEDIA_DIR, row.filename)
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath)
+      }
+      await client.query(
+        `UPDATE media SET alt = $2, filename = $3, url = $4, filesize = $5, width = $6, height = $7, updated_at = NOW() WHERE id = $1`,
+        [
+          mediaId,
+          article.title,
+          filename,
+          `/api/media/file/${filename}`,
+          stat.size,
+          meta.width ?? 0,
+          meta.height ?? 0,
+        ],
+      )
     } else {
       const r = await client.query<{ id: number }>(
         `INSERT INTO media (
