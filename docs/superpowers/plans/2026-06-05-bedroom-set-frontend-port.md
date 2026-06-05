@@ -299,8 +299,8 @@ describe('slot', () => {
     expect(slot(1200, 800, false)).toBeCloseTo(466.432, 2);
   });
   it('mobile: cardW(0.58) + innerWidth*0.10', () => {
-    // 844*0.58*0.703 + 390*0.10 = 344.07... + 39
-    expect(slot(390, 844, true)).toBeCloseTo(344.07016 + 39, 2);
+    // 844*0.58*0.703 + 390*0.10 = 344.13256 + 39
+    expect(slot(390, 844, true)).toBeCloseTo(344.13256 + 39, 2);
   });
 });
 
@@ -308,7 +308,7 @@ describe('flipAngle (half-flip, never past ±90)', () => {
   it('tilts out 0→90 then in -90→0', () => {
     expect(flipAngle(0)).toBe(0);
     expect(flipAngle(0.25)).toBe(45);
-    expect(flipAngle(0.5)).toBe(90);
+    expect(flipAngle(0.5)).toBe(-90); // mockup uses `frac < 0.5`; exactly 0.5 takes the else branch → -90 (edge-on, visually identical to +90)
     expect(flipAngle(0.75)).toBe(-45);
     expect(flipAngle(1)).toBe(0);
   });
