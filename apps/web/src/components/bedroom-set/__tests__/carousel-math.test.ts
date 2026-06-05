@@ -15,13 +15,13 @@ describe('clampIndex', () => {
 });
 
 describe('slot', () => {
-  it('desktop: cardW(0.68) + innerWidth*0.07', () => {
-    // 800*0.68*0.703 + 1200*0.07 = 382.432 + 84 = 466.432
-    expect(slot(1200, 800, false)).toBeCloseTo(466.432, 2);
+  it('desktop: 0.95 × cardW(0.68) — neighbours peek', () => {
+    // 800*0.68*0.703 = 382.432; *0.95 = 363.3104
+    expect(slot(800, false)).toBeCloseTo(363.3104, 2);
   });
-  it('mobile: cardW(0.58) + innerWidth*0.10', () => {
-    // 844*0.58*0.703 + 390*0.10 = 344.13256 + 39
-    expect(slot(390, 844, true)).toBeCloseTo(344.13256 + 39, 2);
+  it('mobile: 0.84 × cardW(0.52) — narrower card so neighbours peek at the edges', () => {
+    // 844*0.52*0.703 = 308.53264; *0.84 = 259.1674176
+    expect(slot(844, true)).toBeCloseTo(259.1674176, 2);
   });
 });
 
@@ -59,8 +59,8 @@ describe('card transforms', () => {
     expect(cardScale(2)).toBe(0.5); // max(0.5, 1-0.52)
     expect(cardOpacity(0)).toBe(1);
     expect(cardOpacity(3)).toBe(0.14); // max(0.14, 1-1.2)
-    expect(cardBlurPx(1)).toBe(7);
-    expect(cardBlurPx(10)).toBe(16); // min(16, 70)
+    expect(cardBlurPx(1)).toBe(4);
+    expect(cardBlurPx(10)).toBe(16); // min(16, 40)
     expect(cardZIndex(0)).toBe(100);
     expect(cardZIndex(1)).toBe(90);
     expect(isCulled(2.2)).toBe(false);

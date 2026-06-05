@@ -32,11 +32,11 @@ describe('<DesignCarousel>', () => {
     expect(container.querySelectorAll('.zh-bs-lg').length).toBe(DESIGNS.length);
   });
 
-  it('shows the Persian counter «طرح ۱ از ۷» and marks the first dot active', () => {
+  it('has no bottom prompt row and marks the first dot active', () => {
     const { container } = render(
       <DesignCarousel designs={DESIGNS} view="designs" onOpenDesign={() => {}} />,
     );
-    expect(container.querySelector('.zh-bs-prompt span')!.textContent).toBe('طرح ۱ از ۷');
+    expect(container.querySelector('.zh-bs-prompt')).toBeNull(); // bottom chevron + counter removed
     expect(container.querySelectorAll('.zh-bs-dot')[0]!.className).toContain('on');
   });
 

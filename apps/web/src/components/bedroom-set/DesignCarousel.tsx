@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { toPersianDigits } from '@zhic/locale';
 import type { DesignCard } from './placeholder-data';
 import { CategoryTabs } from './CategoryTabs';
 import {
@@ -42,6 +41,7 @@ export function DesignCarousel({
   const cardHidRef = React.useRef<boolean[]>([]);
   const cardBlurRef = React.useRef<number[]>([]);
   const bandBlurRef = React.useRef(-1);
+  const interactedRef = React.useRef(false); // true once the user drags/wheels/keys — suppresses the one-time nudge
   const viewRef = React.useRef(view);
   React.useEffect(() => { viewRef.current = view; }, [view]);
   // Mirror the mockup's openFeatured(): cancel any in-flight snap when leaving the carousel view.
@@ -54,7 +54,7 @@ export function DesignCarousel({
 
   const computeSlot = React.useCallback(() => {
     const mob = window.matchMedia('(max-width:768px)').matches;
-    return slot(window.innerWidth, window.innerHeight, mob);
+    return slot(window.innerHeight, mob);
   }, []);
 
   const updateGlass = React.useCallback(() => {
@@ -168,6 +168,7 @@ export function DesignCarousel({
 
     const onDown = (e: PointerEvent) => {
       if (viewRef.current !== 'designs') return;
+      interactedRef.current = true;
       dragging = true;
       sx = e.clientX; sy = e.clientY; sp = progressRef.current; axis = null;
       downCard = (e.target as HTMLElement).closest?.('.zh-bs-card') ?? null;
@@ -227,6 +228,7 @@ export function DesignCarousel({
     let idle: ReturnType<typeof setTimeout> | null = null;
     const onWheel = (e: WheelEvent) => {
       if (viewRef.current !== 'designs' || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      interactedRef.current = true;
       e.preventDefault();
       if (rafRef.current !== null) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
       progressRef.current = clampIndex(progressRef.current + e.deltaX / 700, N);
@@ -242,6 +244,7 @@ export function DesignCarousel({
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (viewRef.current !== 'designs') return;
+      if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) interactedRef.current = true;
       if (e.key === 'ArrowRight') { e.preventDefault(); go(Math.round(progressRef.current) + 1); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); go(Math.round(progressRef.current) - 1); }
       else if (e.key === 'Enter') { onOpenDesign(designs[clampIndex(Math.round(progressRef.current), N)]!); }
@@ -251,6 +254,30 @@ export function DesignCarousel({
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [N, go, designs, onOpenDesign]);
+
+  // One-time "swipe me" nudge: gently glide the focused card toward the next
+  // and settle back, revealing the peeking neighbour — skipped if the user has
+  // already interacted or prefers reduced motion.
+  React.useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let raf = 0;
+    const start = setTimeout(() => {
+      if (interactedRef.current || viewRef.current !== 'designs') return;
+      const peak = 0.26;
+      const dur = 1150;
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        if (interactedRef.current) { progressRef.current = 0; render(); return; }
+        const k = Math.min(1, (now - t0) / dur);
+        progressRef.current = peak * Math.sin(k * Math.PI); // 0 → peak → 0
+        render();
+        if (k < 1) raf = requestAnimationFrame(tick);
+        else { progressRef.current = 0; render(); }
+      };
+      raf = requestAnimationFrame(tick);
+    }, 900);
+    return () => { clearTimeout(start); if (raf) cancelAnimationFrame(raf); };
+  }, [render]);
 
   return (
     <div className="zh-bs-stage" ref={stageRef}>
@@ -304,13 +331,6 @@ export function DesignCarousel({
           </div>
         </div>
       </div>
-
-      <footer className="zh-bs-prompt">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-          <path d="M9 6 L15 12 L9 18" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <span>{`طرح ${toPersianDigits(focused + 1)} از ${toPersianDigits(N)}`}</span>
-      </footer>
 
       <CategoryTabs />
     </div>

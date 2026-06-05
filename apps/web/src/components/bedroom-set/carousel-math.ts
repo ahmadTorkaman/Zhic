@@ -1,13 +1,21 @@
-// Pure carousel/flip math — ported verbatim from the bedroom-set-v2 mockup
-// (index.html: slot/updateGlass/render/snapTo). Constants are the mockup's.
+// Pure carousel/flip math — ported from the bedroom-set-v2 mockup
+// (index.html: slot/updateGlass/render/snapTo). The flip/glass constants are
+// the mockup's; the card spacing + neighbour blur/opacity are tuned so the
+// adjacent cards peek in at the screen edges as a swipe affordance
+// (see slot / cardOpacity / cardBlurPx).
 
 export const clampIndex = (p: number, n: number): number =>
   Math.max(0, Math.min(n - 1, p));
 
-/** Per-card horizontal spacing. `mobile` = matchMedia('(max-width:768px)'). */
-export function slot(innerWidth: number, innerHeight: number, mobile: boolean): number {
-  const cardW = innerHeight * (mobile ? 0.58 : 0.68) * 0.703;
-  return cardW + innerWidth * (mobile ? 0.1 : 0.07);
+/**
+ * Per-card horizontal spacing. `mobile` = matchMedia('(max-width:768px)').
+ * Tighter than the card width so the adjacent cards peek in at the screen
+ * edges (the swipe affordance) — the mockup's wider gap pushed them off-screen
+ * on phones, which is why the carousel didn't read as swipeable.
+ */
+export function slot(innerHeight: number, mobile: boolean): number {
+  const cardW = innerHeight * (mobile ? 0.52 : 0.68) * 0.703;
+  return cardW * (mobile ? 0.84 : 0.95);
 }
 
 // Half-flip: tilt OUT to 90° (edge-on), swap the visible logo, tilt back IN.
@@ -24,10 +32,12 @@ export const bandOpacity = (frac: number): number => 1 - crossfadeMid(frac) * 0.
 export const bandBlurPx = (frac: number): number => Math.round(crossfadeMid(frac) * 12);
 export const flipOpacity = (frac: number): number => 1 - crossfadeMid(frac) * 0.9;
 
-// Per-card transforms by absolute distance from the focused index.
+// Per-card transforms by absolute distance from the focused index. The
+// immediate neighbours are kept brighter + sharper than the mockup so the
+// peeking sliver clearly reads as "another card you can swipe to".
 export const cardScale = (absDist: number): number => Math.max(0.5, 1 - absDist * 0.26);
-export const cardOpacity = (absDist: number): number => Math.max(0.14, 1 - absDist * 0.4);
-export const cardBlurPx = (absDist: number): number => Math.min(16, Math.round(absDist * 7));
+export const cardOpacity = (absDist: number): number => Math.max(0.14, 1 - absDist * 0.34);
+export const cardBlurPx = (absDist: number): number => Math.min(16, Math.round(absDist * 4));
 export const cardZIndex = (absDist: number): number => Math.round(100 - absDist * 10);
 export const isCulled = (absDist: number): boolean => absDist > 2.2;
 
