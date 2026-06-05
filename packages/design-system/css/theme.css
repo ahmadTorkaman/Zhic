@@ -68,7 +68,6 @@
   --spacing-10: 8rem;
   --spacing-11: 12rem;
   --spacing-12: 16rem;
-  --spacing-section-overlap: clamp(2.5rem, 6vw, 4.5rem);
 
   /* Radii */
   --radius-md:   4px;
