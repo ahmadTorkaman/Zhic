@@ -74,6 +74,43 @@ body {
   border-color: rgba(250, 250, 247, 0.12);
 }
 
+/* ── Floating card (straddles a section boundary) ─────────────────── */
+/* Solid ivory card meant to sit across the edge between a light and a
+   dark section. Pair with .section-overlap-top as the FIRST child of
+   the lower (dark) section — the negative margin pulls it up so its
+   top half floats over the previous section's background. */
+.float-card {
+  background: var(--color-ivory);
+  border: 1px solid var(--color-sand);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+}
+
+.section-overlap-top {
+  position: relative;
+  z-index: var(--z-raised);
+  margin-block-start: calc(-1 * var(--section-overlap));
+}
+
+/* ── Divided stat row (on light surfaces) ─────────────────────────── */
+/* 3-up stat grid with hairline vertical dividers. Logical borders so
+   RTL needs no overrides. Cells style their own type (see StatBlock
+   variant="divided"). */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stat-cell {
+  padding-inline: var(--space-4);
+  padding-block: var(--space-5);
+  text-align: center;
+}
+
+.stat-cell + .stat-cell {
+  border-inline-start: 1px solid var(--color-divider-ink);
+}
+
 /* ── Site header chrome (scrolled) ────────────────────────────────── */
 /* Activates once user scrolls past 60px. Heavy-blur glass — same recipe
    as the picker bar and the dropdown panels so all the chrome layers
