@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { DesignCard, Occupancy } from './placeholder-data';
 import { cardForOccupancy, OCCUPANCY_ORDER } from './placeholder-data';
 import { CategoryTabs } from './CategoryTabs';
+import { RotatingLogo } from './RotatingLogo';
 import {
   clampIndex, slot,
   cardScale, cardOpacity, cardBlurPx, cardZIndex, isCulled,
@@ -24,8 +25,6 @@ export function DesignCarousel({
 }) {
   const N = designs.length;
   const [focused, setFocused] = React.useState(0);
-  // The design that just lost focus — its logo plays the slide-up exit (-1 = none).
-  const [prevFocused, setPrevFocused] = React.useState(-1);
   // Selected room-type tab — drives which card variant each design shows.
   const [activeOccupancy, setActiveOccupancy] = React.useState<Occupancy | null>(
     () => OCCUPANCY_ORDER.find((o) => designs[0]?.occupancies.includes(o)) ?? null,
@@ -101,7 +100,6 @@ export function DesignCarousel({
     }
     const near = clampIndex(Math.round(vp), N);
     if (near !== lastNearRef.current) {
-      setPrevFocused(lastNearRef.current);
       lastNearRef.current = near;
       setFocused(near);
     }
@@ -298,20 +296,16 @@ export function DesignCarousel({
         </div>
         <div className="zh-bs-focus">
           <div className="zh-bs-band" style={{ opacity: designs[focused]?.logoSrc ? 1 : 0 }} />
-          <div className="zh-bs-flip">
-            {designs.map((d, i) =>
-              d.logoSrc ? (
-                /* eslint-disable-next-line @next/next/no-img-element -- stacked layers, slide-swapped on focus change */
-                <img
-                  key={d.slug}
-                  className="zh-bs-lg"
-                  alt={d.name}
-                  src={d.logoSrc}
-                  data-state={i === focused ? 'active' : i === prevFocused ? 'exit' : 'rest'}
-                />
-              ) : null,
-            )}
-          </div>
+          <RotatingLogo src={designs[focused]?.logoSrc} />
+        </div>
+        {/* Preload the name-marks so RotatingLogo's slide-in never flashes a blank. */}
+        <div aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
+          {designs.map((d) =>
+            d.logoSrc ? (
+              /* eslint-disable-next-line @next/next/no-img-element -- preload only */
+              <img key={d.slug} src={d.logoSrc} alt="" />
+            ) : null,
+          )}
         </div>
       </div>
 

@@ -23,14 +23,16 @@ beforeAll(() => {
 });
 
 describe('<DesignCarousel>', () => {
-  it('renders a card + dot per design, and a logo layer per design that has one', () => {
+  it('renders a card + dot per design, and the focused design’s name-mark via RotatingLogo', () => {
     const { container } = render(
       <DesignCarousel designs={DESIGNS} view="designs" onOpenDesign={() => {}} />,
     );
     expect(container.querySelectorAll('.zh-bs-card').length).toBe(DESIGNS.length);
     expect(container.querySelectorAll('.zh-bs-dot').length).toBe(DESIGNS.length);
-    // bw/verna/monte have no name-mark → no logo layer
-    expect(container.querySelectorAll('.zh-bs-lg').length).toBe(DESIGNS.filter((d) => d.logoSrc).length);
+    // RotatingLogo builds one name-mark at a time — the focused design's (lotus).
+    const logos = container.querySelectorAll('.zh-bs-lg');
+    expect(logos.length).toBe(1);
+    expect(logos[0]!.getAttribute('src')).toBe(DESIGNS[0]!.logoSrc);
   });
 
   it('has no bottom prompt row and marks the first dot active', () => {
