@@ -40,10 +40,11 @@ describe('<DesignCarousel>', () => {
     expect(container.querySelectorAll('.zh-bs-dot')[0]!.className).toContain('on');
   });
 
-  it('embeds the category tabs', () => {
+  it('embeds the category tabs for the focused design', () => {
     const { container } = render(
       <DesignCarousel designs={DESIGNS} view="designs" onOpenDesign={() => {}} />,
     );
-    expect(container.querySelectorAll('.zh-bs-cat').length).toBe(3);
+    // lotus (focused 0) has occupancies [double, teen] → 2 tabs
+    expect(container.querySelectorAll('.zh-bs-cat').length).toBe(2);
   });
 });

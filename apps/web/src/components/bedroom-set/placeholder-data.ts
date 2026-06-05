@@ -33,16 +33,23 @@ export type WritingContent = { heading: string; body: string };
 
 const A = '/bedroom-set';
 
-// occupancies are placeholder demo values (varied so the tabs visibly change
-// as you swipe); SP1 replaces them with each design's real Payload occupancies.
+// Real catalog designs — names/slugs/occupancies are the actual Payload values.
+// The first 7 use the polished local card + bilingual logo art; the next 5 use
+// the catalog's slider image + the (Persian-only) design name-mark. SP1 swaps
+// this whole module for a fetchAllDesigns() call against Payload.
 export const DESIGNS: DesignCard[] = [
-  { slug: 'lotus', name: 'لوتوس', cardSrc: `${A}/lotus.webp`, logoSrc: `${A}/lotus-logo.png`, occupancies: ['baby', 'teen', 'double'] },
-  { slug: 'parla', name: 'پارلا', cardSrc: `${A}/parla.webp`, logoSrc: `${A}/parla-logo.png`, occupancies: ['baby', 'teen'] },
-  { slug: 'caroline', name: 'کارولین', cardSrc: `${A}/caroline.webp`, logoSrc: `${A}/caroline-logo.png`, occupancies: ['teen', 'double'] },
-  { slug: 'iron', name: 'آیرون', cardSrc: `${A}/iron.webp`, logoSrc: `${A}/iron-logo.png`, occupancies: ['baby', 'teen', 'double'] },
-  { slug: 'jacqueline', name: 'ژاکلین', cardSrc: `${A}/jacqueline.webp`, logoSrc: `${A}/jacqueline-logo.png`, occupancies: ['double'] },
-  { slug: 'lukaplus', name: 'لوکاپلاس', cardSrc: `${A}/lukaplus.webp`, logoSrc: `${A}/lukaplus-logo.png`, occupancies: ['baby', 'teen', 'double'] },
+  { slug: 'lotus', name: 'لوتوس', cardSrc: `${A}/lotus.webp`, logoSrc: `${A}/lotus-logo.png`, occupancies: ['double', 'teen'] },
+  { slug: 'parla', name: 'پارلا', cardSrc: `${A}/parla.webp`, logoSrc: `${A}/parla-logo.png`, occupancies: ['baby', 'teen', 'double', 'bunk'] },
+  { slug: 'caroline', name: 'کارولین', cardSrc: `${A}/caroline.webp`, logoSrc: `${A}/caroline-logo.png`, occupancies: ['baby', 'double', 'teen'] },
+  { slug: 'iron', name: 'آیرون', cardSrc: `${A}/iron.webp`, logoSrc: `${A}/iron-logo.png`, occupancies: ['double', 'teen'] },
+  { slug: 'jacqueline', name: 'ژاکلین', cardSrc: `${A}/jacqueline.webp`, logoSrc: `${A}/jacqueline-logo.png`, occupancies: ['double', 'teen'] },
+  { slug: 'lukaplus', name: 'لوکاپلاس', cardSrc: `${A}/lukaplus.webp`, logoSrc: `${A}/lukaplus-logo.png`, occupancies: ['double', 'teen'] },
   { slug: 'loof', name: 'لوف', cardSrc: `${A}/loof.webp`, logoSrc: `${A}/loof-logo.png`, occupancies: ['baby', 'teen'] },
+  { slug: 'elegance', name: 'الگانس', cardSrc: `${A}/elegance.webp`, logoSrc: `${A}/elegance-logo.png`, occupancies: ['teen'] },
+  { slug: 'elizabeth', name: 'الیزابت', cardSrc: `${A}/elizabeth.webp`, logoSrc: `${A}/elizabeth-logo.png`, occupancies: ['baby', 'double', 'teen'] },
+  { slug: 'gandom', name: 'گندم', cardSrc: `${A}/gandom.webp`, logoSrc: `${A}/gandom-logo.png`, occupancies: ['baby'] },
+  { slug: 'mocha', name: 'موکا', cardSrc: `${A}/mocha.webp`, logoSrc: `${A}/mocha-logo.png`, occupancies: ['teen'] },
+  { slug: 'skate', name: 'اسکیت', cardSrc: `${A}/skate.webp`, logoSrc: `${A}/skate-logo.png`, occupancies: ['baby', 'teen'] },
 ];
 
 // Decorative marketing imagery — alt is '' for now (SP1 supplies real alts).

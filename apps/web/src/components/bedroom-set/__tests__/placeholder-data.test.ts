@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { DESIGNS, FEATURED_PAGES, WRITING } from '../placeholder-data';
 
 describe('bedroom-set placeholder data', () => {
-  it('has the 7 mockup designs in order', () => {
+  it('has the catalog designs in order with real occupancies', () => {
     expect(DESIGNS.map((d) => d.slug)).toEqual([
       'lotus', 'parla', 'caroline', 'iron', 'jacqueline', 'lukaplus', 'loof',
+      'elegance', 'elizabeth', 'gandom', 'mocha', 'skate',
     ]);
     expect(DESIGNS[0]).toMatchObject({
       name: 'لوتوس',
       cardSrc: '/bedroom-set/lotus.webp',
       logoSrc: '/bedroom-set/lotus-logo.png',
-      occupancies: ['baby', 'teen', 'double'],
+      occupancies: ['double', 'teen'],
     });
   });
 
