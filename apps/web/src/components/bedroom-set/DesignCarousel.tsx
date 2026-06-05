@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { toPersianDigits } from '@zhic/locale';
 import type { DesignCard } from './placeholder-data';
 import { CategoryTabs } from './CategoryTabs';
@@ -248,7 +249,7 @@ export function DesignCarousel({
     <div className="zh-bs-stage" ref={stageRef}>
       <header className="zh-bs-top">
         <nav className="zh-bs-crumb">
-          <a href="/">خانه</a> / طرح‌ها
+          <Link href="/">خانه</Link> / طرح‌ها
         </nav>
         <div className="zh-bs-dots" role="tablist" aria-label="گزینش طرح">
           {designs.map((d, i) => (
