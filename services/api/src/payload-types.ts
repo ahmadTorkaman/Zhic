@@ -76,11 +76,13 @@ export interface Config {
     authors: Author;
     'journal-categories': JournalCategory;
     categories: Category;
+    rooms: Room;
     tags: Tag;
     materials: Material;
     collections: Collection;
     media: Media;
     inquiries: Inquiry;
+    subscribers: Subscriber;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -97,11 +99,13 @@ export interface Config {
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     'journal-categories': JournalCategoriesSelect<false> | JournalCategoriesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    rooms: RoomsSelect<false> | RoomsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     materials: MaterialsSelect<false> | MaterialsSelect<true>;
     collections: CollectionsSelect<false> | CollectionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     inquiries: InquiriesSelect<false> | InquiriesSelect<true>;
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -120,9 +124,10 @@ export interface Config {
     care: Care;
     events: Event;
     privacy: Privacy;
-    terms: Term;
     returns: Return;
     shipping: Shipping;
+    'site-config': SiteConfig;
+    terms: Term;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
@@ -133,9 +138,10 @@ export interface Config {
     care: CareSelect<false> | CareSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     privacy: PrivacySelect<false> | PrivacySelect<true>;
-    terms: TermsSelect<false> | TermsSelect<true>;
     returns: ReturnsSelect<false> | ReturnsSelect<true>;
     shipping: ShippingSelect<false> | ShippingSelect<true>;
+    'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
+    terms: TermsSelect<false> | TermsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -185,13 +191,6 @@ export interface User {
   hash?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
   password?: string | null;
   collection: 'users';
 }
@@ -211,10 +210,40 @@ export interface Design {
    */
   age_group?: ('infant' | 'child' | 'teen' | 'adult') | null;
   /**
-   * این طرح در کدام صفحات هاب «سرویس خواب /bedroom-set/{slug}» نمایش داده شود؟
+   * این طرح در کدام صفحات هاب «سرویس خواب /bedroom-set/{slug}» نمایش داده شود؟ انتخاب چند گزینه ممکن است. خالی یعنی هیچ هاب آرایش‌نشده‌ای نمایش نمی‌دهد.
    */
   occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
   description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * یک جمله‌ی کوتاه و گویا که زیر نام طرح در صفحه‌ی اختصاصی نمایش داده می‌شود.
+   */
+  tagline?: string | null;
+  /**
+   * تصویر ابتدای صفحه‌ی طرح (متفاوت از گالری). در صورت خالی بودن، اولین تصویر گالری استفاده می‌شود.
+   */
+  heroMedia?: (number | null) | Media;
+  /**
+   * مدیای کارت این طرح در اسلایدر صفحه‌ی /designs (ترجیحاً GIF یا ویدیوی کوتاه که کل ست را نشان می‌دهد). اگر خالی باشد، از heroMedia یا گالری استفاده می‌شود.
+   */
+  sliderMedia?: (number | null) | Media;
+  /**
+   * متن بلند با امکان درج تصویر، ویدیو/گیف، نقل قول و ارجاع به متریال.
+   */
+  storyBlocks?: {
     root: {
       type: string;
       children: {
@@ -297,13 +326,32 @@ export interface Product {
   } | null;
   design: number | Design;
   piece_type?:
-    | ('bed' | 'nightstand' | 'closet' | 'dresser' | 'mirror' | 'desk' | 'bookcase' | 'display_cabinet')
+    | (
+        | 'bed'
+        | 'nightstand'
+        | 'closet'
+        | 'dresser'
+        | 'mirror'
+        | 'desk'
+        | 'bookcase'
+        | 'display_cabinet'
+        | 'vanity'
+        | 'chair'
+        | 'console'
+        | 'changing_table'
+        | 'bracket'
+        | 'sofa'
+      )
     | null;
+  /**
+   * این قطعه به کدام گروه‌(های) سنی ست تعلق دارد؟ انتخاب چند گزینه ممکن است. در PDP طرح با ?age=… فیلتر می‌شود. خالی یعنی فیلتر سنی روی این قطعه اثری ندارد.
+   */
+  occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
   categoryIds?: (number | Category)[] | null;
   tagIds?: (number | Tag)[] | null;
-  materialIds: (number | Material)[];
+  materialIds?: (number | Material)[] | null;
   /**
-   * الگو: AAA-NNN (مثال: BED-001)
+   * شناسه‌ی یکتای محصول (می‌تواند الگوی AAA-NNN یا عددی باشد).
    */
   sku: string;
   /**
@@ -317,9 +365,13 @@ export interface Product {
   availability: 'in_stock' | 'made_to_order' | 'backorder' | 'discontinued';
   leadTimeDays: number;
   /**
-   * سال‌های گارانتی ساختار. پیش‌فرض ۵.
+   * سال‌های گارانتی ساختار. نمایش در سایدبار PDP.
    */
   warrantyYears?: number | null;
+  /**
+   * سال‌های خدمات پس از فروش. نمایش در سایدبار PDP.
+   */
+  afterSalesYears?: number | null;
   dimensions?: {
     width?: number | null;
     height?: number | null;
@@ -390,29 +442,6 @@ export interface Product {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "product-variants".
- */
-export interface ProductVariant {
-  id: number;
-  product: number | Product;
-  sku: string;
-  label?: string | null;
-  axes?:
-    | {
-        key: string;
-        value: string;
-        id?: string | null;
-      }[]
-    | null;
-  priceDeltaRials?: number | null;
-  availability?: ('in_stock' | 'made_to_order' | 'backorder' | 'discontinued') | null;
-  image?: (number | null) | Media;
-  displayOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
@@ -422,17 +451,20 @@ export interface Category {
    * Auto-generated from name if left empty
    */
   slug?: string | null;
+  /**
+   * یک خط برای متاتگ / SEO. متن طولانی hub در فیلد «مقدمه» می‌رود.
+   */
   description?: string | null;
   /**
    * یک جمله کوتاه که زیر نام دسته‌بندی در hero نمایش داده می‌شود.
    */
   tagline?: string | null;
   /**
-   * تصویر تمام‌عرض بالای صفحه. برای parent‌ها الزامی؛ برای leaf‌ها اختیاری.
+   * تصویر تمام‌عرض بالای صفحه. برای parent‌ها الزامی؛ برای leaf‌ها اختیاری — در صورت خالی بودن، اولین تصویر اولین محصول این دسته استفاده می‌شود.
    */
   cover?: (number | null) | Media;
   /**
-   * ۲ تا ۳ پاراگراف کوتاه پس از hero. متن اصلی SEO صفحه.
+   * ۲ تا ۳ پاراگراف کوتاه پس از hero. متن اصلی SEO صفحه. حدود ۱۰۰ کلمه.
    */
   intro?: {
     root: {
@@ -454,18 +486,23 @@ export interface Category {
    */
   allowed_axes?: string[] | null;
   /**
-   * یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.
+   * از xlsx: یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.
    */
   rule?: string | null;
   /**
-   * فقط برای صفحات SEO-promoted facet (مثل /storage/wardrobe/double-door). شکل: { axis, value }.
+   * فقط برای صفحات SEO-promoted facet (مثل /storage/wardrobe/double-door). شکل: { "axis": "doors", "value": "2" }. صفحه به‌طور خودکار محصولات را با این محور فیلتر می‌کند. برای parent و leaf معمولی خالی می‌ماند.
    */
-  axis_filter?: {
-    axis: string;
-    value: string | number;
-  } | null;
+  axis_filter?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
-   * برای ساخت ساختار درختی (اختیاری)
+   * برای ساخت ساختار درختی (اختیاری برای parent‌ها، الزامی برای leaf‌ها)
    */
   parent?: (number | null) | Category;
   /**
@@ -715,6 +752,56 @@ export interface JournalCategory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-variants".
+ */
+export interface ProductVariant {
+  id: number;
+  product: number | Product;
+  /**
+   * مثلاً GAN-BED-120-H. الزامی و یکتا.
+   */
+  sku: string;
+  /**
+   * متن نمایشی در سبد و فاکتورها. اگر خالی باشد، از نام محصول و محورهای واریانت خودکار ساخته می‌شود.
+   */
+  label?: string | null;
+  /**
+   * هر سطر یک محور (مثلاً سایز=۱۲۰). کلیدها باید با allowed_axes دسته‌بندی محصول هم‌خوان باشند.
+   */
+  axes?:
+    | {
+        /**
+         * مثل size, footboard, doors, drawers, glass, width, pieces
+         */
+        key: string;
+        /**
+         * مثل 120, high, 3, true
+         */
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * به قیمت پایه‌ی محصول اضافه می‌شود. می‌تواند صفر، مثبت، یا منفی باشد.
+   */
+  priceDeltaRials?: number | null;
+  /**
+   * در صورت تنظیم، جایگزین وضعیت محصول می‌شود. خالی = وضعیت محصول.
+   */
+  availability?: ('in_stock' | 'made_to_order' | 'backorder' | 'discontinued') | null;
+  /**
+   * اختیاری. در صورت تنظیم، با انتخاب این واریانت روی صفحه‌ی محصول cross-fade می‌شود.
+   */
+  image?: (number | null) | Media;
+  /**
+   * هرچه کمتر، اول. پیش‌فرض ۰. هنگام تساوی، مرتب‌سازی ثانویه بر اساس createdAt صعودی.
+   */
+  displayOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "showrooms".
  */
 export interface Showroom {
@@ -825,6 +912,68 @@ export interface Showroom {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rooms".
+ */
+export interface Room {
+  id: number;
+  name: string;
+  /**
+   * ASCII فقط: kid, teen, adult
+   */
+  slug: string;
+  /**
+   * اپراتور باید تصویر کاور را پیش از انتشار آپلود کند. اتاق‌های بدون کاور در صفحه‌ی اصلی نمایش داده نمی‌شوند.
+   */
+  cover?: (number | null) | Media;
+  /**
+   * یک جمله که در کارت روی صفحه‌ی اصلی دیده می‌شود.
+   */
+  tagline?: string | null;
+  longDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * این فیلدها برای بهینه‌سازی موتورهای جستجو هستند. اگر خالی بگذارید، از عنوان و توضیح اصلی صفحه استفاده می‌شود.
+   */
+  seo?: {
+    /**
+     * عنوانی که در نتایج گوگل نشان داده می‌شود. بین ۵۰ تا ۶۰ کاراکتر توصیه می‌شود. اگر خالی باشد، عنوان اصلی صفحه استفاده می‌شود.
+     */
+    metaTitle?: string | null;
+    /**
+     * توضیح یک یا دو جمله‌ای زیر عنوان در نتایج گوگل. ۱۵۰ تا ۱۶۰ کاراکتر ایده‌آل است.
+     */
+    metaDescription?: string | null;
+    /**
+     * تصویری که در شبکه‌های اجتماعی و اپ‌های پیام‌رسان هنگام اشتراک‌گذاری لینک نمایش داده می‌شود. ابعاد پیشنهادی: ۱۲۰۰×۶۳۰. اگر خالی باشد، تصویر کاور خودکار ساخته می‌شود.
+     */
+    ogImage?: (number | null) | Media;
+    /**
+     * اگر این محتوا در جای دیگری نسخه اصلی دارد (مثلاً یک مجله‌ی دیگر) اینجا را پر کنید. معمولاً خالی بگذارید.
+     */
+    canonicalUrl?: string | null;
+    /**
+     * اگر روشن باشد، این صفحه در نتایج گوگل نمایش داده نمی‌شود. برای صفحات تست یا در حال ساخت مفید است.
+     */
+    noindex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections".
  */
 export interface Collection {
@@ -900,9 +1049,41 @@ export interface Inquiry {
    * Set when submitted from a product detail page
    */
   product?: (number | null) | Product;
+  /**
+   * واریانت دقیقی که کاربر در PDP انتخاب کرده. در صورت محصول تک‌SKU خالی است.
+   */
   productVariant?: (number | null) | ProductVariant;
-  selectedAxes?: Record<string, unknown> | null;
+  /**
+   * snapshot کلید/مقدار از زمان ارسال. مثلاً {"size":"160","footboard":"high"}.
+   */
+  selectedAxes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   status?: ('new' | 'contacted' | 'closed') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers".
+ */
+export interface Subscriber {
+  id: number;
+  /**
+   * فرمت ذخیره: 09xxxxxxxxx (نرمال‌سازی در /api/newsletter)
+   */
+  phone: string;
+  subscribedAt: string;
+  /**
+   * مثلاً footer یا blog-popup
+   */
+  source?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -939,12 +1120,12 @@ export interface PayloadLockedDocument {
         value: number | Design;
       } | null)
     | ({
-        relationTo: 'product-variants';
-        value: number | ProductVariant;
-      } | null)
-    | ({
         relationTo: 'products';
         value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'product-variants';
+        value: number | ProductVariant;
       } | null)
     | ({
         relationTo: 'showrooms';
@@ -967,6 +1148,10 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'rooms';
+        value: number | Room;
+      } | null)
+    | ({
         relationTo: 'tags';
         value: number | Tag;
       } | null)
@@ -985,6 +1170,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'inquiries';
         value: number | Inquiry;
+      } | null)
+    | ({
+        relationTo: 'subscribers';
+        value: number | Subscriber;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1044,13 +1233,6 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1062,6 +1244,10 @@ export interface DesignsSelect<T extends boolean = true> {
   age_group?: T;
   occupancies?: T;
   description?: T;
+  tagline?: T;
+  heroMedia?: T;
+  sliderMedia?: T;
+  storyBlocks?: T;
   gallery?: T;
   featured?: T;
   updatedAt?: T;
@@ -1079,6 +1265,7 @@ export interface ProductsSelect<T extends boolean = true> {
   longDescription?: T;
   design?: T;
   piece_type?: T;
+  occupancies?: T;
   categoryIds?: T;
   tagIds?: T;
   materialIds?: T;
@@ -1088,6 +1275,7 @@ export interface ProductsSelect<T extends boolean = true> {
   availability?: T;
   leadTimeDays?: T;
   warrantyYears?: T;
+  afterSalesYears?: T;
   dimensions?:
     | T
     | {
@@ -1301,6 +1489,28 @@ export interface CategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rooms_select".
+ */
+export interface RoomsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  cover?: T;
+  tagline?: T;
+  longDescription?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+        noindex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tags_select".
  */
 export interface TagsSelect<T extends boolean = true> {
@@ -1388,6 +1598,17 @@ export interface InquiriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers_select".
+ */
+export interface SubscribersSelect<T extends boolean = true> {
+  phone?: T;
+  subscribedAt?: T;
+  source?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1432,9 +1653,23 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Home {
   id: number;
+  /**
+   * این فیلد در نسخه‌ی بعدی حذف می‌شود. به‌جای آن heroSlides را پر کنید.
+   */
   hero_media?: (number | null) | Media;
   hero_heading?: string | null;
   hero_subheading?: string | null;
+  heroSlides?:
+    | {
+        image: number | Media;
+        alt: string;
+        /**
+         * مسیر داخلی یا URL کامل. اگر خالی باشد اسلاید کلیک‌پذیر نیست.
+         */
+        link?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   brand_statement?: {
     root: {
       type: string;
@@ -1450,6 +1685,10 @@ export interface Home {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * اختیاری — اگر خالی باشد، بخش درباره فقط متن نمایش می‌دهد.
+   */
+  about_media?: (number | null) | Media;
   featured_designs?: (number | Design)[] | null;
   journal_teaser_heading?: string | null;
   inquiry_cta_heading?: string | null;
@@ -1650,31 +1889,6 @@ export interface Privacy {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "terms".
- */
-export interface Term {
-  id: number;
-  title?: string | null;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "returns".
  */
 export interface Return {
@@ -1725,13 +1939,87 @@ export interface Shipping {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-config".
+ */
+export interface SiteConfig {
+  id: number;
+  /**
+   * فرمت بین‌المللی نمایش داده می‌شود (مثلاً ۰۸۱-۳۴۲۵ ۶۷۸۹).
+   */
+  contactPhone?: string | null;
+  contactEmail?: string | null;
+  address?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * مثلاً: شنبه تا چهارشنبه، ۹ تا ۱۸
+   */
+  hours?: string | null;
+  socials?:
+    | {
+        platform: 'instagram' | 'telegram' | 'whatsapp' | 'aparat' | 'youtube' | 'linkedin' | 'pinterest';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "terms".
+ */
+export interface Term {
+  id: number;
+  title?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
   hero_media?: T;
   hero_heading?: T;
   hero_subheading?: T;
+  heroSlides?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        link?: T;
+        id?: T;
+      };
   brand_statement?: T;
+  about_media?: T;
   featured_designs?: T;
   journal_teaser_heading?: T;
   inquiry_cta_heading?: T;
@@ -1835,17 +2123,6 @@ export interface PrivacySelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "terms_select".
- */
-export interface TermsSelect<T extends boolean = true> {
-  title?: T;
-  body?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "returns_select".
  */
 export interface ReturnsSelect<T extends boolean = true> {
@@ -1860,6 +2137,37 @@ export interface ReturnsSelect<T extends boolean = true> {
  * via the `definition` "shipping_select".
  */
 export interface ShippingSelect<T extends boolean = true> {
+  title?: T;
+  body?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-config_select".
+ */
+export interface SiteConfigSelect<T extends boolean = true> {
+  contactPhone?: T;
+  contactEmail?: T;
+  address?: T;
+  hours?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "terms_select".
+ */
+export interface TermsSelect<T extends boolean = true> {
   title?: T;
   body?: T;
   updatedAt?: T;
