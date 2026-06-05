@@ -30,6 +30,7 @@ export const easing = {
   inSoft: 'cubic-bezier(0.64, 0, 0.78, 0)',
   inOutSoft: 'cubic-bezier(0.65, 0, 0.35, 1)',
   expoOut: 'cubic-bezier(0.16, 1, 0.3, 1)',
+  spring: 'cubic-bezier(0.34, 1.45, 0.5, 1)',
 } as const;
 
 export type DurationToken = keyof typeof duration;
