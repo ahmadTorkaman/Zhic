@@ -1,18 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { DESIGNS, FEATURED_PAGES, WRITING } from '../placeholder-data';
+import { cardForOccupancy, DESIGNS, FEATURED_PAGES, WRITING } from '../placeholder-data';
 
 describe('bedroom-set placeholder data', () => {
-  it('has the catalog designs in order with real occupancies', () => {
+  it('has the 7 catalog designs in order with real occupancies', () => {
     expect(DESIGNS.map((d) => d.slug)).toEqual([
       'lotus', 'parla', 'caroline', 'iron', 'jacqueline', 'lukaplus', 'loof',
-      'elegance', 'elizabeth', 'gandom', 'mocha', 'skate',
     ]);
     expect(DESIGNS[0]).toMatchObject({
       name: 'لوتوس',
       cardSrc: '/bedroom-set/lotus.webp',
-      logoSrc: '/bedroom-set/lotus-logo.png',
+      logoSrc: '/bedroom-set/lotus-logo.webp',
       occupancies: ['double', 'teen'],
     });
+  });
+
+  it('cardForOccupancy returns the room-type variant, else the base card', () => {
+    const parla = DESIGNS.find((d) => d.slug === 'parla')!;
+    expect(cardForOccupancy(parla, 'baby')).toBe('/bedroom-set/parla-baby.webp');
+    expect(cardForOccupancy(parla, 'bunk')).toBe('/bedroom-set/parla-bunk.webp');
+    expect(cardForOccupancy(parla, 'teen')).toBe('/bedroom-set/parla.webp'); // no teen variant → base
+    const lotus = DESIGNS.find((d) => d.slug === 'lotus')!;
+    expect(cardForOccupancy(lotus, 'double')).toBe('/bedroom-set/lotus.webp'); // no variants → base
+    expect(cardForOccupancy(lotus, null)).toBe('/bedroom-set/lotus.webp');
   });
 
   it('gives every design at least one occupancy (drives the category tabs)', () => {

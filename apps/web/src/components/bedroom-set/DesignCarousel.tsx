@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import type { DesignCard } from './placeholder-data';
+import type { DesignCard, Occupancy } from './placeholder-data';
+import { cardForOccupancy, OCCUPANCY_ORDER } from './placeholder-data';
 import { CategoryTabs } from './CategoryTabs';
 import {
   clampIndex, slot, flipAngle, activeLogoIndex,
@@ -24,6 +25,10 @@ export function DesignCarousel({
 }) {
   const N = designs.length;
   const [focused, setFocused] = React.useState(0);
+  // Selected room-type tab — drives which card variant each design shows.
+  const [activeOccupancy, setActiveOccupancy] = React.useState<Occupancy | null>(
+    () => OCCUPANCY_ORDER.find((o) => designs[0]?.occupancies.includes(o)) ?? null,
+  );
 
   // DOM refs
   const stageRef = React.useRef<HTMLDivElement | null>(null);
@@ -51,6 +56,16 @@ export function DesignCarousel({
       rafRef.current = null;
     }
   }, [view]);
+
+  // Keep the selected room-type valid as the focused design changes (persist if
+  // the new design still offers it, else fall back to its first occupancy).
+  React.useEffect(() => {
+    const occs = designs[focused]?.occupancies ?? [];
+    setActiveOccupancy((cur) => {
+      const valid = OCCUPANCY_ORDER.filter((o) => occs.includes(o));
+      return cur && valid.includes(cur) ? cur : valid[0] ?? null;
+    });
+  }, [focused, designs]);
 
   const computeSlot = React.useCallback(() => {
     const mob = window.matchMedia('(max-width:768px)').matches;
@@ -310,7 +325,7 @@ export function DesignCarousel({
               ref={(el) => { cardRefs.current[i] = el; }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- 1:1 parity; SP1 swaps to PayloadImage */}
-              <img src={d.cardSrc} alt={d.name} />
+              <img src={cardForOccupancy(d, activeOccupancy)} alt={d.name} />
             </div>
           ))}
         </div>
@@ -332,7 +347,11 @@ export function DesignCarousel({
         </div>
       </div>
 
-      <CategoryTabs occupancies={designs[focused]?.occupancies ?? []} />
+      <CategoryTabs
+        occupancies={designs[focused]?.occupancies ?? []}
+        active={activeOccupancy}
+        onSelect={setActiveOccupancy}
+      />
     </div>
   );
 }
