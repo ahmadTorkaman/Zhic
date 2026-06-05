@@ -91,13 +91,20 @@
   --glass-blur:        24px;
   --glass-bg-dark:     rgba(250, 250, 247, 0.03);
   --glass-border-dark: rgba(250, 250, 247, 0.06);
-  /* Gold glass — warm accent tint for glass elements straddling section
-     boundaries (e.g. CTA buttons). Base is brand gold #C49A6C lifted 30%
-     toward ivory and kept strong (0.6) so the surface stays LIGHT over
-     both the dark and the ivory half — dark text works on either side
-     (same logic as the stats float-card). Hover deepens. */
-  --glass-bg-gold:        rgba(212, 183, 150, 0.6);
-  --glass-bg-gold-hover:  rgba(212, 183, 150, 0.78);
+  /* Boundary glass — the material for elements straddling a section edge
+     (stats float-card, gold CTA). More transparent than .glass-card and
+     heavier on refraction (blur + saturate) so the two backgrounds read
+     THROUGH the surface; rim highlight + sheen supply the glass cues that
+     flat color fields can't. Dark text only — the surface stays light. */
+  --glass-bg-boundary:       rgba(250, 250, 247, 0.42);
+  --glass-blur-boundary:     28px;
+  --glass-saturate-boundary: 1.45;
+  --glass-highlight:         rgba(255, 255, 255, 0.55); /* inset top rim */
+  --glass-sheen:             rgba(255, 255, 255, 0.28); /* diagonal light sweep */
+  /* Gold glass — boundary glass with a brand-gold tint (#C49A6C lifted
+     30% toward ivory). Light enough for dark text on either half. */
+  --glass-bg-gold:        rgba(212, 183, 150, 0.5);
+  --glass-bg-gold-hover:  rgba(212, 183, 150, 0.7);
   --glass-border-gold:    rgba(196, 154, 108, 0.55);
   /* Chrome glass — heavy-blur material shared by the scrolled site header
      and the sticky picker bar so all chrome layers read as one surface. */

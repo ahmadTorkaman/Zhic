@@ -2,6 +2,13 @@
   "name": "@zhic/web",
   "version": "0.0.0",
   "private": true,
+  "browserslist": [
+    "chrome >= 111",
+    "edge >= 111",
+    "firefox >= 113",
+    "safari >= 15",
+    "ios_saf >= 15"
+  ],
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

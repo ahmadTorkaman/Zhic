@@ -41,7 +41,6 @@ body {
 .glass-card {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-subtle);
   transition: all var(--dur-hover) var(--ease-out-soft);
@@ -65,7 +64,6 @@ body {
 .glass-card-dark {
   background: var(--glass-bg-dark);
   backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border-dark);
   transition: border-color var(--dur-hover) var(--ease-out-soft);
 }
@@ -78,15 +76,16 @@ body {
    section boundaries (CTAs). No transform on hover: transforms are
    avoided on blur surfaces. */
 .glass-gold {
-  background: var(--glass-bg-gold);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background-color: var(--glass-bg-gold);
+  background-image: linear-gradient(165deg, var(--glass-sheen), rgba(255, 255, 255, 0) 45%);
+  backdrop-filter: blur(var(--glass-blur-boundary)) saturate(var(--glass-saturate-boundary));
   border: 1px solid var(--glass-border-gold);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
   transition: background-color var(--dur-hover) var(--ease-out-soft);
 }
 
 .glass-gold:hover {
-  background: var(--glass-bg-gold-hover);
+  background-color: var(--glass-bg-gold-hover);
 }
 
 /* ── Floating card (straddles a section boundary) ─────────────────── */
@@ -102,12 +101,13 @@ body {
       that follows the card needs its own explicit margin-top to
       restore the intended visual gap. */
 .float-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background-color: var(--glass-bg-boundary);
+  /* diagonal light sweep — the glass cue flat backgrounds can't provide */
+  background-image: linear-gradient(165deg, var(--glass-sheen), rgba(255, 255, 255, 0) 45%);
+  backdrop-filter: blur(var(--glass-blur-boundary)) saturate(var(--glass-saturate-boundary));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-elevated);
+  box-shadow: var(--shadow-elevated), inset 0 1px 0 var(--glass-highlight);
 }
 
 .section-overlap-top {
@@ -156,7 +156,6 @@ body {
 .site-header-chrome {
   background: var(--glass-bg-chrome);
   backdrop-filter: blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome));
-  -webkit-backdrop-filter: blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate-chrome));
   border: 1px solid rgba(232, 224, 216, 0.55);
   box-shadow: var(--shadow-subtle);
 }
