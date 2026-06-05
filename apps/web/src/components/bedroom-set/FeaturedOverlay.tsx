@@ -58,12 +58,9 @@ export function FeaturedOverlay({
 
   const next = React.useCallback(() => setPage((p) => Math.min(pages.length - 1, p + 1)), [pages.length]);
   const prev = React.useCallback(() => {
-    setPage((p) => {
-      if (p > 0) return p - 1;
-      onClose();
-      return p;
-    });
-  }, [onClose]);
+    if (page > 0) setPage((p) => p - 1);
+    else onClose();
+  }, [page, onClose]);
 
   // touch paging
   React.useEffect(() => {

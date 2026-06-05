@@ -44,6 +44,13 @@ export function DesignCarousel({
   const bandBlurRef = React.useRef(-1);
   const viewRef = React.useRef(view);
   React.useEffect(() => { viewRef.current = view; }, [view]);
+  // Mirror the mockup's openFeatured(): cancel any in-flight snap when leaving the carousel view.
+  React.useEffect(() => {
+    if (view !== 'designs' && rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, [view]);
 
   const computeSlot = React.useCallback(() => {
     const mob = window.matchMedia('(max-width:768px)').matches;
