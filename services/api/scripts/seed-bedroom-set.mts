@@ -64,6 +64,21 @@ async function uploadMedia(srcName: string, destName: string, alt: string): Prom
   return doc.id
 }
 
+// Carousel art must be the rounded posters (transparent corners, alpha 0), never the
+// earlier borderless room-scene images (corners fill the frame, alpha 255). Used to
+// drop borderless occupancy variants so the tab falls back to the base poster.
+let _sharp: any
+try { _sharp = (await import('sharp')).default } catch { _sharp = null }
+async function isRoundedPoster(absPath: string): Promise<boolean> {
+  if (!_sharp) return true
+  try {
+    const { data } = await _sharp(absPath).extract({ left: 2, top: 2, width: 1, height: 1 }).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+    return data[3] < 40
+  } catch {
+    return true
+  }
+}
+
 let stats = { logos: 0, variants: 0, base: 0, featured: 0 }
 
 // 1) name-mark logos → designs.logoMedia
@@ -83,6 +98,10 @@ for (const [slug, occs] of Object.entries(VARIANTS)) {
   if (!id) { console.log('  ⚠ no design', slug); continue }
   const occupancyMedia = []
   for (const occ of occs) {
+    if (!(await isRoundedPoster(`${PUBLIC}/${slug}-${occ}.webp`))) {
+      console.log('  skip (borderless → base poster):', `${slug}-${occ}`)
+      continue
+    }
     const media = await uploadMedia(`${slug}-${occ}.webp`, `bedroom-set-${slug}-${occ}-card.webp`, `کارت سرویس ${OCC_FA[occ]} طرح ${DESIGN_FA[slug]}`)
     occupancyMedia.push({ occupancy: occ, image: media })
   }
