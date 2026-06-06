@@ -74,9 +74,13 @@
   transform-origin: 50% 50%; will-change: transform, opacity, filter;
 }
 .zh-bs-card img {
+  position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: contain; display: block;
   filter: drop-shadow(0 26px 46px rgba(20, 17, 15, 0.2)); pointer-events: none;
 }
+/* Tab change dissolves the focused card's banner into the new one (CardImage). */
+.zh-bs-dissolve { animation: zh-bs-dissolve-in 0.5s var(--ease-out-soft) both; }
+@keyframes zh-bs-dissolve-in { from { opacity: 0; } to { opacity: 1; } }
 
 .zh-bs-focus {
   position: absolute; top: 50%; left: 50%;
@@ -127,7 +131,7 @@
   .zh-bs-grid { max-width: none; --g: 2px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .zh-bs-upcue svg { animation: none; }
+  .zh-bs-upcue svg, .zh-bs-dissolve { animation: none; }
   .zh-bs-tile, .zh-bs-fhead .zh-bs-rt-el, .zh-bs-lg { transition: none; }
 }
 

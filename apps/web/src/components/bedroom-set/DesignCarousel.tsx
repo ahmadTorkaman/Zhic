@@ -6,6 +6,7 @@ import type { DesignCard, Occupancy } from './placeholder-data';
 import { cardForOccupancy, OCCUPANCY_ORDER } from './placeholder-data';
 import { CategoryTabs } from './CategoryTabs';
 import { RotatingLogo } from './RotatingLogo';
+import { CardImage } from './CardImage';
 import {
   clampIndex, slot,
   cardScale, cardOpacity, cardBlurPx, cardZIndex, isCulled,
@@ -289,8 +290,9 @@ export function DesignCarousel({
               data-i={i}
               ref={(el) => { cardRefs.current[i] = el; }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element -- 1:1 parity; SP1 swaps to PayloadImage */}
-              <img src={cardForOccupancy(d, activeOccupancy)} alt={d.name} />
+              {/* Only the focused card reflects the room-type tabs; the rest stay on
+                  their base banner. The focused card dissolves between variants. */}
+              <CardImage src={i === focused ? cardForOccupancy(d, activeOccupancy) : d.cardSrc} alt={d.name} />
             </div>
           ))}
         </div>
