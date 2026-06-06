@@ -19,7 +19,7 @@ export type FooterContactStripProps = {
   socials?: SocialLink[];
 };
 
-const SOCIAL_LABELS: Record<SocialLink['platform'], string> = {
+export const SOCIAL_LABELS: Record<SocialLink['platform'], string> = {
   instagram: 'اینستاگرام', telegram: 'تلگرام', whatsapp: 'واتس‌اپ',
   aparat: 'آپارات', youtube: 'یوتیوب', linkedin: 'لینکدین', pinterest: 'پینترست',
 };
