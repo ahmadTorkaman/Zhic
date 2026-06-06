@@ -1,0 +1,127 @@
+/* apps/web/src/components/layout/mobile-menu.css */
+/* Staggered mobile menu — React Bits StaggeredMenu mechanics in Zhic skin.
+   GSAP owns transforms/opacity at runtime; this file is layout + paint. */
+
+.zh-mm {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  pointer-events: none;
+}
+.zh-mm[data-open='true'] { pointer-events: auto; }
+
+/* Sweep layers — sit under the panel, slide in from the inline-start…
+   physically the RIGHT edge in RTL (GSAP xPercent 100 → 0). */
+.zh-mm__prelayers { position: absolute; inset: 0; pointer-events: none; }
+.zh-mm__prelayer { position: absolute; inset: 0; will-change: transform; }
+.zh-mm__prelayer--1 { background: var(--color-forest); }
+.zh-mm__prelayer--2 { background: var(--color-forest-dark); }
+
+.zh-mm__panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 4.5rem var(--space-5) var(--space-6);
+  background: var(--color-ivory);
+  overflow-y: auto;
+  will-change: transform;
+}
+
+.zh-mm__close {
+  position: absolute;
+  top: 0.75rem;
+  inset-inline-start: 1rem;
+  z-index: 2;
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-charcoal);
+  transition: color var(--dur-hover) var(--ease-out-soft);
+}
+.zh-mm__close:hover { color: var(--color-ink); }
+
+.zh-mm__brand {
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+.zh-mm__brand img { display: inline-block; height: 22px; width: auto; }
+
+.zh-mm__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  counter-reset: zhMmItem;
+}
+/* Each row clips its label for the yPercent-140 entrance. */
+.zh-mm__itemWrap { position: relative; overflow: hidden; line-height: 1; }
+.zh-mm__link {
+  position: relative;
+  display: inline-block;
+  padding-inline-end: 2.2em; /* room for the numeral (inline-end = visual left in RTL) */
+  font-size: var(--text-h3);
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--color-charcoal);
+  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-out-soft);
+}
+.zh-mm__link:hover, .zh-mm__link.is-active { color: var(--color-forest); }
+.zh-mm__label {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: 50% 100%;
+}
+/* Persian numerals — GSAP fades them via --zh-mm-num-opacity. Six static
+   items, so the leading «۰» is hardcoded rather than a counter style. */
+.zh-mm__list[data-numbering] .zh-mm__link::after {
+  counter-increment: zhMmItem;
+  content: '۰' counter(zhMmItem, persian);
+  position: absolute;
+  top: 0.15em;
+  inset-inline-end: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-gold);
+  opacity: var(--zh-mm-num-opacity, 0);
+  pointer-events: none;
+  user-select: none;
+}
+
+.zh-mm__socials {
+  margin-top: auto;
+  padding-top: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.zh-mm__socials-title {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow-wide);
+  color: var(--color-gold);
+}
+.zh-mm__socials-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.zh-mm__social-link {
+  display: inline-block;
+  font-size: var(--text-small);
+  font-weight: 700;
+  color: var(--color-stone);
+  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-out-soft);
+}
+.zh-mm__social-link:hover { color: var(--color-forest); }
