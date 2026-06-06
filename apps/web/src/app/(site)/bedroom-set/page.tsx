@@ -2,7 +2,6 @@ import { BedroomSetLanding } from '@/components/bedroom-set/BedroomSetLanding';
 import { DESIGNS, FEATURED_PAGES, WRITING } from '@/components/bedroom-set/placeholder-data';
 import {
   fetchBedroomSetDesigns,
-  fetchBedroomSetFeatured,
   fetchBedroomSetCopy,
 } from '@/components/bedroom-set/server-data';
 
@@ -13,9 +12,8 @@ export const metadata = {
 };
 
 export default async function BedroomSetPage() {
-  const [designs, pages, writing] = await Promise.all([
+  const [designs, writing] = await Promise.all([
     fetchBedroomSetDesigns(),
-    fetchBedroomSetFeatured(),
     fetchBedroomSetCopy(),
   ]);
 
@@ -24,7 +22,11 @@ export default async function BedroomSetPage() {
   return (
     <BedroomSetLanding
       designs={designs.length ? designs : DESIGNS}
-      pages={pages.length ? pages : FEATURED_PAGES}
+      // Featured-overlay media is the curated bedroom-set-v2 mockup art
+      // (FEATURED_PAGES) by operator decision — NOT product galleries.
+      // fetchBedroomSetFeatured stays in server-data if a CMS-driven
+      // overlay is ever wanted again.
+      pages={FEATURED_PAGES}
       writing={writing ?? WRITING}
     />
   );
