@@ -39,23 +39,21 @@ export function BedroomSetLanding({
   );
   const onOpenProduct = React.useCallback(() => showToast('مشاهده →'), [showToast]);
 
-  // Swipe up once scrolled to the bottom (the writing section) → open featured.
+  // Reaching the end of the writing section auto-raises the featured page (the
+  // footer is hidden on this route, so the writing is the last thing in flow).
+  // Re-arm only after scrolling well clear of the bottom, so closing the featured
+  // — which leaves you at the bottom — doesn't instantly re-open it.
   React.useEffect(() => {
-    let wY = 0;
-    const onStart = (e: TouchEvent) => { wY = e.touches[0]?.clientY ?? 0; };
-    const onEnd = (e: TouchEvent) => {
+    let armed = false;
+    const onScroll = () => {
       if (viewRef.current !== 'designs') return;
-      const dy = (e.changedTouches[0]?.clientY ?? 0) - wY;
-      const atBottom =
-        Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 4;
-      if (dy < -48 && atBottom) openFeatured();
+      const distFromBottom =
+        document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+      if (distFromBottom > 80) { armed = true; return; }
+      if (distFromBottom <= 4 && armed) { armed = false; openFeatured(); }
     };
-    window.addEventListener('touchstart', onStart, { passive: true });
-    window.addEventListener('touchend', onEnd, { passive: true });
-    return () => {
-      window.removeEventListener('touchstart', onStart);
-      window.removeEventListener('touchend', onEnd);
-    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, [openFeatured]);
 
   React.useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);

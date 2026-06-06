@@ -11,10 +11,9 @@ const VALID_SOCIAL_PLATFORMS: ReadonlyArray<SocialLink['platform']> =
   ['instagram', 'telegram', 'whatsapp', 'aparat', 'youtube', 'linkedin', 'pinterest'];
 
 /** Routes where the footer (contact strip + nav columns + legal) is hidden.
- *  (Was used for /bedroom-set when its slider was position:fixed and would
- *  overlap the footer. The slider now sits in normal flow as a one-viewport
- *  section, so the footer renders naturally beneath when scrolled.) */
-const FOOTER_HIDDEN_ROUTES = new Set<string>([]);
+ *  /bedroom-set ends in a full-screen featured takeover that auto-raises when you
+ *  reach the end of the writing section, so the footer is suppressed there. */
+const FOOTER_HIDDEN_ROUTES = new Set<string>(['/bedroom-set']);
 
 export type SiteFooterProps = {
   siteConfig?: PayloadSiteConfig | null;
