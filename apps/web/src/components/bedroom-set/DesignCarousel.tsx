@@ -63,6 +63,22 @@ export function DesignCarousel({
     });
   }, [focused, designs]);
 
+  // Sticky per-design variant: once a card has shown a room-type poster it
+  // KEEPS it after focus scrolls away — snapping back to the base poster
+  // mid-scroll reads as a glitch (CEO 2026-06-06). Tab taps still only ever
+  // change the focused card.
+  const [appliedOccupancy, setAppliedOccupancy] = React.useState<(Occupancy | null)[]>(
+    () => designs.map(() => null),
+  );
+  React.useEffect(() => {
+    setAppliedOccupancy((cur) => {
+      if (cur[focused] === activeOccupancy) return cur;
+      const next = [...cur];
+      next[focused] = activeOccupancy;
+      return next;
+    });
+  }, [focused, activeOccupancy]);
+
   const computeSlot = React.useCallback(() => {
     const mob = window.matchMedia('(max-width:768px)').matches;
     return slot(window.innerHeight, mob);
@@ -295,9 +311,13 @@ export function DesignCarousel({
               data-i={i}
               ref={(el) => { cardRefs.current[i] = el; }}
             >
-              {/* Only the focused card reflects the room-type tabs; the rest stay on
-                  their base banner. The focused card dissolves between variants. */}
-              <CardImage src={i === focused ? cardForOccupancy(d, activeOccupancy) : d.cardSrc} alt={d.name} />
+              {/* Tab taps swap only the focused card, but every card remembers the
+                  variant it last showed (appliedOccupancy) so scrolling away never
+                  snaps it back to the base poster. */}
+              <CardImage
+                src={cardForOccupancy(d, i === focused ? activeOccupancy : (appliedOccupancy[i] ?? null))}
+                alt={d.name}
+              />
             </div>
           ))}
         </div>
