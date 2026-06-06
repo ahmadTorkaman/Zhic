@@ -14,11 +14,12 @@ import {
   type WritingContent,
 } from './placeholder-data';
 
-// Map a Payload design → the carousel's DesignCard. Base card = the design's
-// first room-type poster (occupancyMedia, in OCCUPANCY_ORDER) — the whole-set
-// media (sliderMedia) belongs to the /bedroom-set/<design> page, not the
-// carousel — falling back to sliderMedia ?? heroMedia ?? gallery[0] for
-// designs without card art yet. Logo = logoMedia (optional → logo-less card).
+// Map a Payload design → the carousel's DesignCard. Base card = sliderMedia,
+// which (post seed-bedroom-set) is always the rounded 0.703 portrait poster —
+// the mockup model. Occupancy posters fill in if a design somehow has tab
+// variants but no base poster. heroMedia/gallery are whole-set scenes and are
+// NEVER used on the carousel (they belong to /bedroom-set/<design>).
+// Logo = logoMedia (optional → logo-less card).
 function toCard(d: PayloadDesign): DesignCard | null {
   const cardByOccupancy: Partial<Record<Occupancy, string>> = {};
   for (const om of d.occupancyMedia ?? []) {
@@ -27,8 +28,7 @@ function toCard(d: PayloadDesign): DesignCard | null {
   }
 
   const firstPoster = OCCUPANCY_ORDER.map((o) => cardByOccupancy[o]).find(Boolean);
-  const cardSrc =
-    firstPoster ?? mediaUrl(d.sliderMedia) ?? mediaUrl(d.heroMedia) ?? mediaUrl(d.gallery?.[0]);
+  const cardSrc = mediaUrl(d.sliderMedia) ?? firstPoster;
   if (!cardSrc) return null;
 
   return {

@@ -122,19 +122,37 @@ for (const slug of MISSING_BASE) {
   stats.base++
 }
 
-// 3b) iron's sliderMedia points at a full-bleed landscape scene, not its rounded
-// poster — every other hub design already uses the bedroom-set-*.webp rounded poster.
-// Relink iron to its poster so the carousel art is consistent.
-console.log('— iron: use the rounded poster, not the scene —')
-{
-  const id = await findDesignId('iron')
-  const poster = await payload.find({ collection: 'media', where: { filename: { equals: 'bedroom-set-iron.webp' } }, limit: 1, depth: 0 })
-  if (id && poster.docs[0]) {
-    await payload.update({ collection: 'designs', id, data: { sliderMedia: poster.docs[0].id } })
-    console.log('  iron sliderMedia →', poster.docs[0].id, '(bedroom-set-iron.webp)')
-  } else {
-    console.log('  ⚠ iron or its poster not found')
-  }
+// 3b) carousel posters: sliderMedia must be the rounded 0.703 portrait poster
+// (the mockup card). Where sliderMedia held the whole-set landscape/square
+// scene instead, that scene moves to heroMedia (the /bedroom-set/<design>
+// page) and the poster from public/bedroom-set/{slug}.webp takes its place.
+// Designs with no poster art yet are hidden from the carousel by clearing
+// sliderMedia — the scene is preserved on heroMedia. (CEO 2026-06-06: whole-set
+// media never appears on the carousel.)
+console.log('— carousel posters —')
+const POSTER_DESIGNS = ['lotus', 'parla', 'caroline', 'iron', 'jacqueline', 'lukaplus', 'loof', 'verna', 'bw']
+const NO_POSTER_YET = ['skate', 'elegance', 'elizabeth', 'gandom', 'lorena', 'mocha']
+const isPosterDoc = (m: any) => m && m.width && m.height && Math.abs(m.width / m.height - 0.703) < 0.01
+
+for (const slug of POSTER_DESIGNS) {
+  const r = await payload.find({ collection: 'designs', where: { slug: { equals: slug } }, limit: 1, depth: 1 })
+  const d = r.docs[0] as any
+  if (!d) { console.log('  ⚠ no design', slug); continue }
+  if (isPosterDoc(d.sliderMedia)) { console.log('  ok     ', slug, '(sliderMedia already a poster)'); continue }
+  const poster = await uploadMedia(`${slug}.webp`, `bedroom-set-${slug}-poster.webp`, `پوستر طرح ${DESIGN_FA[slug] ?? d.name}`)
+  const data: Record<string, unknown> = { sliderMedia: poster }
+  if (d.sliderMedia && !d.heroMedia) data.heroMedia = d.sliderMedia.id // keep the scene for the detail page
+  await payload.update({ collection: 'designs', id: d.id, data })
+  console.log('  poster ', slug, d.sliderMedia && !d.heroMedia ? '(scene → heroMedia)' : '')
+}
+for (const slug of NO_POSTER_YET) {
+  const r = await payload.find({ collection: 'designs', where: { slug: { equals: slug } }, limit: 1, depth: 1 })
+  const d = r.docs[0] as any
+  if (!d?.sliderMedia || isPosterDoc(d.sliderMedia)) continue
+  const data: Record<string, unknown> = { sliderMedia: null }
+  if (!d.heroMedia) data.heroMedia = d.sliderMedia.id
+  await payload.update({ collection: 'designs', id: d.id, data })
+  console.log('  hidden ', slug, '(scene → heroMedia; off the carousel until poster art arrives)')
 }
 
 // 4) best-sellers — one flagship bed PER design (varied), clearing any prior featured first
