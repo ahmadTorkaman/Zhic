@@ -8,7 +8,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <>
       <SkipLink />
-      <SiteHeader navMeta={navMeta} />
+      <SiteHeader navMeta={navMeta} socials={siteConfig?.socials ?? undefined} />
       <main id="main">{children}</main>
       <SiteFooter siteConfig={siteConfig} />
     </>

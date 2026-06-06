@@ -8,13 +8,14 @@ import { NAV_LINKS, isNavActive } from './navLinks';
 import { MobileMenu } from './MobileMenu';
 import { SetsMegaMenu } from './SetsMegaMenu';
 import { PiecesMegaMenu } from './PiecesMegaMenu';
-import type { NavMeta } from '@/lib/payload';
+import type { NavMeta, PayloadSiteConfig } from '@/lib/payload';
 
 export type SiteHeaderProps = {
   navMeta: NavMeta;
+  socials?: PayloadSiteConfig['socials'];
 };
 
-export function SiteHeader({ navMeta }: SiteHeaderProps) {
+export function SiteHeader({ navMeta, socials }: SiteHeaderProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -156,7 +157,7 @@ export function SiteHeader({ navMeta }: SiteHeaderProps) {
         </Container>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} pathname={pathname} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} pathname={pathname} socials={socials ?? undefined} />
     </>
   );
 }
