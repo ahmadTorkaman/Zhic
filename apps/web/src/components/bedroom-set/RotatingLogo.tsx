@@ -27,8 +27,8 @@ export function RotatingLogo({ src }: { src: string | undefined }) {
     const old = box.querySelector('.zh-bs-lg');
     if (old) {
       old.classList.remove('in');
-      old.classList.add('out'); // slide the current name-mark up and out
-      timerRef.current = setTimeout(() => build(src), 430); // then bring the next in from below
+      old.classList.add('out'); // slide the current name-mark up and out (at the enter's speed)
+      timerRef.current = setTimeout(() => build(src), 500); // after it clears, bring the next in from below
     } else {
       build(src);
     }

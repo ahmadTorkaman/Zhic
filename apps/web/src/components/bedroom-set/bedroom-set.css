@@ -106,10 +106,8 @@
   will-change: transform, opacity;
 }
 .zh-bs-lg.in { opacity: 1; transform: translateY(0); }
-.zh-bs-lg.out {
-  opacity: 0; transform: translateY(-120%);
-  transition: transform 0.45s var(--ease-out-soft), opacity 0.32s ease;
-}
+/* Exit at the same speed it entered — inherit the base .zh-bs-lg transition. */
+.zh-bs-lg.out { opacity: 0; transform: translateY(-120%); }
 
 .zh-bs-toast {
   position: fixed; left: 50%; bottom: 18%; transform: translate(-50%, 8px);

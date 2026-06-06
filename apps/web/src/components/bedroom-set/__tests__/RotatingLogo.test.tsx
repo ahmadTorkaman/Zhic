@@ -37,8 +37,8 @@ describe('<RotatingLogo>', () => {
     expect(out!.getAttribute('src')).toContain('/a.webp');
     expect(container.querySelectorAll('.zh-bs-lg').length).toBe(1);
 
-    // after the 430ms beat, the next mark is built and slides in
-    act(() => { vi.advanceTimersByTime(430); });
+    // after the beat, the next mark is built and slides in
+    act(() => { vi.advanceTimersByTime(500); });
     const next = container.querySelector('.zh-bs-lg');
     expect(next!.getAttribute('src')).toContain('/b.webp');
     expect(next!.classList.contains('in')).toBe(true);
