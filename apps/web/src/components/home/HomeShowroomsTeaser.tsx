@@ -29,10 +29,6 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
             <BlurInText as="div" className="zh-st__eyebrow">شوروم‌ها</BlurInText>
             <BlurInText as="div" className="zh-st__title">ما را در شهر خودتان ببینید</BlurInText>
           </div>
-          <Link href="/showrooms" className="zh-st__cta">
-            <BlurInText as="span">فهرست کامل</BlurInText>
-            <span aria-hidden className="zh-st__arrow" />
-          </Link>
         </div>
 
         <div className="zh-st__grid">

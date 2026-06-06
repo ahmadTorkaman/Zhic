@@ -23,7 +23,7 @@ describe('<FeaturedOverlay>', () => {
     expect(root.getAttribute('aria-hidden')).toBe('true'); // closed but present
     expect(root.className).not.toContain('show');
     expect(container.querySelectorAll('.zh-bs-tile').length).toBe(3); // hero + 2 rows
-    expect(container.querySelector('.zh-bs-tile.hero img')!.getAttribute('src')).toBe('/bedroom-set/lotus-banner.png');
+    expect(container.querySelector('.zh-bs-tile.hero img')!.getAttribute('src')).toBe('/bedroom-set/lotus-banner.webp');
     expect(container.querySelectorAll('.zh-bs-fdot').length).toBe(2);
     expect(container.querySelector('.zh-bs-fhead')!.getAttribute('aria-label')).toBe('پرفروش‌ترین محصولات');
     expect(container.querySelectorAll('.zh-bs-tile.in').length).toBe(0); // closed: SSR'd but entrance not played

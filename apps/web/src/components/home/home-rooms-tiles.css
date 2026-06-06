@@ -18,7 +18,3 @@
 .zh-rooms__label { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: 6px; }
 .zh-rooms__title { font-size: 1.5rem; font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-2); }
 .zh-rooms__sub { font-size: var(--text-small); color: var(--color-stone); line-height: 1.7; max-width: 36ch; margin-bottom: var(--space-4); }
-.zh-rooms__cta { display: inline-flex; align-items: center; gap: 0.5rem; align-self: flex-start; font-weight: 700; color: var(--color-charcoal); border-bottom: 1px solid var(--color-charcoal); padding-bottom: 2px; transition: color var(--dur-hover) var(--ease-out-soft), border-color var(--dur-hover) var(--ease-out-soft); }
-.zh-rooms__tile:hover .zh-rooms__cta { color: var(--color-forest); border-bottom-color: var(--color-forest); }
-.zh-rooms__arrow { display: inline-block; width: 1rem; height: 1px; background: currentColor; position: relative; }
-.zh-rooms__arrow::before { content: ''; position: absolute; inset-inline-start: -2px; top: -3px; width: 7px; height: 7px; border-inline-start: 1.5px solid currentColor; border-block-end: 1.5px solid currentColor; transform: rotate(45deg); }

@@ -4,8 +4,11 @@
 .zh-fcs__heading { font-size: var(--text-h2); font-weight: 900; line-height: 1.2; color: var(--color-ivory); margin-bottom: var(--space-4); }
 .zh-fcs__lead { font-size: var(--text-body); color: var(--color-sand); font-weight: 300; line-height: 1.85; }
 
-.zh-fcs__grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
-@media (min-width: 900px) { .zh-fcs__grid { grid-template-columns: 1.2fr 1fr 1fr; gap: 3rem; } }
+/* minmax(0,…) — plain 1fr is minmax(auto,1fr), and the newsletter row's
+   intrinsic width (input + button) would force the track past the
+   viewport on phones (9px horizontal scroll at 390px). */
+.zh-fcs__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+@media (min-width: 900px) { .zh-fcs__grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; } }
 .zh-fcs__card { display: flex; flex-direction: column; gap: 1rem; }
 .zh-fcs__label { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-gold); margin-bottom: 0; }
 .zh-fcs__card-h3 { font-size: 1.1rem; font-weight: 700; color: var(--color-ivory); }
@@ -24,7 +27,7 @@
 .zh-news { display: flex; flex-direction: column; gap: 0.5rem; }
 .zh-news__row { display: flex; gap: 0; border: 1px solid rgba(250,250,247,0.12); border-radius: var(--radius-md); overflow: hidden; transition: border-color var(--dur-hover) var(--ease-out-soft); }
 .zh-news__row:focus-within { border-color: var(--color-gold); }
-.zh-news__row input { flex: 1; background: rgba(250,250,247,0.04); border: 0; outline: 0; color: var(--color-ivory); font-family: inherit; font-size: 0.95rem; padding: 0.85rem 1rem; }
+.zh-news__row input { flex: 1; min-width: 0; background: rgba(250,250,247,0.04); border: 0; outline: 0; color: var(--color-ivory); font-family: inherit; font-size: 0.95rem; padding: 0.85rem 1rem; }
 .zh-news__row input::placeholder { color: rgba(232,224,216,0.5); }
 .zh-news__row button { background: var(--color-gold); color: var(--color-ink); border: 0; padding: 0 1.2rem; font-family: inherit; font-weight: 700; cursor: pointer; font-size: 0.95rem; transition: background-color var(--dur-hover) var(--ease-out-soft); }
 .zh-news__row button:hover { background: #b08c5e; }

@@ -40,10 +40,6 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
               <BlurInText as="div" className="zh-rooms__label">دسته‌ی سنی</BlurInText>
               <BlurInText as="div" className="zh-rooms__title">{r.name}</BlurInText>
               {r.tagline && <BlurInText as="p" className="zh-rooms__sub">{r.tagline}</BlurInText>}
-              <span className="zh-rooms__cta">
-                <BlurInText as="span">مشاهده</BlurInText>
-                <span aria-hidden className="zh-rooms__arrow" />
-              </span>
             </Link>
           ))}
         </div>

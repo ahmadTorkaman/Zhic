@@ -21,8 +21,8 @@ export type HomeBrandStatementProps = {
 
 const DEFAULT_STATS: BrandStat[] = [
   { value: 25, suffix: '+', label: 'سال تجربه در صنایع چوب' },
-  { value: 1200, suffix: '+', label: 'قطعه مبلمان تولیدشده' },
-  { value: 3, label: 'شوروم در سراسر ایران' },
+  { value: 570430, suffix: '+', label: 'قطعه مبلمان تولیدشده' },
+  { value: 22, label: 'شوروم در سراسر ایران' },
 ];
 
 export function HomeBrandStatement({
@@ -63,8 +63,8 @@ export function HomeBrandStatement({
         <div
           className={
             aboutMedia
-              ? 'mt-9 mb-8 grid items-center gap-[var(--space-6)] md:mt-10 md:mb-11 md:grid-cols-[3fr_2fr] md:gap-[var(--space-10)]'
-              : 'mt-9 mb-8 md:mt-10 md:mb-11'
+              ? 'mt-9 mb-7 grid items-center gap-[var(--space-6)] md:mt-10 md:mb-9 md:grid-cols-[3fr_2fr] md:gap-[var(--space-10)]'
+              : 'mt-9 mb-7 md:mt-10 md:mb-9'
           }
         >
           <div>

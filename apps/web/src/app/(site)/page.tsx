@@ -41,16 +41,16 @@ export default async function HomePage() {
     { src: '/hero-details/baloot.webp',     alt: 'تختخواب نوزاد چوب طبیعی — بلوط' },
   ];
   const FALLBACK_ROOM_COVERS: Record<'kid' | 'teen' | 'adult', string> = {
-    kid: '/docs/test-media/kid.jpg',
-    teen: '/docs/test-media/teen.jpg',
-    adult: '/docs/test-media/adult.jpg',
+    kid: '/docs/test-media/kid.webp',
+    teen: '/docs/test-media/teen.webp',
+    adult: '/docs/test-media/adult.webp',
   };
   const FALLBACK_JOURNAL_COVERS = [
-    '/docs/test-media/hero-3.jpg',
-    '/docs/test-media/hero-4.jpg',
-    '/docs/test-media/hero-5.jpg',
-    '/docs/test-media/hero-1.jpg',
-    '/docs/test-media/hero-2.jpg',
+    '/docs/test-media/hero-3.webp',
+    '/docs/test-media/hero-4.webp',
+    '/docs/test-media/hero-5.webp',
+    '/docs/test-media/hero-1.webp',
+    '/docs/test-media/hero-2.webp',
   ];
 
   const slides: HeroSlide[] =

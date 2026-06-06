@@ -114,14 +114,6 @@ export function HomeJournalRows({
         ))}
       </div>
 
-      <Container>
-        <div className="zh-jrows__cta-row">
-          <Link href="/journal" className="zh-jrows__cta">
-            <BlurInText as="span">همه‌ی مقالات</BlurInText>
-            <span aria-hidden className="zh-jrows__arrow" />
-          </Link>
-        </div>
-      </Container>
     </section>
   );
 }

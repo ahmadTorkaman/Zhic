@@ -34,7 +34,7 @@ describe('bedroom-set placeholder data', () => {
     expect(FEATURED_PAGES[0]!.title).toBe('پرفروش‌ترین محصولات');
     expect(FEATURED_PAGES[1]!.title).toBe('جدیدترین محصولات');
     expect(FEATURED_PAGES[0]!.row).toHaveLength(2);
-    expect(FEATURED_PAGES[0]!.hero.src).toBe('/bedroom-set/lotus-banner.png');
+    expect(FEATURED_PAGES[0]!.hero.src).toBe('/bedroom-set/lotus-banner.webp');
   });
 
   it('has the writing heading + a non-empty body', () => {

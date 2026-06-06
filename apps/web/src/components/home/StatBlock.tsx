@@ -14,7 +14,7 @@ export function StatBlock({ value, suffix, label, variant = 'gold-border' }: Sta
   if (variant === 'divided') {
     return (
       <div className="stat-cell">
-        <div className="text-lead font-black leading-[var(--leading-h2)] text-ink md:text-h2">
+        <div className="text-lead font-black leading-[var(--leading-h2)] text-ink md:text-h4">
           <CountUp value={value} suffix={suffix} />
         </div>
         {/* charcoal, not stone — the label half of the glass card sits

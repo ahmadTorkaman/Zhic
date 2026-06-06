@@ -80,13 +80,13 @@ export const DESIGNS: DesignCard[] = [
 export const FEATURED_PAGES: FeaturedPage[] = [
   {
     title: 'پرفروش‌ترین محصولات',
-    hero: { src: `${A}/lotus-banner.png`, alt: '' },
+    hero: { src: `${A}/lotus-banner.webp`, alt: '' },
     row: [{ src: `${A}/rect55.webp`, alt: '' }, { src: `${A}/rect56.webp`, alt: '' }],
   },
   {
     title: 'جدیدترین محصولات',
-    hero: { src: `${A}/luka-plus-banner.png`, alt: '' },
-    row: [{ src: `${A}/rect51.png`, alt: '' }, { src: `${A}/rect53.webp`, alt: '' }],
+    hero: { src: `${A}/luka-plus-banner.webp`, alt: '' },
+    row: [{ src: `${A}/rect51.webp`, alt: '' }, { src: `${A}/rect53.webp`, alt: '' }],
   },
 ];
 

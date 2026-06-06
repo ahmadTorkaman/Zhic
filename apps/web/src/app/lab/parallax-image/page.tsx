@@ -18,7 +18,7 @@ export default function LabParallaxImagePage() {
                 amount = {amount}
               </div>
               <ParallaxImage
-                src="/hero/IMG_0889.jpeg"
+                src="/hero/IMG_0889.webp"
                 alt="Test parallax"
                 verticalAmount={amount}
                 topRightRadius={48}
