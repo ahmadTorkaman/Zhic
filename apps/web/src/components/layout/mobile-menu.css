@@ -8,7 +8,7 @@
   z-index: var(--z-overlay);
   pointer-events: none;
 }
-.zh-mm[data-open='true'] { pointer-events: auto; }
+.zh-mm[data-open] { pointer-events: auto; }
 
 /* Sweep layers — sit under the panel, slide in from the inline-start…
    physically the RIGHT edge in RTL (GSAP xPercent 100 → 0). */

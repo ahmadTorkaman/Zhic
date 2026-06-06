@@ -148,6 +148,12 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
     } else if (hasOpenedRef.current) {
       playClose();
     }
+    return () => {
+      // Unmount mid-animation: stop live tweens so they don't run against
+      // a detached DOM. (The header is layout-level, so this is rare.)
+      openTlRef.current?.kill();
+      closeTweenRef.current?.kill();
+    };
   }, [open, playOpen, playClose]);
 
   // Body scroll lock — keyed on `open`.
@@ -188,7 +194,7 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
       aria-label="منو"
       aria-hidden={!open}
       inert={!open || undefined}
-      data-open={open || undefined}
+      data-open={open ? '' : undefined}
       className="zh-mm focus:outline-none"
     >
       <div ref={prelayersRef} className="zh-mm__prelayers" aria-hidden>
