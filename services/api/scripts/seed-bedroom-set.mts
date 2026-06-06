@@ -100,6 +100,21 @@ for (const slug of MISSING_BASE) {
   stats.base++
 }
 
+// 3b) iron's sliderMedia points at a full-bleed landscape scene, not its rounded
+// poster — every other hub design already uses the bedroom-set-*.webp rounded poster.
+// Relink iron to its poster so the carousel art is consistent.
+console.log('— iron: use the rounded poster, not the scene —')
+{
+  const id = await findDesignId('iron')
+  const poster = await payload.find({ collection: 'media', where: { filename: { equals: 'bedroom-set-iron.webp' } }, limit: 1, depth: 0 })
+  if (id && poster.docs[0]) {
+    await payload.update({ collection: 'designs', id, data: { sliderMedia: poster.docs[0].id } })
+    console.log('  iron sliderMedia →', poster.docs[0].id, '(bedroom-set-iron.webp)')
+  } else {
+    console.log('  ⚠ iron or its poster not found')
+  }
+}
+
 // 4) best-sellers — one flagship bed PER design (varied), clearing any prior featured first
 console.log('— best-sellers (featured products) —')
 const prevFeatured = await payload.find({ collection: 'products', where: { featured: { equals: true } }, limit: 50, depth: 0 })
