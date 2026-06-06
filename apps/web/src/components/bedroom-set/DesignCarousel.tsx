@@ -154,7 +154,6 @@ export function DesignCarousel({
       sx = e.clientX; sy = e.clientY; sp = progressRef.current; axis = null;
       downCard = (e.target as HTMLElement).closest?.('.zh-bs-card') ?? null;
       if (rafRef.current !== null) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
-      if (e.pointerType === 'mouse') { try { stage.setPointerCapture(e.pointerId); } catch { /* noop */ } }
     };
     const onMove = (e: PointerEvent) => {
       if (!dragging || viewRef.current !== 'designs') return;
@@ -163,6 +162,12 @@ export function DesignCarousel({
       if (axis === null) {
         if (Math.abs(dx) > 6 || Math.abs(dy) > 6) axis = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
         else return;
+        // Capture the pointer only once a horizontal drag actually begins. Capturing
+        // on pointerdown (as the mockup did) retargets the ensuing click to the stage,
+        // swallowing mouse clicks on the dots, room-type tabs, and cards underneath.
+        if (axis === 'h' && e.pointerType === 'mouse') {
+          try { stage.setPointerCapture(e.pointerId); } catch { /* noop */ }
+        }
       }
       if (axis === 'h') {
         progressRef.current = clampIndex(sp + dx / (slotRef.current || computeSlot()), N);
