@@ -106,6 +106,45 @@ export const Designs: CollectionConfig = {
       },
     },
     {
+      name: 'logoMedia',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'نام‌نشان طرح (لوگو)',
+      admin: {
+        description: 'نام‌نشان دوزبانه‌ی طرح که در نوار شیشه‌ای کارت هاب «سرویس خواب» روی تصویر می‌نشیند. اگر خالی باشد، کارت بدون لوگو نمایش داده می‌شود.',
+      },
+    },
+    {
+      name: 'occupancyMedia',
+      type: 'array',
+      label: 'کارت‌های اختصاصی هر نوع سرویس',
+      labels: { singular: 'کارت نوع سرویس', plural: 'کارت‌های نوع سرویس' },
+      admin: {
+        description: 'برای هر نوع سرویس می‌توانید یک تصویر کارت متفاوت تعیین کنید؛ با انتخاب تب آن نوع در هاب «سرویس خواب»، کارت با محو-و-پیدا به این تصویر تغییر می‌کند. انواعی که اینجا تعریف نشوند، تصویر پایه (sliderMedia) را نشان می‌دهند.',
+      },
+      fields: [
+        {
+          name: 'occupancy',
+          type: 'select',
+          required: true,
+          label: 'نوع سرویس',
+          options: [
+            { label: 'سرویس خواب نوزاد', value: 'baby' },
+            { label: 'سرویس خواب نوجوان', value: 'teen' },
+            { label: 'سرویس خواب دونفره', value: 'double' },
+            { label: 'سرویس خواب دوطبقه', value: 'bunk' },
+          ],
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: 'تصویر کارت',
+        },
+      ],
+    },
+    {
       name: 'storyBlocks',
       type: 'richText',
       label: 'داستان طرح',
