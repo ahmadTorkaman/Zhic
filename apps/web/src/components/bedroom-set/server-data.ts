@@ -5,26 +5,31 @@ import {
   type PayloadDesign,
   type PayloadProduct,
 } from '@/lib/payload';
-import type {
-  DesignCard,
-  FeaturedPage,
-  FeaturedTile,
-  Occupancy,
-  WritingContent,
+import {
+  OCCUPANCY_ORDER,
+  type DesignCard,
+  type FeaturedPage,
+  type FeaturedTile,
+  type Occupancy,
+  type WritingContent,
 } from './placeholder-data';
 
-// Map a Payload design → the carousel's DesignCard. Base card = sliderMedia ??
-// heroMedia ?? gallery[0]; logo = logoMedia (optional → logo-less card); the
-// room-type tab variants come from occupancyMedia.
+// Map a Payload design → the carousel's DesignCard. Base card = the design's
+// first room-type poster (occupancyMedia, in OCCUPANCY_ORDER) — the whole-set
+// media (sliderMedia) belongs to the /bedroom-set/<design> page, not the
+// carousel — falling back to sliderMedia ?? heroMedia ?? gallery[0] for
+// designs without card art yet. Logo = logoMedia (optional → logo-less card).
 function toCard(d: PayloadDesign): DesignCard | null {
-  const cardSrc = mediaUrl(d.sliderMedia) ?? mediaUrl(d.heroMedia) ?? mediaUrl(d.gallery?.[0]);
-  if (!cardSrc) return null;
-
   const cardByOccupancy: Partial<Record<Occupancy, string>> = {};
   for (const om of d.occupancyMedia ?? []) {
     const url = mediaUrl(om?.image);
     if (om?.occupancy && url) cardByOccupancy[om.occupancy] = url;
   }
+
+  const firstPoster = OCCUPANCY_ORDER.map((o) => cardByOccupancy[o]).find(Boolean);
+  const cardSrc =
+    firstPoster ?? mediaUrl(d.sliderMedia) ?? mediaUrl(d.heroMedia) ?? mediaUrl(d.gallery?.[0]);
+  if (!cardSrc) return null;
 
   return {
     slug: d.slug,

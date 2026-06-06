@@ -47,7 +47,10 @@ const OCC_FA: Record<string, string> = { baby: 'نوزاد', teen: 'نوجوان
 
 const LOGOS = ['lotus', 'parla', 'caroline', 'iron', 'jacqueline', 'lukaplus', 'loof']
 const VARIANTS: Record<string, string[]> = {
-  parla: ['baby', 'bunk'], caroline: ['double', 'teen'], lukaplus: ['double'], loof: ['baby'],
+  parla: ['baby', 'bunk', 'teen'],
+  caroline: ['double', 'teen'],
+  lukaplus: ['double', 'teen'],
+  loof: ['baby', 'teen'],
 }
 const MISSING_BASE = ['jacqueline', 'verna']
 
