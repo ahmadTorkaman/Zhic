@@ -6,7 +6,7 @@ import { RotatingHeadline } from './RotatingHeadline';
 
 type View = 'designs' | 'featured';
 
-function FeaturedGrid({ page, open, onOpenProduct }: { page: FeaturedPage; open: boolean; onOpenProduct: () => void }) {
+function FeaturedGrid({ page, open, onOpenProduct }: { page: FeaturedPage; open: boolean; onOpenProduct: (href?: string) => void }) {
   const tiles = [{ tile: page.hero, hero: true }, ...page.row.map((t) => ({ tile: t, hero: false }))];
   const refs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -30,7 +30,7 @@ function FeaturedGrid({ page, open, onOpenProduct }: { page: FeaturedPage; open:
           type="button"
           className={`zh-bs-tile${hero ? ' hero' : ''}`}
           ref={(el) => { refs.current[idx] = el; }}
-          onClick={onOpenProduct}
+          onClick={() => onOpenProduct(tile.href)}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- 1:1 parity; SP1 swaps to PayloadImage */}
           <img src={tile.src} alt={tile.alt} />
@@ -49,7 +49,7 @@ export function FeaturedOverlay({
   pages: FeaturedPage[];
   view: View;
   onClose: () => void;
-  onOpenProduct: () => void;
+  onOpenProduct: (href?: string) => void;
 }) {
   const rootRef = React.useRef<HTMLElement | null>(null);
   const viewRef = React.useRef(view);

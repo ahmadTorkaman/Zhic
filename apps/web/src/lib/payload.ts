@@ -31,6 +31,10 @@ export type PayloadDesign = {
   storyBlocks?: LexicalRoot | null;
   /** Slider tile media on /bedroom-set (ideally a GIF). Falls back to heroMedia / gallery[0]. */
   sliderMedia?: PayloadMedia | null;
+  /** Name-mark shown in the /bedroom-set carousel glass band (SP1). Card is logo-less if null. */
+  logoMedia?: PayloadMedia | null;
+  /** Per-room-type card variants — the carousel cross-dissolves to one when its tab is tapped (SP1). */
+  occupancyMedia?: { occupancy: 'baby' | 'teen' | 'double' | 'bunk'; image?: PayloadMedia | null }[] | null;
 };
 
 export type PayloadAddress = {

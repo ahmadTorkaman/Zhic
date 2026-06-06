@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import type { DesignCard, FeaturedPage, WritingContent } from './placeholder-data';
 import { DesignCarousel } from './DesignCarousel';
 import { WritingSection } from './WritingSection';
@@ -19,6 +20,7 @@ export function BedroomSetLanding({
   pages: FeaturedPage[];
   writing: WritingContent;
 }) {
+  const router = useRouter();
   const [view, setView] = React.useState<View>('designs');
   const [toast, setToast] = React.useState({ text: '', show: false });
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,10 +36,19 @@ export function BedroomSetLanding({
   const openFeatured = React.useCallback(() => setView('featured'), []);
   const closeFeatured = React.useCallback(() => setView('designs'), []);
   const onOpenDesign = React.useCallback(
-    (d: DesignCard) => showToast(`باز کردن طرح ${d.name} →`),
-    [showToast],
+    (d: DesignCard) => {
+      if (d.slug) router.push(`/bedroom-set/${d.slug}`);
+      else showToast(`باز کردن طرح ${d.name} →`);
+    },
+    [router, showToast],
   );
-  const onOpenProduct = React.useCallback(() => showToast('مشاهده →'), [showToast]);
+  const onOpenProduct = React.useCallback(
+    (href?: string) => {
+      if (href) router.push(href);
+      else showToast('مشاهده →');
+    },
+    [router, showToast],
+  );
 
   // Reaching the end of the writing section auto-raises the featured page (the
   // footer is hidden on this route, so the writing is the last thing in flow).

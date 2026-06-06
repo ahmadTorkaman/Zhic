@@ -35,7 +35,7 @@ export type DesignCard = {
 export function cardForOccupancy(d: DesignCard, occ: Occupancy | null): string {
   return (occ && d.cardByOccupancy?.[occ]) || d.cardSrc;
 }
-export type FeaturedTile = { src: string; alt: string };
+export type FeaturedTile = { src: string; alt: string; href?: string };
 export type FeaturedPage = { title: string; hero: FeaturedTile; row: FeaturedTile[] };
 export type WritingContent = { heading: string; body: string };
 

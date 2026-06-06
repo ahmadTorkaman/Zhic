@@ -1,5 +1,10 @@
 import { BedroomSetLanding } from '@/components/bedroom-set/BedroomSetLanding';
 import { DESIGNS, FEATURED_PAGES, WRITING } from '@/components/bedroom-set/placeholder-data';
+import {
+  fetchBedroomSetDesigns,
+  fetchBedroomSetFeatured,
+  fetchBedroomSetCopy,
+} from '@/components/bedroom-set/server-data';
 
 export const metadata = {
   title: 'طرح‌ها',
@@ -7,6 +12,20 @@ export const metadata = {
   alternates: { canonical: '/bedroom-set' },
 };
 
-export default function BedroomSetPage() {
-  return <BedroomSetLanding designs={DESIGNS} pages={FEATURED_PAGES} writing={WRITING} />;
+export default async function BedroomSetPage() {
+  const [designs, pages, writing] = await Promise.all([
+    fetchBedroomSetDesigns(),
+    fetchBedroomSetFeatured(),
+    fetchBedroomSetCopy(),
+  ]);
+
+  // Fall back to the bundled placeholder content if Payload is unreachable, so the
+  // hub never renders empty.
+  return (
+    <BedroomSetLanding
+      designs={designs.length ? designs : DESIGNS}
+      pages={pages.length ? pages : FEATURED_PAGES}
+      writing={writing ?? WRITING}
+    />
+  );
 }

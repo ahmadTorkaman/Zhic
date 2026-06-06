@@ -1,8 +1,10 @@
 /** @vitest-environment jsdom */
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { BedroomSetLanding } from '../BedroomSetLanding';
 import { DESIGNS, FEATURED_PAGES, WRITING } from '../placeholder-data';
+
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: () => {} }) }));
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
