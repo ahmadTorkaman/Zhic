@@ -35,7 +35,7 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
   const prelayersRef = useRef<HTMLDivElement>(null);
   const openTlRef = useRef<ReturnType<typeof gsap.timeline> | null>(null);
   const closeTweenRef = useRef<ReturnType<typeof gsap.to> | null>(null);
-  const firstRunRef = useRef(true);
+  const hasOpenedRef = useRef(false);
 
   // Park panel + sweep layers past the RIGHT edge (RTL entrance side).
   useLayoutEffect(() => {
@@ -138,15 +138,16 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
     });
   }, [resetHiddenStates]);
 
-  // open prop drives the timelines. Skip the very first run so a
-  // closed-on-mount menu doesn't play its close sweep.
+  // open prop drives the timelines. The latch skips the close sweep until
+  // the menu has actually opened once (covers both first mount and
+  // StrictMode's double-invoked effects).
   useEffect(() => {
-    if (firstRunRef.current) {
-      firstRunRef.current = false;
-      if (!open) return;
+    if (open) {
+      hasOpenedRef.current = true;
+      playOpen();
+    } else if (hasOpenedRef.current) {
+      playClose();
     }
-    if (open) playOpen();
-    else playClose();
   }, [open, playOpen, playClose]);
 
   // Body scroll lock — keyed on `open`.
@@ -186,6 +187,7 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
       aria-modal="true"
       aria-label="منو"
       aria-hidden={!open}
+      inert={!open || undefined}
       data-open={open || undefined}
       className="zh-mm focus:outline-none"
     >
@@ -227,8 +229,8 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
           <div className="zh-mm__socials" aria-label="شبکه‌های اجتماعی">
             <h3 className="zh-mm__socials-title">شبکه‌های اجتماعی</h3>
             <ul className="zh-mm__socials-list">
-              {validSocials.map((s, i) => (
-                <li key={s.platform + i}>
+              {validSocials.map((s) => (
+                <li key={s.platform}>
                   <a href={s.url} target="_blank" rel="noopener noreferrer" className="zh-mm__social-link">
                     {SOCIAL_LABELS[s.platform]}
                   </a>

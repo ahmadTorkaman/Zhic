@@ -23,6 +23,7 @@ vi.mock('gsap', () => {
   };
 });
 
+import { gsap } from 'gsap';
 import { MobileMenu } from '../MobileMenu';
 
 beforeAll(() => {
@@ -107,5 +108,14 @@ describe('MobileMenu (staggered)', () => {
     expect(
       container.querySelector('[role="dialog"]')?.getAttribute('aria-hidden'),
     ).toBe('true');
+  });
+
+  it('kills the open timeline when the menu closes', () => {
+    const { rerender } = render(<MobileMenu open onClose={() => {}} pathname="/" />);
+    // StrictMode double-invokes effects; the last timeline call is the live one.
+    const results = vi.mocked(gsap.timeline).mock.results;
+    const tlInstance = results[results.length - 1]!.value;
+    rerender(<MobileMenu open={false} onClose={() => {}} pathname="/" />);
+    expect(tlInstance.kill).toHaveBeenCalled();
   });
 });
