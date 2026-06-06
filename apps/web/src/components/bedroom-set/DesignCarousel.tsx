@@ -295,10 +295,9 @@ export function DesignCarousel({
               data-i={i}
               ref={(el) => { cardRefs.current[i] = el; }}
             >
-              {/* Every card reflects the room-type tabs: when the active occupancy
-                  has a dedicated «-card» image the card dissolves to it, else it
-                  stays on its base banner (cardForOccupancy falls back). */}
-              <CardImage src={cardForOccupancy(d, activeOccupancy)} alt={d.name} />
+              {/* Only the focused card reflects the room-type tabs; the rest stay on
+                  their base banner. The focused card dissolves between variants. */}
+              <CardImage src={i === focused ? cardForOccupancy(d, activeOccupancy) : d.cardSrc} alt={d.name} />
             </div>
           ))}
         </div>
