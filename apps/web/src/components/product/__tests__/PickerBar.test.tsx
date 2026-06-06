@@ -1,9 +1,27 @@
 /** @vitest-environment jsdom */
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import { VariantSelectionProvider } from '../VariantSelectionContext';
 import { PickerBar } from '../PickerBar';
 import type { PayloadProduct, PayloadProductVariant } from '@/lib/payload';
+
+// PickerBar reads matchMedia for its mobile bottom-offset; jsdom lacks it.
+beforeAll(() => {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    configurable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+});
 
 const product = {
   id: 10,
