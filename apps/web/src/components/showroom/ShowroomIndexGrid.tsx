@@ -1,6 +1,7 @@
 import { toPersianDigits } from '@zhic/locale';
 import { Container } from '@zhic/ui';
 import { GlassCard } from '@/components/shared/GlassCard';
+import { PayloadImage } from '@/components/PayloadImage';
 import type { PayloadShowroom, ShowroomHourEntry } from '@/lib/payload';
 import { showroomPath } from '@/lib/payload';
 import { ShowroomAddressBlock } from './ShowroomAddressBlock';
@@ -45,6 +46,15 @@ export function ShowroomIndexGrid({
               const city = s.address?.city ?? 'ایران';
               return (
                 <GlassCard key={String(s.id)} href={showroomPath(s.slug)}>
+                  {/* City illustration — same 3:2 crop as the homepage teaser. */}
+                  {s.cover ? (
+                    <div className="mb-4 overflow-hidden rounded-md">
+                      <PayloadImage
+                        media={s.cover}
+                        className="aspect-[3/2] h-auto w-full object-cover"
+                      />
+                    </div>
+                  ) : null}
                   <div className="mb-3 text-eyebrow font-bold uppercase tracking-[0.08em] text-forest">
                     {city}
                   </div>
