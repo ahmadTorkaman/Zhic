@@ -1,6 +1,6 @@
 /* apps/web/src/components/home/home-showrooms-teaser.css */
 /* Figma home showrooms section: 3-up full-bleed city-illustration cards +
-   the «فهرست کامل» expand bar. */
+   the «فهرست کامل» curtain-expand bar. */
 .zh-st { background: var(--color-ivory); border-top: 1px solid var(--color-sand); padding-block: var(--space-7); }
 @media (min-width: 768px) {
   .zh-st { padding-block: var(--space-8); }
@@ -22,23 +22,13 @@
   overflow: hidden;
   transition: transform var(--dur-hover) var(--ease-out-soft);
 }
-/* Only the grid's extreme corners carry the big curve: the visually
-   top-right card (first in RTL flow) and the bottom-left one (last). */
-.zh-st__card:first-child { border-top-right-radius: 36px; }
-.zh-st__card:last-child { border-bottom-left-radius: 36px; }
 .zh-st__card:hover { transform: translateY(var(--hover-lift-card)); }
-/* Expand reveal — newly mounted cards rise in with a per-card stagger. */
-@keyframes zh-st-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: none; }
-}
-.zh-st__card.is-new {
-  animation: zh-st-in 0.55s var(--ease-out-soft) both;
-  animation-delay: calc(var(--zh-st-i, 0) * 45ms);
-}
-@media (prefers-reduced-motion: reduce) {
-  .zh-st__card.is-new { animation: none; }
-}
+/* Every row carries the motif: its visually rightmost card (3n+1 in RTL flow)
+   curves top-right, its leftmost (3n, or the final card of a partial row)
+   curves bottom-left. */
+.zh-st__card:nth-child(3n + 1) { border-top-right-radius: 36px; }
+.zh-st__card:nth-child(3n),
+.zh-st__card:last-child { border-bottom-left-radius: 36px; }
 /* Legibility for the white city name — illustrations are light. */
 .zh-st__card::after {
   content: '';
@@ -60,6 +50,23 @@
   font-size: clamp(1.5rem, 2.4vw, 2.1rem);
   font-weight: 900;
   line-height: 1.2;
+}
+
+/* Curtain — the hidden rows unfold (0fr → 1fr) so the bar below glides down,
+   revealing the cards top-to-bottom. */
+.zh-st__more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.8s var(--ease-out-soft);
+}
+.zh-st__more.is-open { grid-template-rows: 1fr; }
+.zh-st__more-inner { overflow: hidden; min-height: 0; }
+.zh-st__grid--more { padding-top: var(--space-3); }
+@media (min-width: 768px) {
+  .zh-st__grid--more { padding-top: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zh-st__more { transition: none; }
 }
 
 .zh-st__expand {

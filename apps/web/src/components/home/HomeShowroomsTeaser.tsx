@@ -16,16 +16,37 @@ export type HomeShowroomsTeaserProps = {
   showrooms: HomeShowroomCard[];
 };
 
+function Card({ s, eager }: { s: HomeShowroomCard; eager?: boolean }) {
+  return (
+    <Link href={`/showrooms/${s.slug}`} className="zh-st__card">
+      {s.coverUrl ? (
+        <img
+          src={s.coverUrl}
+          alt={`شوروم ${s.city}`}
+          width={900}
+          height={1200}
+          loading={eager ? undefined : 'lazy'}
+          className="zh-st__img"
+        />
+      ) : (
+        <span className="zh-st__img zh-st__img--ph" aria-hidden />
+      )}
+      <span className="zh-st__city">{s.city}</span>
+    </Link>
+  );
+}
+
 /**
- * Figma "zhic wood .com" home showrooms section: one row of three full-bleed
- * city-illustration cards (city name overlaid bottom-start in white), with a
- * full-width «فهرست کامل» bar that expands the grid to every showroom.
+ * Figma "zhic wood .com" home showrooms section: rows of three full-bleed
+ * city-illustration cards. The «فهرست کامل» bar slides DOWN as the hidden
+ * rows unfold above it (grid-template-rows 0fr → 1fr curtain), then reads
+ * «نمایش کمتر» to fold them back up.
  */
 export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
   const [expanded, setExpanded] = useState(false);
   if (showrooms.length === 0) return null;
-  const visible = expanded ? showrooms : showrooms.slice(0, 3);
-  const canToggle = showrooms.length > 3;
+  const firstRow = showrooms.slice(0, 3);
+  const rest = showrooms.slice(3);
 
   return (
     <section className="zh-st" aria-label="شوروم‌ها">
@@ -35,40 +56,38 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
         </BlurInText>
 
         <div className="zh-st__grid">
-          {visible.map((s, i) => (
-            <Link
-              key={s.slug}
-              href={`/showrooms/${s.slug}`}
-              // Cards revealed by the expand enter with a small staggered rise.
-              className={`zh-st__card${i >= 3 ? ' is-new' : ''}`}
-              style={i >= 3 ? ({ '--zh-st-i': i - 3 } as React.CSSProperties) : undefined}
-            >
-              {s.coverUrl ? (
-                <img
-                  src={s.coverUrl}
-                  alt={`شوروم ${s.city}`}
-                  width={900}
-                  height={1200}
-                  loading={i < 3 ? undefined : 'lazy'}
-                  className="zh-st__img"
-                />
-              ) : (
-                <span className="zh-st__img zh-st__img--ph" aria-hidden />
-              )}
-              <span className="zh-st__city">{s.city}</span>
-            </Link>
+          {firstRow.map((s) => (
+            <Card key={s.slug} s={s} eager />
           ))}
         </div>
 
-        {canToggle && (
-          <button
-            type="button"
-            className="zh-st__expand"
-            aria-expanded={expanded}
-            onClick={() => setExpanded((e) => !e)}
-          >
-            {expanded ? 'نمایش کمتر' : 'فهرست کامل'}
-          </button>
+        {rest.length > 0 && (
+          <>
+            {/* Curtain: rows unfold and push the bar down slowly. All cards
+                stay in the DOM (crawlable); inert blocks focus while folded. */}
+            <div
+              className={`zh-st__more${expanded ? ' is-open' : ''}`}
+              inert={!expanded || undefined}
+              aria-hidden={!expanded}
+            >
+              <div className="zh-st__more-inner">
+                <div className="zh-st__grid zh-st__grid--more">
+                  {rest.map((s) => (
+                    <Card key={s.slug} s={s} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="zh-st__expand"
+              aria-expanded={expanded}
+              onClick={() => setExpanded((e) => !e)}
+            >
+              {expanded ? 'نمایش کمتر' : 'فهرست کامل'}
+            </button>
+          </>
         )}
       </Container>
     </section>
