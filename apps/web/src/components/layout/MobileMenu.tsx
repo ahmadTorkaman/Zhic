@@ -49,11 +49,9 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
     const panel = panelRef.current;
     if (!panel) return;
     const labels = panel.querySelectorAll('.zh-mm__label');
-    const numbered = panel.querySelectorAll('.zh-mm__list[data-numbering] .zh-mm__link');
     const socialTitle = panel.querySelector('.zh-mm__socials-title');
     const socialLinks = panel.querySelectorAll('.zh-mm__social-link');
     if (labels.length) gsap.set(labels, { yPercent: 140, rotate: 10 });
-    if (numbered.length) gsap.set(numbered, { '--zh-mm-num-opacity': 0 });
     if (socialTitle) gsap.set(socialTitle, { opacity: 0 });
     if (socialLinks.length) gsap.set(socialLinks, { y: 25, opacity: 0 });
   }, []);
@@ -68,14 +66,12 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
     openTlRef.current?.kill();
 
     const labels = panel.querySelectorAll('.zh-mm__label');
-    const numbered = panel.querySelectorAll('.zh-mm__list[data-numbering] .zh-mm__link');
     const socialTitle = panel.querySelector('.zh-mm__socials-title');
     const socialLinks = panel.querySelectorAll('.zh-mm__social-link');
 
     if (prefersReduced()) {
       gsap.set([...layers, panel], { xPercent: 0 });
       if (labels.length) gsap.set(labels, { yPercent: 0, rotate: 0 });
-      if (numbered.length) gsap.set(numbered, { '--zh-mm-num-opacity': 1 });
       if (socialTitle) gsap.set(socialTitle, { opacity: 1 });
       if (socialLinks.length) gsap.set(socialLinks, { y: 0, opacity: 1 });
       return;
@@ -100,9 +96,6 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
     const itemsStart = panelInsertTime + panelDuration * 0.15;
     if (labels.length) {
       tl.to(labels, { yPercent: 0, rotate: 0, duration: 1, ease: 'power4.out', stagger: { each: 0.1, from: 'start' } }, itemsStart);
-    }
-    if (numbered.length) {
-      tl.to(numbered, { duration: 0.6, ease: 'power2.out', '--zh-mm-num-opacity': 1, stagger: { each: 0.08, from: 'start' } }, itemsStart + 0.1);
     }
     const socialsStart = panelInsertTime + panelDuration * 0.4;
     if (socialTitle) {
@@ -213,7 +206,7 @@ export function MobileMenu({ open, onClose, pathname, socials = [] }: MobileMenu
           <img src="/zhic-logo.svg" alt="ژیک" />
         </div>
 
-        <ul aria-label="پیمایش اصلی" className="zh-mm__list" data-numbering>
+        <ul aria-label="پیمایش اصلی" className="zh-mm__list">
           {ITEMS.map((item) => {
             const active = isNavActive(pathname, item.href);
             return (

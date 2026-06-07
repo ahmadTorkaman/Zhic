@@ -59,11 +59,11 @@ describe('MobileMenu (staggered)', () => {
     expect(links[1]!.getAttribute('href')).toBe('/bedroom-furniture');
   });
 
-  it('marks the list for numbering', () => {
+  it('renders no item numbering', () => {
     const { container } = render(
       <MobileMenu open onClose={() => {}} pathname="/" />,
     );
-    expect(container.querySelector('.zh-mm__list[data-numbering]')).not.toBeNull();
+    expect(container.querySelector('.zh-mm__list[data-numbering]')).toBeNull();
   });
 
   it('flags the active item with aria-current', () => {
