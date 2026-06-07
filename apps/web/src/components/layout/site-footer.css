@@ -24,6 +24,14 @@
   background: linear-gradient(to left, var(--color-cream) 22%, rgba(244, 236, 224, 0.55) 50%, transparent 80%);
   pointer-events: none;
 }
+@media (max-width: 767px) {
+  /* Narrow card: text spans most of the width, so wash the whole face cream
+     (vase stays faintly visible at the far inline-end / visual left). */
+  .zh-foot-cta__card::before {
+    background: linear-gradient(to left, var(--color-cream) 52%, rgba(244, 236, 224, 0.82) 80%, rgba(244, 236, 224, 0.35) 100%);
+  }
+  .zh-foot-cta__sub { font-size: var(--text-body); }
+}
 .zh-foot-cta__body {
   position: relative;
   z-index: 1;
