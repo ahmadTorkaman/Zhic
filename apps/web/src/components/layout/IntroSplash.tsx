@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import './intro-splash.css';
 
-// Light logo-motion GIF: 760×480, ~3.24s for one play (it loops, so we time
-// the fade to one play length).
-const PLAY_MS = 3240;
+// Transparent logo-motion GIF: 760×480, ~2.88s for one play (it loops, so we
+// time the fade to one play length).
+const PLAY_MS = 2880;
 const FADE_MS = 700;
 
 /**
@@ -44,7 +44,7 @@ export function IntroSplash() {
 
   return (
     <div className={`zh-intro${phase === 'fade' ? ' is-fading' : ''}`} aria-hidden>
-      <img src="/intro/zhic-logo-motion-light.gif" alt="" className="zh-intro__gif" />
+      <img src="/intro/zhic-logo-motion-transparent.gif" alt="" className="zh-intro__gif" />
     </div>
   );
 }
