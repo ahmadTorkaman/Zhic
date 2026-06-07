@@ -1,21 +1,36 @@
 /* apps/web/src/components/layout/site-footer.css */
 /* Figma "zhic wood .com" footer: cream CTA band + dark-green 3-column footer. */
 
-/* ── CTA band ───────────────────────────────────────────────────────────── */
-.zh-foot-cta { background: var(--color-cream); padding-block: var(--space-6); }
-.zh-foot-cta__row {
+/* ── Consultation CTA card ──────────────────────────────────────────────── */
+.zh-foot-cta { background: var(--color-ivory); padding-block: var(--space-7); }
+.zh-foot-cta__card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px 28px 4px 28px;
+  background-color: var(--color-cream);
+  /* Vase-and-branches lifestyle photo (fades to cream on the text side). */
+  background-image: url('/footer/consult-card.webp');
+  background-size: cover;
+  background-position: left center; /* vase sits visual-left; text fills the right */
+  min-height: 260px;
+  display: flex;
+}
+.zh-foot-cta__body {
+  margin-inline-start: auto;        /* push to inline-start (visual right in RTL) */
+  width: min(100%, 460px);
+  padding: var(--space-6) var(--space-6) var(--space-6) var(--space-4);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  text-align: center;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.35rem;
+  text-align: start;
 }
-@media (min-width: 768px) {
-  .zh-foot-cta__row { flex-direction: row; justify-content: space-between; text-align: start; }
-}
-.zh-foot-cta__eyebrow { margin: 0; font-size: var(--text-body); font-weight: 500; color: var(--color-charcoal); }
+.zh-foot-cta__h { margin: 0; font-size: var(--text-h2); font-weight: 900; color: var(--color-gold); }
+.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: var(--text-lead); font-weight: 700; color: var(--color-ink); }
+.zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: var(--text-small); font-weight: 500; color: var(--color-charcoal); max-width: 32ch; }
 .zh-foot-cta__btn {
-  flex-shrink: 0;
+  align-self: stretch;
   padding: 0.9rem 2.2rem;
   background: var(--color-gold);
   color: var(--color-ivory);
@@ -28,6 +43,9 @@
   transition: background-color var(--dur-hover) var(--ease-out-soft);
 }
 .zh-foot-cta__btn:hover { background: #b08c5e; }
+@media (min-width: 768px) {
+  .zh-foot-cta__btn { align-self: flex-start; }
+}
 
 /* ── Footer ─────────────────────────────────────────────────────────────── */
 .zh-foot { background: var(--color-forest-dark); color: var(--color-ivory); padding-block: var(--space-8) var(--space-6); }

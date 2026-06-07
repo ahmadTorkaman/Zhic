@@ -44,14 +44,18 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
 
   return (
     <>
-      {/* CTA band — opens the consultation / showroom-visit form. */}
+      {/* Consultation CTA card — opens the consultation / showroom-visit form. */}
       <section className="zh-foot-cta">
         <Container>
-          <div className="zh-foot-cta__row">
-            <p className="zh-foot-cta__eyebrow">مشاوره تخصصی برای خرید سرویس خواب مناسب</p>
-            <button type="button" className="zh-foot-cta__btn" onClick={() => setConsultOpen(true)}>
-              دریافت مشاوره رایگان
-            </button>
+          <div className="zh-foot-cta__card">
+            <div className="zh-foot-cta__body">
+              <p className="zh-foot-cta__h">زیبایی</p>
+              <p className="zh-foot-cta__sub">از یک انتخاب ساده آغاز می‌شود</p>
+              <p className="zh-foot-cta__eyebrow">مشاوره تخصصی برای خرید سرویس خواب مناسب</p>
+              <button type="button" className="zh-foot-cta__btn" onClick={() => setConsultOpen(true)}>
+                دریافت مشاوره رایگان
+              </button>
+            </div>
           </div>
         </Container>
       </section>
