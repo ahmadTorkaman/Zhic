@@ -18,11 +18,14 @@
   position: relative;
   display: block;
   aspect-ratio: 3 / 4;
-  /* Signature diagonal: big curve on the top-right and bottom-left corners. */
-  border-radius: 4px 36px 4px 36px;
+  border-radius: 4px;
   overflow: hidden;
   transition: transform var(--dur-hover) var(--ease-out-soft);
 }
+/* Only the grid's extreme corners carry the big curve: the visually
+   top-right card (first in RTL flow) and the bottom-left one (last). */
+.zh-st__card:first-child { border-top-right-radius: 36px; }
+.zh-st__card:last-child { border-bottom-left-radius: 36px; }
 .zh-st__card:hover { transform: translateY(var(--hover-lift-card)); }
 /* Expand reveal — newly mounted cards rise in with a per-card stagger. */
 @keyframes zh-st-in {
