@@ -3,12 +3,12 @@ import { HomeRoomsTiles, type HomeRoomTile } from '@/components/home/HomeRoomsTi
 import { HomeBrandStatement } from '@/components/home/HomeBrandStatement';
 import { HomeJournalRows, type HomeJournalArticle } from '@/components/home/HomeJournalRows';
 import { HomeShowroomsTeaser, type HomeShowroomCard } from '@/components/home/HomeShowroomsTeaser';
-import { fetchHome, fetchShowrooms, fetchLatestArticles, fetchRooms } from '@/lib/payload';
+import { fetchHome, fetchAllShowrooms, fetchLatestArticles, fetchRooms } from '@/lib/payload';
 
 export default async function HomePage() {
   const [home, showrooms, articles, rooms] = await Promise.all([
     fetchHome(),
-    fetchShowrooms(3),
+    fetchAllShowrooms(),
     fetchLatestArticles(15),
     fetchRooms(),
   ]);
@@ -83,18 +83,16 @@ export default async function HomePage() {
     coverUrl: a.cover?.url ?? FALLBACK_JOURNAL_COVERS[i % FALLBACK_JOURNAL_COVERS.length]!,
   }));
 
-  // Build showroom cards: max 3. No cover → null, so the teaser renders its
-  // on-brand gradient placeholder instead of a stock photo.
-  const showroomCards: HomeShowroomCard[] = showrooms.slice(0, 3).map((s) => ({
-    slug: s.slug,
-    city: s.address?.city ?? s.name,
-    addressLine: [s.address?.district, s.address?.street, s.address?.plaque]
-      .filter((p): p is string => typeof p === 'string' && p.length > 0)
-      .join('، '),
-    phone: s.phone ?? undefined,
-    coverUrl: s.cover?.url ?? null,
-    isCentral: s.is_central ?? undefined,
-  }));
+  // Figma layout: the teaser holds EVERY showroom (collapsed to one row of 3,
+  // «فهرست کامل» expands). Central showroom leads the row.
+  const showroomCards: HomeShowroomCard[] = showrooms
+    .map((s) => ({
+      slug: s.slug,
+      city: s.address?.city ?? s.name,
+      coverUrl: s.cover?.url ?? null,
+      isCentral: s.is_central ?? undefined,
+    }))
+    .sort((a, b) => Number(Boolean(b.isCentral)) - Number(Boolean(a.isCentral)));
 
   return (
     <>

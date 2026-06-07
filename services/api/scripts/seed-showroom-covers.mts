@@ -56,7 +56,9 @@ const COVERS: Record<string, { file: string; fa: string }> = {
 }
 
 // Cities with no illustration in the Figma file → showroom removed.
-const REMOVE = ['arak', 'ardabil', 'behnamir']
+// NOTE: arak was wrongly in this list at first (its illustration lives in the
+// Figma home-page row); restored via restore-arak-showroom.mts.
+const REMOVE = ['ardabil', 'behnamir']
 
 async function uploadCover(file: string, fa: string): Promise<number | string> {
   const filename = `showroom-${file}.webp`
