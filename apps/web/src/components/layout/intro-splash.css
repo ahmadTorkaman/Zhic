@@ -1,0 +1,26 @@
+/* apps/web/src/components/layout/intro-splash.css */
+.zh-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-ivory);
+  opacity: 1;
+  transition: opacity 700ms var(--ease-out-soft);
+}
+.zh-intro.is-fading { opacity: 0; }
+
+.zh-intro__gif {
+  width: min(62vw, 340px);
+  height: auto;
+}
+
+/* Returning-in-session / reduced-motion: hidden before first paint by the
+   head script's `.intro-seen` flag — no flash. */
+html.intro-seen .zh-intro { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .zh-intro { display: none; }
+}

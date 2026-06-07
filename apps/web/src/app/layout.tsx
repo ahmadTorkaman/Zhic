@@ -29,6 +29,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa-IR" dir="rtl" className={`${ayandeh.variable} ${ayandeh.className} antialiased`}>
+      <head>
+        {/* Flag <html> before first paint so the intro splash never flashes for
+            returning-in-session visitors or reduced-motion users. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(sessionStorage.getItem('zhic-intro')||matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('intro-seen')}}catch(e){}",
+          }}
+        />
+      </head>
       <body className={ayandeh.className}>{children}</body>
     </html>
   );
