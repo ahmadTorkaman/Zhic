@@ -15,7 +15,18 @@
   min-height: 260px;
   display: flex;
 }
+/* Cream scrim behind the text (inline-start / visual right) so it stays
+   legible over the photo on narrow screens. */
+.zh-foot-cta__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to left, var(--color-cream) 22%, rgba(244, 236, 224, 0.55) 50%, transparent 80%);
+  pointer-events: none;
+}
 .zh-foot-cta__body {
+  position: relative;
+  z-index: 1;
   margin-inline-start: auto;        /* push to inline-start (visual right in RTL) */
   width: min(100%, 460px);
   padding: var(--space-6) var(--space-6) var(--space-6) var(--space-4);
