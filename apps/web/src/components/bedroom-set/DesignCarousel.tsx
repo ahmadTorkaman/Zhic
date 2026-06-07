@@ -59,15 +59,18 @@ export function DesignCarousel({
     }
   }, [view]);
 
-  // Keep the selected room-type valid as the focused design changes (persist if
-  // the new design still offers it, else fall back to its first occupancy).
+  // The first room-type a design supports, in canonical order.
+  const defaultOccFor = React.useCallback(
+    (i: number): Occupancy | null =>
+      OCCUPANCY_ORDER.find((o) => designs[i]?.occupancies.includes(o)) ?? null,
+    [designs],
+  );
+
+  // Reset the active room-type to the focused design's default when focus
+  // changes (a tab hover overrides it transiently).
   React.useEffect(() => {
-    const occs = designs[focused]?.occupancies ?? [];
-    setActiveOccupancy((cur) => {
-      const valid = OCCUPANCY_ORDER.filter((o) => occs.includes(o));
-      return cur && valid.includes(cur) ? cur : valid[0] ?? null;
-    });
-  }, [focused, designs]);
+    setActiveOccupancy(defaultOccFor(focused));
+  }, [focused, defaultOccFor]);
 
   const computeSlot = React.useCallback(() => {
     const mob = window.matchMedia('(max-width:768px)').matches;
@@ -331,7 +334,11 @@ export function DesignCarousel({
       <CategoryTabs
         occupancies={designs[focused]?.occupancies ?? []}
         active={activeOccupancy}
-        onSelect={setActiveOccupancy}
+        onPreview={(o) => {
+          if (o) { setActiveOccupancy(o); setHoverIdx(focused); }
+          else { setActiveOccupancy(defaultOccFor(focused)); setHoverIdx((h) => (h === focused ? -1 : h)); }
+        }}
+        onOpen={(o) => onOpenDesign(designs[focused]!, o)}
       />
     </div>
   );
