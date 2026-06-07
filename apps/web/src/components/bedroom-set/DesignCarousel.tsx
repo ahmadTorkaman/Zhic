@@ -22,14 +22,20 @@ export function DesignCarousel({
 }: {
   designs: DesignCard[];
   view: View;
-  onOpenDesign: (d: DesignCard) => void;
+  onOpenDesign: (d: DesignCard, occupancy: Occupancy | null) => void;
 }) {
   const N = designs.length;
   const [focused, setFocused] = React.useState(0);
-  // Selected room-type tab — drives which card variant each design shows.
+  // Selected room-type tab — the FILTER carried to the design page on card
+  // click (?age=…) and the variant previewed on desktop hover. It never
+  // changes a card's resting image (CEO 2026-06-08).
   const [activeOccupancy, setActiveOccupancy] = React.useState<Occupancy | null>(
     () => OCCUPANCY_ORDER.find((o) => designs[0]?.occupancies.includes(o)) ?? null,
   );
+  const activeOccRef = React.useRef(activeOccupancy);
+  React.useEffect(() => { activeOccRef.current = activeOccupancy; }, [activeOccupancy]);
+  // Desktop-only hover preview of the active room-type variant.
+  const [hoverIdx, setHoverIdx] = React.useState(-1);
 
   // DOM refs
   const stageRef = React.useRef<HTMLDivElement | null>(null);
@@ -62,22 +68,6 @@ export function DesignCarousel({
       return cur && valid.includes(cur) ? cur : valid[0] ?? null;
     });
   }, [focused, designs]);
-
-  // Sticky per-design variant: once a card has shown a room-type poster it
-  // KEEPS it after focus scrolls away — snapping back to the base poster
-  // mid-scroll reads as a glitch (CEO 2026-06-06). Tab taps still only ever
-  // change the focused card.
-  const [appliedOccupancy, setAppliedOccupancy] = React.useState<(Occupancy | null)[]>(
-    () => designs.map(() => null),
-  );
-  React.useEffect(() => {
-    setAppliedOccupancy((cur) => {
-      if (cur[focused] === activeOccupancy) return cur;
-      const next = [...cur];
-      next[focused] = activeOccupancy;
-      return next;
-    });
-  }, [focused, activeOccupancy]);
 
   const computeSlot = React.useCallback(() => {
     const mob = window.matchMedia('(max-width:768px)').matches;
@@ -199,7 +189,7 @@ export function DesignCarousel({
       const cardEl = ((e.target as HTMLElement).closest?.('.zh-bs-card') as HTMLElement | null) ?? downCard;
       if (cardEl) {
         const i = Number(cardEl.dataset.i);
-        if (i === Math.round(progressRef.current)) onOpenDesign(designs[i]!);
+        if (i === Math.round(progressRef.current)) onOpenDesign(designs[i]!, activeOccRef.current);
         else snapTo(i);
       } else {
         snapTo(Math.round(progressRef.current));
@@ -249,7 +239,7 @@ export function DesignCarousel({
       if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) interactedRef.current = true;
       if (e.key === 'ArrowRight') { e.preventDefault(); go(Math.round(progressRef.current) + 1); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); go(Math.round(progressRef.current) - 1); }
-      else if (e.key === 'Enter') { onOpenDesign(designs[clampIndex(Math.round(progressRef.current), N)]!); }
+      else if (e.key === 'Enter') { onOpenDesign(designs[clampIndex(Math.round(progressRef.current), N)]!, activeOccRef.current); }
       else if (e.key === 'Home') { e.preventDefault(); go(0); }
       else if (e.key === 'End') { e.preventDefault(); go(N - 1); }
     };
@@ -310,12 +300,14 @@ export function DesignCarousel({
               className="zh-bs-card"
               data-i={i}
               ref={(el) => { cardRefs.current[i] = el; }}
+              onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHoverIdx(i); }}
+              onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHoverIdx((h) => (h === i ? -1 : h)); }}
             >
-              {/* Tab taps swap only the focused card, but every card remembers the
-                  variant it last showed (appliedOccupancy) so scrolling away never
-                  snaps it back to the base poster. */}
+              {/* Cards rest on their base poster. Hovering (mouse only) dissolves
+                  to the active room-type variant as a preview; touch never swaps.
+                  The tab itself only filters the click-through (?age=…). */}
               <CardImage
-                src={cardForOccupancy(d, i === focused ? activeOccupancy : (appliedOccupancy[i] ?? null))}
+                src={hoverIdx === i ? cardForOccupancy(d, activeOccupancy) : d.cardSrc}
                 alt={d.name}
               />
             </div>

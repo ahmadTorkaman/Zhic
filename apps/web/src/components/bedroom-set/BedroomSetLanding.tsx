@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import type { DesignCard, FeaturedPage, WritingContent } from './placeholder-data';
+import type { DesignCard, FeaturedPage, Occupancy, WritingContent } from './placeholder-data';
 import { DesignCarousel } from './DesignCarousel';
 import { WritingSection } from './WritingSection';
 import { FeaturedOverlay } from './FeaturedOverlay';
@@ -36,8 +36,9 @@ export function BedroomSetLanding({
   const openFeatured = React.useCallback(() => setView('featured'), []);
   const closeFeatured = React.useCallback(() => setView('designs'), []);
   const onOpenDesign = React.useCallback(
-    (d: DesignCard) => {
-      if (d.slug) router.push(`/bedroom-set/${d.slug}`);
+    (d: DesignCard, occupancy: Occupancy | null) => {
+      // The active room-type tab travels as the design page's ?age= filter.
+      if (d.slug) router.push(`/bedroom-set/${d.slug}${occupancy ? `?age=${occupancy}` : ''}`);
       else showToast(`باز کردن طرح ${d.name} →`);
     },
     [router, showToast],
