@@ -5,36 +5,24 @@ export type FooterColumn = {
   links: FooterLink[];
 };
 
+// Figma "zhic wood .com" footer — برند + فروشگاه columns. The third column
+// («ارتباط با ما») is built from siteConfig (socials + phone) in SiteFooter.
 export const FOOTER_COLUMNS: FooterColumn[] = [
   {
-    heading: 'محصولات',
+    heading: 'برند',
     links: [
-      { label: 'همه‌ی محصولات', href: '/products' },
-      { label: 'مجموعه‌ها', href: '/products' },
-      { label: 'دسته‌بندی‌ها', href: '/products' },
+      { label: 'درباره ما', href: '/about' },
+      { label: 'سوالات متداول', href: '/faq' },
+      { label: 'مجله', href: '/journal' },
     ],
   },
   {
-    heading: 'درباره‌ی ما',
+    heading: 'فروشگاه',
     links: [
-      { label: 'داستان ما', href: '/about' },
-      { label: 'کارگاه', href: '/atelier' },
-      { label: 'ژورنال', href: '/journal' },
-    ],
-  },
-  {
-    heading: 'شوروم‌ها',
-    links: [
-      { label: 'فهرست شوروم‌ها', href: '/showrooms' },
-      { label: 'رویدادها', href: '/events' },
-    ],
-  },
-  {
-    heading: 'خدمات',
-    links: [
-      { label: 'پرسش‌های متداول', href: '/faq' },
-      { label: 'مراقبت و گارانتی', href: '/care' },
-      { label: 'ارسال و تحویل', href: '/shipping-and-delivery' },
+      { label: 'سرویس خواب', href: '/bedroom-set' },
+      { label: 'تخت خواب', href: '/bedroom-furniture/bed' },
+      { label: 'کمد و دراور', href: '/bedroom-furniture/wardrobe' },
+      { label: 'اکسسوری', href: '/bedroom-furniture/complement' },
     ],
   },
 ];
@@ -44,6 +32,8 @@ export const FOOTER_LEGAL: FooterLink[] = [
   { label: 'شرایط استفاده', href: '/terms' },
 ];
 
-/** Persian-digit Jalali year for the copyright line. Update when the year rolls. */
-export const FOOTER_COPYRIGHT_YEAR = '۱۴۰۵';
-export const FOOTER_COPYRIGHT_LINE = `© ${FOOTER_COPYRIGHT_YEAR} شرکت ژیک — تمام حقوق محفوظ است.`;
+// Legal bar — verbatim from the Figma footer.
+export const FOOTER_SINCE = 'SINCE 2008';
+export const FOOTER_TAGLINE = 'ساخته شده برای ماندن';
+export const FOOTER_PITCH = 'طراحی‌شده برای آرامش روزهای شما.';
+export const FOOTER_COPYRIGHT_LINE = '© شرکت هنر چوب ژیک، تمامی حقوق محفوظ است';

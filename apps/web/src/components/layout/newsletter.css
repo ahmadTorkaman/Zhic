@@ -1,0 +1,14 @@
+/* apps/web/src/components/layout/newsletter.css */
+/* Newsletter (phone) signup — light surface (lives in the footer modal). */
+.zh-news { display: flex; flex-direction: column; gap: 0.5rem; }
+.zh-news__row { display: flex; gap: 0; border: 1px solid var(--color-sand); border-radius: var(--radius-md); overflow: hidden; transition: border-color var(--dur-hover) var(--ease-out-soft); }
+.zh-news__row:focus-within { border-color: var(--color-forest); }
+.zh-news__row input { flex: 1; min-width: 0; background: var(--color-cream); border: 0; outline: 0; color: var(--color-ink); font-family: inherit; font-size: 0.95rem; padding: 0.85rem 1rem; }
+.zh-news__row input::placeholder { color: var(--color-stone); }
+.zh-news__row button { background: var(--color-forest); color: var(--color-ivory); border: 0; padding: 0 1.4rem; font-family: inherit; font-weight: 700; cursor: pointer; font-size: 0.95rem; transition: background-color var(--dur-hover) var(--ease-out-soft); }
+.zh-news__row button:hover { background: var(--color-forest-dark); }
+.zh-news__row button:disabled { opacity: 0.6; cursor: not-allowed; }
+.zh-news__msg { font-size: 0.85rem; margin: 0; }
+.zh-news__msg--ok { color: var(--color-forest); }
+.zh-news__msg--err { color: var(--color-rust); }
+.zh-news__disclaimer { font-size: 11px; color: var(--color-stone); line-height: 1.6; margin: 0; }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import './newsletter.css';
 
 export function NewsletterSignup() {
   const [phone, setPhone] = useState('');

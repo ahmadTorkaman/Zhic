@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { NAV_LINKS, isNavActive } from './navLinks';
-import { SOCIAL_LABELS, type SocialLink } from './FooterContactStrip';
+import { SOCIAL_LABELS, type SocialLink } from './socials';
 import './mobile-menu.css';
 
 export type MobileMenuProps = {

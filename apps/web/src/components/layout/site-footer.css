@@ -1,0 +1,91 @@
+/* apps/web/src/components/layout/site-footer.css */
+/* Figma "zhic wood .com" footer: cream CTA band + dark-green 3-column footer. */
+
+/* ── CTA band ───────────────────────────────────────────────────────────── */
+.zh-foot-cta { background: var(--color-cream); padding-block: var(--space-6); }
+.zh-foot-cta__row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .zh-foot-cta__row { flex-direction: row; justify-content: space-between; text-align: start; }
+}
+.zh-foot-cta__eyebrow { margin: 0; font-size: var(--text-body); font-weight: 500; color: var(--color-charcoal); }
+.zh-foot-cta__btn {
+  flex-shrink: 0;
+  padding: 0.9rem 2.2rem;
+  background: var(--color-gold);
+  color: var(--color-ivory);
+  font-family: inherit;
+  font-size: var(--text-body);
+  font-weight: 700;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color var(--dur-hover) var(--ease-out-soft);
+}
+.zh-foot-cta__btn:hover { background: #b08c5e; }
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.zh-foot { background: var(--color-forest-dark); color: var(--color-ivory); padding-block: var(--space-8) var(--space-6); }
+
+.zh-foot__brand { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); margin-bottom: var(--space-7); }
+.zh-foot__logo { height: 34px; width: auto; }
+.zh-foot__tagline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: var(--text-small);
+  letter-spacing: 0.35em;
+  color: var(--color-sand);
+}
+.zh-foot__dash { display: inline-block; width: 2.2rem; height: 1px; background: var(--color-gold); opacity: 0.6; }
+
+/* Columns — 3-up with hairline dividers (RTL: borders on the inline-start). */
+.zh-foot__cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+  max-width: 760px;
+  margin-inline: auto;
+  padding-block: var(--space-6);
+  text-align: center;
+}
+.zh-foot__col + .zh-foot__col { border-inline-start: 1px solid rgba(250, 250, 247, 0.12); }
+.zh-foot__h { margin: 0 0 var(--space-4); font-size: var(--text-small); font-weight: 700; color: var(--color-gold); }
+.zh-foot__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.zh-foot__link {
+  display: inline-block;
+  font-size: var(--text-small);
+  font-weight: 300;
+  color: var(--color-sand);
+  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-out-soft);
+}
+.zh-foot__link:hover { color: var(--color-ivory); }
+.zh-foot__link--btn { background: none; border: 0; font-family: inherit; cursor: pointer; padding: 0; }
+
+/* ── Legal bar ──────────────────────────────────────────────────────────── */
+.zh-foot__legal {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgba(250, 250, 247, 0.08);
+  text-align: center;
+  color: rgba(250, 250, 247, 0.45);
+}
+.zh-foot__since {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.3em;
+  color: var(--color-gold);
+  margin-bottom: var(--space-3);
+}
+.zh-foot__pitch { margin: 0 0 var(--space-2); font-size: var(--text-small); font-weight: 300; }
+.zh-foot__copy { margin: 0; font-size: var(--text-eyebrow); }
+.zh-foot__copy .zh-foot__link { font-size: var(--text-eyebrow); color: rgba(250, 250, 247, 0.45); }
+.zh-foot__sep { margin-inline: 0.5rem; }
