@@ -287,9 +287,13 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
   // ═══════════════════════════════════════════════════════════════════════════
   // SERIES HUB BRANCH (existing behavior)
   // ═══════════════════════════════════════════════════════════════════════════
+  // Occupancy is a DESIGN-level property (every product in a design serves all
+  // the design's age groups), so products are NOT filtered by age here — the
+  // whole set is shown. `ageFilter` only emphasizes the badge the visitor
+  // arrived through from the carousel.
   const [design, productsPage] = await Promise.all([
     fetchDesign(slug),
-    fetchProducts({ design: slug, page: 1, occupancies: ageFilter }),
+    fetchProducts({ design: slug, page: 1 }),
   ]);
 
   if (!design) {
@@ -333,60 +337,35 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
           <p className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
             مجموعه
           </p>
-          {/* Age-filter chip row. Shows when the design covers any
-              occupancy. Renders an "All" chip (clears filter) + one chip
-              per occupancy the design covers, in canonical age order. The
-              active chip fills forest-dark; inactive chips are sand-
-              outlined and fill forest-dark on hover. The chip row replaces
-              the older single-active "filter pill" — its job (clearing) is
-              done by the "All" chip and its display (current filter) is
-              done by the active chip's distinct styling. */}
+          {/* Read-only age badges: occupancy is design-level, so these show
+              which age groups the design serves rather than filtering the set.
+              The badge the visitor arrived through (?age=…) is emphasized. */}
           {design.occupancies && design.occupancies.length > 0 ? (
             <div className="mb-6 flex flex-wrap items-center gap-2">
               <span className="me-2 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-stone">
                 گروه سنی:
               </span>
-              {(() => {
-                const chipBase =
-                  'inline-flex rounded-full px-4 py-1.5 text-small transition-colors';
-                const chipActive =
-                  `${chipBase} bg-forest-dark font-bold text-ivory`;
-                const chipIdle =
-                  `${chipBase} border border-sand font-medium text-charcoal hover:border-forest-dark hover:bg-forest-dark hover:text-ivory`;
+              {OCCUPANCY_SLUGS.filter((o) => design.occupancies!.includes(o)).map((o) => {
+                const emphasized = ageFilter === o;
+                const base = 'inline-flex rounded-full px-4 py-1.5 text-small';
                 return (
-                  <>
-                    <a
-                      href={`/bedroom-set/${slug}`}
-                      aria-current={!ageFilter ? 'true' : undefined}
-                      className={!ageFilter ? chipActive : chipIdle}
-                    >
-                      همه
-                    </a>
-                    {OCCUPANCY_SLUGS.filter((o) =>
-                      design.occupancies!.includes(o),
-                    ).map((o) => {
-                      const active = ageFilter === o;
-                      return (
-                        <a
-                          key={o}
-                          href={`/bedroom-set/${slug}?age=${o}`}
-                          aria-current={active ? 'true' : undefined}
-                          className={active ? chipActive : chipIdle}
-                        >
-                          {OCCUPANCY_PERSIAN[o].title.replace('سرویس خواب ', '')}
-                        </a>
-                      );
-                    })}
-                  </>
+                  <span
+                    key={o}
+                    className={
+                      emphasized
+                        ? `${base} bg-forest-dark font-bold text-ivory`
+                        : `${base} border border-sand font-medium text-charcoal`
+                    }
+                  >
+                    {OCCUPANCY_PERSIAN[o].title.replace('سرویس خواب ', '')}
+                  </span>
                 );
-              })()}
+              })}
             </div>
           ) : null}
           {productsPage.docs.length === 0 ? (
             <p className="py-9 text-center text-stone">
-              {ageFilter
-                ? 'برای این گروه سنی هنوز قطعه‌ای ثبت نشده.'
-                : 'به‌زودی محصولات این طرح اضافه می‌شود.'}
+              به‌زودی محصولات این طرح اضافه می‌شود.
             </p>
           ) : (
             <ProductGrid products={productsPage.docs} />
