@@ -8,20 +8,34 @@
 
 .zh-st__title { display: block; font-size: var(--text-h2); font-weight: 900; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-6); }
 
-.zh-st__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+/* Three cards per row at every width (CEO directive). */
+.zh-st__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
 @media (min-width: 768px) {
-  .zh-st__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+  .zh-st__grid { gap: var(--space-4); }
 }
 
 .zh-st__card {
   position: relative;
   display: block;
   aspect-ratio: 3 / 4;
-  border-radius: 20px;
+  /* Signature diagonal: big curve on the top-right and bottom-left corners. */
+  border-radius: 4px 36px 4px 36px;
   overflow: hidden;
   transition: transform var(--dur-hover) var(--ease-out-soft);
 }
 .zh-st__card:hover { transform: translateY(var(--hover-lift-card)); }
+/* Expand reveal — newly mounted cards rise in with a per-card stagger. */
+@keyframes zh-st-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+.zh-st__card.is-new {
+  animation: zh-st-in 0.55s var(--ease-out-soft) both;
+  animation-delay: calc(var(--zh-st-i, 0) * 45ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .zh-st__card.is-new { animation: none; }
+}
 /* Legibility for the white city name — illustrations are light. */
 .zh-st__card::after {
   content: '';
