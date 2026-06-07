@@ -2,7 +2,13 @@
 /* Figma "zhic wood .com" footer: cream CTA band + dark-green 3-column footer. */
 
 /* ── Consultation CTA card ──────────────────────────────────────────────── */
-.zh-foot-cta { background: var(--color-ivory); padding-block: var(--space-7); }
+/* The card straddles the ivory→footer boundary: top half on ivory, bottom
+   half on the forest green (which then flows straight into the footer).
+   Equal padding centers the card on the 50% seam. */
+.zh-foot-cta {
+  background: linear-gradient(to bottom, var(--color-ivory) 50%, var(--color-forest-dark) 50%);
+  padding-block: var(--space-7);
+}
 .zh-foot-cta__card {
   position: relative;
   overflow: hidden;
