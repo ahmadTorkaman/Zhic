@@ -1,52 +1,18 @@
-import { notFound } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Container, Breadcrumbs } from '@zhic/ui';
 import { toPersianDigits } from '@zhic/locale';
-import { DesignHero } from '@/components/design/DesignHero';
-import { DesignStory } from '@/components/design/DesignStory';
-import { DesignMoodboard } from '@/components/design/DesignMoodboard';
-import { ProductGrid } from '@/components/product/ProductGrid';
-import { fetchDesign, fetchProducts, fetchDesignsByOccupancy } from '@/lib/payload';
+import { fetchDesignsByOccupancy } from '@/lib/payload';
+import { OCCUPANCY_SLUGS, OCCUPANCY_PERSIAN, isOccupancySlug } from './occupancy';
+import { SeriesHub, seriesHubMetadata } from './series-hub';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
-  /** `?age=baby|teen|double|bunk` — within-design occupancy filter.
-   *  Set when the user clicks an occupancy card on the slider. Anything
-   *  not matching the 4 reserved slugs is dropped silently. */
+  /** Legacy `?age=baby|teen|double|bunk` — the within-design occupancy
+   *  filter used to travel as a query param. It now lives at
+   *  /bedroom-set/[slug]/[age]; valid values are permanently redirected
+   *  there, anything else is dropped silently. */
   searchParams: Promise<{ age?: string }>;
-};
-
-/** The 4 reserved occupancy slugs that branch to the occupancy-hub view
- *  instead of the series-hub view. Per the canonical IA in
- *  docs/superpowers/handoff-2026-05-23.md. */
-const OCCUPANCY_SLUGS = ['baby', 'teen', 'double', 'bunk'] as const;
-type OccupancySlug = (typeof OCCUPANCY_SLUGS)[number];
-
-function isOccupancySlug(slug: string): slug is OccupancySlug {
-  return (OCCUPANCY_SLUGS as readonly string[]).includes(slug);
-}
-
-const OCCUPANCY_PERSIAN: Record<OccupancySlug, { title: string; tagline: string; eyebrow: string }> = {
-  baby: {
-    title: 'سرویس خواب نوزاد',
-    tagline: 'طرح‌هایی برای نخستین اتاق — جایی برای رشد، نه برای بزرگ‌نمایی.',
-    eyebrow: 'گروه سنی',
-  },
-  teen: {
-    title: 'سرویس خواب نوجوان',
-    tagline: 'طرح‌هایی برای ۹ تا ۱۸ سال — تختی که با اتاق بزرگ می‌شود.',
-    eyebrow: 'گروه سنی',
-  },
-  double: {
-    title: 'سرویس خواب دونفره',
-    tagline: 'برای اتاق مشترک — دو‌نفره‌ی استاندارد در ابعاد ۱۴۰، ۱۶۰، و ۱۸۰ سانتی‌متر.',
-    eyebrow: 'پیکربندی',
-  },
-  bunk: {
-    title: 'سرویس خواب دوطبقه',
-    tagline: 'دو کودک، یک اتاق — تخت‌های دوطبقه با حفاظ و نردبان ثابت.',
-    eyebrow: 'پیکربندی',
-  },
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -65,18 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   // Series hub
-  const design = await fetchDesign(slug);
-  if (!design) return { title: 'یافت نشد' };
-  return {
-    title: design.name,
-    description: design.tagline ?? `طرح ${design.name} — مبلمان دست‌ساز ژیک`,
-    alternates: { canonical: `/bedroom-set/${design.slug}` },
-    openGraph: {
-      title: design.name,
-      description: design.tagline ?? undefined,
-      images: design.heroMedia?.url ? [{ url: design.heroMedia.url }] : undefined,
-    },
-  };
+  return seriesHubMetadata(slug);
 }
 
 export default async function BedroomSetSlugPage({ params, searchParams }: PageProps) {
@@ -84,8 +39,6 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
   const slug = decodeURIComponent(rawSlug);
   const sp = await searchParams;
   const ageRaw = typeof sp.age === 'string' ? sp.age : undefined;
-  const ageFilter: OccupancySlug | undefined =
-    ageRaw && isOccupancySlug(ageRaw) ? ageRaw : undefined;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // OCCUPANCY HUB BRANCH
@@ -171,7 +124,9 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
                   return (
                     <a
                       key={d.id}
-                      href={`/bedroom-set/${d.slug}`}
+                      /* Age-first nested URL (IA spec) keeps the hub's age
+                         context on the series page. */
+                      href={`/bedroom-set/${slug}/${d.slug}`}
                       className="group block"
                     >
                       <div className="relative aspect-[5/6] overflow-hidden rounded bg-cream transition-transform duration-700 hover:-translate-y-1">
@@ -285,93 +240,13 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // SERIES HUB BRANCH (existing behavior)
+  // SERIES HUB BRANCH
   // ═══════════════════════════════════════════════════════════════════════════
-  // Occupancy is a DESIGN-level property (every product in a design serves all
-  // the design's age groups), so products are NOT filtered by age here — the
-  // whole set is shown. `ageFilter` only emphasizes the badge the visitor
-  // arrived through from the carousel.
-  const [design, productsPage] = await Promise.all([
-    fetchDesign(slug),
-    fetchProducts({ design: slug, page: 1 }),
-  ]);
-
-  if (!design) {
-    notFound();
+  // Legacy ?age= URLs move permanently to the age-first nested path so old
+  // links and history keep working.
+  if (ageRaw && isOccupancySlug(ageRaw)) {
+    permanentRedirect(`/bedroom-set/${ageRaw}/${encodeURIComponent(slug)}`);
   }
 
-  // Each set's carousel image (sliderMedia, the bedroom-set-<slug>.webp) is the
-  // per-set picture; use it as the detail-page hero when no explicit heroMedia
-  // is set, so the page matches its carousel slide. Operator can still override
-  // by uploading a dedicated heroMedia.
-  const heroMedia = design.heroMedia ?? design.sliderMedia ?? design.gallery?.[0] ?? null;
-  const moodboardImages = design.gallery ?? [];
-
-  return (
-    <>
-      <Container>
-        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
-          <Breadcrumbs
-            items={[
-              { label: 'خانه', href: '/' },
-              { label: 'سرویس خواب', href: '/bedroom-set' },
-              { label: design.name },
-            ]}
-          />
-        </div>
-      </Container>
-
-      <DesignHero
-        heroMedia={heroMedia}
-        name={design.name}
-        tagline={design.tagline ?? null}
-        eyebrow="طرح"
-      />
-
-      <DesignStory blocks={design.storyBlocks ?? null} />
-
-      <DesignMoodboard images={moodboardImages} />
-
-      <Container>
-        <section aria-label="مجموعه" className="pb-16">
-          <p className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
-            مجموعه
-          </p>
-          {/* Read-only age badges: occupancy is design-level, so these show
-              which age groups the design serves rather than filtering the set.
-              The badge the visitor arrived through (?age=…) is emphasized. */}
-          {design.occupancies && design.occupancies.length > 0 ? (
-            <div className="mb-6 flex flex-wrap items-center gap-2">
-              <span className="me-2 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-stone">
-                گروه سنی:
-              </span>
-              {OCCUPANCY_SLUGS.filter((o) => design.occupancies!.includes(o)).map((o) => {
-                const emphasized = ageFilter === o;
-                const base = 'inline-flex rounded-full px-4 py-1.5 text-small';
-                return (
-                  <span
-                    key={o}
-                    className={
-                      emphasized
-                        ? `${base} bg-forest-dark font-bold text-ivory`
-                        : `${base} border border-sand font-medium text-charcoal`
-                    }
-                  >
-                    {OCCUPANCY_PERSIAN[o].title.replace('سرویس خواب ', '')}
-                  </span>
-                );
-              })}
-            </div>
-          ) : null}
-          {productsPage.docs.length === 0 ? (
-            <p className="py-9 text-center text-stone">
-              به‌زودی محصولات این طرح اضافه می‌شود.
-            </p>
-          ) : (
-            <ProductGrid products={productsPage.docs} />
-          )}
-        </section>
-      </Container>
-    </>
-  );
+  return <SeriesHub slug={slug} />;
 }

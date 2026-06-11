@@ -37,8 +37,8 @@ export function BedroomSetLanding({
   const closeFeatured = React.useCallback(() => setView('designs'), []);
   const onOpenDesign = React.useCallback(
     (d: DesignCard, occupancy: Occupancy | null) => {
-      // The active room-type tab travels as the design page's ?age= filter.
-      if (d.slug) router.push(`/bedroom-set/${d.slug}${occupancy ? `?age=${occupancy}` : ''}`);
+      // The active room-type tab travels age-first: /bedroom-set/[age]/[series].
+      if (d.slug) router.push(occupancy ? `/bedroom-set/${occupancy}/${d.slug}` : `/bedroom-set/${d.slug}`);
       else showToast(`باز کردن طرح ${d.name} →`);
     },
     [router, showToast],

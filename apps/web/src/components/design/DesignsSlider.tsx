@@ -557,9 +557,9 @@ function Slider({ designs }: { designs: PayloadDesign[] }) {
                     <Link
                       key={o}
                       // Within-design filter: navigates to this design's PDP
-                      // narrowed to the chosen occupancy via ?age=. The PDP
-                      // reads searchParams and passes the filter to Payload.
-                      href={`/bedroom-set/${encodeURIComponent(focusedSlug)}?age=${o}`}
+                      // narrowed to the chosen occupancy via the age-first
+                      // nested /bedroom-set/[age]/[series] route.
+                      href={`/bedroom-set/${o}/${encodeURIComponent(focusedSlug)}`}
                       className="zh-designs-occupancy-card"
                       style={{ ['--i' as never]: i }}
                     >
