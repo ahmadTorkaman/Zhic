@@ -59,7 +59,7 @@ export function InquiryForm({ cities, productSlug, showroomSlug, tone = 'dark' }
                   aria-describedby={state.errors?.reason ? 'inquiry-reason-error' : undefined}>
             <option value="" disabled>انتخاب موضوع</option>
             <option value="price_inquiry">استعلام قیمت</option>
-            <option value="showroom_visit">رزرو بازدید از شوروم</option>
+            <option value="showroom_visit">رزرو بازدید از شعبه</option>
           </Select>
         </FormField>
 

@@ -35,7 +35,7 @@ export default function LabCountUpPage() {
               <div className="text-h2 font-black text-ivory">
                 <CountUp value={3} />
               </div>
-              <div className="mt-1 text-small font-light text-sand">شوروم</div>
+              <div className="mt-1 text-small font-light text-sand">شعبه</div>
             </div>
           </div>
         </Container>

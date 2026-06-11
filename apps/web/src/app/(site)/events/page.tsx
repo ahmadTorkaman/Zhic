@@ -22,7 +22,7 @@ const FALLBACK_ITEMS: PayloadEventItem[] = [
       },
     },
     date: '2026-05-15',
-    location: 'شوروم همدان',
+    location: 'شعبه همدان',
   },
   {
     title: 'نمایشگاه مبلمان تهران',
@@ -46,7 +46,7 @@ const FALLBACK_ITEMS: PayloadEventItem[] = [
     location: 'نمایشگاه بین‌المللی تهران',
   },
   {
-    title: 'روز درهای باز — شوروم ونک',
+    title: 'روز درهای باز — شعبه‌ی ونک',
     description: {
       root: {
         type: 'root',
@@ -56,7 +56,7 @@ const FALLBACK_ITEMS: PayloadEventItem[] = [
             children: [
               {
                 type: 'text',
-                text: 'بازدید آزاد از شوروم ونک با مشاوره‌ی رایگان طراحی داخلی و پذیرایی ویژه.',
+                text: 'بازدید آزاد از شعبه‌ی ونک با مشاوره‌ی رایگان طراحی داخلی و پذیرایی ویژه.',
               },
             ],
           },
@@ -64,7 +64,7 @@ const FALLBACK_ITEMS: PayloadEventItem[] = [
       },
     },
     date: '2026-06-22',
-    location: 'شوروم تهران',
+    location: 'شعبه تهران',
   },
 ];
 

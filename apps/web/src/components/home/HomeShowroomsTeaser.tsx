@@ -22,7 +22,7 @@ function Card({ s, eager }: { s: HomeShowroomCard; eager?: boolean }) {
       {s.coverUrl ? (
         <img
           src={s.coverUrl}
-          alt={`شوروم ${s.city}`}
+          alt={`شعبه‌ی ${s.city}`}
           width={900}
           height={1200}
           loading={eager ? undefined : 'lazy'}
@@ -49,7 +49,7 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
   const rest = showrooms.slice(3);
 
   return (
-    <section className="zh-st" aria-label="شوروم‌ها">
+    <section className="zh-st" aria-label="شعب">
       <Container>
         <BlurInText as="h2" className="zh-st__title">
           ما را در شهر خودتان ببینید

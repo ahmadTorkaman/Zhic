@@ -30,7 +30,7 @@ export function GlassOverlayHero({
         <div className="absolute inset-0">{image}</div>
       ) : (
         <div className="absolute inset-0 flex items-center justify-center text-body text-stone">
-          تصویر شوروم
+          تصویر شعبه
         </div>
       )}
 

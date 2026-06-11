@@ -14,21 +14,21 @@ type ShowroomItem = {
 const PLACEHOLDER_SHOWROOMS: ShowroomItem[] = [
   {
     city: 'تهران',
-    name: 'شوروم ونک',
+    name: 'شعبه‌ی ونک',
     address: 'خیابان ونک، خیابان شهید خدامی\nپلاک ۴۲، طبقه‌ی همکف',
     hours: 'شنبه تا پنجشنبه · ۱۰:۰۰ – ۲۰:۰۰',
     href: null,
   },
   {
     city: 'اصفهان',
-    name: 'شوروم چهارباغ',
+    name: 'شعبه‌ی چهارباغ',
     address: 'خیابان چهارباغ بالا\nنبش کوچه‌ی گلزار، پلاک ۱۸',
     hours: 'شنبه تا پنجشنبه · ۰۹:۰۰ – ۱۸:۰۰',
     href: null,
   },
   {
     city: 'همدان',
-    name: 'کارگاه و شوروم مرکزی',
+    name: 'کارگاه و شعبه‌ی مرکزی',
     address: 'بلوار استاد شهریار\nجنب پارک مردم، پلاک ۷',
     hours: 'هر روز · ۰۸:۰۰ – ۱۷:۰۰',
     href: null,
@@ -63,7 +63,7 @@ export type HomeShowroomsStripProps = {
 
 export function HomeShowroomsStrip({
   showrooms,
-  heading = 'شوروم‌ها',
+  heading = 'شعب',
   subtitle = 'از نزدیک ببینید، لمس کنید، و با تیم ما صحبت کنید.',
 }: HomeShowroomsStripProps) {
   const items: ShowroomItem[] = showrooms.length > 0

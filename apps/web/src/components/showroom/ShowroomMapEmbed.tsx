@@ -29,7 +29,7 @@ export function ShowroomMapEmbed({ showroom, aspect = '16/9' }: ShowroomMapEmbed
     <div
       className={`flex w-full items-center justify-center rounded-md bg-cream text-small text-stone ${aspectClass}`}
     >
-      نقشه‌ی این شوروم به‌زودی
+      نقشه‌ی این شعبه به‌زودی
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { Container, Breadcrumbs } from '@zhic/ui';
 import { ShowroomIndexGrid } from '@/components/showroom/ShowroomIndexGrid';
 
 export function generateMetadata() {
-  return { title: 'شوروم‌ها' };
+  return { title: 'شعب' };
 }
 
 export default async function ShowroomsIndexPage() {
@@ -13,7 +13,7 @@ export default async function ShowroomsIndexPage() {
     <>
       <Container>
         <div className="pt-[calc(var(--header-height)+var(--space-5))]">
-          <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'شوروم‌ها' }]} />
+          <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'شعب' }]} />
         </div>
       </Container>
 

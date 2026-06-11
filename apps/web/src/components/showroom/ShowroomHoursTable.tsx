@@ -22,7 +22,7 @@ export function ShowroomHoursTable({ hours, appointmentOnly }: ShowroomHoursTabl
   if (appointmentOnly) {
     return (
       <p className="text-small text-stone">
-        بازدید این شوروم فقط با وقت قبلی امکان‌پذیر است.
+        بازدید این شعبه فقط با وقت قبلی امکان‌پذیر است.
       </p>
     );
   }

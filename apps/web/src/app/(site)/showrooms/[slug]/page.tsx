@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: PageProps) {
   const slug = decodeURIComponent(rawSlug);
   const showroom = await fetchShowroom(slug);
   return {
-    title: showroom?.name ?? 'شوروم',
+    title: showroom?.name ?? 'شعبه',
     description: showroom?.headline ?? undefined,
   };
 }
@@ -54,7 +54,7 @@ export default async function ShowroomDetailPage({ params }: PageProps) {
       {showroom.gallery && showroom.gallery.length > 1 ? (
         <section className="pb-9">
           <Container>
-            <h2 className="mb-5 text-h3 font-bold text-ink">گالری شوروم</h2>
+            <h2 className="mb-5 text-h3 font-bold text-ink">گالری شعبه</h2>
             <div className="flex gap-[var(--space-4)] overflow-x-auto pb-3">
               {showroom.gallery.map((m, i) => (
                 <div

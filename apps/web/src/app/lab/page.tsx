@@ -165,7 +165,7 @@ const FAKE_SHOWROOMS: PayloadShowroom[] = [
   {
     id: 's1',
     slug: 'vanak',
-    name: 'شوروم ونک',
+    name: 'شعبه‌ی ونک',
     address: { city: 'تهران', district: 'ونک', street: 'خیابان شهید خدامی', plaque: '42' },
     hours: [
       { day: 'sat', opens: '10:00', closes: '20:00' },
@@ -182,7 +182,7 @@ const FAKE_SHOWROOMS: PayloadShowroom[] = [
   {
     id: 's2',
     slug: 'chaharba',
-    name: 'شوروم چهارباغ',
+    name: 'شعبه‌ی چهارباغ',
     address: { city: 'اصفهان', street: 'خیابان چهارباغ بالا', plaque: '18' },
     appointmentOnly: true,
     phone: '03136001234',
@@ -191,7 +191,7 @@ const FAKE_SHOWROOMS: PayloadShowroom[] = [
   {
     id: 's3',
     slug: 'hamedan-central',
-    name: 'کارگاه و شوروم مرکزی',
+    name: 'کارگاه و شعبه‌ی مرکزی',
     address: { city: 'همدان', street: 'بلوار استاد شهریار', plaque: '7' },
     hours: [
       { day: 'sat', opens: '08:00', closes: '17:00' },
@@ -441,12 +441,12 @@ export default function LabPage() {
             <div className="mb-8 grid grid-cols-3 gap-5">
               <GlassCard href="#">
                 <div className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow)] text-forest mb-2">تهران</div>
-                <h4 className="text-h4 font-bold mb-2">شوروم ونک</h4>
+                <h4 className="text-h4 font-bold mb-2">شعبه‌ی ونک</h4>
                 <p className="text-small text-stone">خیابان ونک، خیابان شهید خدامی</p>
               </GlassCard>
               <GlassCard href="#">
                 <div className="text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow)] text-forest mb-2">اصفهان</div>
-                <h4 className="text-h4 font-bold mb-2">شوروم چهارباغ</h4>
+                <h4 className="text-h4 font-bold mb-2">شعبه‌ی چهارباغ</h4>
                 <p className="text-small text-stone">خیابان چهارباغ بالا</p>
               </GlassCard>
               <GlassCard>
@@ -660,7 +660,7 @@ export default function LabPage() {
             <div className="mb-8 -mx-12 border-y border-dashed border-sand">
               <GlassOverlayHero
                 city="تهران"
-                title="شوروم ونک"
+                title="شعبه‌ی ونک"
                 headline="فضایی آرام برای دیدن و لمس مبلمان ژیک از نزدیک."
               />
             </div>
@@ -669,7 +669,7 @@ export default function LabPage() {
             <div className="mb-8 -mx-12 border-y border-dashed border-sand">
               <GlassOverlayHero
                 city="همدان"
-                title="کارگاه و شوروم مرکزی"
+                title="کارگاه و شعبه‌ی مرکزی"
                 headline="جایی که هر قطعه ساخته می‌شود."
                 image={
                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone to-charcoal">
@@ -684,7 +684,7 @@ export default function LabPage() {
             <h2 className="mb-4 text-h2 font-black text-ink">InquiryForm (full 5-field)</h2>
             <p className="mb-6 text-small text-stone">
               Dark glass card + useActionState wrapping <code>submitInquiry</code>. Includes conditional
-              <code>preferred_date</code> field when reason = &quot;رزرو بازدید از شوروم&quot;. Mockup:{' '}
+              <code>preferred_date</code> field when reason = &quot;رزرو بازدید از شعبه&quot;. Mockup:{' '}
               <a href="http://80.240.31.146:9090/.superpowers/a6-contact.html" className="underline" target="_blank" rel="noreferrer">
                 a6-contact.html
               </a>{' '}Option B (<code>.b-form-card</code>).
@@ -927,7 +927,7 @@ export default function LabPage() {
 
             <h3 className="mb-3 mt-8 text-h4 font-bold">ShowroomMapEmbed — fallback (no URL)</h3>
             <div className="mb-12 max-w-sm border border-dashed border-sand">
-              <ShowroomMapEmbed showroom={{ mapEmbedUrl: null, geo: null, name: 'شوروم ونک' }} aspect="4/3" />
+              <ShowroomMapEmbed showroom={{ mapEmbedUrl: null, geo: null, name: 'شعبه‌ی ونک' }} aspect="4/3" />
             </div>
           </section>
 
@@ -1001,14 +1001,14 @@ export default function LabPage() {
                         {
                           type: 'paragraph',
                           children: [
-                            { type: 'text', text: 'اولین رونمایی از مجموعه‌ی بهار ۱۴۰۵ در شوروم ونک تهران.' },
+                            { type: 'text', text: 'اولین رونمایی از مجموعه‌ی بهار ۱۴۰۵ در شعبه‌ی ونک تهران.' },
                           ],
                         },
                       ],
                     },
                   } as import('@/lib/payload').LexicalRoot,
                   date: '2026-05-15',
-                  location: 'شوروم ونک، تهران',
+                  location: 'شعبه‌ی ونک، تهران',
                 }}
               />
               <EventCard
@@ -1113,7 +1113,7 @@ export default function LabPage() {
               <DarkSplitHero
                 variant="page"
                 title="با ما در تماس باشید"
-                lead="برای استعلام قیمت، رزرو بازدید از شوروم، یا مشاوره‌ی پیش از خرید. تیم ما آماده‌ی پاسخ‌گویی است."
+                lead="برای استعلام قیمت، رزرو بازدید از شعبه، یا مشاوره‌ی پیش از خرید. تیم ما آماده‌ی پاسخ‌گویی است."
                 contact={{ phone: '۰۸۱-۳۴۲۵ ۶۷۸۹', email: 'info@zhicwood.com' }}
                 hours={{ text: 'شنبه تا پنجشنبه · ۰۹:۰۰ – ۱۷:۰۰' }}
               >

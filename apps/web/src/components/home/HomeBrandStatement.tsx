@@ -22,7 +22,7 @@ export type HomeBrandStatementProps = {
 const DEFAULT_STATS: BrandStat[] = [
   { value: 25, suffix: '+', label: 'سال تجربه در صنایع چوب' },
   { value: 570430, suffix: '+', label: 'قطعه مبلمان تولیدشده' },
-  { value: 22, label: 'شوروم در سراسر ایران' },
+  { value: 22, label: 'شعبه در سراسر ایران' },
 ];
 
 export function HomeBrandStatement({

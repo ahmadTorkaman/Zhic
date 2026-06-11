@@ -25,8 +25,8 @@ function summarizeHours(
 
 export function ShowroomIndexGrid({
   showrooms,
-  heading = 'شوروم‌ها',
-  subtitle = 'از نزدیک ببینید، لمس کنید، و با تیم ما صحبت کنید. در هر شوروم تجربه‌ای متفاوت منتظر شماست.',
+  heading = 'شعب',
+  subtitle = 'از نزدیک ببینید، لمس کنید، و با تیم ما صحبت کنید. در هر شعبه تجربه‌ای متفاوت منتظر شماست.',
 }: ShowroomIndexGridProps) {
   return (
     <section>
@@ -39,7 +39,7 @@ export function ShowroomIndexGrid({
         </div>
 
         {showrooms.length === 0 ? (
-          <p className="text-stone">شوروم فعالی پیدا نشد.</p>
+          <p className="text-stone">شعبه‌ی فعالی پیدا نشد.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--space-5)] pb-[var(--space-9)]">
             {showrooms.map((s) => {
