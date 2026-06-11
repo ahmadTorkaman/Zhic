@@ -19,6 +19,13 @@ export type ParallaxImageProps = {
   borderRadius?: number;
   /** Container border-top-right-radius in px (overrides borderRadius for that corner). */
   topRightRadius?: number;
+  /**
+   * Shifts the image content upward inside the frame by this % of container
+   * height (the visible window moves down the source image). The extra
+   * height is added ABOVE the frame only, so the parallax range can never
+   * expose a gap at either edge. Default 0.
+   */
+  shiftUp?: number;
   className?: string;
 };
 
@@ -28,6 +35,7 @@ export function ParallaxImage({
   verticalAmount = 80,
   borderRadius,
   topRightRadius,
+  shiftUp = 0,
   className,
 }: ParallaxImageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -77,10 +85,10 @@ export function ParallaxImage({
     position: 'absolute',
     insetInlineStart: 0,
     insetInlineEnd: 0,
-    top: `-${overflowPct}%`,
+    top: `-${overflowPct + shiftUp}%`,
     bottom: `-${overflowPct}%`,
     width: '100%',
-    height: `calc(100% + ${Math.abs(verticalAmount)}%)`,
+    height: `calc(100% + ${Math.abs(verticalAmount) + shiftUp}%)`,
     objectFit: 'cover',
     willChange: 'transform',
     backfaceVisibility: 'hidden',

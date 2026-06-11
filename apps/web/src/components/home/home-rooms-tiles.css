@@ -16,5 +16,7 @@
   .zh-rooms__tile :where(.zh-rooms__media) > div { border-top-right-radius: 28px !important; }
 }
 .zh-rooms__label { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: 6px; }
+/* Figma motif: short thick forest bar under the age eyebrow. */
+.zh-rooms__label::after { content: ''; display: block; width: 42px; height: 3px; margin-top: 6px; background: var(--color-forest); border-radius: 2px; }
 .zh-rooms__title { font-size: 1.5rem; font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-2); }
 .zh-rooms__sub { font-size: var(--text-small); color: var(--color-stone); line-height: 1.7; max-width: 36ch; margin-bottom: var(--space-4); }

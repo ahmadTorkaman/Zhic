@@ -63,7 +63,7 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
       <footer className="zh-foot">
         <Container>
           <div className="zh-foot__brand">
-            <img src="/zhic-logo.svg" alt="ژیک" className="zh-foot__logo" />
+            <img src="/zhic-logo-footer.svg" alt="ژیک" className="zh-foot__logo" />
             <div className="zh-foot__tagline">
               <span aria-hidden className="zh-foot__dash" />
               {FOOTER_TAGLINE}

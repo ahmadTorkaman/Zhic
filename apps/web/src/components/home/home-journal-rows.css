@@ -7,7 +7,7 @@
 .zh-jrows__heading { font-size: var(--text-h2); font-weight: 900; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-4); }
 .zh-jrows__lead { font-size: var(--text-body); color: var(--color-stone); font-weight: 300; line-height: 1.85; }
 
-.zh-jrows__rows { display: flex; flex-direction: column; gap: var(--space-5); }
+.zh-jrows__rows { display: flex; flex-direction: column; gap: var(--space-4); }
 /* Rows flow edge-to-edge horizontally and extend beyond the viewport so the
    parallax has actual content to slide past. On screens wider than the
    1440px container, we add inline padding to keep the cards aligned with the
@@ -22,8 +22,8 @@
   padding-inline: max(0px, calc((100vw - var(--width-container-storefront)) / 2));
 }
 
-.zh-jrows__card { flex: 0 0 auto; width: 340px; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
-@media (max-width: 767px) { .zh-jrows__card { width: 200px; } }
+.zh-jrows__card { flex: 0 0 auto; width: 300px; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+@media (max-width: 767px) { .zh-jrows__card { width: 170px; } }
 .zh-jrows__cover { aspect-ratio: 16 / 9; background: linear-gradient(135deg, var(--color-cream), var(--color-sand)); background-size: cover; background-position: center; margin-bottom: 0.7rem; overflow: hidden; border-top-right-radius: 20px; position: relative; }
 .zh-jrows__cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,17,15,0.18), transparent 60%); pointer-events: none; }
 .zh-jrows__cat { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: 0.3rem; }

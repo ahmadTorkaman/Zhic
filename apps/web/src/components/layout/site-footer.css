@@ -37,11 +37,14 @@
     background: linear-gradient(to left, var(--color-cream) 52%, rgba(244, 236, 224, 0.82) 80%, rgba(244, 236, 224, 0.35) 100%);
   }
   .zh-foot-cta__sub { font-size: var(--text-body); }
+  /* Phone: cover leaves the vase tiny — zoom the photo and anchor it to the
+     bottom corner so it fills the card properly. */
+  .zh-foot-cta__card { background-size: auto 135%; background-position: left bottom; }
 }
 .zh-foot-cta__body {
   position: relative;
   z-index: 1;
-  margin-inline-start: auto;        /* push to inline-start (visual right in RTL) */
+  margin-inline-end: auto;          /* keep at inline-start (visual right in RTL) */
   width: min(100%, 460px);
   padding: var(--space-6) var(--space-6) var(--space-6) var(--space-4);
   display: flex;
@@ -51,8 +54,8 @@
   gap: 0.35rem;
   text-align: start;
 }
-.zh-foot-cta__h { margin: 0; font-size: var(--text-h2); font-weight: 900; color: var(--color-gold); }
-.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: var(--text-lead); font-weight: 700; color: var(--color-ink); }
+.zh-foot-cta__h { margin: 0; font-size: var(--text-h2); font-weight: 900; color: var(--color-forest); }
+.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: var(--text-lead); font-weight: 700; color: var(--color-forest); }
 .zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: var(--text-small); font-weight: 500; color: var(--color-charcoal); max-width: 32ch; }
 .zh-foot-cta__btn {
   align-self: stretch;
@@ -73,9 +76,9 @@
 }
 
 /* ── Footer ─────────────────────────────────────────────────────────────── */
-.zh-foot { background: var(--color-forest-dark); color: var(--color-ivory); padding-block: var(--space-8) var(--space-6); }
+.zh-foot { background: var(--color-forest-dark); color: var(--color-ivory); padding-block: var(--space-6) var(--space-5); }
 
-.zh-foot__brand { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); margin-bottom: var(--space-7); }
+.zh-foot__brand { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); margin-bottom: var(--space-5); }
 .zh-foot__logo { height: 34px; width: auto; }
 .zh-foot__tagline {
   display: inline-flex;
@@ -94,12 +97,12 @@
   gap: var(--space-5);
   max-width: 760px;
   margin-inline: auto;
-  padding-block: var(--space-6);
+  padding-block: var(--space-4);
   text-align: center;
 }
 .zh-foot__col + .zh-foot__col { border-inline-start: 1px solid rgba(250, 250, 247, 0.12); }
-.zh-foot__h { margin: 0 0 var(--space-4); font-size: var(--text-small); font-weight: 700; color: var(--color-gold); }
-.zh-foot__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.zh-foot__h { margin: 0 0 var(--space-3); font-size: var(--text-small); font-weight: 700; color: var(--color-gold); }
+.zh-foot__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .zh-foot__link {
   display: inline-block;
   font-size: var(--text-small);
@@ -113,8 +116,8 @@
 
 /* ── Legal bar ──────────────────────────────────────────────────────────── */
 .zh-foot__legal {
-  margin-top: var(--space-6);
-  padding-top: var(--space-5);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
   border-top: 1px solid rgba(250, 250, 247, 0.08);
   text-align: center;
   color: rgba(250, 250, 247, 0.45);
@@ -126,7 +129,7 @@
   font-size: var(--text-eyebrow);
   letter-spacing: 0.3em;
   color: var(--color-gold);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 .zh-foot__pitch { margin: 0 0 var(--space-2); font-size: var(--text-small); font-weight: 300; }
 .zh-foot__copy { margin: 0; font-size: var(--text-eyebrow); }

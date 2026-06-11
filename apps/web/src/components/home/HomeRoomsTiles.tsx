@@ -33,7 +33,11 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
               <ParallaxImage
                 src={r.coverUrl}
                 alt={r.name}
-                verticalAmount={80}
+                /* Teen cover: the bed sits in the lower part of the photo —
+                   bias the window down hard and soften the parallax so the
+                   bed stays in frame while scrolling. */
+                verticalAmount={r.slug === 'teen' ? 20 : 80}
+                shiftUp={r.slug === 'teen' ? 100 : 0}
                 topRightRadius={48}
                 className="zh-rooms__media"
               />

@@ -34,7 +34,13 @@
   .zh-hhc__cta-row { flex-direction: row; flex-wrap: wrap; justify-content: center; }
 }
 /* Shorter + wider single-line pill. Two classes outrank the Button's size utilities. */
-.zh-hhc__cta-row .zh-hhc__cta { padding: 0.75rem 3rem; white-space: nowrap; }
+.zh-hhc__cta-row .zh-hhc__cta { padding: 0.6rem 4.5rem; white-space: nowrap; }
+/* Phone: full-bleed inside the text column — its inline padding (--space-5)
+   is the only margin left to the screen edge. */
+@media (max-width: 767px) {
+  .zh-hhc__cta-row { align-items: stretch; }
+  .zh-hhc__cta-row .zh-hhc__cta { width: 100%; padding-inline: 1rem; justify-content: center; }
+}
 
 .zh-hhc__viewport {
   position: relative;

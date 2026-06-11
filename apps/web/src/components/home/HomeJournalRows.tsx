@@ -15,7 +15,6 @@ export type HomeJournalArticle = {
 export type HomeJournalRowsProps = {
   articles: HomeJournalArticle[];
   /** Heading text. */
-  eyebrow?: string;
   heading?: string;
   lead?: string;
 };
@@ -30,7 +29,6 @@ const MAX_PHONE = 240;
 
 export function HomeJournalRows({
   articles,
-  eyebrow = 'ژورنال ژیک',
   heading = 'از کارگاه، از همدان',
   lead = 'یادداشت‌هایی از پشت‌صحنه‌ی ساخت، انتخاب چوب، و طرح‌هایی که از سنت بلند ایران الهام گرفته‌اند.',
 }: HomeJournalRowsProps) {
@@ -85,7 +83,6 @@ export function HomeJournalRows({
     <section ref={sectionRef} className="zh-jrows" aria-label="ژورنال">
       <Container>
         <div className="zh-jrows__head">
-          <BlurInText as="div" className="zh-jrows__eyebrow">{eyebrow}</BlurInText>
           <BlurInText as="h2" className="zh-jrows__heading">{heading}</BlurInText>
           <BlurInText as="p" className="zh-jrows__lead">{lead}</BlurInText>
         </div>
