@@ -54,8 +54,9 @@
   gap: 0.35rem;
   text-align: start;
 }
-.zh-foot-cta__h { margin: 0; font-size: var(--text-h2); font-weight: 900; color: var(--color-forest); }
-.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: var(--text-lead); font-weight: 700; color: var(--color-forest); }
+/* «زیبایی» forest (T1), sub forest (T5), eyebrow charcoal — reverted to forest 2026-06-13. Button stays gold. */
+.zh-foot-cta__h { margin: 0; font-size: var(--home-t1); font-weight: 900; color: var(--color-forest); }
+.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: var(--home-t5); font-weight: 700; color: var(--color-forest); }
 .zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: var(--text-small); font-weight: 500; color: var(--color-charcoal); max-width: 32ch; }
 .zh-foot-cta__btn {
   align-self: stretch;

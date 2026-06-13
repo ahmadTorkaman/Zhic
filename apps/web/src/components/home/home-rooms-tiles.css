@@ -64,16 +64,25 @@
   .zh-rooms__text { flex: 1 1 50%; padding-inline: var(--space-6); }
 }
 
-.zh-rooms__label { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: var(--space-3); }
-.zh-rooms__title { font-size: var(--text-h2); font-weight: 700; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-3); }
-.zh-rooms__sub { font-size: var(--text-body); color: var(--color-stone); line-height: 1.8; max-width: 42ch; margin-bottom: var(--space-5); }
+/* Eyebrow lays ON TOP of the green ribbon — the wrap is the positioning context,
+   the ribbon is absolutely placed behind the text so they collide/overlap. */
+.zh-rooms__eyebrow-wrap {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: var(--space-3);
+  font-size: var(--home-t6);
+}
+.zh-rooms__label { position: relative; z-index: 1; font-size: 1em; font-weight: 700; color: var(--color-ink); }
+.zh-rooms__title { font-size: var(--home-t3); font-weight: 700; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-3); }
+.zh-rooms__sub { font-size: var(--home-t6); font-weight: 300; color: var(--color-stone); line-height: 1.55; max-width: 32ch; margin-bottom: var(--space-5); }
 
-/* «مشاهده» — visual CTA inside the band-link (not a nested anchor). */
+/* «مشاهده» — visual CTA inside the band-link (not a nested anchor). Forest (T5). */
 .zh-rooms__cta {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: var(--text-body);
+  font-size: var(--home-t5);
   font-weight: 700;
   color: var(--color-forest);
   align-self: flex-start;
@@ -84,15 +93,16 @@
   .zh-rooms__cta svg { transition: none; }
 }
 
-/* Figma accent bar (node 212:50 — 384×9 at the band bottom, ≈22% of text width):
-   a wide forest bar below the «مشاهده» CTA, replacing the old dash under the
-   eyebrow. */
+/* Green vector (Figma Vector 5) — forest ribbon @88% with a tapered left tip,
+   placed BEHIND the eyebrow text (z-index 0) so the text lays on top of it and
+   they collide. Sized in em so it tracks the eyebrow; extends past the text. */
 .zh-rooms__bar {
-  display: block;
-  align-self: flex-start;
-  width: clamp(130px, 40%, 220px);
-  height: 6px;
-  margin-top: var(--space-5);
-  background: var(--color-forest);
-  border-radius: 3px;
+  position: absolute;
+  z-index: 0;
+  inset-inline-start: -0.25em;
+  bottom: 0.02em;
+  width: clamp(150px, 22vw, 280px);
+  height: 0.62em;
+  background: color-mix(in srgb, var(--color-forest) 88%, transparent);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 13% 100%);
 }

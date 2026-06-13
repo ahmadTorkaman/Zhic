@@ -25,6 +25,11 @@
   --color-rust:       #8B4A2B;
   --color-overlay:    rgba(20, 17, 15, 0.6);
   --color-divider-ink: rgba(20, 17, 15, 0.08);
+  /* Neutral grays — gray-text homepage direction (2026-06-13);
+     text-gray-soft / -mid / -strong utilities */
+  --color-gray-soft:   #737373;
+  --color-gray-mid:    #525252;
+  --color-gray-strong: #262626;
 
   /* Font */
   --font-sans: var(--font-ayandeh), 'Tahoma', sans-serif;

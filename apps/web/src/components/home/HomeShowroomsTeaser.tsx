@@ -91,6 +91,14 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
           </>
         )}
       </Container>
+
+      {/* Figma export Vector 6 — full-width forest ribbon at the seam into the
+          consultation section: tapered ends + a downward point at center. */}
+      <div className="zh-st__divider" aria-hidden>
+        <svg viewBox="0 0 383 17" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0H382.528C382.528 0 380.748 1.98907 378.131 4.60625C375.514 7.22344 372.792 7.32813 372.792 7.32813C372.792 7.32813 201.523 7.32801 200.581 7.32813C194.89 7.32885 189.275 16.2262 189.275 16.2262C189.275 16.2262 184.2 7.32958 179.016 7.32813C177.341 7.32766 10.1981 7.32813 10.1981 7.32813C10.1981 7.32813 6.13138 6.26336 4.75494 4.94805C3.37851 3.63275 0 0 0 0Z" />
+        </svg>
+      </div>
     </section>
   );
 }

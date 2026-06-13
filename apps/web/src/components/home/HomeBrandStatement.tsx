@@ -68,10 +68,10 @@ export function HomeBrandStatement({
           }
         >
           <div>
-            <BlurInText as="div" className="mb-5 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-gold">
+            <BlurInText as="div" className="mb-5 text-[length:var(--home-t6)] font-bold text-gold">
               {eyebrow}
             </BlurInText>
-            <BlurInText as="h2" className="mb-5 text-h2 font-black leading-[var(--leading-h2)] text-ivory">
+            <BlurInText as="h2" className="mb-5 text-[length:var(--home-t2)] font-black leading-[var(--leading-h2)] text-ivory">
               {heading}
             </BlurInText>
             <div className="mb-6">
@@ -83,7 +83,7 @@ export function HomeBrandStatement({
                 /* Figma Page-2 node 212:85 — the 3-paragraph brand story.
                    Shown when the home global has no seeded statement; the CMS
                    statement should be updated to match for parity. */
-                <div className="space-y-4 text-body font-light leading-[1.85] text-sand">
+                <div className="space-y-4 text-[length:var(--home-t5)] font-light leading-[1.85] text-sand">
                   <BlurInText as="p">
                     ژیک از همدان آغاز شده است؛ از کارگاهی که در آن چوب گردو، کتان بلژیکی و دستانِ صبورِ استادکاران، یک قطعه مبلمان را می‌سازند که می‌ماند.
                   </BlurInText>

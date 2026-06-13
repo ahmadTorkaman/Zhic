@@ -21,29 +21,42 @@
 }
 
 .zh-hhc__heading {
-  margin-bottom: var(--space-5);
-  /* Largest sanctioned scale; Figma's 184px@1920 maps here without breaking the
-     ramp. TODO(designer): a dedicated hero scale if more prominence is wanted. */
-  font-size: var(--text-display-lg);
+  margin-bottom: var(--space-6);
+  /* Forest headline (tier T1), gold comma. Constrained narrower than the CTA so
+     it reads as the export's centered display (wraps ~2 lines). */
+  font-size: var(--home-t1);
   font-weight: 900;
-  line-height: 1.12;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
   color: var(--color-forest);
   text-align: center;
   white-space: pre-line;
   text-wrap: balance;
+  max-width: 48rem;
+  margin-inline: auto;
 }
 .zh-hhc__comma { color: var(--color-gold); }
-.zh-hhc__cta-row { display: flex; flex-direction: column; gap: var(--space-4); align-items: center; }
-@media (min-width: 768px) {
-  .zh-hhc__cta-row { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+
+/* Figma export hero CTA (Rectangle 29) — a wide full-width dark bar
+   (bg neutral-800 #262626 = --color-gray-strong), rounded-md, white bold text
+   (tier T5), centered. Replaces the compact pill; the row caps the width and
+   the button fills it. */
+.zh-hhc__cta-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: stretch;
+  width: 100%;
+  max-width: 60rem;
+  margin-inline: auto;
 }
-/* Shorter + wider single-line pill. Two classes outrank the Button's size utilities. */
-.zh-hhc__cta-row .zh-hhc__cta { padding: 0.6rem 4.5rem; white-space: nowrap; }
-/* Phone: full-bleed inside the text column — its inline padding (--space-5)
-   is the only margin left to the screen edge. */
-@media (max-width: 767px) {
-  .zh-hhc__cta-row { align-items: stretch; }
-  .zh-hhc__cta-row .zh-hhc__cta { width: 100%; padding-inline: 1rem; justify-content: center; }
+.zh-hhc__cta-row .zh-hhc__cta {
+  width: 100%;
+  padding-block: 1.15rem;
+  padding-inline: 2rem;
+  font-size: var(--home-t5);
+  background: var(--color-gray-strong);
+  justify-content: center;
 }
 
 .zh-hhc__viewport {

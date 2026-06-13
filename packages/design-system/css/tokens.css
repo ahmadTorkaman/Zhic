@@ -17,6 +17,12 @@
   /* Functional (app infra) */
   --color-rust:     #8B4A2B;
 
+  /* Neutral grays — Figma Page-1 homepage direction: muted gray text with
+     forest reserved for accent bars only (operator decision 2026-06-13). */
+  --color-gray-soft:   #737373; /* hero headline, section eyebrows, زیبایی */
+  --color-gray-mid:    #525252; /* subtitles, leads, body (= handoff "outline") */
+  --color-gray-strong: #262626; /* band titles, section headings */
+
   /* Gradients
      Caramel→walnut glow used as the on-brand placeholder background for
      hero/showroom cards without a photo yet. Defined once here; reference
@@ -38,6 +44,18 @@
   --text-display:    clamp(40px, 6vw, 76px);
   --text-display-lg: clamp(44px, 7vw, 88px);
   --text-section:    clamp(22px, 2.4vw, 32px);
+
+  /* Homepage type ramp — derived from the Figma Page-1 export's tier RATIOS
+     (text-4xl/3xl/2xl/lg/sm/xs/7.5px), not its absolute px (the export's font
+     scaling is unreliable). One knob to recalibrate the whole homepage scale:
+     raise/lower the vw + max in lockstep. Anchored ~hero 94px @ desktop. */
+  --home-t1: clamp(2.5rem, 6.6vw, 5.875rem);  /* hero / زیبایی        ~40–94px */
+  --home-t2: clamp(2.25rem, 5.4vw, 4.875rem); /* «از همدان» heading   ~36–78px */
+  --home-t3: clamp(2rem, 4.3vw, 3.875rem);    /* band/section titles, stats# ~32–62px */
+  --home-t4: clamp(1.4rem, 3.2vw, 2.9rem);    /* «همه‌ی مقالات» CTAs  ~22–46px */
+  --home-t5: clamp(1.15rem, 2.5vw, 2.25rem);  /* مشاهده / labels / about ~18–36px */
+  --home-t6: clamp(1rem, 2.2vw, 1.95rem);     /* eyebrows / subtitles / lead ~16–31px */
+  --home-t7: clamp(0.85rem, 1.4vw, 1.25rem);  /* journal card titles  ~14–20px */
 
   /* Line heights */
   --leading-h1:      1.2;

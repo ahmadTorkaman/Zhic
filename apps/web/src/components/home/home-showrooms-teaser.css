@@ -6,8 +6,9 @@
   .zh-st { padding-block: var(--space-8); }
 }
 
-.zh-st__eyebrow { display: block; font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: var(--space-3); }
-.zh-st__title { display: block; font-size: var(--text-h2); font-weight: 900; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-6); }
+/* Forest eyebrow (T6), ink heading (T3) — reverted to forest 2026-06-13. */
+.zh-st__eyebrow { display: block; font-size: var(--home-t6); font-weight: 700; color: var(--color-forest); margin-bottom: var(--space-3); }
+.zh-st__title { display: block; font-size: var(--home-t3); font-weight: 900; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-6); }
 
 /* Three cards per row at every width (CEO directive). */
 .zh-st__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
@@ -77,22 +78,29 @@
   .zh-st__more { transition: none; }
 }
 
+/* Figma export: «فهرست کامل» is plain black bold text (text-lg / tier T4),
+   centered — no cream bar, border, or radius. */
 .zh-st__expand {
   display: flex;
   width: 100%;
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
   align-items: center;
   justify-content: center;
-  padding-block: 1rem;
-  background: var(--color-cream);
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  background: none;
   color: var(--color-ink);
   font-family: inherit;
-  font-size: var(--text-body);
+  font-size: var(--home-t4);
   font-weight: 700;
   border: 0;
-  border-bottom: 5px solid var(--color-forest);
-  border-radius: 12px;
   cursor: pointer;
-  transition: background-color var(--dur-hover) var(--ease-out-soft);
+  transition: color var(--dur-hover) var(--ease-out-soft);
 }
-.zh-st__expand:hover { background: var(--color-sand); }
+.zh-st__expand:hover { color: var(--color-forest); }
+
+/* Full-width forest seam divider (Figma Vector 6). Spans edge-to-edge; the SVG
+   scales with width and keeps its aspect (tapered ends + center downward point). */
+.zh-st__divider { margin-top: var(--space-6); }
+.zh-st__divider svg { display: block; width: 100%; height: auto; }
+.zh-st__divider path { fill: var(--color-forest); fill-opacity: 0.88; }

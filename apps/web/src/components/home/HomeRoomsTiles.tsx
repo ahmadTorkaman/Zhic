@@ -42,7 +42,10 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
               className="zh-rooms__media"
             />
             <div className="zh-rooms__text">
-              <BlurInText as="div" className="zh-rooms__label">دسته‌ی سنی</BlurInText>
+              <span className="zh-rooms__eyebrow-wrap">
+                <span className="zh-rooms__bar" aria-hidden />
+                <BlurInText as="div" className="zh-rooms__label">دسته‌ی سنی</BlurInText>
+              </span>
               <BlurInText as="h2" className="zh-rooms__title">{r.name}</BlurInText>
               {r.tagline && <BlurInText as="p" className="zh-rooms__sub">{r.tagline}</BlurInText>}
               <span className="zh-rooms__cta">
@@ -51,7 +54,6 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
                   <path d="M14 6l-6 6 6 6" />
                 </svg>
               </span>
-              <span className="zh-rooms__bar" aria-hidden />
             </div>
           </Link>
         ))}
