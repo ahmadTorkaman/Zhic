@@ -1,4 +1,4 @@
-import { toPersianDigits } from '@zhic/locale';
+import { formatNumber } from '@zhic/locale';
 
 /** Standard ease-out cubic curve: f(t) = 1 - (1-t)^3. */
 export function easeOutCubic(t: number): number {
@@ -6,9 +6,9 @@ export function easeOutCubic(t: number): number {
 }
 
 /**
- * Format a count-up value: round to integer, convert to Persian digits,
- * append the suffix verbatim.
+ * Format a count-up value: round to integer, convert to Persian digits
+ * with thousands separators (٬), append the suffix verbatim.
  */
 export function formatCountUpValue(value: number, suffix: string): string {
-  return toPersianDigits(Math.round(value)) + suffix;
+  return formatNumber(Math.round(value)) + suffix;
 }

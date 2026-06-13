@@ -27,8 +27,9 @@ describe('easeOutCubic', () => {
 });
 
 describe('formatCountUpValue', () => {
-  it('formats a number with Persian digits, no suffix', () => {
-    expect(formatCountUpValue(1200, '')).toBe('۱۲۰۰');
+  it('formats a number with Persian digits and thousands separators, no suffix', () => {
+    expect(formatCountUpValue(1200, '')).toBe('۱٬۲۰۰');
+    expect(formatCountUpValue(570430, '+')).toBe('۵۷۰٬۴۳۰+');
   });
 
   it('appends a suffix verbatim', () => {
