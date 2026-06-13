@@ -20,12 +20,15 @@ export type HomeHeroCarouselProps = {
   intervalMs?: number;
 };
 
-// Figma Page-2 hero headline (node 212:17). Split on the Persian comma «،»
-// renders it in gold; the two clauses sit on either side.
+// Kaveh hero headline (frame 19:120, node 19:136). Split on the Persian comma
+// «،» renders it in gold; the two clauses sit on either side.
 const DEFAULT_HEADING = 'خواب خوب،تمام ماجــــــراست';
+// Kaveh hero subtitle (node 19:257) — sits under the headline.
+const DEFAULT_SUBHEADING = 'تولیدی سرویس خواب و وسایل اتاق خواب، با ارسال به سراسر ایران';
 
 export function HomeHeroCarousel({
   heading = DEFAULT_HEADING,
+  subheading = DEFAULT_SUBHEADING,
   slides,
   intervalMs = 5000,
 }: HomeHeroCarouselProps) {
@@ -117,9 +120,14 @@ export function HomeHeroCarousel({
             </Fragment>
           ))}
         </h1>
+        {subheading && (
+          <BlurInText as="p" className="zh-hhc__sub">
+            {subheading}
+          </BlurInText>
+        )}
         <div className="zh-hhc__cta-row">
           <Button as="a" href="/bedroom-set" variant="primary" size="lg" className="zh-hhc__cta">
-            مشاهده‌ی محصولات
+            مشاهده‌ی سرویس خواب
           </Button>
         </div>
       </div>

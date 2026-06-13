@@ -60,18 +60,41 @@ export default async function HomePage() {
         ? [{ src: home.hero_media.url, alt: home?.hero_heading ?? '' }]
         : FALLBACK_HERO_SLIDES;
 
-  // Map and filter rooms: only include rooms with valid slugs. Use the room's
-  // own cover when set; otherwise fall back to a stock interior shot so the
-  // section is visible before the operator uploads media.
+  // Homepage age-band copy + order from the Kaveh mobile design (frame 19:120).
+  // Falls back to a stock cover per slug when the room has no uploaded media.
+  // These override the site-wide room hub names («اتاق کودک» …) for the homepage
+  // bands ONLY — routes, nav, and the room hub pages keep the canonical names.
+  // Order matches Kaveh: دو نفره → کودک → نوجوان (adult → kid → teen).
+  const BAND_ORDER = ['adult', 'kid', 'teen'] as const;
+  const BAND_COPY: Record<'kid' | 'teen' | 'adult', { name: string; tagline: string }> = {
+    adult: {
+      name: 'سرویس خواب دو نفره',
+      tagline:
+        'مدل‌های سرویس خواب دو نفره‌ی هماهنگ، شامل تخت، پاتختی و میز آرایش؛ چوبی و ام‌دی‌اف، برای آرامش بلندمدت اتاق خواب شما.',
+    },
+    kid: {
+      name: 'سرویس خواب کودک',
+      tagline:
+        'سرویس خواب کودک با قطعات ایمن و رنگ‌های آرام؛ طراحی‌شده تا همراه رشد کودک، از نوزادی تا کودکی بماند.',
+    },
+    teen: {
+      name: 'سرویس خواب نوجوان',
+      tagline:
+        'سرویس خواب نوجوان با طراحی منعطف؛ از تخت و میز تحریر تا کتابخانه، مناسب سال‌های درس و مطالعه.',
+    },
+  };
   const VALID_ROOM_SLUGS = new Set<'kid' | 'teen' | 'adult'>(['kid', 'teen', 'adult']);
-  const roomTiles: HomeRoomTile[] = rooms
-    .filter((r): r is typeof r & { slug: 'kid' | 'teen' | 'adult' } => VALID_ROOM_SLUGS.has(r.slug as 'kid' | 'teen' | 'adult'))
-    .map((r) => ({
-      slug: r.slug,
-      name: r.name,
-      tagline: r.tagline ?? undefined,
-      coverUrl: r.cover?.url ?? FALLBACK_ROOM_COVERS[r.slug],
-    }));
+  const roomBySlug = new Map(
+    rooms
+      .filter((r): r is typeof r & { slug: 'kid' | 'teen' | 'adult' } => VALID_ROOM_SLUGS.has(r.slug as 'kid' | 'teen' | 'adult'))
+      .map((r) => [r.slug, r] as const),
+  );
+  const roomTiles: HomeRoomTile[] = BAND_ORDER.filter((slug) => roomBySlug.has(slug)).map((slug) => ({
+    slug,
+    name: BAND_COPY[slug].name,
+    tagline: BAND_COPY[slug].tagline,
+    coverUrl: roomBySlug.get(slug)!.cover?.url ?? FALLBACK_ROOM_COVERS[slug],
+  }));
 
   // Map articles to journal row format. Fall back to stock covers if the
   // article has none — so the parallax rows are visible before editorial

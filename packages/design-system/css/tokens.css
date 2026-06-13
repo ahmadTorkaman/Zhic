@@ -49,13 +49,15 @@
      (text-4xl/3xl/2xl/lg/sm/xs/7.5px), not its absolute px (the export's font
      scaling is unreliable). One knob to recalibrate the whole homepage scale:
      raise/lower the vw + max in lockstep. Anchored ~hero 94px @ desktop. */
-  --home-t1: clamp(2.5rem, 6.6vw, 5.875rem);  /* hero / زیبایی        ~40–94px */
-  --home-t2: clamp(2.25rem, 5.4vw, 4.875rem); /* «از همدان» heading   ~36–78px */
-  --home-t3: clamp(2rem, 4.3vw, 3.875rem);    /* band/section titles, stats# ~32–62px */
-  --home-t4: clamp(1.4rem, 3.2vw, 2.9rem);    /* «همه‌ی مقالات» CTAs  ~22–46px */
-  --home-t5: clamp(1.15rem, 2.5vw, 2.25rem);  /* مشاهده / labels / about ~18–36px */
-  --home-t6: clamp(1rem, 2.2vw, 1.95rem);     /* eyebrows / subtitles / lead ~16–31px */
-  --home-t7: clamp(0.85rem, 1.4vw, 1.25rem);  /* journal card titles  ~14–20px */
+  /* Mobile floors retuned to the Kaveh 402px comp (2026-06-13); the vw term and
+     desktop maxes are unchanged from the 1920 reference, so desktop is untouched. */
+  --home-t1: clamp(2.4rem, 6.6vw, 5.875rem);  /* hero / زیبایی        ~38–94px */
+  --home-t2: clamp(2rem, 5.4vw, 4.875rem);    /* about heading        ~32–78px */
+  --home-t3: clamp(1.45rem, 4.3vw, 3.875rem); /* band/section titles, stats# ~23–62px */
+  --home-t4: clamp(1.18rem, 3.2vw, 2.9rem);   /* «همه‌ی مقالات» CTAs  ~19–46px */
+  --home-t5: clamp(0.95rem, 2.5vw, 2.25rem);  /* مشاهده / labels / about ~15–36px */
+  --home-t6: clamp(0.75rem, 2.2vw, 1.95rem);  /* eyebrows / subtitles / lead ~12–31px */
+  --home-t7: clamp(0.85rem, 1.4vw, 1.25rem);  /* journal card titles  ~14–20px (Kaveh 7.5px → kept legible per WCAG) */
 
   /* Line heights */
   --leading-h1:      1.2;

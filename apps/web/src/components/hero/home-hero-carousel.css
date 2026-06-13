@@ -21,12 +21,12 @@
 }
 
 .zh-hhc__heading {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
   /* Forest headline (tier T1), gold comma. Constrained narrower than the CTA so
      it reads as the export's centered display (wraps ~2 lines). */
   font-size: var(--home-t1);
   font-weight: 900;
-  line-height: 1.45;
+  line-height: 1.4;
   letter-spacing: -0.02em;
   color: var(--color-forest);
   text-align: center;
@@ -36,6 +36,18 @@
   margin-inline: auto;
 }
 .zh-hhc__comma { color: var(--color-gold); }
+
+/* Kaveh hero subtitle (node 19:257) — muted, centered, between headline + CTA. */
+.zh-hhc__sub {
+  margin: 0 auto var(--space-6);
+  font-size: var(--home-t6);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-gray-mid);
+  text-align: center;
+  text-wrap: balance;
+  max-width: 36rem;
+}
 
 /* Figma export hero CTA (Rectangle 29) — a wide full-width dark bar
    (bg neutral-800 #262626 = --color-gray-strong), rounded-md, white bold text

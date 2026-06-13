@@ -57,6 +57,9 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
         <BlurInText as="h2" className="zh-st__title">
           ما را در شهر خودتان ببینید
         </BlurInText>
+        <BlurInText as="p" className="zh-st__lead">
+          سرویس خواب ژیک را از نزدیک در شعب ما ببینید.
+        </BlurInText>
 
         <div className="zh-st__grid">
           {firstRow.map((s) => (
