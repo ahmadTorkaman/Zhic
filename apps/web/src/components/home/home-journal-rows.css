@@ -1,6 +1,6 @@
-.zh-jrows { background: var(--color-ivory); padding-block: var(--space-7); overflow: hidden; }
+.zh-jrows { background: var(--color-ivory); padding-top: var(--space-7); padding-bottom: var(--space-3); overflow: hidden; }
 @media (min-width: 768px) {
-  .zh-jrows { padding-block: var(--space-8); }
+  .zh-jrows { padding-top: var(--space-8); }
 }
 .zh-jrows__head { max-width: 720px; margin-bottom: var(--space-7); }
 /* Forest eyebrow (T6), ink heading (T3), stone lead (T6) — reverted to forest 2026-06-13. */

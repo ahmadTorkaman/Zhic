@@ -1,9 +1,9 @@
 /* apps/web/src/components/home/home-showrooms-teaser.css */
 /* Figma home showrooms section: 3-up full-bleed city-illustration cards +
    the «فهرست کامل» curtain-expand bar. */
-.zh-st { background: var(--color-ivory); padding-block: var(--space-7); }
+.zh-st { background: var(--color-ivory); padding-top: var(--space-3); padding-bottom: var(--space-7); }
 @media (min-width: 768px) {
-  .zh-st { padding-block: var(--space-8); }
+  .zh-st { padding-bottom: var(--space-8); }
 }
 
 /* Forest eyebrow (T6), ink heading (T3) — reverted to forest 2026-06-13. */
