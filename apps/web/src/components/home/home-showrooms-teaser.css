@@ -78,6 +78,18 @@
   .zh-st__more { transition: none; }
 }
 
+/* Dotted divider above the branches (Figma «sar barg») — a centered forest
+   dotted line, NOT a solid rule. */
+.zh-st__dots {
+  width: clamp(180px, 55%, 680px);
+  height: 5px;
+  margin: 0 auto var(--space-6);
+  background-image: radial-gradient(circle, var(--color-forest) 1.8px, transparent 2.3px);
+  background-size: 14px 5px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
 /* Figma export: «فهرست کامل» is plain black bold text (text-lg / tier T4),
    centered — no cream bar, border, or radius. */
 .zh-st__expand {
@@ -87,7 +99,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0 0;
   background: none;
   color: var(--color-ink);
   font-family: inherit;
@@ -100,7 +112,8 @@
 .zh-st__expand:hover { color: var(--color-forest); }
 
 /* Full-width forest seam divider (Figma Vector 6). Spans edge-to-edge; the SVG
-   scales with width and keeps its aspect (tapered ends + center downward point). */
-.zh-st__divider { margin-top: var(--space-6); }
+   scales with width and keeps its aspect (tapered ends + center downward point).
+   Pulled up tight under «فهرست کامل» so it underlines the CTA. */
+.zh-st__divider { margin-top: -0.35rem; }
 .zh-st__divider svg { display: block; width: 100%; height: auto; }
 .zh-st__divider path { fill: var(--color-forest); fill-opacity: 0.88; }
