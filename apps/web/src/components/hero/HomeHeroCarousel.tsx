@@ -20,7 +20,9 @@ export type HomeHeroCarouselProps = {
   intervalMs?: number;
 };
 
-const DEFAULT_HEADING = 'ساخته‌شده\nبرای ماندن';
+// Figma Page-2 hero headline (node 212:17). Split on the Persian comma «،»
+// renders it in gold; the two clauses sit on either side.
+const DEFAULT_HEADING = 'خواب خوب،تمام ماجراست';
 
 export function HomeHeroCarousel({
   heading = DEFAULT_HEADING,

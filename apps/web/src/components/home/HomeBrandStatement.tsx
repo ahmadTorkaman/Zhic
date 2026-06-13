@@ -80,9 +80,20 @@ export function HomeBrandStatement({
                   <RichText value={statement} />
                 </div>
               ) : (
-                <BlurInText as="p" className="text-body font-light leading-[1.85] text-sand">
-                  ژیک در کارگاهی در همدان متولد شد — جایی که سنت کار با چوب ریشه در قرن‌ها دارد. ما چوب گردو را از جنگل‌های شمال تهیه می‌کنیم و با روش‌هایی می‌سازیم که عجله‌ای در آن‌ها نیست. هر قطعه یک سرمایه‌گذاری در آرامش است.
-                </BlurInText>
+                /* Figma Page-2 node 212:85 — the 3-paragraph brand story.
+                   Shown when the home global has no seeded statement; the CMS
+                   statement should be updated to match for parity. */
+                <div className="space-y-4 text-body font-light leading-[1.85] text-sand">
+                  <BlurInText as="p">
+                    ژیک از همدان آغاز شده است؛ از کارگاهی که در آن چوب گردو، کتان بلژیکی و دستانِ صبورِ استادکاران، یک قطعه مبلمان را می‌سازند که می‌ماند.
+                  </BlurInText>
+                  <BlurInText as="p">
+                    ما باور داریم اتاق خواب، آرام‌ترین و شخصی‌ترین جای خانه است. هر قطعه‌ای که می‌سازیم، برای همان لحظه‌ی صبح‌ زود است که نور آرام از میان پرده عبور می‌کند.
+                  </BlurInText>
+                  <BlurInText as="p">
+                    از طراحی تا تحویل، به جزئیات وفاداریم. نه بیش‌تر از آنچه لازم است می‌سازیم، نه کم‌تر از آنچه شایسته است.
+                  </BlurInText>
+                </div>
               )}
             </div>
           </div>

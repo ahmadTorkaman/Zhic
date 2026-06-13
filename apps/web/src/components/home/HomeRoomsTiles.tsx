@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BlurInText, Container, ParallaxImage } from '@zhic/ui';
+import { BlurInText, ParallaxImage } from '@zhic/ui';
 import './home-rooms-tiles.css';
 
 export type HomeRoomTile = {
@@ -26,28 +26,36 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
   if (rooms.length === 0) return null;
   return (
     <section className="zh-rooms" aria-label="دسته‌بندی سنی">
-      <Container>
-        <div className="zh-rooms__grid">
-          {rooms.map((r) => (
-            <Link key={r.slug} href={`/bedroom-set/${ROOM_TO_OCCUPANCY[r.slug]}`} className="zh-rooms__tile">
-              <ParallaxImage
-                src={r.coverUrl}
-                alt={r.name}
-                /* Teen cover: the bed sits in the lower part of the photo —
-                   bias the window down hard and soften the parallax so the
-                   bed stays in frame while scrolling. */
-                verticalAmount={r.slug === 'teen' ? 20 : 80}
-                shiftUp={r.slug === 'teen' ? 100 : 0}
-                topRightRadius={48}
-                className="zh-rooms__media"
-              />
+      {/* Figma Page-2: full-bleed editorial bands, image + text 50/50,
+          alternating sides per band (nth-child(even) flips). */}
+      <div className="zh-rooms__bands">
+        {rooms.map((r) => (
+          <Link key={r.slug} href={`/bedroom-set/${ROOM_TO_OCCUPANCY[r.slug]}`} className="zh-rooms__band">
+            <ParallaxImage
+              src={r.coverUrl}
+              alt={r.name}
+              /* Teen cover: the bed sits in the lower part of the photo —
+                 bias the window down so it stays in frame while scrolling. */
+              verticalAmount={r.slug === 'teen' ? 30 : 70}
+              shiftUp={r.slug === 'teen' ? 80 : 0}
+              topRightRadius={48}
+              className="zh-rooms__media"
+            />
+            <div className="zh-rooms__text">
               <BlurInText as="div" className="zh-rooms__label">دسته‌ی سنی</BlurInText>
-              <BlurInText as="div" className="zh-rooms__title">{r.name}</BlurInText>
+              <BlurInText as="h2" className="zh-rooms__title">{r.name}</BlurInText>
               {r.tagline && <BlurInText as="p" className="zh-rooms__sub">{r.tagline}</BlurInText>}
-            </Link>
-          ))}
-        </div>
-      </Container>
+              <span className="zh-rooms__cta">
+                مشاهده
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M14 6l-6 6 6 6" />
+                </svg>
+              </span>
+              <span className="zh-rooms__bar" aria-hidden />
+            </div>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 }

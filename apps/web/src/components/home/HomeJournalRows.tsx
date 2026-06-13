@@ -14,9 +14,14 @@ export type HomeJournalArticle = {
 
 export type HomeJournalRowsProps = {
   articles: HomeJournalArticle[];
+  /** Forest eyebrow above the heading (Figma «ژورنال ژیک»). */
+  eyebrow?: string;
   /** Heading text. */
   heading?: string;
   lead?: string;
+  /** "See all" link copy + target below the rows (Figma «همه ی مقالات»). */
+  ctaText?: string;
+  ctaHref?: string;
 };
 
 // Speed × direction per row (matches framer.university intent).
@@ -29,8 +34,11 @@ const MAX_PHONE = 240;
 
 export function HomeJournalRows({
   articles,
+  eyebrow = 'ژورنال ژیک',
   heading = 'از کارگاه، از همدان',
   lead = 'یادداشت‌هایی از پشت‌صحنه‌ی ساخت، انتخاب چوب، و طرح‌هایی که از سنت بلند ایران الهام گرفته‌اند.',
+  ctaText = 'همه‌ی مقالات',
+  ctaHref = '/journal',
 }: HomeJournalRowsProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -83,6 +91,7 @@ export function HomeJournalRows({
     <section ref={sectionRef} className="zh-jrows" aria-label="ژورنال">
       <Container>
         <div className="zh-jrows__head">
+          <BlurInText as="p" className="zh-jrows__eyebrow">{eyebrow}</BlurInText>
           <BlurInText as="h2" className="zh-jrows__heading">{heading}</BlurInText>
           <BlurInText as="p" className="zh-jrows__lead">{lead}</BlurInText>
         </div>
@@ -111,6 +120,16 @@ export function HomeJournalRows({
         ))}
       </div>
 
+      <Container>
+        <div className="zh-jrows__foot">
+          <Link href={ctaHref} className="zh-jrows__cta">
+            <span>{ctaText}</span>
+            <svg className="zh-jrows__cta-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M14 6l-6 6 6 6" />
+            </svg>
+          </Link>
+        </div>
+      </Container>
     </section>
   );
 }

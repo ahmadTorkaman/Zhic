@@ -51,6 +51,7 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
   return (
     <section className="zh-st" aria-label="شعب">
       <Container>
+        <BlurInText as="p" className="zh-st__eyebrow">نمایندگی‌ها</BlurInText>
         <BlurInText as="h2" className="zh-st__title">
           ما را در شهر خودتان ببینید
         </BlurInText>

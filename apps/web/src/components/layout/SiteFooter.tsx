@@ -12,7 +12,7 @@ import {
   FOOTER_TAGLINE,
   FOOTER_PITCH,
 } from './footerLinks';
-import { SOCIAL_LABELS, VALID_SOCIAL_PLATFORMS, type SocialLink } from './socials';
+import { SOCIAL_LABELS, VALID_SOCIAL_PLATFORMS, SocialIcon, type SocialLink } from './socials';
 import { Modal } from '@/components/shared/Modal';
 import { InquiryForm } from '@/components/inquiry/InquiryForm';
 import { NewsletterSignup } from './NewsletterSignup';
@@ -79,19 +79,26 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
                 {socials.map((s, i) => (
                   <li key={s.platform + i}>
                     <Link href={s.url} target="_blank" rel="noopener noreferrer" className="zh-foot__link">
+                      <span className="zh-foot__ico"><SocialIcon platform={s.platform} /></span>
                       {SOCIAL_LABELS[s.platform]}
                     </Link>
                   </li>
                 ))}
                 {phone && (
                   <li>
-                    <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="zh-foot__link">
+                    <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} className="zh-foot__link">
+                      <span className="zh-foot__ico" aria-hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 005 5L19 13l5 2v3a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>
+                      </span>
                       تلفن
                     </a>
                   </li>
                 )}
                 <li>
                   <button type="button" className="zh-foot__link zh-foot__link--btn" onClick={() => setNewsletterOpen(true)}>
+                    <span className="zh-foot__ico" aria-hidden>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                    </span>
                     خبرنامه
                   </button>
                 </li>

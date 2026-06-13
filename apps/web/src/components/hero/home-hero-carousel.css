@@ -7,22 +7,26 @@
   padding-top: var(--header-height);
 }
 
-/* Mobile: media on top (order-1), text below (order-2). */
-.zh-hhc__text { order: 2; padding: var(--space-6) var(--space-5); display: flex; flex-direction: column; justify-content: center; }
+/* Figma Page-2 hero is STACKED: full-width media on top, centered headline +
+   CTA below on cream (this is the live mobile layout, promoted to all widths). */
 .zh-hhc__media { order: 1; position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-top-right-radius: 96px; }
+.zh-hhc__text { order: 2; padding: var(--space-7) var(--space-5) var(--space-8); display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
-/* Desktop: split 50/50, total hero 16:9, text on the start (RTL: right). */
 @media (min-width: 768px) {
-  .zh-hhc { grid-template-columns: 1fr 1fr; aspect-ratio: 16 / 9; padding-top: var(--header-height); }
-  .zh-hhc__text { order: 1; padding-block: var(--space-7); padding-inline-start: var(--space-7); padding-inline-end: var(--space-6); }
-  .zh-hhc__media { order: 2; aspect-ratio: auto; height: 100%; border-top-right-radius: 140px; }
+  /* Desktop hero band — Figma's full-width image is portrait (3:4), impractical
+     at 1920w, so use an immersive 16:9 band, cover-cropped.
+     TODO(designer): confirm the intended desktop hero height. */
+  .zh-hhc__media { aspect-ratio: 16 / 9; border-top-right-radius: 140px; }
+  .zh-hhc__text { padding-block: var(--space-8); }
 }
 
 .zh-hhc__heading {
   margin-bottom: var(--space-5);
-  font-size: var(--text-h2);
+  /* Largest sanctioned scale; Figma's 184px@1920 maps here without breaking the
+     ramp. TODO(designer): a dedicated hero scale if more prominence is wanted. */
+  font-size: var(--text-display-lg);
   font-weight: 900;
-  line-height: 1.1;
+  line-height: 1.12;
   color: var(--color-forest);
   text-align: center;
   white-space: pre-line;

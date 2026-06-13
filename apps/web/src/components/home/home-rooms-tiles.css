@@ -1,22 +1,98 @@
 /* apps/web/src/components/home/home-rooms-tiles.css */
-.zh-rooms { background: var(--color-ivory); padding-block: var(--space-7); }
+/* Figma Page-2 age section: full-bleed editorial bands stacked vertically,
+   each a 50/50 image + text row that alternates sides per band. */
+/* Mirror the page Container so the bands share the same gutter as every other
+   section (1440 max-width + 1rem / 1.5rem inline padding) — no edge-sticking,
+   and a real margin on mobile (which previously had none). */
+.zh-rooms { background: var(--color-ivory); padding-block: var(--space-7); padding-inline: 1rem; }
 @media (min-width: 768px) {
-  .zh-rooms { padding-block: var(--space-9); padding-inline: var(--space-7); }
+  .zh-rooms { padding-block: var(--space-9); }
 }
-.zh-rooms__grid { display: grid; grid-template-columns: 1fr; gap: var(--space-4); max-width: var(--width-container-storefront); margin-inline: auto; }
+@media (min-width: 1024px) {
+  .zh-rooms { padding-inline: 1.5rem; }
+}
+
+.zh-rooms__bands {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  max-width: var(--container-storefront);
+  margin-inline: auto;
+}
 @media (min-width: 768px) {
-  .zh-rooms__grid { grid-template-columns: 1fr 1fr 1fr; gap: var(--space-5); }
+  .zh-rooms__bands { gap: var(--space-9); }
 }
-.zh-rooms__tile { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform var(--dur-hover) var(--ease-out-soft); }
-.zh-rooms__tile:hover { transform: translateY(var(--hover-lift-card)); }
-.zh-rooms__media { aspect-ratio: 4 / 5; margin-bottom: var(--space-4); }
+
+/* Mobile: image over text. Desktop: 50/50 row, even bands flip the side. */
+.zh-rooms__band {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  text-decoration: none;
+  color: inherit;
+}
+@media (min-width: 768px) {
+  .zh-rooms__band { flex-direction: row; align-items: stretch; gap: var(--space-7); }
+  .zh-rooms__band:nth-child(even) { flex-direction: row-reverse; }
+}
+
+.zh-rooms__media {
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .zh-rooms__media { flex: 1 1 50%; }
+}
 @media (max-width: 767px) {
-  .zh-rooms__media { aspect-ratio: 5 / 3; }
-  /* Phone: tighter corner */
-  .zh-rooms__tile :where(.zh-rooms__media) > div { border-top-right-radius: 28px !important; }
+  .zh-rooms__band :where(.zh-rooms__media) > div { border-top-right-radius: 28px !important; }
 }
-.zh-rooms__label { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: 6px; }
-/* Figma motif: short thick forest bar under the age eyebrow. */
-.zh-rooms__label::after { content: ''; display: block; width: 42px; height: 3px; margin-top: 6px; background: var(--color-forest); border-radius: 2px; }
-.zh-rooms__title { font-size: 1.5rem; font-weight: 700; color: var(--color-ink); margin-bottom: var(--space-2); }
-.zh-rooms__sub { font-size: var(--text-small); color: var(--color-stone); line-height: 1.7; max-width: 36ch; margin-bottom: var(--space-4); }
+/* Subtle editorial zoom on hover (no card-lift — the bands are large). */
+.zh-rooms__media > div { transition: transform var(--dur-hover) var(--ease-out-soft); }
+.zh-rooms__band:hover .zh-rooms__media > div { transform: scale(1.02); }
+@media (prefers-reduced-motion: reduce) {
+  .zh-rooms__media > div { transition: none; }
+  .zh-rooms__band:hover .zh-rooms__media > div { transform: none; }
+}
+
+.zh-rooms__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .zh-rooms__text { flex: 1 1 50%; padding-inline: var(--space-6); }
+}
+
+.zh-rooms__label { font-size: var(--text-eyebrow); font-weight: 700; text-transform: uppercase; letter-spacing: var(--tracking-eyebrow-wide); color: var(--color-forest); margin-bottom: var(--space-3); }
+.zh-rooms__title { font-size: var(--text-h2); font-weight: 700; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-3); }
+.zh-rooms__sub { font-size: var(--text-body); color: var(--color-stone); line-height: 1.8; max-width: 42ch; margin-bottom: var(--space-5); }
+
+/* «مشاهده» — visual CTA inside the band-link (not a nested anchor). */
+.zh-rooms__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--color-forest);
+  align-self: flex-start;
+}
+.zh-rooms__cta svg { transition: transform var(--dur-hover) var(--ease-out-soft); }
+.zh-rooms__band:hover .zh-rooms__cta svg { transform: translateX(-4px); }
+@media (prefers-reduced-motion: reduce) {
+  .zh-rooms__cta svg { transition: none; }
+}
+
+/* Figma accent bar (node 212:50 — 384×9 at the band bottom, ≈22% of text width):
+   a wide forest bar below the «مشاهده» CTA, replacing the old dash under the
+   eyebrow. */
+.zh-rooms__bar {
+  display: block;
+  align-self: flex-start;
+  width: clamp(130px, 40%, 220px);
+  height: 6px;
+  margin-top: var(--space-5);
+  background: var(--color-forest);
+  border-radius: 3px;
+}
