@@ -123,7 +123,8 @@ export function HomeJournalRows({
       <Container>
         <div className="zh-jrows__foot">
           <Link href={ctaHref} className="zh-jrows__cta">
-            <span>{ctaText}</span>
+            <span className="zh-jrows__cta-bar" aria-hidden />
+            <span className="zh-jrows__cta-label">{ctaText}</span>
           </Link>
         </div>
       </Container>
