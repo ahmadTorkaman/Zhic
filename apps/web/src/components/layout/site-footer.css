@@ -60,24 +60,22 @@
    زیبایی 34.966px, sub 13.4px, eyebrow 8.27px (eyebrow very small — flagged). Button stays gold. */
 .zh-foot-cta__h { margin: 0; font-size: clamp(2.185rem, 6vw, 3.5rem); font-weight: 900; color: var(--color-forest-muted); }
 .zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: 0.8375rem; font-weight: 700; color: var(--color-forest-muted); }
-.zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: 0.517rem; font-weight: 500; color: var(--color-forest-muted); max-width: 32ch; }
+.zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: 0.517rem; font-weight: 500; color: var(--color-forest-muted); max-width: 46ch; white-space: nowrap; }
 .zh-foot-cta__btn {
-  align-self: stretch;
-  padding: 0.9rem 2.2rem;
+  /* Kaveh button (19:135): hugs its label (~171px), right-aligned, short. NOT full-bleed. */
+  align-self: flex-start;
+  padding: 0.45rem 1rem;
   background: var(--color-gold);
   color: var(--color-ivory);
   font-family: inherit;
   font-size: 0.864rem;
   font-weight: 700;
   border: 0;
-  border-radius: 8px;
+  border-radius: 6.28px;
   cursor: pointer;
   transition: background-color var(--dur-hover) var(--ease-out-soft);
 }
 .zh-foot-cta__btn:hover { background: #b08c5e; }
-@media (min-width: 768px) {
-  .zh-foot-cta__btn { align-self: flex-start; }
-}
 
 /* ── Footer ─────────────────────────────────────────────────────────────── */
 .zh-foot { background: var(--color-forest-dark); color: var(--color-ivory); padding-block: var(--space-6) var(--space-5); }
