@@ -31,27 +31,21 @@
 /* Card title: ink. Kaveh node 19:137 = 7.537px (very small — flagged for legibility review). */
 .zh-jrows__title { font-size: 0.471rem; font-weight: 400; line-height: 1.25; color: var(--color-ink); display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-/* «همه ی مقالات» — forest text link (T4) under the rows; arrow drifts toward the
-   inline-start (left in RTL) on hover. (Kaveh: forest #5F7760, node 19:171.) */
+/* «همه ی مقالات» (Kaveh node 19:171) — BLACK bold text (T4) with the caramel
+   dashed «sar barg» underline (node 19:164). No arrow. */
 .zh-jrows__foot { margin-top: var(--space-6); }
 .zh-jrows__cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
   font-size: var(--home-t4);
   font-weight: 700;
-  color: var(--color-forest);
+  color: var(--color-ink);
   text-decoration: none;
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-forest) 45%, transparent);
+  padding-bottom: 0.4rem;
+  border-bottom: 2px dashed var(--color-gold);
   transition: border-color var(--dur-hover) var(--ease-out-soft);
 }
-.zh-jrows__cta:hover { border-bottom-color: var(--color-forest); }
-.zh-jrows__cta-arrow { transition: transform var(--dur-hover) var(--ease-out-soft); }
-.zh-jrows__cta:hover .zh-jrows__cta-arrow { transform: translateX(-4px); }
-@media (prefers-reduced-motion: reduce) {
-  .zh-jrows__cta-arrow { transition: none; }
-}
+.zh-jrows__cta:hover { border-bottom-color: var(--color-gold); }
 
 @media (prefers-reduced-motion: reduce) {
   .zh-jrows__row { transform: none !important; }
