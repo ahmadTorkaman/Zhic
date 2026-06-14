@@ -76,16 +76,21 @@ body {
    section boundaries (CTAs). No transform on hover: transforms are
    avoided on blur surfaces. */
 .glass-gold {
-  background-color: var(--glass-bg-gold);
-  background-image: linear-gradient(165deg, var(--glass-sheen), rgba(255, 255, 255, 0) 45%);
+  /* Kaveh about-CTA «بیشتر درباره‌ی ما» (nodes 19:184/185): frosted gold pill —
+     gold ~82%, thin white border, dark-gold top edge, top-right corner sharp,
+     subtle upward shadow. White text is set on the Button glass-gold variant. */
+  background-color: rgba(194, 152, 107, 0.82);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 42%);
   backdrop-filter: blur(var(--glass-blur-boundary)) saturate(var(--glass-saturate-boundary));
-  border: 1px solid var(--glass-border-gold);
-  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-top: 1.5px solid #a3815d;
+  border-radius: 6.7px 0 6.7px 6.7px;
+  box-shadow: 0 -0.2px 6px 1px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: background-color var(--dur-hover) var(--ease-out-soft);
 }
 
 .glass-gold:hover {
-  background-color: var(--glass-bg-gold-hover);
+  background-color: rgba(194, 152, 107, 0.95);
 }
 
 /* ── Floating card (straddles a section boundary) ─────────────────── */

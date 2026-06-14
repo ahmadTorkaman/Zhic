@@ -33,9 +33,8 @@ const VARIANT_CLASSES: Record<Variant, string> = {
   'on-dark': 'bg-transparent border border-ivory/15 text-ivory hover:border-gold hover:text-gold focus-ring-invert',
   'on-dark-solid': 'bg-ivory text-ink hover:bg-cream hover:-translate-y-px hover:shadow-elevated focus-ring-invert',
   /* glass material lives in the .glass-gold recipe (design-system base.css);
-     ink text — the light gold glaze stays light over both halves of a
-     section boundary; no hover translate (transforms avoided on blur) */
-  'glass-gold': 'glass-gold text-ink focus-ring-invert',
+     white text per Kaveh (19:197); no hover translate (transforms avoided on blur) */
+  'glass-gold': 'glass-gold text-ivory focus-ring-invert',
   link:      'bg-transparent text-charcoal border-b border-sand pb-[2px] hover:border-charcoal rounded-none',
 };
 
