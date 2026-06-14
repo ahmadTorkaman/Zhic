@@ -42,7 +42,7 @@
   overflow: hidden;
 }
 @media (min-width: 768px) {
-  .zh-rooms__media { flex: 1 1 50%; }
+  .zh-rooms__media { flex: 1 1 36%; }
 }
 @media (max-width: 767px) {
   .zh-rooms__band :where(.zh-rooms__media) > div { border-top-right-radius: 28px !important; }
@@ -61,7 +61,7 @@
   justify-content: center;
 }
 @media (min-width: 768px) {
-  .zh-rooms__text { flex: 1 1 50%; padding-inline: var(--space-6); }
+  .zh-rooms__text { flex: 1 1 64%; padding-inline: var(--space-6); }
 }
 
 /* Eyebrow lays ON TOP of the green ribbon — the wrap is the positioning context,
@@ -74,8 +74,8 @@
   font-size: var(--home-t6);
 }
 .zh-rooms__label { position: relative; z-index: 1; font-size: 1em; font-weight: 700; color: var(--color-ink); }
-.zh-rooms__title { font-size: var(--home-t3); font-weight: 700; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-3); }
-.zh-rooms__sub { font-size: var(--home-t6); font-weight: 300; color: var(--color-stone); line-height: 1.55; max-width: 32ch; margin-bottom: var(--space-5); }
+.zh-rooms__title { font-size: calc(var(--home-t3) * 0.8); font-weight: 700; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-3); }
+.zh-rooms__sub { font-size: var(--home-t6); font-weight: 300; color: var(--color-stone); line-height: 1.55; max-width: 46ch; margin-inline: auto; margin-bottom: var(--space-5); text-align: center; }
 
 /* «مشاهده» — visual CTA inside the band-link (not a nested anchor). Forest (T5). */
 .zh-rooms__cta {

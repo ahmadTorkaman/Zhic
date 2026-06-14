@@ -80,20 +80,19 @@ export function HomeBrandStatement({
                   <RichText value={statement} />
                 </div>
               ) : (
-                /* Kaveh about story (node 19:131). One block in the comp; split
-                   into 3 staggered paragraphs here for mobile readability,
-                   words verbatim (Figma kashida elongations stripped, ZWNJ
-                   normalized per project Persian rules). The CMS `statement`
-                   should be updated to match for parity. */
+                /* Kaveh about story (node 19:131), 3 staggered paragraphs.
+                   Operator-supplied copy with intentional kashida (tatweel ـ)
+                   elongations preserved verbatim per their request. The CMS
+                   `statement` should be updated to match for parity. */
                 <div className="space-y-4 text-[0.8375rem] font-light leading-[1.85] text-sand">
                   <BlurInText as="p">
-                    شرکت هنر چوب ژیک، تولیدی سرویس خواب و وسایل اتاق خواب است. ما هر تخت، پاتختی، میز آرایش و کمد را از چوب و ام‌دی‌اف باکیفیت با روکش وکیوم می‌سازیم و بدون واسطه، مستقیم از کارخانه به دست شما می‌رسانیم.
+                    شرکت هنر چوب ژیک، تولیدی سرویس خواب و وسایــــــل اتاق خواب است. ما هر تخت، پاتختی، میز آرایش و کمد را از چـــــــــــوب و ام‌دی‌اف باکیفیت با روکش وکیوم می‌سازیم و بدون واســــــــــــــطه، مستقیم از کارخانه به دست شما می‌رسانیم.
                   </BlurInText>
                   <BlurInText as="p">
-                    باور ما این است که اتاق خواب آرام‌ترین گوشه‌ی خانه است؛ برای همین از طراحی تا تحویل، به جزئیات وفاداریم؛ تا خوابی خوب و خانه‌ای زیبا داشته باشید.
+                    باور ما این است که اتاق خواب آرام ‌تریـــــــــن گوشه‌ی خانه است؛ برای همین از طراحی تا تـــــــــحویل، به جزئیات وفاداریم؛ تا خوابی خوب و خانه‌ای زیبا داشته باشـــــید. نه بیشتر از آنچه لازم است می‌سازیم، نه کمتر از آنچه شایسته است.
                   </BlurInText>
                   <BlurInText as="p">
-                    نه بیشتر از آنچه لازم است می‌سازیم، نه کمتر از آنچه شایسته است. سرویس خواب ژیک همواره با گارانتی و ارسال به سراسر ایران عرضه می‌شود.
+                    سرویس خواب ژیک همواره با گارانتی و ارسال به سراسر ایـــــــــــــــران عرضــــــــه مــــی‌شود.
                   </BlurInText>
                 </div>
               )}

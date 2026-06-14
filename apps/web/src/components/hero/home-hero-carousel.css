@@ -24,7 +24,7 @@
   margin-bottom: var(--space-4);
   /* Forest headline (tier T1), gold comma. Constrained narrower than the CTA so
      it reads as the export's centered display (wraps ~2 lines). */
-  font-size: var(--home-t1);
+  font-size: calc(var(--home-t1) * 0.82);
   font-weight: 900;
   line-height: 1.4;
   letter-spacing: -0.02em;
@@ -32,9 +32,13 @@
   text-align: center;
   white-space: pre-line;
   text-wrap: balance;
-  max-width: 48rem;
+  max-width: 64rem;
   margin-inline: auto;
 }
+/* Each comma-clause is its own line, so the headline is capped at one row per
+   clause (2 rows for «خواب خوب، تمام ماجراست») instead of free-wrapping to 3
+   on narrow phones. */
+.zh-hhc__line { display: block; }
 .zh-hhc__comma { color: var(--color-gold); }
 
 /* Kaveh hero subtitle (node 19:257) — muted, centered, between headline + CTA. */
@@ -46,7 +50,7 @@
   color: var(--color-gray-mid);
   text-align: center;
   text-wrap: balance;
-  max-width: 36rem;
+  max-width: 52rem;
 }
 
 /* Figma export hero CTA (Rectangle 29) — a wide full-width dark bar
@@ -72,9 +76,14 @@
 }
 
 .zh-hhc__viewport {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  /* Fill the aspect-ratio media box via absolute insets, NOT height:100%.
+     Safari/iOS won't resolve a child's % height against an aspect-ratio-derived
+     parent height (treats it as indefinite), which collapsed the carousel and
+     cramped the hero on iPhone. inset:0 gives a definite box on every engine.
+     .zh-hhc__media is position:relative, so this anchors to it (and still
+     anchors the dots). */
+  position: absolute;
+  inset: 0;
   overflow: hidden;
   /* Horizontal swipes drive the carousel; vertical pans keep scrolling the page. */
   touch-action: pan-y;

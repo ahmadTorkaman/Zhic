@@ -15,8 +15,8 @@ export function StatBlock({ value, suffix, label, variant = 'gold-border' }: Sta
     return (
       <div className="stat-cell">
         {/* Prominent stat number, explicit size (not a clamp floor); one line so
-            the long count stays big. 26px mobile → 32px desktop. */}
-        <div className="text-[1.625rem] font-black leading-[var(--leading-h2)] tracking-[-0.02em] whitespace-nowrap text-ink md:text-[2rem]">
+            the long count stays on one line. 20px mobile → 24px desktop. */}
+        <div className="text-[1.25rem] font-black leading-[var(--leading-h2)] tracking-[-0.02em] whitespace-nowrap text-ink md:text-[1.5rem]">
           <CountUp value={value} suffix={suffix} />
         </div>
         {/* Kaveh (19:183): white labels — the label half sits over the dark

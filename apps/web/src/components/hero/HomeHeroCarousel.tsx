@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { BlurInText, Button } from '@zhic/ui';
 import './home-hero-carousel.css';
@@ -113,11 +113,15 @@ export function HomeHeroCarousel({
         {/* Persian commas are rendered outside BlurInText (string-only) so
             they can carry the gold accent. */}
         <h1 className="zh-hhc__heading">
+          {/* Each comma-delimited clause is its own line (block), so a two-clause
+              headline like «خواب خوب، تمام ماجراست» always renders in exactly
+              2 rows — never 3 when the floor font is too big to fit on narrow
+              phones. The gold comma stays at the end of its clause's line. */}
           {heading.split('،').map((seg, i, arr) => (
-            <Fragment key={i}>
-              <BlurInText as="span">{seg}</BlurInText>
+            <span className="zh-hhc__line" key={i}>
+              <BlurInText as="span">{seg.trim()}</BlurInText>
               {i < arr.length - 1 && <span className="zh-hhc__comma">،</span>}
-            </Fragment>
+            </span>
           ))}
         </h1>
         {subheading && (
