@@ -42,6 +42,17 @@ import { BedroomSet } from './globals/BedroomSet'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// Origins allowed to use the admin panel / authenticated API. Payload's
+// CSRF + CORS checks reject authenticated requests whose Origin isn't listed
+// (returns 403). serverURL (the storefront origin) is always allowed; the
+// review VPS additionally serves the API+admin directly on :3001, so that
+// origin must be whitelisted too. Extra origins via PAYLOAD_ADMIN_ORIGINS
+// (comma-separated).
+const adminOrigins = [
+  process.env.NEXT_PUBLIC_SERVER_URL,
+  ...(process.env.PAYLOAD_ADMIN_ORIGINS?.split(',').map((s) => s.trim()) ?? []),
+].filter(Boolean) as string[]
+
 export default buildConfig({
   admin: {
     // Pin theme to a deterministic value. Default 'all' uses Sec-CH-Prefers-Color-Scheme
@@ -141,6 +152,8 @@ export default buildConfig({
   },
 
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  cors: adminOrigins,
+  csrf: adminOrigins,
 
   sharp,
 })
