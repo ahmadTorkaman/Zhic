@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zhic — Glassmorphism card studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ivory:#FAFAF7; --cream:#F5F0EB; --sand:#E8E0D8; --stone:#8C8279;
+    --charcoal:#2C2825; --ink:#14110F; --gold:#C49A6C; --gold2:#C2986B;
+    --rust:#8B4A2B; --forest:#5F7760; --forest-dark:#2D3A2E; --forest-muted:#657767;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Vazirmatn',Tahoma,sans-serif;background:#1c211c;color:var(--ink);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1280px;margin:0 auto;padding:28px 20px 80px}
+  header{color:#f4f1ea;margin-bottom:22px}
+  h1{font-weight:700;font-size:26px;letter-spacing:-.01em;margin-bottom:6px}
+  header p{font-weight:300;color:#bcc4bb;font-size:14px;line-height:1.7}
+  .controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:18px 0 26px;padding:14px 16px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.04)}
+  .controls .grp{display:flex;align-items:center;gap:8px}
+  .controls label{color:#cdd4cc;font-size:13px;font-weight:400}
+  .seg{display:inline-flex;border:1px solid rgba(255,255,255,.16);border-radius:999px;overflow:hidden}
+  .seg button{font-family:inherit;font-size:13px;padding:7px 14px;border:0;background:transparent;color:#cdd4cc;cursor:pointer}
+  .seg button.on{background:var(--gold);color:#241a10;font-weight:700}
+  input[type=range]{accent-color:var(--gold);width:160px}
+  .val{color:#f4f1ea;font-size:13px;font-weight:700;min-width:38px}
+
+  /* ── backdrop scene ─────────────────────────────────────────── */
+  .scene{position:relative;border-radius:20px;overflow:hidden;padding:34px 28px;min-height:520px}
+  .scene.seam{background:linear-gradient(180deg,var(--ivory) 0%,var(--ivory) 46%,var(--forest-dark) 54%,var(--forest-dark) 100%)}
+  .scene.warm{background:#caa173}
+  .scene.forest{background:var(--forest-dark)}
+  .blob{position:absolute;border-radius:50%;filter:blur(8px);pointer-events:none;opacity:.9}
+  .scene.seam .blob,.scene.forest .blob{display:none}
+  .b1{width:240px;height:240px;background:var(--rust);left:-40px;top:30px}
+  .b2{width:300px;height:300px;background:var(--forest);right:-60px;top:80px;opacity:.8}
+  .b3{width:220px;height:220px;background:var(--gold);left:38%;bottom:-50px}
+  .b4{width:180px;height:180px;background:var(--cream);right:30%;top:-30px}
+  /* seam guide line */
+  .scene.seam::after{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(0,0,0,.12)}
+
+  .grid{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+
+  /* ── shared card shell ──────────────────────────────────────── */
+  .card{position:relative;border-radius:16px;padding:20px 18px 16px;overflow:hidden;
+        -webkit-backdrop-filter:blur(var(--bk,10px)) saturate(1.4);backdrop-filter:blur(var(--bk,10px)) saturate(1.4)}
+  .tag{position:absolute;top:10px;inset-inline-start:12px;font-size:11px;font-weight:700;letter-spacing:.04em;opacity:.85;text-transform:uppercase}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:20px}
+  .stat{text-align:center;padding:6px 4px}
+  .num{font-weight:900;font-size:22px;line-height:1.2}
+  .lab{font-weight:300;font-size:11px;margin-top:3px;opacity:.9}
+  .stat+.stat{border-inline-start:1px solid var(--divider,rgba(20,17,15,.1))}
+  .recipe{margin-top:16px;font-size:10.5px;line-height:1.6;font-weight:300;opacity:.72;font-family:ui-monospace,Menlo,monospace;direction:ltr;text-align:left}
+  .sheen{position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.55),rgba(255,255,255,0) 42%);pointer-events:none}
+
+  /* ── 1. Ivory frost (current build, pre-Kaveh) ──────────────── */
+  .g1{background:rgba(250,250,247,.42);border:1px solid rgba(255,255,255,.55);box-shadow:0 12px 40px rgba(20,17,15,.10),inset 0 1px 0 rgba(255,255,255,.55)}
+  .g1 .num,.g1 .tag,.g1 .recipe{color:var(--ink)} .g1 .lab{color:var(--charcoal)} .g1{--divider:rgba(20,17,15,.10)}
+
+  /* ── 2. Kaveh forest-gray (shipped) ─────────────────────────── */
+  .g2{background:rgba(92,107,92,.20);border:1px solid rgba(255,255,255,.3);box-shadow:0 12px 40px rgba(20,17,15,.12),inset 0 1px 0 rgba(255,255,255,.5)}
+  .g2 .num{color:#14110F;font-size:26px;letter-spacing:-.02em;white-space:nowrap} .g2 .lab{color:#fff} .g2 .tag,.g2 .recipe{color:#fff}
+  .g2 .stat{position:relative} .g2 .stat+.stat{border-inline-start:0}
+  .g2 .stat+.stat::before{content:'';position:absolute;inset-inline-start:0;top:50%;transform:translateY(-50%);height:62%;width:1px;background:var(--gold2)}
+
+  /* ── 3. Deep frost (heavy blur, near-white) ─────────────────── */
+  .g3{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.6);box-shadow:0 14px 44px rgba(20,17,15,.14),inset 0 1px 0 rgba(255,255,255,.7);--bk:24px}
+  .g3 .num,.g3 .tag{color:var(--ink)} .g3 .lab,.g3 .recipe{color:var(--charcoal)} .g3{--divider:rgba(255,255,255,.5)}
+
+  /* ── 4. Warm cream ──────────────────────────────────────────── */
+  .g4{background:rgba(245,240,235,.45);border:1px solid rgba(232,224,216,.7);box-shadow:0 10px 34px rgba(20,17,15,.10),inset 0 1px 0 rgba(255,255,255,.5);--bk:14px}
+  .g4 .num,.g4 .tag{color:var(--ink)} .g4 .lab,.g4 .recipe{color:var(--stone)} .g4{--divider:rgba(139,74,43,.22)}
+
+  /* ── 5. Gold tint ───────────────────────────────────────────── */
+  .g5{background:rgba(196,154,108,.22);border:1px solid rgba(196,154,108,.55);box-shadow:0 10px 34px rgba(20,17,15,.12),inset 0 1px 0 rgba(255,255,255,.45)}
+  .g5 .num,.g5 .tag{color:#5a3e1f} .g5 .lab,.g5 .recipe{color:#6e4f2c} .g5{--divider:rgba(90,62,31,.3)}
+
+  /* ── 6. Dark glass (for dark sections) ──────────────────────── */
+  .g6{background:rgba(20,17,15,.32);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 44px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.18);--bk:16px}
+  .g6 .num{color:#fff} .g6 .lab{color:#e6e1d8} .g6 .tag,.g6 .recipe{color:#cbd2c9} .g6{--divider:rgba(255,255,255,.16)}
+
+  /* ── 7. Sheen sweep (diagonal light) ────────────────────────── */
+  .g7{background:rgba(250,250,247,.30);border:1px solid rgba(255,255,255,.5);box-shadow:0 12px 40px rgba(20,17,15,.12);--bk:12px}
+  .g7 .num,.g7 .tag{color:var(--ink)} .g7 .lab,.g7 .recipe{color:var(--charcoal)} .g7{--divider:rgba(20,17,15,.1)}
+
+  /* ── 8. Clear outline (edge-lit, minimal fill) ──────────────── */
+  .g8{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.06);--bk:6px}
+  .g8 .num{color:#fff} .g8 .lab{color:#f0ece4} .g8 .tag,.g8 .recipe{color:#e3e8e2} .g8{--divider:rgba(255,255,255,.3)}
+
+  /* ── 9. Double-edge (two-tone ring) ─────────────────────────── */
+  .g9{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.65);box-shadow:0 12px 40px rgba(20,17,15,.12),inset 0 0 0 3px rgba(255,255,255,.12),inset 0 1px 0 rgba(255,255,255,.6);--bk:18px}
+  .g9 .num,.g9 .tag{color:var(--ink)} .g9 .lab,.g9 .recipe{color:var(--charcoal)} .g9{--divider:rgba(255,255,255,.45)}
+
+  /* ── 10. Forest-gray + gold top accent ──────────────────────── */
+  .g10{background:rgba(92,107,92,.22);border:1px solid rgba(255,255,255,.4);border-top:2px solid var(--gold);box-shadow:0 12px 40px rgba(20,17,15,.14),inset 0 1px 0 rgba(255,255,255,.4);border-radius:0 0 16px 16px}
+  .g10 .num{color:#fff} .g10 .lab{color:#eee9df} .g10 .tag,.g10 .recipe{color:#fff} .g10{--divider:var(--gold2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>مطالعه‌ی کارت‌های گلاسمورفیسم — ژیک</h1>
+    <p>Ten glass recipes over your real contexts. Toggle the backdrop — “seam” is where the stats card actually lives (ivory → forest). Card 1 = pre-Kaveh build · Card 2 = what’s shipped now.</p>
+  </header>
+
+  <div class="controls">
+    <div class="grp">
+      <label>پس‌زمینه</label>
+      <div class="seg" id="bgseg">
+        <button data-bg="seam" class="on">Seam (ivory→forest)</button>
+        <button data-bg="warm">Warm photo</button>
+        <button data-bg="forest">Forest dark</button>
+      </div>
+    </div>
+    <div class="grp">
+      <label>Blur</label>
+      <input type="range" id="blur" min="0" max="30" value="10" step="1" />
+      <span class="val" id="blurv">10px</span>
+    </div>
+  </div>
+
+  <div class="scene seam" id="scene">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+    <div class="grid">
+      <div class="card g1"><span class="tag">1 · ivory frost</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill ivory/42% · border #fff/55% · ink dividers</div></div>
+
+      <div class="card g2"><span class="tag">2 · forest-gray (chosen) ✓</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill rgba(92,107,92)/20% · thin border · INSET gold dividers · 26px numbers · white labels</div></div>
+
+      <div class="card g3"><span class="tag">3 · deep frost</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill #fff/16% · blur 24px · border #fff/60%</div></div>
+
+      <div class="card g4"><span class="tag">4 · warm cream</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill cream/45% · sand border · rust dividers</div></div>
+
+      <div class="card g5"><span class="tag">5 · gold tint</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill gold/22% · gold border · brown text</div></div>
+
+      <div class="card g6"><span class="tag">6 · dark glass</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill ink/32% · blur 16px · border #fff/14% · for dark sections</div></div>
+
+      <div class="card g7"><span class="tag">7 · sheen sweep</span><div class="sheen"></div><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill ivory/30% + 160° light sweep · blur 12px</div></div>
+
+      <div class="card g8"><span class="tag">8 · clear outline</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill #fff/6% · blur 6px · strong white edge + inset</div></div>
+
+      <div class="card g9"><span class="tag">9 · double-edge</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">fill #fff/18% · blur 18px · outer + inner 3px ring</div></div>
+
+      <div class="card g10"><span class="tag">10 · gold top accent</span><div class="stats"><div class="stat"><div class="num">۲۲</div><div class="lab">شعبه</div></div><div class="stat"><div class="num">۵۷۰٬۴۳۰+</div><div class="lab">قطعه تولید</div></div><div class="stat"><div class="num">۲۵+</div><div class="lab">سال تجربه</div></div></div><div class="recipe">forest-gray/22% + 2px gold top border · gold dividers</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var scene=document.getElementById('scene');
+  document.getElementById('bgseg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    [].forEach.call(this.children,function(x){x.classList.remove('on')});
+    b.classList.add('on');
+    scene.className='scene '+b.dataset.bg;
+  });
+  var blur=document.getElementById('blur'),bv=document.getElementById('blurv');
+  blur.addEventListener('input',function(){
+    var v=Math.round(blur.value); bv.textContent=v+'px';
+    document.documentElement.style.setProperty('--bk',v+'px');
+    document.querySelectorAll('.card').forEach(function(c){c.style.setProperty('--bk',v+'px')});
+  });
+</script>
+</body>
+</html>

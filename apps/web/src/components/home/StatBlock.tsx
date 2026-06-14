@@ -14,8 +14,9 @@ export function StatBlock({ value, suffix, label, variant = 'gold-border' }: Sta
   if (variant === 'divided') {
     return (
       <div className="stat-cell">
-        {/* Kaveh stat value = 23.45px (node 19:186-188); md bumps to text-h4=24px. */}
-        <div className="text-[1.466rem] font-black leading-[var(--leading-h2)] text-ink md:text-h4">
+        {/* Prominent stat number, explicit size (not a clamp floor); one line so
+            the long count stays big. 26px mobile → 32px desktop. */}
+        <div className="text-[1.625rem] font-black leading-[var(--leading-h2)] tracking-[-0.02em] whitespace-nowrap text-ink md:text-[2rem]">
           <CountUp value={value} suffix={suffix} />
         </div>
         {/* Kaveh (19:183): white labels — the label half sits over the dark
