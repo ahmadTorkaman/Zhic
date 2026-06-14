@@ -105,8 +105,9 @@ body {
   /* diagonal light sweep — the glass cue flat backgrounds can't provide */
   background-image: linear-gradient(165deg, var(--glass-sheen), rgba(255, 255, 255, 0) 45%);
   backdrop-filter: blur(var(--glass-blur-boundary)) saturate(var(--glass-saturate-boundary));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
+  /* Kaveh stat card (19:182): thin white border, 15.5px radius. */
+  border: 1px solid var(--glass-highlight);
+  border-radius: 16px;
   box-shadow: var(--shadow-elevated), inset 0 1px 0 var(--glass-highlight);
 }
 
@@ -152,7 +153,8 @@ body {
 }
 
 .stat-cell + .stat-cell {
-  border-inline-start: 1px solid var(--color-divider-ink);
+  /* Kaveh stat dividers (19:192-194) are solid gold #C2986B, not ink hairlines. */
+  border-inline-start: 1px solid var(--color-gold);
 }
 
 /* ── Site header chrome (scrolled) ────────────────────────────────── */

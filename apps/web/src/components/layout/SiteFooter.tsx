@@ -64,6 +64,7 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
         <Container>
           <div className="zh-foot__brand">
             <img src="/zhic-logo-footer.svg" alt="ژیک" className="zh-foot__logo" />
+            <p className="zh-foot__brandline">ژیک — تولیدی سرویس خواب و وسایل اتاق خواب</p>
             <div className="zh-foot__tagline">
               <span aria-hidden className="zh-foot__dash" />
               {FOOTER_TAGLINE}

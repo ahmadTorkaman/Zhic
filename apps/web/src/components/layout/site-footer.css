@@ -12,7 +12,8 @@
 .zh-foot-cta__card {
   position: relative;
   overflow: hidden;
-  border-radius: 4px 28px 4px 28px;
+  /* Kaveh consult card (19:133): uniform 25.75px radius. */
+  border-radius: 25.75px;
   background-color: var(--color-cream);
   /* Vase-and-branches lifestyle photo (fades to cream on the text side). */
   background-image: url('/footer/consult-card.webp');
@@ -36,10 +37,11 @@
   .zh-foot-cta__card::before {
     background: linear-gradient(to left, var(--color-cream) 52%, rgba(244, 236, 224, 0.82) 80%, rgba(244, 236, 224, 0.35) 100%);
   }
-  .zh-foot-cta__sub { font-size: var(--text-body); }
+  .zh-foot-cta__sub { font-size: 0.8375rem; }
   /* Phone: cover leaves the vase tiny — zoom the photo and anchor it to the
      bottom corner so it fills the card properly. */
-  .zh-foot-cta__card { background-size: auto 135%; background-position: left bottom; }
+  /* Kaveh phone card (19:133) ≈ 188px tall — tighter than the 260px desktop floor. */
+  .zh-foot-cta__card { background-size: auto 135%; background-position: left bottom; min-height: 188px; }
 }
 .zh-foot-cta__body {
   position: relative;
@@ -54,17 +56,18 @@
   gap: 0.35rem;
   text-align: start;
 }
-/* «زیبایی» forest (T1), sub forest (T5), eyebrow charcoal — reverted to forest 2026-06-13. Button stays gold. */
-.zh-foot-cta__h { margin: 0; font-size: var(--home-t1); font-weight: 900; color: var(--color-forest); }
-.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: var(--home-t5); font-weight: 700; color: var(--color-forest); }
-.zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: var(--text-small); font-weight: 500; color: var(--color-charcoal); max-width: 32ch; }
+/* Kaveh consultation CTA (nodes 19:158/148/134): all text muted-forest #657767.
+   زیبایی 34.966px, sub 13.4px, eyebrow 8.27px (eyebrow very small — flagged). Button stays gold. */
+.zh-foot-cta__h { margin: 0; font-size: clamp(2.185rem, 6vw, 3.5rem); font-weight: 900; color: var(--color-forest-muted); }
+.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: 0.8375rem; font-weight: 700; color: var(--color-forest-muted); }
+.zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: 0.517rem; font-weight: 500; color: var(--color-forest-muted); max-width: 32ch; }
 .zh-foot-cta__btn {
   align-self: stretch;
   padding: 0.9rem 2.2rem;
   background: var(--color-gold);
   color: var(--color-ivory);
   font-family: inherit;
-  font-size: var(--text-body);
+  font-size: 0.864rem;
   font-weight: 700;
   border: 0;
   border-radius: 8px;
@@ -81,11 +84,13 @@
 
 .zh-foot__brand { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); margin-bottom: var(--space-5); }
 .zh-foot__logo { height: 34px; width: auto; }
+/* Kaveh brand line under the logo (node 19:256) = 6.909px (very small — flagged). */
+.zh-foot__brandline { margin: 0; font-size: 0.432rem; font-weight: 400; color: var(--color-sand); text-align: center; }
 .zh-foot__tagline {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: var(--text-small);
+  font-size: 0.517rem;
   letter-spacing: 0.35em;
   color: var(--color-sand);
 }
@@ -102,13 +107,13 @@
   text-align: center;
 }
 .zh-foot__col + .zh-foot__col { border-inline-start: 1px solid rgba(250, 250, 247, 0.12); }
-.zh-foot__h { margin: 0 0 var(--space-3); font-size: var(--text-small); font-weight: 700; color: var(--color-gold); }
+.zh-foot__h { margin: 0 0 var(--space-3); font-size: 0.706rem; font-weight: 700; color: var(--color-gold); }
 .zh-foot__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .zh-foot__link {
   display: inline-flex;
   align-items: center;
   gap: 0.45em;
-  font-size: var(--text-small);
+  font-size: 0.517rem;
   font-weight: 300;
   color: var(--color-sand);
   text-decoration: none;
@@ -134,12 +139,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  font-size: var(--text-eyebrow);
+  font-size: 0.517rem;
   letter-spacing: 0.3em;
   color: var(--color-gold);
   margin-bottom: var(--space-2);
 }
-.zh-foot__pitch { margin: 0 0 var(--space-2); font-size: var(--text-small); font-weight: 300; }
-.zh-foot__copy { margin: 0; font-size: var(--text-eyebrow); }
-.zh-foot__copy .zh-foot__link { font-size: var(--text-eyebrow); color: rgba(250, 250, 247, 0.45); }
+.zh-foot__pitch { margin: 0 0 var(--space-2); font-size: 0.393rem; font-weight: 300; }
+.zh-foot__copy { margin: 0; font-size: 0.393rem; }
+.zh-foot__copy .zh-foot__link { font-size: 0.393rem; color: rgba(250, 250, 247, 0.45); }
 .zh-foot__sep { margin-inline: 0.5rem; }

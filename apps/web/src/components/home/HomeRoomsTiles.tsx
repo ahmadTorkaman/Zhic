@@ -44,7 +44,7 @@ export function HomeRoomsTiles({ rooms }: HomeRoomsTilesProps) {
             <div className="zh-rooms__text">
               <span className="zh-rooms__eyebrow-wrap">
                 <span className="zh-rooms__bar" aria-hidden />
-                <BlurInText as="div" className="zh-rooms__label">دسته‌ی سنی</BlurInText>
+                <BlurInText as="div" className="zh-rooms__label">{r.slug === 'teen' ? 'اتاق نوجوان' : 'دسته سنی'}</BlurInText>
               </span>
               <BlurInText as="h2" className="zh-rooms__title">{r.name}</BlurInText>
               {r.tagline && <BlurInText as="p" className="zh-rooms__sub">{r.tagline}</BlurInText>}

@@ -37,7 +37,7 @@ export function HomeJournalRows({
   eyebrow = 'ژورنال ژیک',
   heading = 'راهنمای خرید و چیدمان اتاق خواب',
   lead = 'از انتخاب سرویس خواب تا چیدمان اتاق کودک و نوجوان؛ راهنماهایی که خرید را برای شما ساده می‌کنند.',
-  ctaText = 'همه‌ی مقالات',
+  ctaText = 'همه ی مقالات',
   ctaHref = '/journal',
 }: HomeJournalRowsProps) {
   const sectionRef = useRef<HTMLElement>(null);

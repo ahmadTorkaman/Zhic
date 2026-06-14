@@ -14,12 +14,13 @@ export function StatBlock({ value, suffix, label, variant = 'gold-border' }: Sta
   if (variant === 'divided') {
     return (
       <div className="stat-cell">
-        <div className="text-lead font-black leading-[var(--leading-h2)] text-ink md:text-h4">
+        {/* Kaveh stat value = 23.45px (node 19:186-188); md bumps to text-h4=24px. */}
+        <div className="text-[1.466rem] font-black leading-[var(--leading-h2)] text-ink md:text-h4">
           <CountUp value={value} suffix={suffix} />
         </div>
-        {/* charcoal, not stone — the label half of the glass card sits
-            over the dark section and stone washes out there */}
-        <div className="mt-1 text-small font-light text-charcoal">{label}</div>
+        {/* Kaveh (19:183): white labels — the label half sits over the dark
+            green band, so they read light, not dark. */}
+        <div className="mt-1 text-small font-light text-ivory">{label}</div>
       </div>
     );
   }

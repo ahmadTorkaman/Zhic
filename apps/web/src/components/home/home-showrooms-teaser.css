@@ -8,9 +8,9 @@
 
 /* Forest eyebrow (T6), ink heading (T3) — reverted to forest 2026-06-13. */
 .zh-st__eyebrow { display: block; font-size: var(--home-t6); font-weight: 700; color: var(--color-forest); margin-bottom: var(--space-3); }
-.zh-st__title { display: block; font-size: var(--home-t3); font-weight: 900; line-height: var(--leading-h2); color: var(--color-ink); margin-bottom: var(--space-3); }
-/* Kaveh showroom lead (node 19:255) — muted gray, under the heading. */
-.zh-st__lead { display: block; font-size: var(--home-t6); font-weight: 400; line-height: 1.5; color: var(--color-gray-mid); margin-bottom: var(--space-6); max-width: 42ch; }
+.zh-st__title { display: block; font-size: var(--home-t3); font-weight: 900; line-height: var(--leading-h2); color: var(--color-gray-strong); margin-bottom: var(--space-3); }
+/* Kaveh showroom lead (node 19:255) = 9.003px, muted gray (very small — flagged). */
+.zh-st__lead { display: block; font-size: 0.563rem; font-weight: 400; line-height: 1.5; color: var(--color-gray-mid); margin-bottom: var(--space-6); max-width: 42ch; }
 
 /* Three cards per row at every width (CEO directive). */
 .zh-st__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
@@ -58,7 +58,8 @@
   text-align: center;
   padding-inline: 0.5rem;
   color: var(--color-ivory);
-  font-size: clamp(1.05rem, 1.7vw, 1.45rem);
+  /* Kaveh city label = 28.27px (node 19:218-220); scales up on wider screens. */
+  font-size: clamp(1.767rem, 7vw, 2.5rem);
   font-weight: 900;
   line-height: 1.2;
 }

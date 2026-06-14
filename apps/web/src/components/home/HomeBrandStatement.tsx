@@ -85,7 +85,7 @@ export function HomeBrandStatement({
                    words verbatim (Figma kashida elongations stripped, ZWNJ
                    normalized per project Persian rules). The CMS `statement`
                    should be updated to match for parity. */
-                <div className="space-y-4 text-[length:var(--home-t5)] font-light leading-[1.85] text-sand">
+                <div className="space-y-4 text-[0.8375rem] font-light leading-[1.85] text-sand">
                   <BlurInText as="p">
                     شرکت هنر چوب ژیک، تولیدی سرویس خواب و وسایل اتاق خواب است. ما هر تخت، پاتختی، میز آرایش و کمد را از چوب و ام‌دی‌اف باکیفیت با روکش وکیوم می‌سازیم و بدون واسطه، مستقیم از کارخانه به دست شما می‌رسانیم.
                   </BlurInText>
@@ -115,8 +115,8 @@ export function HomeBrandStatement({
             mirroring the stats card on the top edge. RTL flex-start
             aligns it with the text column's inline-start. */}
         <div className="section-overlap-center">
-          <Button as="a" href={aboutHref} variant="glass-gold" size="md">
-            بیش‌تر درباره‌ی ما
+          <Button as="a" href={aboutHref} variant="glass-gold" size="md" className="text-[1.008rem]">
+            بیشتر درباره‌ی ما
           </Button>
         </div>
       </Container>

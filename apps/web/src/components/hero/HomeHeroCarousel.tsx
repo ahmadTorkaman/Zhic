@@ -127,7 +127,7 @@ export function HomeHeroCarousel({
         )}
         <div className="zh-hhc__cta-row">
           <Button as="a" href="/bedroom-set" variant="primary" size="lg" className="zh-hhc__cta">
-            مشاهده‌ی سرویس خواب
+            مشاهده سرویس خواب
           </Button>
         </div>
       </div>

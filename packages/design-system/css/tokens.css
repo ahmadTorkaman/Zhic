@@ -9,8 +9,9 @@
   --color-ink:      #14110F;
 
   /* Accent colors */
-  --color-forest:      #5F7760;
-  --color-forest-dark: #2D3A2E;
+  --color-forest:       #5F7760;
+  --color-forest-dark:  #2D3A2E;
+  --color-forest-muted: #657767; /* Kaveh consultation-CTA text (زیبایی + sub + eyebrow) */
   --color-gold:        #C49A6C;
   --color-overlay:     rgba(20, 17, 15, 0.6);
 
@@ -116,7 +117,7 @@
      heavier on refraction (blur + saturate) so the two backgrounds read
      THROUGH the surface; rim highlight + sheen supply the glass cues that
      flat color fields can't. Dark text only — the surface stays light. */
-  --glass-bg-boundary:       rgba(250, 250, 247, 0.42);
+  --glass-bg-boundary:       rgba(92, 107, 92, 0.2); /* Kaveh stat card (node 19:182): muted forest-gray @20% */
   --glass-blur-boundary:     4px;
   --glass-saturate-boundary: 1.45;
   --glass-highlight:         rgba(255, 255, 255, 0.55); /* inset top rim */
