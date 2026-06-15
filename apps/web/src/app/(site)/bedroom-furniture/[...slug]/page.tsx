@@ -18,6 +18,7 @@ import {
   fetchAvailableMaterials,
 } from '@/lib/category-fetchers';
 import { buildCrumbs, deriveDescriptionFromIntro, countActiveFilters } from '@/lib/category-helpers';
+import { OCCUPANCIES, OCCUPANCY_FA } from '@/lib/tag/types';
 import { buildMetadata } from '@/lib/seo';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { CategoryHero } from '@/components/category/CategoryHero';
@@ -38,7 +39,10 @@ type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const FILTER_PARAM_KEYS = ['design', 'material', 'size', 'sort', 'page'] as const;
+const FILTER_PARAM_KEYS = ['design', 'material', 'size', 'sort', 'page', 'age'] as const;
+
+/** Age filter options derived from the shared OCCUPANCY_FA map — single source of truth. */
+const AGE_OPTIONS = OCCUPANCIES.map((slug) => ({ slug, name: OCCUPANCY_FA[slug] })) as readonly { slug: string; name: string }[];
 
 /**
  * Walk the category's parent chain and return the canonical slug sequence.
@@ -152,6 +156,9 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     if (sortRaw === 'name') return 'name';
     return 'newest';
   })();
+  const ageRaw = typeof sp.age === 'string' ? sp.age : undefined;
+  const age: 'baby' | 'teen' | 'double' | 'bunk' | undefined =
+    ageRaw === 'baby' || ageRaw === 'teen' || ageRaw === 'double' || ageRaw === 'bunk' ? ageRaw : undefined;
 
   // --- mode determination -----------------------------------------------------
   // Pure parent → no own products, has children. Renders child grid.
@@ -243,6 +250,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         materials: materialParam ? [materialParam] : undefined,
         sort,
         productIds: facetProductIds,
+        occupancies: age,
       }),
       fetchDesignsForCategory(leafSlug),
       parentRef
@@ -459,6 +467,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               searchParams={sp}
               availableDesigns={availableDesigns}
               availableMaterials={availableMaterials}
+              availableAges={isFacet ? undefined : AGE_OPTIONS}
             />
           </div>
         </div>
@@ -470,6 +479,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         searchParams={sp}
         availableDesigns={availableDesigns}
         availableMaterials={availableMaterials}
+        availableAges={isFacet ? undefined : AGE_OPTIONS}
       />
 
       <div className="pb-12" />

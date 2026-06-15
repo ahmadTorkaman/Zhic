@@ -50,7 +50,7 @@ export function buildCrumbs(category: PayloadCategory): Crumb[] {
   ];
 }
 
-const FILTER_KEYS = ['design', 'material', 'size'] as const;
+const FILTER_KEYS = ['design', 'material', 'size', 'age'] as const;
 const DEFAULT_SORT = 'newest';
 
 /**

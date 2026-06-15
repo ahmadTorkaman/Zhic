@@ -6,11 +6,12 @@ type Override = {
   material?: string | null;
   size?: string | null;
   sort?: string | null;
+  age?: string | null;
   page?: number | string | null;
 };
 
 const DEFAULT_SORT = 'newest';
-const FILTER_KEYS = ['design', 'material', 'size', 'sort'] as const;
+const FILTER_KEYS = ['design', 'material', 'size', 'sort', 'age'] as const;
 
 function pick(sp: SearchParams, key: string): string | undefined {
   const v = sp[key];

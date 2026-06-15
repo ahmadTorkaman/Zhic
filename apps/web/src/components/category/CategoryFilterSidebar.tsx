@@ -18,6 +18,7 @@ export type CategoryFilterSidebarProps = {
   availableDesigns: { slug: string; name: string; count: number }[];
   availableMaterials: { slug: string; name: string; count: number }[];
   availableSizes?: { value: string; label: string; count: number }[];
+  availableAges?: readonly { slug: string; name: string }[];
 };
 
 function pickStr(sp: Record<string, string | string[] | undefined>, key: string): string | undefined {
@@ -27,12 +28,13 @@ function pickStr(sp: Record<string, string | string[] | undefined>, key: string)
 
 export function CategoryFilterSidebar({
   basePath, searchParams,
-  availableDesigns, availableMaterials, availableSizes,
+  availableDesigns, availableMaterials, availableSizes, availableAges,
 }: CategoryFilterSidebarProps) {
   const activeSort = (pickStr(searchParams, 'sort') ?? 'newest') as SortKey;
   const activeDesign = pickStr(searchParams, 'design');
   const activeMaterial = pickStr(searchParams, 'material');
   const activeSize = pickStr(searchParams, 'size');
+  const activeAge = pickStr(searchParams, 'age');
 
   return (
     <aside className={styles.sidebar} aria-label="فیلتر">
@@ -107,6 +109,24 @@ export function CategoryFilterSidebar({
                   <span className={styles.check} />
                   {s.label}
                   <span className={styles.count}>{toPersianDigits(s.count)}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {availableAges && availableAges.length > 0 && (
+        <div className={styles.group}>
+          <div className={styles.label}>گروه سنی</div>
+          <div className={styles.list}>
+            {availableAges.map((a) => {
+              const isActive = activeAge === a.slug;
+              const href = buildFilterHref(basePath, searchParams, { age: isActive ? null : a.slug, page: null });
+              return (
+                <Link key={a.slug} href={href} className={`${styles.opt} ${isActive ? styles.active : ''}`} aria-current={isActive ? 'true' : undefined}>
+                  <span className={styles.check} />
+                  {a.name}
                 </Link>
               );
             })}
