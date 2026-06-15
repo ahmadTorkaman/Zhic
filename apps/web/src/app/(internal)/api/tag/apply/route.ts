@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     applied++;
     for (const c of changes.filter((x) => x.collection === collection && x.id === id)) {
       try {
-        appendAudit({ ts: new Date().toISOString(), user_id: user.id, mode: collection === 'products' ? 'product' : 'occupancy', op: `set-${c.field}`, target_id: id, collection, before: c.before, after: c.after, backup_dir: backupDir });
+        appendAudit({ ts: new Date().toISOString(), user_id: user.id, mode: collection === 'products' ? 'product' : collection === 'media' ? 'images' : 'occupancy', op: `set-${c.field}`, target_id: id, collection, before: c.before, after: c.after, backup_dir: backupDir });
       } catch (e) {
         console.error('tag-apply: audit write failed', (e as Error).message);
       }
