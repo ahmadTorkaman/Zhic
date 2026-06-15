@@ -18,10 +18,13 @@ export async function POST(req: NextRequest) {
   const changes = body?.changes ?? [];
   if (!changes.length) return NextResponse.json({ applied: 0, backupDir: '' });
 
-  // Guard: reject any change targeting a collection or field outside our managed set.
-  const VALID_COLLECTIONS = new Set(['designs', 'products', 'media']);
-  const VALID_FIELDS = new Set(['occupancies', 'occupancyMedia', 'alt', 'caption', 'decorative']);
-  if (changes.some((c) => !VALID_COLLECTIONS.has(c.collection) || !VALID_FIELDS.has(c.field))) {
+  // Guard: reject any change whose collection+field pair is outside our managed set.
+  const VALID_FIELDS_BY_COLLECTION: Record<string, Set<string>> = {
+    designs: new Set(['occupancies', 'occupancyMedia']),
+    products: new Set(['occupancies']),
+    media: new Set(['alt', 'caption', 'decorative']),
+  };
+  if (changes.some((c) => !VALID_FIELDS_BY_COLLECTION[c.collection]?.has(c.field))) {
     return NextResponse.json({ error: 'invalid-change' }, { status: 400 });
   }
 
