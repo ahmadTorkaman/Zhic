@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex"/>
+<title>مقایسه · /bedroom-set — فعلی ↔ جدید</title>
+<style>
+:root{--ink:#14110F;--ivory:#FAFAF7;--sand:#E8E0D8;--stone:#8C8279;--forest:#5F7760;--charcoal:#2C2825;}
+*{box-sizing:border-box;} html,body{margin:0;height:100%;background:var(--ink);
+  font-family:'Tahoma',sans-serif;color:var(--ivory);overflow:hidden;}
+.bar{height:46px;display:flex;align-items:center;gap:14px;padding:0 14px;background:#100e0c;border-bottom:1px solid #2a2622;}
+.bar b{font-size:13px;letter-spacing:.04em;color:#cfc8c0;font-weight:700;}
+.bar .hint{font-size:11px;color:var(--stone);margin-inline-start:auto;}
+.seg{display:flex;border:1px solid #34302b;border-radius:999px;overflow:hidden;}
+.seg button{background:transparent;color:#bdb6ae;border:0;padding:7px 16px;font-size:12px;cursor:pointer;font-family:inherit;}
+.seg button.on{background:var(--forest);color:#fff;}
+.stagewrap{position:absolute;inset:46px 0 0 0;display:flex;}
+.pane{position:relative;flex:1 1 0;min-width:0;height:100%;border-inline-start:1px solid #000;}
+.pane:first-child{border:0;}
+.pane.hidden{display:none;}
+.pane label{position:absolute;top:10px;inset-inline-start:10px;z-index:3;font-size:11px;font-weight:700;
+  letter-spacing:.08em;background:rgba(16,14,12,.78);color:#e7e1d8;padding:5px 11px;border-radius:999px;border:1px solid #34302b;}
+.pane.new label{background:rgba(95,119,96,.92);color:#fff;border-color:transparent;}
+iframe{width:100%;height:100%;border:0;display:block;background:var(--ivory);}
+.note{position:fixed;bottom:10px;inset-inline-start:10px;z-index:5;font-size:10px;color:var(--stone);}
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>مقایسه · /bedroom-set</b>
+  <div class="seg" id="seg">
+    <button data-m="split" class="on">کنار هم</button>
+    <button data-m="current">فعلی</button>
+    <button data-m="new">جدید</button>
+  </div>
+  <span class="hint">کلیدهای ۱ / ۲ / ۳ — «کنار هم» نمای موبایل را نشان می‌دهد؛ برای دسکتاپ تک‌تک ببینید</span>
+</div>
+<div class="stagewrap">
+  <div class="pane current" id="paneCur"><label>فعلی · production</label>
+    <iframe id="ifCur" title="current"></iframe></div>
+  <div class="pane new" id="paneNew"><label>جدید · mockup v2</label>
+    <iframe id="ifNew" title="new"></iframe></div>
+</div>
+<div class="note">هر دو از همین سرور بارگذاری می‌شوند · فعلی شامل هدر سایت است، ماکاپ مستقل</div>
+<script>
+const CUR='/bedroom-set', NEW='/mockups/bedroom-set-v2/index.html';
+const ifCur=document.getElementById('ifCur'), ifNew=document.getElementById('ifNew');
+const paneCur=document.getElementById('paneCur'), paneNew=document.getElementById('paneNew');
+let loaded={cur:false,nw:false};
+function ensure(){ if(!loaded.cur){ifCur.src=CUR;loaded.cur=true;} if(!loaded.nw){ifNew.src=NEW;loaded.nw=true;} }
+function setMode(m){
+  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  ensure();
+  if(m==='split'){paneCur.classList.remove('hidden');paneNew.classList.remove('hidden');}
+  else if(m==='current'){paneCur.classList.remove('hidden');paneNew.classList.add('hidden');}
+  else {paneNew.classList.remove('hidden');paneCur.classList.add('hidden');}
+}
+document.querySelectorAll('#seg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
+addEventListener('keydown',e=>{ if(e.key==='1')setMode('split'); if(e.key==='2')setMode('current'); if(e.key==='3')setMode('new'); });
+setMode('split');
+</script>
+</body>
+</html>

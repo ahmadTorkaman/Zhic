@@ -62,6 +62,8 @@
   font-size: clamp(1.767rem, 7vw, 2.5rem);
   font-weight: 900;
   line-height: 1.2;
+  /* Slight shadow backdrop so the ivory name lifts off the photo. */
+  text-shadow: 0 2px 10px rgba(20, 17, 15, 0.45);
 }
 
 /* Curtain — the hidden rows unfold (0fr → 1fr) so the bar below glides down,

@@ -22,21 +22,7 @@
   min-height: 260px;
   display: flex;
 }
-/* Cream scrim behind the text (inline-start / visual right) so it stays
-   legible over the photo on narrow screens. */
-.zh-foot-cta__card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to left, var(--color-cream) 22%, rgba(244, 236, 224, 0.55) 50%, transparent 80%);
-  pointer-events: none;
-}
 @media (max-width: 767px) {
-  /* Narrow card: text spans most of the width, so wash the whole face cream
-     (vase stays faintly visible at the far inline-end / visual left). */
-  .zh-foot-cta__card::before {
-    background: linear-gradient(to left, var(--color-cream) 52%, rgba(244, 236, 224, 0.82) 80%, rgba(244, 236, 224, 0.35) 100%);
-  }
   .zh-foot-cta__sub { font-size: 0.8375rem; }
   /* Phone: cover leaves the vase tiny — zoom the photo and anchor it to the
      bottom corner so it fills the card properly. */
@@ -53,18 +39,18 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.12rem;
   text-align: start;
 }
 /* Kaveh consultation CTA (nodes 19:158/148/134): all text muted-forest #657767.
    زیبایی 34.966px, sub 13.4px, eyebrow 8.27px (eyebrow very small — flagged). Button stays gold. */
 .zh-foot-cta__h { margin: 0; font-size: clamp(2.185rem, 6vw, 3.5rem); font-weight: 900; color: var(--color-forest-muted); }
-.zh-foot-cta__sub { margin: 0 0 var(--space-2); font-size: 0.8375rem; font-weight: 700; color: var(--color-forest-muted); }
-.zh-foot-cta__eyebrow { margin: 0 0 var(--space-3); font-size: 0.517rem; font-weight: 500; color: var(--color-forest-muted); max-width: 46ch; white-space: nowrap; }
+.zh-foot-cta__sub { margin: 0; font-size: 0.8375rem; font-weight: 700; color: var(--color-forest-muted); }
+.zh-foot-cta__eyebrow { margin: 0 0 var(--space-2); font-size: 0.517rem; font-weight: 500; color: var(--color-forest-muted); max-width: 46ch; white-space: nowrap; }
 .zh-foot-cta__btn {
   /* Kaveh button (19:135): hugs its label (~171px), right-aligned, short. NOT full-bleed. */
   align-self: flex-start;
-  padding: 0.45rem 1rem;
+  padding: 0.28rem 1rem;
   background: var(--color-gold);
   color: var(--color-ivory);
   font-family: inherit;
