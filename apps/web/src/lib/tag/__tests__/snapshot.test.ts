@@ -22,6 +22,12 @@ it('writeSnapshot writes {docs:[...]} per collection and returns the dir', async
   expect(parsed.docs[0].id).toBe(24);
 });
 
+it('listSnapshotCollections returns the collections written', async () => {
+  const { writeSnapshot, listSnapshotCollections } = await import('../snapshot');
+  const dir = writeSnapshot('20260615-1200-test', { designs: [{ id: 1 }], products: [{ id: 2 }] });
+  expect(listSnapshotCollections(dir).sort()).toEqual(['designs', 'products']);
+});
+
 it('appendAudit appends one JSONL line per call', async () => {
   const { appendAudit } = await import('../snapshot');
   appendAudit({ ts: 't1', user_id: 6, mode: 'occupancy', op: 'set-design-occupancies', target_id: 24 });

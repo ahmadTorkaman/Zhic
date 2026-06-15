@@ -23,12 +23,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid-backup-dir' }, { status: 400 });
   }
 
+  // Guard: only allow our own tag-* backup dirs (not full-catalog or other backup dirs).
+  if (!path.basename(resolved).startsWith('tag-')) {
+    return NextResponse.json({ error: 'invalid-backup-dir' }, { status: 400 });
+  }
+
   let collections: string[];
   try {
     collections = listSnapshotCollections(resolved);
   } catch (e) {
     return NextResponse.json({ error: `snapshot-read-failed: ${(e as Error).message}` }, { status: 404 });
   }
+  // Defensively filter to only the collections this tool manages.
+  collections = collections.filter((c) => c === 'designs' || c === 'products');
 
   let restored = 0;
   for (const col of collections) {
