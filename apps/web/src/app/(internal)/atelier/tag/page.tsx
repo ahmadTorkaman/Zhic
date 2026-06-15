@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation';
 import { getTagUser } from '@/lib/tag/auth';
 import { OccupancyMode } from './OccupancyMode';
+import { ProductMode } from './ProductMode';
 import './tag-panel.css';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,6 @@ export default async function TagPanelPage({ searchParams }: { searchParams: Pro
   const user = await getTagUser();
   if (!user) redirect('/atelier/tag/login');
   const { mode = 'occupancy' } = await searchParams;
-  // M1 ships occupancy only; other modes land in M2–M4.
+  if (mode === 'product') return <ProductMode />;
   return <OccupancyMode userEmail={user.email} initialMode={mode} />;
 }

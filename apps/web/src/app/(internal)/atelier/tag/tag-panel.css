@@ -20,3 +20,8 @@
 .zh-tag__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
 .zh-tag__grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; cursor: pointer; }
 .zh-tag__status { min-height: 1.4em; color: var(--color-forest); }
+.zh-tag-nav { display: flex; gap: 0.75rem; padding: 0.5rem 0; }
+.zh-tag-nav a { padding: 0.3rem 0.8rem; border-radius: 6px; text-decoration: none; color: var(--color-ink); border: 1px solid var(--color-cream); }
+.zh-tag-nav a.is-active { background: var(--color-forest); color: var(--color-ivory); border-color: var(--color-forest); }
+.zh-tag-score { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.zh-tag__actions { display: flex; gap: 0.5rem; margin: 0.75rem 0; }

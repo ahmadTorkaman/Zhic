@@ -2,6 +2,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { OCCUPANCIES, OCCUPANCY_FA, type Occupancy } from '@/lib/tag/types';
+import { ModeNav } from './ModeNav';
 import { Scoreboard } from './Scoreboard';
 
 type Candidate = { id: number; url: string; alt: string | null; filename: string };
@@ -83,10 +84,11 @@ export function OccupancyMode({ userEmail }: { userEmail: string; initialMode?: 
     return () => window.removeEventListener('keydown', onKey);
   }, [designs.length, pickerOcc, save, undo]); // toggleOcc/save close over focus via state setters
 
-  if (!cur) return <main className="zh-tag"><p>در حال بارگذاری…</p></main>;
+  if (!cur) return <main className="zh-tag"><ModeNav active="occupancy" /><p>در حال بارگذاری…</p></main>;
 
   return (
     <main className="zh-tag" data-user={userEmail}>
+      <ModeNav active="occupancy" />
       <Scoreboard complete={score.complete} total={score.total} />
       <div className="zh-tag__cols">
         <ul className="zh-tag__list">
