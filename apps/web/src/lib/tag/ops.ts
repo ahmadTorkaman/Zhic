@@ -1,5 +1,5 @@
 // apps/web/src/lib/tag/ops.ts
-import type { DesignCurrent, DesignEdit, FieldChange } from './types';
+import type { DesignCurrent, DesignEdit, FieldChange, Occupancy, ProductEdit } from './types';
 
 export type { DesignCurrent };
 
@@ -31,6 +31,14 @@ export function buildDesignDiff(current: DesignCurrent, edit: DesignEdit): Field
     changes.push({ collection: 'designs', id: edit.designId, field: 'occupancyMedia', before: curMedia, after: nextMedia });
   }
   return changes;
+}
+
+export type ProductCurrent = { productId: number; occupancies: readonly Occupancy[] };
+
+/** Build the field-level change for a product's occupancies (set-diff, order-insensitive). */
+export function buildProductDiff(current: ProductCurrent, edit: ProductEdit): FieldChange[] {
+  if (sameSet(current.occupancies, edit.occupancies)) return [];
+  return [{ collection: 'products', id: edit.productId, field: 'occupancies', before: [...current.occupancies], after: [...edit.occupancies] }];
 }
 
 /** Reverse a change list so applying it restores the prior values (for undo). */

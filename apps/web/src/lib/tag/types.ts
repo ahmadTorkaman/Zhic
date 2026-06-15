@@ -28,11 +28,22 @@ export type DesignCurrent = {
 
 /** A single field-level change for diff/snapshot/audit. */
 export type FieldChange = {
-  collection: 'designs';
+  collection: 'designs' | 'products';
   id: number;
   field: 'occupancies' | 'occupancyMedia';
   before: unknown;
   after: unknown;
+};
+
+/** The UI's intended occupancies for ONE product (product mode). */
+export type ProductEdit = { productId: number; occupancies: Occupancy[] };
+
+export type ProductState = {
+  productId: number;
+  title: string;
+  designSlug: string | null;
+  designTitle: string | null;
+  occupancies: Occupancy[];
 };
 
 export type PreviewResult = { changes: FieldChange[]; confirmToken: string };
