@@ -24,42 +24,46 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'stale-or-invalid-confirm-token' }, { status: 409 });
   }
 
-  // 1) Snapshot the CURRENT designs about to change (hard-fail aborts apply).
-  const ids = [...new Set(changes.map((c) => c.id))];
-  const label = new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14) + '-occupancy';
+  // Group changes by collection.
+  const collections = [...new Set(changes.map((c) => c.collection))] as ('designs' | 'products')[];
+
+  // 1) Snapshot the CURRENT docs about to change, per collection (hard-fail aborts apply).
+  const label = new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14) + '-tag';
   let backupDir: string;
   try {
-    const snapDocs = await Promise.all(
-      ids.map((id) => payloadGet<Record<string, unknown>>(`/api/designs/${id}?depth=0`, token)),
-    );
-    backupDir = writeSnapshot(label, { designs: snapDocs });
+    const byCollection: Record<string, unknown[]> = {};
+    for (const col of collections) {
+      const ids = [...new Set(changes.filter((c) => c.collection === col).map((c) => c.id))];
+      byCollection[col] = await Promise.all(
+        ids.map((id) => payloadGet<Record<string, unknown>>(`/api/${col}/${id}?depth=0`, token)),
+      );
+    }
+    backupDir = writeSnapshot(label, byCollection);
   } catch (e) {
     return NextResponse.json({ error: `snapshot-failed: ${(e as Error).message}` }, { status: 500 });
   }
 
-  // 2) Apply per-design (idempotent: PATCH the field to its `after` value). occupancyMedia
-  //    `after` is [{occupancy, image:<id>}] — Payload accepts the numeric id for the upload rel.
-  const byId = new Map<number, Record<string, unknown>>();
+  // 2) Apply: group changed fields by (collection,id), PATCH each doc once.
+  const byDoc = new Map<string, { collection: 'designs' | 'products'; id: number; data: Record<string, unknown> }>();
   for (const c of changes) {
-    const cur = byId.get(c.id) ?? {};
-    cur[c.field] = c.after;
-    byId.set(c.id, cur);
+    const key = `${c.collection}:${c.id}`;
+    const entry = byDoc.get(key) ?? { collection: c.collection, id: c.id, data: {} };
+    entry.data[c.field] = c.after;
+    byDoc.set(key, entry);
   }
   let applied = 0;
-  for (const [id, data] of byId) {
-    await payloadPatch('designs', id, data, token);
+  for (const { collection, id, data } of byDoc.values()) {
+    await payloadPatch(collection, id, data, token);
     applied++;
-    for (const c of changes.filter((x) => x.id === id)) {
+    for (const c of changes.filter((x) => x.collection === collection && x.id === id)) {
       try {
-        appendAudit({ ts: new Date().toISOString(), user_id: user.id, mode: 'occupancy', op: `set-${c.field}`, target_id: id, before: c.before, after: c.after, backup_dir: backupDir });
+        appendAudit({ ts: new Date().toISOString(), user_id: user.id, mode: collection === 'products' ? 'product' : 'occupancy', op: `set-${c.field}`, target_id: id, collection, before: c.before, after: c.after, backup_dir: backupDir });
       } catch (e) {
         console.error('tag-apply: audit write failed', (e as Error).message);
       }
     }
   }
 
-  // Next.js 16 requires a cache-life profile arg. This is a write path where the
-  // operator expects their edit live immediately, so expire the 'designs' tag now.
-  revalidateTag('designs', { expire: 0 });
+  for (const col of collections) revalidateTag(col, { expire: 0 });
   return NextResponse.json({ applied, backupDir });
 }
