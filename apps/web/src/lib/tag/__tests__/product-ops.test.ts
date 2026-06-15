@@ -14,15 +14,16 @@ describe('buildProductDiff', () => {
     const edit: ProductEdit = { productId: 7, occupancies: ['teen'] };
     const changes = buildProductDiff(current, edit);
     expect(changes).toHaveLength(1);
-    expect(changes[0]).toMatchObject({ collection: 'products', id: 7, field: 'occupancies' });
-    expect([...(changes[0].before as string[])].sort()).toEqual(['double', 'teen']);
-    expect(changes[0].after).toEqual(['teen']);
+    const c = changes[0]!;
+    expect(c).toMatchObject({ collection: 'products', id: 7, field: 'occupancies' });
+    expect([...(c.before as string[])].sort()).toEqual(['double', 'teen']);
+    expect(c.after).toEqual(['teen']);
   });
 
   it('emits a change to empty when all occupancies removed', () => {
     const edit: ProductEdit = { productId: 7, occupancies: [] };
     const changes = buildProductDiff(current, edit);
     expect(changes).toHaveLength(1);
-    expect(changes[0].after).toEqual([]);
+    expect(changes[0]!.after).toEqual([]);
   });
 });

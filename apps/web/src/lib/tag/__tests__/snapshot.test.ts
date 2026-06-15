@@ -28,5 +28,5 @@ it('appendAudit appends one JSONL line per call', async () => {
   appendAudit({ ts: 't2', user_id: 6, mode: 'occupancy', op: 'set-design-poster', target_id: 24 });
   const lines = fs.readFileSync(process.env.ZHIC_TAG_AUDIT!, 'utf8').trim().split('\n');
   expect(lines.length).toBe(2);
-  expect(JSON.parse(lines[0]).ts).toBe('t1');
+  expect(JSON.parse(lines[0]!).ts).toBe('t1');
 });
