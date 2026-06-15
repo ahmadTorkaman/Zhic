@@ -1,9 +1,9 @@
 // apps/web/src/app/(internal)/api/tag/preview/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getTagUser, getTagToken } from '@/lib/tag/auth';
-import { loadOccupancyState } from '@/lib/tag/state';
-import { buildDesignDiff, makeConfirmToken } from '@/lib/tag/ops';
-import type { DesignEdit, FieldChange } from '@/lib/tag/types';
+import { loadOccupancyState, loadProductState } from '@/lib/tag/state';
+import { buildDesignDiff, buildProductDiff, makeConfirmToken } from '@/lib/tag/ops';
+import type { DesignEdit, ProductEdit, FieldChange } from '@/lib/tag/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,21 +12,32 @@ export async function POST(req: NextRequest) {
   const token = await getTagToken();
   if (!user || !token) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
 
-  const body = (await req.json().catch(() => null)) as { edits?: DesignEdit[] } | null;
-  if (!body?.edits?.length) return NextResponse.json({ changes: [], confirmToken: makeConfirmToken([], 'empty') });
+  const body = (await req.json().catch(() => null)) as { mode?: 'occupancy' | 'product'; edits?: unknown[] } | null;
+  const mode = body?.mode ?? 'occupancy';
+  const edits = body?.edits ?? [];
+  if (!edits.length) return NextResponse.json({ changes: [], confirmToken: makeConfirmToken([], 'empty') });
 
-  const state = await loadOccupancyState(token);
-  const byId = new Map(state.map((d) => [d.designId, d]));
   const changes: FieldChange[] = [];
-  for (const edit of body.edits) {
-    const cur = byId.get(edit.designId);
-    if (!cur) continue;
-    changes.push(...buildDesignDiff(
-      { designId: cur.designId, occupancies: cur.occupancies, occupancyMedia: cur.posters.map((p) => ({ occupancy: p.occupancy, image: p.imageId })) },
-      edit,
-    ));
+  if (mode === 'product') {
+    const state = await loadProductState(token);
+    const byId = new Map(state.map((p) => [p.productId, p]));
+    for (const edit of edits as ProductEdit[]) {
+      const cur = byId.get(edit.productId);
+      if (!cur) continue;
+      changes.push(...buildProductDiff({ productId: cur.productId, occupancies: cur.occupancies }, edit));
+    }
+  } else {
+    const state = await loadOccupancyState(token);
+    const byId = new Map(state.map((d) => [d.designId, d]));
+    for (const edit of edits as DesignEdit[]) {
+      const cur = byId.get(edit.designId);
+      if (!cur) continue;
+      changes.push(...buildDesignDiff(
+        { designId: cur.designId, occupancies: cur.occupancies, occupancyMedia: cur.posters.map((p) => ({ occupancy: p.occupancy, image: p.imageId })) },
+        edit,
+      ));
+    }
   }
-  // Static stamp (Date.now is fine in a route handler, unlike workflow scripts).
   const stamp = new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14);
   return NextResponse.json({ changes, confirmToken: makeConfirmToken(changes, stamp) });
 }
