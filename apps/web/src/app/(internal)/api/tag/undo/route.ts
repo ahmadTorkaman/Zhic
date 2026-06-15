@@ -35,19 +35,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `snapshot-read-failed: ${(e as Error).message}` }, { status: 404 });
   }
   // Defensively filter to only the collections this tool manages.
-  collections = collections.filter((c) => c === 'designs' || c === 'products');
+  collections = collections.filter((c) => c === 'designs' || c === 'products' || c === 'media');
 
   let restored = 0;
   for (const col of collections) {
     const snap = readSnapshot(resolved, col);
     for (const doc of snap.docs) {
       const id = doc.id as number;
-      const data: Record<string, unknown> = { occupancies: doc.occupancies ?? [] };
-      if (col === 'designs') {
-        data.occupancyMedia = ((doc.occupancyMedia as { occupancy: string; image: number | { id: number } }[] | null) ?? [])
-          .map((m) => ({ occupancy: m.occupancy, image: typeof m.image === 'number' ? m.image : m.image?.id }));
+      let data: Record<string, unknown>;
+      if (col === 'media') {
+        data = { alt: (doc.alt as string | null) ?? null, caption: (doc.caption as string | null) ?? null, decorative: Boolean(doc.decorative) };
+      } else {
+        data = { occupancies: doc.occupancies ?? [] };
+        if (col === 'designs') {
+          data.occupancyMedia = ((doc.occupancyMedia as { occupancy: string; image: number | { id: number } }[] | null) ?? [])
+            .map((m) => ({ occupancy: m.occupancy, image: typeof m.image === 'number' ? m.image : m.image?.id }));
+        }
       }
-      await payloadPatch(col as 'designs' | 'products', id, data, token);
+      await payloadPatch(col as 'designs' | 'products' | 'media', id, data, token);
       restored++;
       try {
         appendAudit({ ts: new Date().toISOString(), user_id: user.id, mode: 'undo', op: 'undo', collection: col, target_id: id, backup_dir: resolved });

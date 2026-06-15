@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
   if (!changes.length) return NextResponse.json({ applied: 0, backupDir: '' });
 
   // Guard: reject any change targeting a collection or field outside our managed set.
-  const VALID_COLLECTIONS = new Set(['designs', 'products']);
-  const VALID_FIELDS = new Set(['occupancies', 'occupancyMedia']);
+  const VALID_COLLECTIONS = new Set(['designs', 'products', 'media']);
+  const VALID_FIELDS = new Set(['occupancies', 'occupancyMedia', 'alt', 'caption', 'decorative']);
   if (changes.some((c) => !VALID_COLLECTIONS.has(c.collection) || !VALID_FIELDS.has(c.field))) {
     return NextResponse.json({ error: 'invalid-change' }, { status: 400 });
   }
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 2) Apply: group changed fields by (collection,id), PATCH each doc once.
-  const byDoc = new Map<string, { collection: string; id: number; data: Record<string, unknown> }>();
+  const byDoc = new Map<string, { collection: 'designs' | 'products' | 'media'; id: number; data: Record<string, unknown> }>();
   for (const c of changes) {
     const key = `${c.collection}:${c.id}`;
     const entry = byDoc.get(key) ?? { collection: c.collection, id: c.id, data: {} as Record<string, unknown> };
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
   }
   let applied = 0;
   for (const { collection, id, data } of byDoc.values()) {
-    await payloadPatch(collection as 'designs' | 'products' | 'media', id, data, token);
+    await payloadPatch(collection, id, data, token);
     applied++;
     for (const c of changes.filter((x) => x.collection === collection && x.id === id)) {
       try {
