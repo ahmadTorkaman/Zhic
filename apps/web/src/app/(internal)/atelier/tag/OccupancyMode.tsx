@@ -18,6 +18,7 @@ export function OccupancyMode({ userEmail }: { userEmail: string; initialMode?: 
   const [focus, setFocus] = useState(0);
   const [pickerOcc, setPickerOcc] = useState<Occupancy | null>(null);
   const [status, setStatus] = useState('');
+  const [lastBackupDir, setLastBackupDir] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const res = await fetch('/api/tag/state', { cache: 'no-store' });
@@ -39,13 +40,35 @@ export function OccupancyMode({ userEmail }: { userEmail: string; initialMode?: 
   const save = useCallback(async () => {
     if (!cur) return;
     setStatus('در حال پیش‌نمایش…');
-    const pv = await fetch('/api/tag/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ edits: [{ designId: cur.designId, occupancies: cur.occupancies, posters: cur.posters.map((p) => ({ occupancy: p.occupancy, imageId: p.imageId })) }] }) }).then((r) => r.json());
-    if (!pv.changes.length) { setStatus('تغییری نیست'); return; }
-    const ap = await fetch('/api/tag/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pv) }).then((r) => r.json());
-    setStatus(ap.applied ? `ذخیره شد (نسخه‌ی پشتیبان: ${ap.backupDir.split('/').pop()})` : `خطا: ${ap.error ?? ''}`);
-    await load();
+    try {
+      const pvRes = await fetch('/api/tag/preview', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ edits: [{ designId: cur.designId, occupancies: cur.occupancies, posters: cur.posters.map((p) => ({ occupancy: p.occupancy, imageId: p.imageId })) }] }) });
+      const pv = await pvRes.json();
+      if (!pvRes.ok) { setStatus(`خطا: ${pv.error ?? pvRes.status}`); return; }
+      if (!pv.changes?.length) { setStatus('تغییری نیست'); return; }
+      const apRes = await fetch('/api/tag/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pv) });
+      const ap = await apRes.json();
+      if (apRes.ok && ap.applied) { setLastBackupDir(ap.backupDir); setStatus(`ذخیره شد (نسخه‌ی پشتیبان: ${ap.backupDir.split('/').pop()})`); }
+      else { setStatus(`خطا: ${ap.error ?? apRes.status}`); }
+      await load();
+    } catch {
+      setStatus('خطا در ذخیره‌سازی');
+    }
   }, [cur, load]);
+
+  const undo = useCallback(async () => {
+    if (!lastBackupDir) { setStatus('چیزی برای بازگردانی نیست'); return; }
+    setStatus('در حال بازگردانی…');
+    try {
+      const res = await fetch('/api/tag/undo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ backupDir: lastBackupDir }) });
+      const data = await res.json();
+      setStatus(res.ok ? `بازگردانی شد (${data.restored} طرح)` : `خطا: ${data.error ?? ''}`);
+      setLastBackupDir(null);
+      await load();
+    } catch {
+      setStatus('خطا در بازگردانی');
+    }
+  }, [lastBackupDir, load]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -54,10 +77,11 @@ export function OccupancyMode({ userEmail }: { userEmail: string; initialMode?: 
       else if (e.key === 'ArrowUp') { e.preventDefault(); setFocus((f) => Math.max(f - 1, 0)); }
       else if (['1', '2', '3', '4'].includes(e.key)) { const o = OCCUPANCIES[Number(e.key) - 1]; if (!o) return; if (e.shiftKey) setPickerOcc(o); else toggleOcc(o); }
       else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
+      else if (e.key === 'Z' || e.key === 'z') { undo(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [designs.length, pickerOcc, save]); // toggleOcc/save close over focus via state setters
+  }, [designs.length, pickerOcc, save, undo]); // toggleOcc/save close over focus via state setters
 
   if (!cur) return <main className="zh-tag"><p>در حال بارگذاری…</p></main>;
 
@@ -101,6 +125,7 @@ export function OccupancyMode({ userEmail }: { userEmail: string; initialMode?: 
             })}
           </div>
           <p className="zh-tag__status" role="status">{status}</p>
+          <button className="zh-tag__age" onClick={undo} disabled={!lastBackupDir}>بازگردانی آخرین تغییر <kbd>Z</kbd></button>
         </section>
 
         {pickerOcc ? (
