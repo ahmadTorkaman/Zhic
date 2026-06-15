@@ -66,12 +66,18 @@ indexed or cached. Persian-first RTL, Persian digits in UI, ASCII slug. URL driv
 `/atelier/tag?mode=occupancy|product|images|orphans` (default `occupancy`).
 
 **Auth gate (net-new — `apps/web` has no auth path today; `payloadFetch` is read-only/unauth/ISR-300s).**
-Three layers, default-deny:
-1. `(internal)/layout.tsx` (RSC) reads the `payload-token` cookie via `next/headers` `cookies()` and
-   calls Payload `GET /api/users/me` server-to-server (`http://127.0.0.1:3001`). No user, or role
-   not in `[admin, editor, marketing]` → redirect to `/admin` (Payload login).
-2. `middleware.ts` matcher on `/atelier/tag` + `/api/tag/*` short-circuits unauth requests cheaply.
-3. Every `/api/tag/*` handler re-verifies the forwarded token + role independently (defense in depth).
+**Cross-origin reality:** the Payload `payload-token` cookie is scoped to the `:3001` admin origin, so
+the browser will NOT send it to the panel on `:3000`. The panel therefore runs its **own login**
+against the same Payload user store: a small login form POSTs credentials to Payload
+`POST /api/users/login` **server-side** (`http://127.0.0.1:3001`), receives the JWT, and the panel sets
+it as its **own HttpOnly cookie `tag_session` on the `:3000` origin**. That token is the same JWT
+Payload accepts for authenticated REST, so it's forwarded as `Authorization: JWT <token>` on every
+write. Three layers, default-deny:
+1. `(internal)/layout.tsx` (RSC) reads the `tag_session` cookie via `next/headers` `cookies()` and
+   verifies it by calling Payload `GET /api/users/me` (`Authorization: JWT <token>`) server-to-server.
+   No/invalid token, or role not in `[admin, editor, marketing]` → redirect to the panel's `/atelier/tag/login`.
+2. `middleware.ts` matcher on `/atelier/tag` + `/api/tag/*` short-circuits requests with no `tag_session` cheaply.
+3. Every `/api/tag/*` handler re-verifies `tag_session` + role independently (defense in depth).
 
 **Data reads.** On mode entry the client calls `GET /api/tag/state` (server route under
 `apps/web/src/app/(internal)/api/tag/`) which proxies authenticated Payload reads and returns the
