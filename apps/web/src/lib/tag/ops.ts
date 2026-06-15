@@ -1,15 +1,16 @@
 // apps/web/src/lib/tag/ops.ts
-import type { DesignEdit, FieldChange, Occupancy } from './types';
+import type { DesignCurrent, DesignEdit, FieldChange } from './types';
 
-/** Current persisted shape of a design's occupancy data (image as numeric id). */
-export type DesignCurrent = {
-  designId: number;
-  occupancies: readonly Occupancy[];
-  occupancyMedia: { occupancy: Occupancy; image: number | null }[];
+export type { DesignCurrent };
+
+const sameSet = (a: readonly string[], b: readonly string[]) => {
+  const sa = [...new Set(a)].sort().join('|');
+  const sb = [...new Set(b)].sort().join('|');
+  return sa === sb;
 };
 
-const sameSet = (a: readonly string[], b: readonly string[]) =>
-  a.length === b.length && [...a].sort().join('|') === [...b].sort().join('|');
+const sortMedia = (arr: { occupancy: string; image: number | null }[]) =>
+  [...arr].sort((a, b) => a.occupancy.localeCompare(b.occupancy));
 
 /** Build field-level changes from current state -> the UI's intended edit. */
 export function buildDesignDiff(current: DesignCurrent, edit: DesignEdit): FieldChange[] {
@@ -26,7 +27,7 @@ export function buildDesignDiff(current: DesignCurrent, edit: DesignEdit): Field
     .map((p) => ({ occupancy: p.occupancy, image: p.imageId as number }));
   const curMedia = current.occupancyMedia.map((m) => ({ occupancy: m.occupancy, image: m.image }));
 
-  if (JSON.stringify(nextMedia) !== JSON.stringify(curMedia)) {
+  if (JSON.stringify(sortMedia(nextMedia)) !== JSON.stringify(sortMedia(curMedia))) {
     changes.push({ collection: 'designs', id: edit.designId, field: 'occupancyMedia', before: curMedia, after: nextMedia });
   }
   return changes;

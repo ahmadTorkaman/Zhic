@@ -19,6 +19,13 @@ export type DesignEdit = {
   posters: DesignPoster[]; // one entry per asserted occupancy
 };
 
+/** Current persisted shape of a design's occupancy data (image as numeric id). */
+export type DesignCurrent = {
+  designId: number;
+  occupancies: readonly Occupancy[];
+  occupancyMedia: { occupancy: Occupancy; image: number | null }[];
+};
+
 /** A single field-level change for diff/snapshot/audit. */
 export type FieldChange = {
   collection: 'designs';

@@ -1,6 +1,6 @@
 // apps/web/src/lib/tag/__tests__/ops.test.ts
 import { describe, it, expect } from 'vitest';
-import { buildDesignDiff, reverseChanges } from '../ops';
+import { buildDesignDiff, reverseChanges, makeConfirmToken } from '../ops';
 import type { DesignEdit } from '../types';
 
 const current = {
@@ -48,11 +48,32 @@ describe('buildDesignDiff', () => {
     const changes = buildDesignDiff(current, edit);
     expect((changes.find((c) => c.field === 'occupancyMedia')!.after as unknown[]).length).toBe(1);
   });
+
+  it('treats same occupancyMedia pairs in different order as no change', () => {
+    const edit: DesignEdit = {
+      designId: 24,
+      occupancies: ['teen', 'double'],
+      posters: [{ occupancy: 'double', imageId: 102 }, { occupancy: 'teen', imageId: 101 }],
+    };
+    expect(buildDesignDiff(current, edit)).toEqual([]);
+  });
 });
 
 describe('reverseChanges', () => {
   it('swaps before/after so applying it restores prior state', () => {
     const changes = [{ collection: 'designs' as const, id: 24, field: 'occupancies' as const, before: ['teen'], after: ['teen', 'baby'] }];
     expect(reverseChanges(changes)).toEqual([{ collection: 'designs', id: 24, field: 'occupancies', before: ['teen', 'baby'], after: ['teen'] }]);
+  });
+});
+
+describe('makeConfirmToken', () => {
+  it('identical inputs produce identical token', () => {
+    expect(makeConfirmToken([], 'ts1')).toBe(makeConfirmToken([], 'ts1'));
+  });
+
+  it('differing changes produce differing token', () => {
+    const t1 = makeConfirmToken([], 'ts1');
+    const t2 = makeConfirmToken([{ collection: 'designs', id: 1, field: 'occupancies', before: [], after: ['baby'] }], 'ts1');
+    expect(t1).not.toBe(t2);
   });
 });
