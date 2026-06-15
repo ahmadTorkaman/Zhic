@@ -26,14 +26,12 @@ export async function POST(req: NextRequest) {
 
   // 1) Snapshot the CURRENT designs about to change (hard-fail aborts apply).
   const ids = [...new Set(changes.map((c) => c.id))];
-  const snapDocs: Record<string, unknown>[] = [];
-  for (const id of ids) {
-    const doc = await payloadGet<Record<string, unknown>>(`/api/designs/${id}?depth=0`, token);
-    snapDocs.push(doc);
-  }
   const label = new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14) + '-occupancy';
   let backupDir: string;
   try {
+    const snapDocs = await Promise.all(
+      ids.map((id) => payloadGet<Record<string, unknown>>(`/api/designs/${id}?depth=0`, token)),
+    );
     backupDir = writeSnapshot(label, { designs: snapDocs });
   } catch (e) {
     return NextResponse.json({ error: `snapshot-failed: ${(e as Error).message}` }, { status: 500 });
@@ -52,7 +50,11 @@ export async function POST(req: NextRequest) {
     await payloadPatch('designs', id, data, token);
     applied++;
     for (const c of changes.filter((x) => x.id === id)) {
-      appendAudit({ ts: new Date().toISOString(), user_id: user.id, mode: 'occupancy', op: `set-${c.field}`, target_id: id, before: c.before, after: c.after, backup_dir: backupDir });
+      try {
+        appendAudit({ ts: new Date().toISOString(), user_id: user.id, mode: 'occupancy', op: `set-${c.field}`, target_id: id, before: c.before, after: c.after, backup_dir: backupDir });
+      } catch (e) {
+        console.error('tag-apply: audit write failed', (e as Error).message);
+      }
     }
   }
 
