@@ -28,11 +28,26 @@ export type DesignCurrent = {
 
 /** A single field-level change for diff/snapshot/audit. */
 export type FieldChange = {
-  collection: 'designs' | 'products';
+  collection: 'designs' | 'products' | 'media';
   id: number;
-  field: 'occupancies' | 'occupancyMedia';
+  field: 'occupancies' | 'occupancyMedia' | 'alt' | 'caption' | 'decorative';
   before: unknown;
   after: unknown;
+};
+
+/** The UI's intended per-image text fields. */
+export type MediaEdit = { mediaId: number; alt: string | null; caption: string | null; decorative: boolean };
+
+export type MediaState = {
+  id: number;
+  url: string;
+  thumbnailURL: string | null;
+  filename: string;
+  alt: string | null;
+  caption: string | null;
+  decorative: boolean;
+  inUse: boolean;
+  ctx: { pieceType: string | null; designName: string | null; productName: string | null; productSlug: string | null } | null;
 };
 
 /** The UI's intended occupancies for ONE product (product mode). */

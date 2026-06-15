@@ -1,5 +1,5 @@
 // apps/web/src/lib/tag/ops.ts
-import type { DesignCurrent, DesignEdit, FieldChange, Occupancy, ProductEdit } from './types';
+import type { DesignCurrent, DesignEdit, FieldChange, MediaEdit, Occupancy, ProductEdit } from './types';
 
 export type { DesignCurrent };
 
@@ -52,4 +52,16 @@ export function makeConfirmToken(changes: FieldChange[], stamp: string): string 
   let h = 0;
   for (let i = 0; i < body.length; i++) h = (h * 31 + body.charCodeAt(i)) | 0;
   return `${stamp}.${(h >>> 0).toString(36)}`;
+}
+
+export type MediaCurrent = { mediaId: number; alt: string | null; caption: string | null; decorative: boolean };
+
+/** Field-level diff for a media's text fields (null and '' treated equal). */
+export function buildMediaDiff(current: MediaCurrent, edit: MediaEdit): FieldChange[] {
+  const changes: FieldChange[] = [];
+  const norm = (s: string | null) => (s ?? '').trim();
+  if (norm(current.alt) !== norm(edit.alt)) changes.push({ collection: 'media', id: edit.mediaId, field: 'alt', before: current.alt ?? '', after: (edit.alt ?? '').trim() });
+  if (norm(current.caption) !== norm(edit.caption)) changes.push({ collection: 'media', id: edit.mediaId, field: 'caption', before: current.caption ?? '', after: (edit.caption ?? '').trim() });
+  if (Boolean(current.decorative) !== Boolean(edit.decorative)) changes.push({ collection: 'media', id: edit.mediaId, field: 'decorative', before: current.decorative, after: edit.decorative });
+  return changes;
 }
