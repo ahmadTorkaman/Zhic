@@ -340,6 +340,11 @@ export function DesignCarousel({
         }}
         onOpen={(o) => onOpenDesign(designs[focused]!, o)}
       />
+
+      {/* Per-design caption under the room-type tabs (CMS: design.hubIntro). */}
+      {designs[focused]?.intro ? (
+        <p className="zh-bs-intro">{designs[focused]!.intro}</p>
+      ) : null}
     </div>
   );
 }

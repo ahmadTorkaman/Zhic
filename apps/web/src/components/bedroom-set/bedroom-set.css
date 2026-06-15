@@ -246,3 +246,36 @@
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
 }
+
+/* Per-design caption under the room-type tabs on the carousel stage. */
+.zh-bs-intro {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(10px, 1.8vh, 16px);
+  transform: translateX(-50%);
+  z-index: 9;
+  max-width: min(86vw, 360px);
+  margin: 0;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 300;
+  font-size: clamp(10px, 2.8vw, 11.5px);
+  line-height: 1.6;
+  color: var(--color-charcoal);
+  pointer-events: none;
+}
+
+/* Per-page caption under the featured-overlay product grid. */
+.zh-bs-fintro {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 800px;
+  margin: clamp(14px, 2.6vh, 24px) auto 0;
+  padding-inline: clamp(18px, 5.5vw, 42px);
+  text-align: right;
+  font-family: inherit;
+  font-weight: 300;
+  font-size: clamp(13px, 3.6vw, 15px);
+  line-height: 1.85;
+  color: var(--color-charcoal);
+}

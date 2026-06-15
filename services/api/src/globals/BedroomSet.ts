@@ -21,5 +21,17 @@ export const BedroomSet: GlobalConfig = {
       label: 'متن بخش نوشتار',
       admin: { description: 'یک پاراگراف توضیحی زیر عنوان. از نیم‌فاصله (ZWNJ) استفاده کنید.' },
     },
+    {
+      name: 'featuredBestsellersIntro',
+      type: 'textarea',
+      label: 'معرفی صفحه‌ی پرفروش‌ترین‌ها',
+      admin: { description: 'متن کوتاه زیر شبکه‌ی تصاویر در صفحه‌ی «پرفروش‌ترین محصولات» اورلی ویژه. از نیم‌فاصله (ZWNJ) استفاده کنید.' },
+    },
+    {
+      name: 'featuredNewestIntro',
+      type: 'textarea',
+      label: 'معرفی صفحه‌ی جدیدترین‌ها',
+      admin: { description: 'متن کوتاه زیر شبکه‌ی تصاویر در صفحه‌ی «جدیدترین محصولات» اورلی ویژه. از نیم‌فاصله (ZWNJ) استفاده کنید.' },
+    },
   ],
 }

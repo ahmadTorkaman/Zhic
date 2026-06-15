@@ -12,22 +12,27 @@ export const metadata = {
 };
 
 export default async function BedroomSetPage() {
-  const [designs, writing] = await Promise.all([
+  const [designs, copy] = await Promise.all([
     fetchBedroomSetDesigns(),
     fetchBedroomSetCopy(),
   ]);
+
+  // Featured-overlay media stays the curated FEATURED_PAGES art (operator
+  // decision — NOT product galleries); only the per-page intro caption is
+  // CMS-driven from the bedroom-set global. Page 0 = bestsellers, page 1 =
+  // newest; fall back to each page's placeholder intro when the CMS field is empty.
+  const pages = FEATURED_PAGES.map((p, i) => {
+    const cms = i === 0 ? copy.featuredIntros.bestsellers : i === 1 ? copy.featuredIntros.newest : null;
+    return cms ? { ...p, intro: cms } : p;
+  });
 
   // Fall back to the bundled placeholder content if Payload is unreachable, so the
   // hub never renders empty.
   return (
     <BedroomSetLanding
       designs={designs.length ? designs : DESIGNS}
-      // Featured-overlay media is the curated bedroom-set-v2 mockup art
-      // (FEATURED_PAGES) by operator decision — NOT product galleries.
-      // fetchBedroomSetFeatured stays in server-data if a CMS-driven
-      // overlay is ever wanted again.
-      pages={FEATURED_PAGES}
-      writing={writing ?? WRITING}
+      pages={pages}
+      writing={copy.writing ?? WRITING}
     />
   );
 }

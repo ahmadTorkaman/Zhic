@@ -131,6 +131,8 @@ export function FeaturedOverlay({
       <RotatingHeadline title={cur.title} active={open} />
       {/* key={page} remounts the grid so the rise-in stagger replays per page */}
       <FeaturedGrid key={page} page={cur} open={open} onOpenProduct={onOpenProduct} />
+      {/* Per-page caption under the grid (CMS: bedroom-set global per-page intro). */}
+      {cur.intro ? <p className="zh-bs-fintro">{cur.intro}</p> : null}
       <div className="zh-bs-fdots" aria-hidden="true">
         {pages.map((_, i) => (
           <span key={i} className={`zh-bs-fdot${i === page ? ' on' : ''}`} />

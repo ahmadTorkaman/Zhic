@@ -25,6 +25,8 @@ export type PayloadDesign = {
   basePriceRials?: number | null;
   /** Short lead sentence shown under the design name on /bedroom-set/<slug>. */
   tagline?: string | null;
+  /** Per-design caption shown under the carousel room-type tabs on the /bedroom-set hub. */
+  hubIntro?: string | null;
   /** Hero image for /bedroom-set/<slug>. Falls back to gallery[0] if null. */
   heroMedia?: PayloadMedia | null;
   /** Long-form editorial story with embedded media blocks. */

@@ -37,6 +37,7 @@ function toCard(d: PayloadDesign): DesignCard | null {
     cardSrc,
     logoSrc: mediaUrl(d.logoMedia) ?? undefined,
     occupancies: (d.occupancies ?? []) as Occupancy[],
+    intro: d.hubIntro ?? undefined,
     cardByOccupancy: Object.keys(cardByOccupancy).length ? cardByOccupancy : undefined,
   };
 }
@@ -81,12 +82,29 @@ export async function fetchBedroomSetFeatured(): Promise<FeaturedPage[]> {
   ].filter((p): p is FeaturedPage => p !== null);
 }
 
-/** The «درباره‌ی این سرویس‌ها» writing-section copy from the bedroom-set global. */
-export async function fetchBedroomSetCopy(): Promise<WritingContent | null> {
-  const g = await payloadFetch<{ writingHeading?: string | null; writingBody?: string | null }>(
-    '/api/globals/bedroom-set?depth=0',
-    'bedroom-set',
-  );
-  if (!g || (!g.writingHeading && !g.writingBody)) return null;
-  return { heading: g.writingHeading ?? '', body: g.writingBody ?? '' };
+/** Editorial copy from the bedroom-set global: the writing section + the two
+ *  per-page featured-overlay intros (bestsellers / newest). */
+export type BedroomSetCopy = {
+  writing: WritingContent | null;
+  featuredIntros: { bestsellers: string | null; newest: string | null };
+};
+
+export async function fetchBedroomSetCopy(): Promise<BedroomSetCopy> {
+  const g = await payloadFetch<{
+    writingHeading?: string | null;
+    writingBody?: string | null;
+    featuredBestsellersIntro?: string | null;
+    featuredNewestIntro?: string | null;
+  }>('/api/globals/bedroom-set?depth=0', 'bedroom-set');
+  const writing =
+    g && (g.writingHeading || g.writingBody)
+      ? { heading: g.writingHeading ?? '', body: g.writingBody ?? '' }
+      : null;
+  return {
+    writing,
+    featuredIntros: {
+      bestsellers: g?.featuredBestsellersIntro ?? null,
+      newest: g?.featuredNewestIntro ?? null,
+    },
+  };
 }

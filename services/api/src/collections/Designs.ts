@@ -88,6 +88,14 @@ export const Designs: CollectionConfig = {
       },
     },
     {
+      name: 'hubIntro',
+      type: 'textarea',
+      label: 'معرفی در هاب سرویس خواب',
+      admin: {
+        description: 'یک جمله‌ی کوتاه مخصوص این طرح که زیر تب‌های نوع سرویس در اسلایدر هاب «سرویس خواب /bedroom-set» نمایش داده می‌شود. از نیم‌فاصله (ZWNJ) استفاده کنید.',
+      },
+    },
+    {
       name: 'heroMedia',
       type: 'upload',
       relationTo: 'media',
