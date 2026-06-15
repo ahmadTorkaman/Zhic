@@ -40,7 +40,7 @@ describe('<StatBlock>', () => {
     expect(root.className).not.toContain('stat-cell');
   });
 
-  it('variant="divided" renders a stat-cell with ink numeral and charcoal label', () => {
+  it('variant="divided" renders a stat-cell with ink numeral and ivory label', () => {
     const { container } = render(
       <StatBlock variant="divided" value={1200} suffix="+" label="قطعه مبلمان تولیدشده" />
     );
@@ -48,7 +48,9 @@ describe('<StatBlock>', () => {
     expect(root.className).toContain('stat-cell');
     expect(root.className).not.toContain('border-gold');
     expect(root.querySelector('.text-ink')).not.toBeNull();
-    expect(root.querySelector('.text-charcoal')).not.toBeNull();
+    // Divided-variant label is ivory (white over the dark-green band, Kaveh 19:183);
+    // the section's charcoal color is supplied by the parent .float-card, not StatBlock.
+    expect(root.querySelector('.text-ivory')).not.toBeNull();
     expect(root.textContent).toContain('قطعه مبلمان تولیدشده');
     // CountUp exposes the target value via aria-label even before animating
     expect(root.querySelector('[aria-label="1200+"]')).not.toBeNull();
