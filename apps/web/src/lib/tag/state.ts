@@ -1,7 +1,7 @@
 // apps/web/src/lib/tag/state.ts
 import 'server-only';
 import { payloadGet } from './payload-rest';
-import type { Occupancy } from './types';
+import type { Occupancy, ProductState } from './types';
 
 export type CandidateImage = { id: number; url: string; alt: string | null; filename: string };
 export type DesignState = {
@@ -94,6 +94,27 @@ export async function loadOccupancyState(token: string): Promise<DesignState[]> 
       occupancies: d.occupancies ?? [],
       posters,
       candidates: [...candidates.values()],
+    };
+  });
+}
+
+type PayloadProductOccRaw = {
+  id: number; name?: string | null; title?: string | null;
+  occupancies?: Occupancy[] | null;
+  design?: { slug?: string | null; name?: string | null; title?: string | null } | number | null;
+};
+
+/** Load product-mode state: every product with its occupancies + parent design label. */
+export async function loadProductState(token: string): Promise<ProductState[]> {
+  const products = await payloadGet<{ docs: PayloadProductOccRaw[] }>(`/api/products?limit=500&depth=1`, token);
+  return products.docs.map((p) => {
+    const d = p.design && typeof p.design === 'object' ? p.design : null;
+    return {
+      productId: p.id,
+      title: (p.name ?? p.title ?? `#${p.id}`) as string,
+      designSlug: d?.slug ?? null,
+      designTitle: (d?.name ?? d?.title ?? null) as string | null,
+      occupancies: p.occupancies ?? [],
     };
   });
 }
