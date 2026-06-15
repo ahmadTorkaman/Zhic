@@ -1,11 +1,11 @@
 // apps/web/src/lib/tag/__tests__/ops.test.ts
 import { describe, it, expect } from 'vitest';
 import { buildDesignDiff, reverseChanges, makeConfirmToken } from '../ops';
-import type { DesignEdit } from '../types';
+import type { DesignEdit, DesignCurrent } from '../types';
 
-const current = {
+const current: DesignCurrent = {
   designId: 24,
-  occupancies: ['teen', 'double'] as const,
+  occupancies: ['teen', 'double'],
   occupancyMedia: [
     { occupancy: 'teen', image: 101 },
     { occupancy: 'double', image: 102 },
