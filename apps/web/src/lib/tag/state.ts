@@ -1,7 +1,7 @@
 // apps/web/src/lib/tag/state.ts
 import 'server-only';
 import { payloadGet } from './payload-rest';
-import type { Occupancy, ProductState } from './types';
+import type { Occupancy, ProductState, MediaState } from './types';
 
 export type CandidateImage = { id: number; url: string; alt: string | null; filename: string };
 export type DesignState = {
@@ -117,4 +117,47 @@ export async function loadProductState(token: string): Promise<ProductState[]> {
       occupancies: p.occupancies ?? [],
     };
   });
+}
+
+type PayloadMediaRaw = { id: number; url: string; thumbnailURL?: string | null; filename: string; alt?: string | null; caption?: string | null; decorative?: boolean | null };
+
+/** Build the in-use set + per-media owner context from products/variants/designs, then page media. */
+export async function loadImagesState(
+  token: string,
+  opts: { page: number; limit: number; needsAlt: boolean },
+): Promise<{ images: MediaState[]; total: number; totalPages: number; page: number }> {
+  const [products, variants, designs] = await Promise.all([
+    payloadGet<{ docs: { id: number; name?: string | null; slug?: string | null; piece_type?: string | null; design?: { name?: string | null } | number | null; gallery?: ({ id: number } | number)[] | null }[] }>(`/api/products?limit=500&depth=1`, token),
+    payloadGet<{ docs: { id: number; image?: { id: number } | number | null }[] }>(`/api/product-variants?limit=500&depth=0`, token),
+    payloadGet<{ docs: Record<string, unknown>[] }>(`/api/designs?limit=200&depth=1`, token),
+  ]);
+
+  const inUse = new Set<number>();
+  const owner = new Map<number, MediaState['ctx']>();
+  for (const p of products.docs) {
+    const designName = p.design && typeof p.design === 'object' ? (p.design.name ?? null) : null;
+    for (const g of p.gallery ?? []) {
+      const id = idOf(g);
+      if (id == null) continue;
+      inUse.add(id);
+      if (!owner.has(id)) owner.set(id, { pieceType: p.piece_type ?? null, designName, productName: p.name ?? null, productSlug: p.slug ?? null });
+    }
+  }
+  for (const v of variants.docs) { const id = idOf(v.image ?? null); if (id != null) inUse.add(id); }
+  for (const d of designs.docs) {
+    for (const k of ['heroMedia', 'sliderMedia', 'logoMedia'] as const) { const id = idOf((d[k] as { id: number } | number | null) ?? null); if (id != null) inUse.add(id); }
+    for (const g of (d.gallery as ({ id: number } | number)[] | null) ?? []) { const id = idOf(g); if (id != null) inUse.add(id); }
+    for (const om of (d.occupancyMedia as { image?: { id: number } | number | null }[] | null) ?? []) { const id = idOf(om.image ?? null); if (id != null) inUse.add(id); }
+  }
+
+  const where = opts.needsAlt ? '&where[alt][exists]=false' : '';
+  const media = await payloadGet<{ docs: PayloadMediaRaw[]; totalDocs: number; totalPages: number }>(
+    `/api/media?limit=${opts.limit}&page=${opts.page}&depth=0${where}`, token,
+  );
+  const images: MediaState[] = media.docs.map((m) => ({
+    id: m.id, url: m.url, thumbnailURL: m.thumbnailURL ?? null, filename: m.filename,
+    alt: m.alt ?? null, caption: m.caption ?? null, decorative: !!m.decorative,
+    inUse: inUse.has(m.id), ctx: owner.get(m.id) ?? null,
+  }));
+  return { images, total: media.totalDocs, totalPages: media.totalPages, page: opts.page };
 }

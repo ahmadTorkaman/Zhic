@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Group changes by collection.
-  const collections = [...new Set(changes.map((c) => c.collection))] as ('designs' | 'products')[];
+  const collections = [...new Set(changes.map((c) => c.collection))];
 
   // 1) Snapshot the CURRENT docs about to change, per collection (hard-fail aborts apply).
   const label = new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14) + '-tag';
@@ -51,16 +51,16 @@ export async function POST(req: NextRequest) {
   }
 
   // 2) Apply: group changed fields by (collection,id), PATCH each doc once.
-  const byDoc = new Map<string, { collection: 'designs' | 'products'; id: number; data: Record<string, unknown> }>();
+  const byDoc = new Map<string, { collection: string; id: number; data: Record<string, unknown> }>();
   for (const c of changes) {
     const key = `${c.collection}:${c.id}`;
-    const entry = byDoc.get(key) ?? { collection: c.collection, id: c.id, data: {} };
-    entry.data[c.field] = c.after;
+    const entry = byDoc.get(key) ?? { collection: c.collection, id: c.id, data: {} as Record<string, unknown> };
+    (entry.data as Record<string, unknown>)[c.field] = c.after;
     byDoc.set(key, entry);
   }
   let applied = 0;
   for (const { collection, id, data } of byDoc.values()) {
-    await payloadPatch(collection, id, data, token);
+    await payloadPatch(collection as 'designs' | 'products' | 'media', id, data, token);
     applied++;
     for (const c of changes.filter((x) => x.collection === collection && x.id === id)) {
       try {

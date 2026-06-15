@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTagUser, getTagToken } from '@/lib/tag/auth';
-import { loadOccupancyState, loadProductState } from '@/lib/tag/state';
+import { loadOccupancyState, loadProductState, loadImagesState } from '@/lib/tag/state';
 import { OCCUPANCIES } from '@/lib/tag/types';
 
 export const dynamic = 'force-dynamic';
@@ -18,6 +18,14 @@ export async function GET(req: NextRequest) {
       OCCUPANCIES.map((o) => [o, products.filter((p) => p.occupancies.includes(o)).length]),
     );
     return NextResponse.json({ products, scoreboard: { productsTotal: products.length, distribution } });
+  }
+
+  if (mode === 'images') {
+    const sp = req.nextUrl.searchParams;
+    const page = Math.max(1, Number(sp.get('page')) || 1);
+    const needsAlt = sp.get('filter') === 'needs-alt';
+    const data = await loadImagesState(token, { page, limit: 50, needsAlt });
+    return NextResponse.json(data);
   }
 
   const designs = await loadOccupancyState(token);
