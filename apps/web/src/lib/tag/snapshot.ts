@@ -18,6 +18,11 @@ export function readSnapshot(dir: string, collection: string): { docs: Record<st
   return JSON.parse(fs.readFileSync(path.join(dir, `${collection}.json`), 'utf8'));
 }
 
+/** Collections present in a snapshot dir (e.g. ['designs','products']) by reading *.json filenames. */
+export function listSnapshotCollections(dir: string): string[] {
+  return fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => f.replace(/\.json$/, ''));
+}
+
 export function appendAudit(entry: Record<string, unknown>): void {
   fs.mkdirSync(path.dirname(AUDIT_PATH), { recursive: true });
   fs.appendFileSync(AUDIT_PATH, JSON.stringify(entry) + '\n', 'utf8');
