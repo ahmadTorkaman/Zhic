@@ -21,6 +21,11 @@
   --color-ink:        #14110F;
   --color-forest:     #5F7760;
   --color-forest-dark: #2D3A2E;
+  /* Bedroom-furniture room-grid green ramp (Figma 191:207) */
+  --color-sage:         #667967;
+  --color-sage-deep:    #4A5A4B;
+  --color-forest-deep:  #2E3B2F;
+  --color-forest-night: #1F2A20;
   --color-gold:       #C49A6C;
   --color-rust:       #8B4A2B;
   --color-overlay:    rgba(20, 17, 15, 0.6);
@@ -77,6 +82,8 @@
   /* Radii */
   --radius-md:   4px;
   --radius-lg:   8px;
+  --radius-card: 14px;
+  --radius-arch: 41px;
   --radius-pill: 999px;
 
   /* Shadows */

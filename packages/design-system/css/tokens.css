@@ -12,6 +12,14 @@
   --color-forest:       #5F7760;
   --color-forest-dark:  #2D3A2E;
   --color-forest-muted: #657767; /* Kaveh consultation-CTA text (زیبایی + sub + eyebrow) */
+  /* Bedroom-furniture room-grid green ramp + showcase forest (Figma 191:207).
+     A progressive darkening set used by the 4 room cards and the category
+     showcase pills/heading. forest-deep is the design's exact forest (#2E3B2F,
+     ~forest-dark) used for the showcase heading, center pill, and grid row 3. */
+  --color-sage:         #667967; /* room-grid row 1 — اتاق بزرگسال */
+  --color-sage-deep:    #4A5A4B; /* room-grid row 2 — اتاق نوجوان */
+  --color-forest-deep:  #2E3B2F; /* showcase heading/center-pill + grid row 3 (نوزاد) */
+  --color-forest-night: #1F2A20; /* room-grid row 4 — اتاق دو طبقه (darkest) */
   --color-gold:        #C49A6C;
   --color-overlay:     rgba(20, 17, 15, 0.6);
 
@@ -98,6 +106,8 @@
   /* Radii */
   --radius-md:   4px;
   --radius-lg:   8px;
+  --radius-card: 14px;  /* bedroom-furniture cards/photos (Figma 13.55px) */
+  --radius-arch: 41px;  /* bedroom-furniture showcase arch top (Figma 40.65px) */
   --radius-pill: 999px;
 
   /* Shadows */
@@ -105,6 +115,7 @@
   --shadow-card:     0 8px 32px rgba(20, 17, 15, 0.04);
   --shadow-elevated: 0 12px 40px rgba(20, 17, 15, 0.08);
   --shadow-modal:    0 24px 64px -24px rgba(20, 17, 15, 0.18);
+  --shadow-pill:     0 2.7px 1.6px 0.45px rgba(0, 0, 0, 0.35); /* bedroom-furniture label pills */
 
   /* Glass surfaces */
   --glass-bg:          rgba(250, 250, 247, 0.6);

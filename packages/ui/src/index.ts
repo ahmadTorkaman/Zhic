@@ -39,5 +39,8 @@ export { BlurInText } from './BlurInText';
 export type { BlurInTextProps } from './BlurInText';
 export { FadeUp } from './FadeUp';
 export type { FadeUpProps } from './FadeUp';
+export { GoldArrow } from './GoldArrow';
+export { DotsIndicator } from './DotsIndicator';
+export type { DotsIndicatorProps } from './DotsIndicator';
 export { computeRowOffset } from './journal-rows-math';
 export type { JournalRowInput } from './journal-rows-math';

@@ -1,0 +1,179 @@
+/* Bedroom-furniture category showcase — Figma 191:217 region.
+   Cream card: zhic wordmark divider → heading → 3-arch coverflow (center
+   featured) → dots → drag hint → gold-bordered lorem card.
+   Type/sizing in cqw against the 430 column (pixel-exact at 430). */
+
+.card {
+  position: relative;
+  z-index: 2;
+  /* Pull up to overlap the hero photo (comp: card y421 vs hero bottom y457 ≈
+     36px). translateY + matching negative margin-bottom keeps the grid tight
+     below and avoids margin-collapse through wrappers. */
+  transform: translateY(-8.4cqw);
+  margin-bottom: -8.4cqw;
+  background: #fbf3e8;
+  border-radius: var(--radius-card);
+  padding: 4.2cqw 3.7cqw 4.6cqw; /* ~18 16 20 @430 */
+  box-shadow: 0 -6px 24px rgba(20, 17, 15, 0.12); /* soft lift where it crosses the hero */
+}
+
+.heading {
+  margin: 3cqw 0 0;
+  text-align: center;
+  font-weight: 700; /* Bold */
+  font-size: 5.1cqw; /* 21.9px @430 */
+  color: var(--color-forest-deep);
+}
+
+/* Coverflow: LTR visual order; absolute slides positioned by role, animated. */
+.coverflow {
+  position: relative;
+  height: 64cqw;
+  margin-top: 4.6cqw;
+  direction: ltr;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.item {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  display: block;
+  text-decoration: none;
+  transition:
+    transform 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.42s ease;
+}
+.center {
+  width: 34cqw; /* 145px @430 */
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  cursor: pointer;
+}
+.left {
+  width: 23cqw; /* ~99px */
+  transform: translate(calc(-50% - 25cqw), -50%);
+  z-index: 1;
+  cursor: pointer;
+}
+.right {
+  width: 23cqw;
+  transform: translate(calc(-50% + 25cqw), -50%);
+  z-index: 1;
+  cursor: pointer;
+}
+.hidden {
+  width: 23cqw;
+  transform: translate(-50%, -50%) scale(0.7);
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.arch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 145 / 240; /* same ratio at every size — width drives the scale */
+  border-radius: var(--radius-arch) var(--radius-arch) 0 0;
+  overflow: hidden;
+}
+.arch img {
+  object-fit: cover;
+  transition: opacity 0.42s ease;
+}
+.left .arch img {
+  opacity: 0.7;
+}
+.right .arch img {
+  opacity: 0.6;
+}
+
+/* Label pill straddling the arch bottom edge */
+.pill {
+  position: absolute;
+  left: 50%;
+  bottom: -3.2cqw;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-pill);
+  transition: background-color 0.42s ease, padding 0.42s ease, min-width 0.42s ease;
+}
+.pillLabel {
+  color: #fff;
+  font-weight: 700; /* Bold */
+  line-height: 1;
+}
+.center .pill {
+  background: var(--color-forest-deep);
+  padding: 2cqw 4cqw;
+}
+.center .pillLabel {
+  font-size: 5.4cqw; /* 23.26px */
+}
+.left .pill,
+.right .pill {
+  min-width: 25cqw; /* wider than the ~23cqw arch, like the comp */
+  padding: 1.4cqw 2cqw;
+}
+.left .pill {
+  background: rgba(46, 59, 47, 0.7);
+}
+.right .pill {
+  background: rgba(46, 59, 47, 0.6);
+}
+.left .pillLabel,
+.right .pillLabel {
+  font-size: 4.3cqw; /* 18.5px */
+}
+
+.dots {
+  margin-top: 1cqw;
+}
+.drag {
+  margin-top: 1.8cqw;
+  text-align: center;
+  font-weight: 300; /* Light */
+  font-size: 2.57cqw; /* 11.07px */
+  color: #101010;
+}
+
+.lorem {
+  position: relative;
+  margin-top: 4.2cqw;
+  border-radius: var(--radius-card);
+  box-shadow: 0 0.9px 0.9px rgba(0, 0, 0, 0.25);
+  padding: 3.7cqw;
+}
+/* Gold border that fades to transparent toward the bottom. Drawn as a
+   gradient-filled ring (mask = border-box XOR content-box) so it keeps the
+   rounded corners that border-image would drop. */
+.lorem::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  /* Even gold→transparent fade down the card (no muddy mid-stop). */
+  background: linear-gradient(to bottom, var(--color-gold) 0%, rgba(196, 154, 108, 0) 88%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.loremText {
+  margin: 0;
+  text-align: center;
+  font-weight: 400; /* Regular */
+  font-size: 3.94cqw; /* 16.94px */
+  line-height: 1.49;
+  color: #000;
+}

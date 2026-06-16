@@ -1,0 +1,87 @@
+/* Bedroom-furniture hero — Figma 191:207 (photo 191:208 + text 191:233/235/239/237).
+   Full-bleed photo, white right-aligned overlay text, centered «مشاهده» CTA.
+   Type sized in cqw against the 430 column → pixel-exact at 430, fluid below. */
+
+.hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 430 / 334;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+}
+
+.photo {
+  object-fit: cover;
+  object-position: 58% 50%; /* approximates the comp's right-panned crop */
+}
+
+/* 73% black scrim + caramel bottom-fade (191:208 backgroundImage). */
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 67.7%, rgba(194, 152, 107, 0.72) 97.6%),
+    rgba(0, 0, 0, 0.73);
+}
+
+.content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14.4cqw 6.5cqw 0; /* top 62 / inline 28 @430 */
+  text-align: right;
+}
+
+.title {
+  margin: 0;
+  font-weight: 900; /* Ayandeh Black */
+  font-size: 9.66cqw; /* 41.55px @430 */
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 2.8cqw 0 0;
+  font-weight: 700; /* Bold */
+  font-size: 3.94cqw; /* 16.94px */
+  line-height: 1.49;
+}
+
+.tagline {
+  margin: 1.2cqw 0 0;
+  font-weight: 400; /* Regular */
+  font-size: 3.15cqw; /* 13.55px */
+  line-height: 1.49;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.cta {
+  align-self: center;
+  margin-top: 5.5cqw;
+  display: inline-flex;
+  align-items: center;
+  gap: 2.8cqw;
+  color: #fff;
+  transition: gap var(--dur-fast) var(--ease-out-soft);
+}
+.cta:hover {
+  gap: 3.6cqw;
+}
+
+.ctaLabel {
+  font-weight: 300; /* Light */
+  font-size: 3.94cqw; /* 16.94px */
+  letter-spacing: 0.14em;
+}
+
+.chev {
+  width: 4.7cqw;
+  height: auto;
+  opacity: 0.85;
+}
+.chevFlip {
+  transform: scaleX(-1);
+}

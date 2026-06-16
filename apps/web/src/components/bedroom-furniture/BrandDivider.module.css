@@ -1,0 +1,17 @@
+/* «zhic» wordmark flanked by two hairlines (Figma 191:295 / 191:246). */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.3cqw;
+}
+.rule {
+  flex: 0 0 18cqw; /* ~78px @430 */
+  height: 1px;
+  border: 0;
+  background: rgba(46, 59, 47, 0.22);
+}
+.wordmark {
+  width: 10.7cqw; /* ~46px @430 */
+  height: auto;
+}
