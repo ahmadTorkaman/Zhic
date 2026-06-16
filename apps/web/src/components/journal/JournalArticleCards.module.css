@@ -1,0 +1,67 @@
+/* Paired editorial article cards (Figma 227:605–617). Two cards; each photo
+   has a forest-tint text panel on its OUTER side (card-1 right, card-2 left). */
+.cards {
+  display: flex;
+  gap: 1.9cqw;
+}
+.card {
+  position: relative;
+  flex: 1 1 0;
+  aspect-ratio: 199 / 129;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+}
+.card img {
+  object-fit: cover;
+}
+.panel {
+  position: absolute;
+  inset-block: 0;
+  width: 47%; /* ~92px of a ~199px card, like the comp */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5cqw;
+  padding: 2cqw 2.2cqw; /* tighter — leave the title room to set in 2 lines */
+  background: rgba(46, 59, 47, 0.8);
+  text-align: right;
+}
+.right {
+  right: 0;
+}
+.left {
+  left: 0;
+}
+.cat {
+  font-weight: 400; /* Regular */
+  font-size: 2.1cqw; /* 9.03px */
+  color: rgba(255, 255, 255, 0.85);
+}
+.title {
+  margin: 0.4cqw 0;
+  font-weight: 900; /* Black */
+  font-size: 3.3cqw; /* ~14.2px — fits the kashida title in 2 lines */
+  line-height: 1.25;
+  white-space: pre-line; /* honor the explicit 2-line break from the content */
+}
+.subtitle {
+  font-weight: 400; /* Regular */
+  font-size: 2.1cqw; /* 9.03px */
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.85);
+}
+.meta {
+  margin-top: 0.8cqw;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2cqw;
+  font-weight: 400;
+  font-size: 2.1cqw; /* 9.03px */
+}
+.metaArrow {
+  width: 4.2cqw;
+  height: auto;
+  color: var(--color-gold);
+}

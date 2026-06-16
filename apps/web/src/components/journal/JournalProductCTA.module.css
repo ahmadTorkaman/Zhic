@@ -1,0 +1,44 @@
+/* Product CTA banner (Figma 227:602/610/620). Wide photo banner: heading on
+   the right, «مشاهده محصولات» pill on the left. */
+.cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  aspect-ratio: 405 / 87;
+  padding: 0 5cqw;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+}
+.photo {
+  object-fit: cover;
+}
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(20, 17, 15, 0.45) 0%, rgba(20, 17, 15, 0.15) 100%);
+}
+.title {
+  position: relative;
+  margin: 0;
+  font-weight: 700; /* Bold */
+  font-size: 4.04cqw; /* 17.39px @430 */
+  color: #fff;
+  text-align: right;
+}
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.6cqw 3.6cqw;
+  border-radius: var(--radius-pill);
+  background: var(--color-cream-warm);
+  color: var(--color-forest-deep);
+  font-weight: 400;
+  font-size: 2.5cqw; /* ~10.7px */
+  white-space: nowrap;
+}

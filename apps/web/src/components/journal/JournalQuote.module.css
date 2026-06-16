@@ -1,0 +1,45 @@
+/* Quote block (Figma 227:599–603). Cream band with a big gold quote mark on
+   the right and a plant illustration overflowing on the left. */
+.quote {
+  position: relative;
+  padding-top: 7cqw; /* room for the plant/mark overflow above the band */
+}
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20cqw; /* ~87px @430 */
+  padding: 3cqw 9cqw 3cqw 22cqw; /* extra room: mark (right) + plant (left) */
+  background: var(--color-cream-warm);
+  border-radius: 2.63cqw; /* 11.29px */
+  box-shadow: 0 0.9px 0.9px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+.text {
+  margin: 0;
+  font-weight: 900; /* Ayandeh Black */
+  font-size: 3.83cqw; /* 16.49px */
+  line-height: 1.49;
+  color: #000;
+}
+.mark {
+  position: absolute;
+  z-index: 3;
+  top: -1cqw;
+  right: 3cqw;
+  font-weight: 400; /* Ayandeh Regular */
+  font-size: 15.4cqw; /* 66.4px */
+  line-height: 1;
+  color: var(--color-gold);
+  pointer-events: none;
+}
+.plant {
+  position: absolute;
+  z-index: 2;
+  bottom: 0;
+  left: 0.5cqw;
+  width: 20cqw; /* ~86px */
+  height: auto;
+}

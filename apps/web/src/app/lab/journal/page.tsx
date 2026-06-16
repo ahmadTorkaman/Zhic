@@ -1,0 +1,75 @@
+import type { Metadata } from 'next';
+import { Breadcrumbs } from '@zhic/ui';
+import { getJournalContent } from '@/lib/journal-content';
+import { JournalIntro } from '@/components/journal/JournalIntro';
+import { JournalTabs } from '@/components/journal/JournalTabs';
+import { JournalFeaturedCard } from '@/components/journal/JournalFeaturedCard';
+import { JournalNumberedList } from '@/components/journal/JournalNumberedList';
+import { JournalSectionHeading } from '@/components/journal/JournalSectionHeading';
+import { JournalQuote } from '@/components/journal/JournalQuote';
+import { JournalArticleCards } from '@/components/journal/JournalArticleCards';
+import { JournalProductCTA } from '@/components/journal/JournalProductCTA';
+import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
+
+export const metadata: Metadata = {
+  title: 'Lab — ژورنال',
+  robots: { index: false, follow: false },
+};
+
+/**
+ * Standalone preview of the /journal index redesign (Figma 227:478), BODY only.
+ * Built incrementally — top section first. 430-column / cqw like bedroom-furniture.
+ */
+export default async function LabJournalPage() {
+  const c = await getJournalContent();
+
+  return (
+    <main className="min-h-screen bg-ivory">
+      <div className="mx-auto w-full max-w-[430px]" style={{ containerType: 'inline-size' }}>
+        <div className="px-4 pt-6">
+          <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'ژورنال' }]} />
+        </div>
+
+        <div className="mt-4 px-[13px]">
+          <JournalIntro />
+        </div>
+
+        <div className="mt-4 px-[13px]">
+          <BrandDivider />
+        </div>
+
+        <div className="mt-5 px-[12px]">
+          <JournalTabs tabs={c.tabs} activeKey={c.activeTab} />
+        </div>
+
+        <div className="mt-5 px-[12px]">
+          <JournalFeaturedCard article={c.featured} />
+        </div>
+
+        <div className="mt-3 px-[12px]">
+          <JournalNumberedList articles={c.topList} />
+        </div>
+
+        <div className="mt-6 px-[12px]">
+          <JournalSectionHeading title="فهرست کامل" />
+        </div>
+
+        <div className="mt-4 px-[12px]">
+          <JournalQuote quote={c.quote} />
+        </div>
+
+        <div className="mt-5 px-[12px]">
+          <JournalArticleCards cards={c.cards} />
+        </div>
+
+        <div className="mt-4 px-[12px]">
+          <JournalProductCTA cta={c.productCta} />
+        </div>
+
+        <div className="mt-6 px-[12px] pb-[64px]">
+          <BrandDivider />
+        </div>
+      </div>
+    </main>
+  );
+}

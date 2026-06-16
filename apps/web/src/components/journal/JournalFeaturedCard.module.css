@@ -1,0 +1,92 @@
+/* Featured article card (Figma 227:479). Photo with a leftward dark gradient;
+   white text sits on the dark (physical-left) side. */
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 405 / 228;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+}
+.photo {
+  object-fit: cover;
+  object-position: 50% 100%; /* object-bottom */
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    -90deg,
+    rgba(102, 102, 102, 0) 34.5%,
+    rgba(46, 59, 47, 0.8) 53.6%,
+    rgba(33, 33, 33, 0.97) 100%
+  );
+}
+.content {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0; /* physical-left in RTL — the dark side */
+  width: 58%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 5cqw;
+  text-align: right;
+}
+.tag {
+  font-weight: 400;
+  font-size: 2.1cqw; /* 9.03px */
+}
+.title {
+  margin: 1.2cqw 0 0;
+  font-weight: 700; /* Bold */
+  font-size: 3.57cqw; /* 15.36px */
+  line-height: 1.4;
+}
+.excerpt {
+  margin: 1.4cqw 0 0;
+  font-weight: 400;
+  font-size: 2.1cqw; /* 9.03px */
+  line-height: 1.49;
+  color: rgba(255, 255, 255, 0.9);
+}
+.meta {
+  margin-top: 2.4cqw;
+  display: flex;
+  align-items: center;
+  gap: 1.6cqw;
+  font-size: 1.84cqw; /* 7.9px */
+}
+.metaNum {
+  font-weight: 700;
+}
+.sep {
+  width: 1px;
+  height: 2.6cqw;
+  background: rgba(255, 255, 255, 0.5);
+}
+.cal {
+  width: 2.4cqw;
+  height: auto;
+  color: var(--color-gold);
+}
+.read {
+  margin-top: 1.8cqw;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4cqw;
+  font-weight: 300;
+  font-size: 1.84cqw; /* 7.9px */
+  transition: gap var(--dur-fast) var(--ease-out-soft);
+}
+.card:hover .read {
+  gap: 2.2cqw;
+}
+.readArrow {
+  width: 5.8cqw;
+  height: auto;
+  color: var(--color-gold);
+}

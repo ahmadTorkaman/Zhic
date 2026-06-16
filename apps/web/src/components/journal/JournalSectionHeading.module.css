@@ -1,0 +1,18 @@
+/* Section heading with the notched forest underline (Figma 227:623 + 227:622). */
+.wrap {
+  text-align: center;
+}
+.title {
+  margin: 0;
+  font-weight: 700; /* Ayandeh Bold */
+  font-size: 4.73cqw; /* 20.33px @430 */
+  color: #000;
+  text-align: center;
+}
+.line {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 0.6cqw;
+  color: var(--color-forest);
+}

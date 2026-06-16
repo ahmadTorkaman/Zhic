@@ -1,0 +1,16 @@
+/* Journal intro headline (Figma 227:497) — forest-green key nouns at 16.94px
+   interleaved with gold connector words at 13.55px, centered, Ayandeh Bold. */
+.intro {
+  margin: 0;
+  text-align: center;
+  font-weight: 700; /* Bold */
+  line-height: 1.49;
+}
+.big {
+  font-size: 3.94cqw; /* 16.94px @430 */
+  color: var(--color-forest);
+}
+.small {
+  font-size: 3.15cqw; /* 13.55px @430 */
+  color: var(--color-gold);
+}

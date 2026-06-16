@@ -1,0 +1,44 @@
+/* Journal category filter pills (Figma Frame 227:498). RTL: «همه» first/right
+   (active), «اتاق کودک» last/left. Outer corners get the larger radius. */
+.tabs {
+  display: flex;
+  gap: 1.94cqw; /* 8.36px @430 */
+  align-items: center;
+  justify-content: center;
+}
+.tab {
+  flex: 0 0 auto;
+  min-width: 16cqw; /* ~70px */
+  height: 5.72cqw; /* 24.6px */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.2cqw;
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  border-radius: 0.58cqw; /* 2.48px */
+  font-weight: 300; /* Ayandeh Light */
+  font-size: 2.63cqw; /* 11.29px */
+  color: #222;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out-soft), color var(--dur-fast) var(--ease-out-soft);
+}
+.tab:hover {
+  background: rgba(59, 74, 56, 0.08);
+}
+.active {
+  background: #3b4a38;
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0.68px 2.46px 0.9px rgba(0, 0, 0, 0.62);
+}
+.active:hover {
+  background: #3b4a38;
+}
+/* Outer rounded corners of the pill row (first = right in RTL). */
+.tabs > .tab:first-child {
+  border-top-right-radius: 2.73cqw; /* 11.74px */
+}
+.tabs > .tab:last-child {
+  border-bottom-left-radius: 2.73cqw;
+}

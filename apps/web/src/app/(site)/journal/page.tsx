@@ -1,64 +1,68 @@
-import { Container, Breadcrumbs, Pagination } from '@zhic/ui';
-import { PageHeader } from '@/components/hero/PageHeader';
-import { JournalFeaturedArticle } from '@/components/journal/JournalFeaturedArticle';
-import { JournalCategoryNav } from '@/components/journal/JournalCategoryNav';
-import { JournalGrid } from '@/components/journal/JournalGrid';
-import { fetchArticles, fetchJournalCategories } from '@/lib/payload';
+import type { Metadata } from 'next';
+import { Breadcrumbs } from '@zhic/ui';
+import { getJournalContent } from '@/lib/journal-content';
+import { JournalIntro } from '@/components/journal/JournalIntro';
+import { JournalTabs } from '@/components/journal/JournalTabs';
+import { JournalFeaturedCard } from '@/components/journal/JournalFeaturedCard';
+import { JournalNumberedList } from '@/components/journal/JournalNumberedList';
+import { JournalSectionHeading } from '@/components/journal/JournalSectionHeading';
+import { JournalQuote } from '@/components/journal/JournalQuote';
+import { JournalArticleCards } from '@/components/journal/JournalArticleCards';
+import { JournalProductCTA } from '@/components/journal/JournalProductCTA';
+import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
 
-type PageProps = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+export const metadata: Metadata = {
+  title: 'ژورنال',
+  description: 'ایده‌ها، راهنماها و ترندهای دکوراسیون برای خانه‌ای که دوستش دارید.',
+  alternates: { canonical: '/journal' },
+};
 
-export default async function JournalIndexPage({ searchParams }: PageProps) {
-  const sp = await searchParams;
-  const page = Number(sp.page) > 0 ? Number(sp.page) : 1;
-  const [articlesPage, categories] = await Promise.all([
-    fetchArticles({ page }),
-    fetchJournalCategories(),
-  ]);
-
-  // Featured = first article on page 1; grid = rest on page 1, or all on subsequent pages.
-  const showFeatured = page === 1 && articlesPage.docs.length > 0;
-  const featured = showFeatured ? articlesPage.docs[0] : null;
-  const gridArticles = showFeatured ? articlesPage.docs.slice(1) : articlesPage.docs;
-
-  const hrefForPage = (n: number) => (n <= 1 ? '/journal' : `/journal?page=${n}`);
+/**
+ * /journal index — rebuilt from Figma frame 227:478 ("/journals"). See
+ * docs/superpowers/figma-kaveh/journal-rebuild-spec-430.md. Body in a
+ * 430-standard column; global SiteHeader/Footer + consultation CTA wrap it via
+ * (site)/layout.tsx. Content is seeded (lib/journal-content) and swaps to
+ * Payload (fetchArticles/fetchJournalCategories) later without touching this.
+ */
+export default async function JournalIndexPage() {
+  const c = await getJournalContent();
 
   return (
-    <>
-      <Container>
-        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
-          <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'ژورنال' }]} />
-        </div>
-      </Container>
+    <div className="mx-auto w-full max-w-[430px]" style={{ containerType: 'inline-size' }}>
+      <div className="px-4 pt-[calc(var(--header-height)+var(--space-5))]">
+        <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'ژورنال' }]} />
+      </div>
 
-      <PageHeader
-        title="ژورنال"
-        subtitle="یادداشت‌ها، مصاحبه‌ها، و داستان‌های پشت ساخت هر قطعه — از کارگاه ما در همدان."
-      />
-
-      <Container>
-        {categories.length > 0 ? (
-          <JournalCategoryNav categories={categories} activeSlug={null} />
-        ) : null}
-
-        {featured ? (
-          <>
-            <JournalFeaturedArticle article={featured} />
-            <div aria-hidden className="mb-[var(--space-7)] mt-[var(--space-7)] h-px bg-sand" />
-          </>
-        ) : null}
-
-        <JournalGrid articles={gridArticles} />
-
-        <Pagination
-          currentPage={articlesPage.page}
-          totalPages={articlesPage.totalPages}
-          hrefFor={hrefForPage}
-        />
-      </Container>
-
-      <div className="pb-12" />
-    </>
+      <div className="mt-4 px-[13px]">
+        <JournalIntro />
+      </div>
+      <div className="mt-4 px-[13px]">
+        <BrandDivider />
+      </div>
+      <div className="mt-5 px-[12px]">
+        <JournalTabs tabs={c.tabs} activeKey={c.activeTab} />
+      </div>
+      <div className="mt-5 px-[12px]">
+        <JournalFeaturedCard article={c.featured} />
+      </div>
+      <div className="mt-3 px-[12px]">
+        <JournalNumberedList articles={c.topList} />
+      </div>
+      <div className="mt-6 px-[12px]">
+        <JournalSectionHeading title="فهرست کامل" />
+      </div>
+      <div className="mt-4 px-[12px]">
+        <JournalQuote quote={c.quote} />
+      </div>
+      <div className="mt-5 px-[12px]">
+        <JournalArticleCards cards={c.cards} />
+      </div>
+      <div className="mt-4 px-[12px]">
+        <JournalProductCTA cta={c.productCta} />
+      </div>
+      <div className="mt-6 px-[12px] pb-[40px]">
+        <BrandDivider />
+      </div>
+    </div>
   );
 }
-
-export function generateMetadata() { return { title: 'ژورنال' }; }

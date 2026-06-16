@@ -21,6 +21,7 @@
   --color-forest-deep:  #2E3B2F; /* showcase heading/center-pill + grid row 3 (نوزاد) */
   --color-forest-night: #1F2A20; /* room-grid row 4 — اتاق دو طبقه (darkest) */
   --color-gold:        #C49A6C;
+  --color-cream-warm:  #F3EAE0; /* journal quote-block card surface (Figma 227:599) */
   --color-overlay:     rgba(20, 17, 15, 0.6);
 
   /* Functional (app infra) */
