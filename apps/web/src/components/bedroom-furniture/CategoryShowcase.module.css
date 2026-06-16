@@ -13,7 +13,7 @@
   margin-bottom: -8.4cqw;
   background: #fbf3e8;
   border-radius: var(--radius-card);
-  padding: 4.2cqw 3.7cqw 4.6cqw; /* ~18 16 20 @430 */
+  padding: 4.2cqw 3.7cqw 1.6cqw; /* lorem card sits near the bottom edge (comp: flush) */
   box-shadow: 0 -6px 24px rgba(20, 17, 15, 0.12); /* soft lift where it crosses the hero */
 }
 
@@ -147,20 +147,23 @@
   position: relative;
   margin-top: 4.2cqw;
   border-radius: var(--radius-card);
-  box-shadow: 0 0.9px 0.9px rgba(0, 0, 0, 0.25);
-  padding: 3.7cqw;
+  padding: 3.7cqw 3.7cqw 1.6cqw; /* tighter bottom — no dead strip under the last line */
 }
-/* Gold border that fades to transparent toward the bottom. Drawn as a
-   gradient-filled ring (mask = border-box XOR content-box) so it keeps the
-   rounded corners that border-image would drop. */
+.loremText:last-child {
+  /* trim the last line's bottom half-leading so the text hugs the lower edge */
+  margin-bottom: -0.4cqw;
+}
+/* Writing border, matched to the bedroom-set writing panel (.zh-bs-wpanel):
+   a gradient-filled ring (mask = border-box XOR content-box, keeps the rounded
+   corners) that's solid for the top 22% then fades to transparent by 92% —
+   same profile as zh-bs-wpanel, kept in this card's gold. */
 .lorem::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1.4px;
-  /* Even gold→transparent fade down the card (no muddy mid-stop). */
-  background: linear-gradient(to bottom, var(--color-gold) 0%, rgba(196, 154, 108, 0) 88%);
+  padding: 1.5px;
+  background: linear-gradient(to bottom, var(--color-gold), var(--color-gold) 22%, transparent 92%);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
