@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import styles from './BedroomHero.module.css';
 
-/** Small flanking chevron for the «مشاهده» CTA (comp vectors 191:240–243). */
+/** Small downward chevron flanking the «مشاهده» CTA (comp vectors 191:240–243). */
 function Chevron({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 8 14" fill="none" aria-hidden="true" className={className}>
-      <path d="M6.5 1L1.5 7l5 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 14 8" fill="none" aria-hidden="true" className={className}>
+      <path d="M1 1.5L7 6.5L13 1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -40,7 +40,7 @@ export function BedroomHero() {
         <a href="#bf-categories" className={styles.cta}>
           <Chevron className={styles.chev} />
           <span className={styles.ctaLabel}>مشاهده</span>
-          <Chevron className={`${styles.chev} ${styles.chevFlip}`} />
+          <Chevron className={styles.chev} />
         </a>
       </div>
     </section>

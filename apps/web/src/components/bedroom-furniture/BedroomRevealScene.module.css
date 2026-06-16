@@ -1,0 +1,31 @@
+/* Scroll reveal: the hero pins while the showcase card rises over it and
+   widens to full-bleed; then the pin releases and the page continues.
+
+   The pin is BOUNDED — the hero is sticky inside `.heroScene`, whose height is
+   2× the hero's own height (the hero + an equal pin distance). So the hero
+   stays put only for as long as it takes the card to rise up and cover it;
+   the moment the card is fully over the hero, the pin range is exhausted and
+   the hero scrolls away locked behind the card. That's what stops the hero
+   from peeking out below the card's bottom edge as the page continues. */
+.scene {
+  position: relative;
+}
+.heroScene {
+  position: relative;
+  /* hero is 430/334; doubling the height (430/668) reserves an equal pin
+     distance below it, all proportional to the column width. */
+  aspect-ratio: 430 / 668;
+}
+.heroPin {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.showcase {
+  position: relative;
+  z-index: 2;
+  /* pull the card up over the hero by exactly one hero height (334/430 of the
+     column width — percentage margins resolve against the container width), so
+     the card's rest position overlaps the hero bottom just like before. */
+  margin-top: -77.67%;
+}

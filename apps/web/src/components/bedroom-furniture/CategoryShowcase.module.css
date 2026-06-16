@@ -11,9 +11,13 @@
      below and avoids margin-collapse through wrappers. */
   transform: translateY(-8.4cqw);
   margin-bottom: -8.4cqw;
+  /* reveal: extend the frame to full-bleed via negative margin, and add the
+     same amount as inner padding so the content width (and text wrap) is fixed */
+  margin-inline: calc(-1 * var(--bf-spread, 0px));
   background: #fbf3e8;
-  border-radius: var(--radius-card);
-  padding: 4.2cqw 3.7cqw 1.6cqw; /* lorem card sits near the bottom edge (comp: flush) */
+  /* radius is scene-controllable so the reveal can flatten it to full-bleed */
+  border-radius: var(--bf-card-radius, var(--radius-card));
+  padding: 4.2cqw calc(3.7cqw + var(--bf-spread, 0px)) 1.6cqw; /* lorem near the bottom edge (comp: flush) */
   box-shadow: 0 -6px 24px rgba(20, 17, 15, 0.12); /* soft lift where it crosses the hero */
 }
 

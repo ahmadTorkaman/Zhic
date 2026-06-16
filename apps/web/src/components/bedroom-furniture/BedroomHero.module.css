@@ -78,10 +78,7 @@
 }
 
 .chev {
-  width: 4.7cqw;
+  width: 3cqw;
   height: auto;
   opacity: 0.85;
-}
-.chevFlip {
-  transform: scaleX(-1);
 }
