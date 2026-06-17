@@ -18,6 +18,7 @@ import * as migration_20260605_120000_add_home_about_media from './20260605_1200
 import * as migration_20260606_120000_add_bedroom_set_fields from './20260606_120000_add_bedroom_set_fields';
 import * as migration_20260615_120000_add_bedroom_set_intros from './20260615_120000_add_bedroom_set_intros';
 import * as migration_20260617_120000_add_design_detail_fields from './20260617_120000_add_design_detail_fields';
+import * as migration_20260618_120000_create_journal_global from './20260618_120000_create_journal_global';
 
 export const migrations = [
   {
@@ -119,5 +120,10 @@ export const migrations = [
     up: migration_20260617_120000_add_design_detail_fields.up,
     down: migration_20260617_120000_add_design_detail_fields.down,
     name: '20260617_120000_add_design_detail_fields'
+  },
+  {
+    up: migration_20260618_120000_create_journal_global.up,
+    down: migration_20260618_120000_create_journal_global.down,
+    name: '20260618_120000_create_journal_global'
   },
 ];
