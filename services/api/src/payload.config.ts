@@ -38,6 +38,7 @@ import { Shipping } from './globals/Shipping'
 import { SiteConfig } from './globals/SiteConfig'
 import { Terms } from './globals/Terms'
 import { BedroomSet } from './globals/BedroomSet'
+import { Journal } from './globals/Journal'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -104,6 +105,7 @@ export default buildConfig({
     SiteConfig,
     Terms,
     BedroomSet,
+    Journal,
   ],
 
   editor: lexicalEditor(),
