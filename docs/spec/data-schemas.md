@@ -479,6 +479,36 @@ Reusable material descriptors.
 | `careNotes` (L) | richText | |
 | `relatedArticleIds` | relation[] → `content.articles` | |
 
+### `designs` (§14)
+
+Bedroom-set series. Drives `/bedroom-set/<slug>` hubs and `/bedroom-set/[age]/[design]` detail pages.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `name` (L) | text (req) | نام طرح |
+| `slug` | text (unique) | auto-slugified from name |
+| `age_group` | select | infant / child / teen / adult (pending OD-3) |
+| `occupancies` | select[] | baby / teen / double / bunk — which hub pages list the design |
+| `description` (L) | richText | — |
+| `tagline` | text | lead sentence under the design name |
+| `hubIntro` | textarea | caption under the hub carousel room-type tabs |
+| `heroMedia` | upload → media | detail-page hero (falls back to gallery[0]) |
+| `sliderMedia` | upload → media | `/designs` slider card (GIF/video) |
+| `logoMedia` | upload → media | bilingual name-mark for the hub glass band |
+| `occupancyMedia` | array `{ occupancy(select), image(upload) }` | per-room-type card variants |
+| `storyBlocks` | richText (+ blocks) | long-form story with embedded media blocks |
+| `gallery` | upload[] → media | — |
+| `featured` | checkbox | show on home |
+| **`introTitle`** | text | detail-page intro card title |
+| **`introBody`** | textarea | detail-page intro card body |
+| **`introMedia`** | upload → media | detail-page intro card photo (card hidden if empty) |
+| **`storyBody`** | textarea | detail-page story card paragraph (title is the constant «داستان طراحی») |
+| **`storyMedia`** | upload → media | detail-page story card photo (card hidden if empty) |
+| **`materialCallouts`** | array `{ image(upload,req), label(text,req), sub(text) }` | 3 circular material swatches |
+| **`designDetails`** | array `{ image(upload,req), label(text,req), description(textarea), span(number,def 100) }` | 4 design-detail tiles (span = relative width) |
+
+The **bold** fields back the detail page's intro / story / materials / design-details sections (added 2026-06-17). `(L)` = localized.
+
 ## §15 `carts`
 
 Live shopping carts. One cart per session; merges with the customer
