@@ -573,6 +573,26 @@ export async function fetchHome(): Promise<PayloadHome | null> {
   return payloadFetch<PayloadHome>('/api/globals/home?depth=2', 'home');
 }
 
+export type PayloadJournalGlobal = {
+  introTitle?: string | null;
+  fullListHeading?: string | null;
+  quoteText?: string | null;
+  ctaTitle?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  ctaImage?: PayloadMedia | null;
+  featuredArticle?: PayloadArticle | null;
+  listArticles?: PayloadArticle[] | null;
+  cardArticles?: PayloadArticle[] | null;
+  categoryTabs?: PayloadJournalCategory[] | null;
+};
+
+/** /journal index config global. depth=2 populates each slot's Article + its
+ *  cover/category, the categoryTabs, and the CTA image. */
+export async function fetchJournal(): Promise<PayloadJournalGlobal | null> {
+  return payloadFetch<PayloadJournalGlobal>('/api/globals/journal?depth=2', 'journal');
+}
+
 export async function fetchShowrooms(limit = 4): Promise<PayloadShowroom[]> {
   const list = await payloadFetch<PayloadList<PayloadShowroom>>(
     `/api/showrooms?limit=${limit}&depth=2&sort=-is_central`,
