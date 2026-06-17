@@ -37,6 +37,17 @@ export type PayloadDesign = {
   logoMedia?: PayloadMedia | null;
   /** Per-room-type card variants — the carousel cross-dissolves to one when its tab is tapped (SP1). */
   occupancyMedia?: { occupancy: 'baby' | 'teen' | 'double' | 'bunk'; image?: PayloadMedia | null }[] | null;
+  /** Intro editorial card (detail page). Card renders only when introMedia is set. */
+  introTitle?: string | null;
+  introBody?: string | null;
+  introMedia?: PayloadMedia | null;
+  /** Design-story editorial card (detail page). Renders only when storyMedia + storyBody are set. */
+  storyBody?: string | null;
+  storyMedia?: PayloadMedia | null;
+  /** 3 circular material swatches (detail page «متریال های استفاده شده»). */
+  materialCallouts?: { image?: PayloadMedia | null; label?: string | null; sub?: string | null }[] | null;
+  /** 4 design-detail tiles (detail page «جزئیات طراحی»). */
+  designDetails?: { image?: PayloadMedia | null; label?: string | null; description?: string | null; span?: number | null }[] | null;
 };
 
 export type PayloadAddress = {
