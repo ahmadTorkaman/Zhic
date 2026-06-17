@@ -209,17 +209,50 @@ export async function getSeriesHubContent(
       href: `/bedroom-set/${o}/${design.slug}`,
     }));
 
+  const materialItems: SeriesMaterial[] = (design.materialCallouts ?? [])
+    .map((m, i): SeriesMaterial | null => {
+      const img = mediaUrl(m.image);
+      return img ? { key: `m-${i}`, name: m.label ?? '', sub: m.sub ?? '', img } : null;
+    })
+    .filter((x): x is SeriesMaterial => x !== null);
+  const materials = materialItems.length
+    ? { heading: 'متریال های استفاده شده', items: materialItems }
+    : null;
+
+  const detailItems: SeriesDetail[] = (design.designDetails ?? [])
+    .map((d, i): SeriesDetail | null => {
+      const img = mediaUrl(d.image);
+      return img
+        ? { key: `d-${i}`, label: d.label ?? '', desc: d.description ?? '', img, span: d.span ?? 100 }
+        : null;
+    })
+    .filter((x): x is SeriesDetail => x !== null);
+  const details = detailItems.length
+    ? { heading: 'جزئیات طراحی', items: detailItems }
+    : null;
+
+  const introImg = mediaUrl(design.introMedia);
+  const intro: SeriesEditorialCard = introImg
+    ? { title: design.introTitle ?? ageTitle ?? design.name, body: design.introBody ?? '', href: '#', img: introImg }
+    : null;
+
+  const storyImg = mediaUrl(design.storyMedia);
+  const story: SeriesEditorialCard =
+    storyImg && design.storyBody
+      ? { title: 'داستان طراحی', body: design.storyBody, href: '#', img: storyImg }
+      : null;
+
   return {
     hero: { img: mediaUrl(heroMedia), alt: design.name },
     title: {
       name: design.name,
       subtitle: design.tagline ?? (ageTitle ? `${ageTitle} ${design.name}` : null),
     },
-    intro: null,
+    intro,
     collection: { heading: 'قطعات سرویس', items },
-    materials: null,
-    details: null,
-    story: null,
+    materials,
+    details,
+    story,
     featuredSibling: siblings[0] ?? null,
     siblings: siblings.slice(1),
   };
