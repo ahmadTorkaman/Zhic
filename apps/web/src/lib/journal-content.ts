@@ -1,11 +1,13 @@
 /**
  * Content for the /journal index redesign (Figma 227:478 "/journals").
  *
- * SEEDED for now — static data + local media under /public/journal. To wire
- * Payload later, replace the body of `getJournalContent` with a CMS query
- * (fetchArticles / fetchJournalCategories) mapped to this shape; components
- * stay untouched. Types mirror PayloadArticle / PayloadJournalCategory.
+ * Fetches the `journal` global from Payload at depth=2 and maps each curated
+ * Article slot into the JournalArticle shape. Falls back to SEED when the
+ * global is unconfigured (no featuredArticle), so the page never breaks.
  */
+
+import { fetchJournal, fetchJournalCategories, mediaUrl, type PayloadArticle } from '@/lib/payload';
+import { formatJalaliNumeric } from '@zhic/locale';
 
 export type JournalCategoryTab = {
   key: string;
@@ -36,6 +38,10 @@ export type JournalContent = {
   /** Numbered top list (rendered 02..N; featured is #01). */
   topList: JournalArticle[];
   quote: string;
+  /** Page headline override; when unset, JournalIntro renders its default bicolor. */
+  intro?: string;
+  /** «فهرست کامل» section heading. */
+  fullListHeading?: string;
   /** Two editorial cards. */
   cards: JournalArticle[];
   productCta: { title: string; cta: string; href: string; img: string };
@@ -67,6 +73,7 @@ const SEED: JournalContent = {
     { key: 't5', title: 'بهترین میز تحریر ها در ۱۴۰۵', category: 'ترند ها', img: '/journal/list-2.jpg', readingMinutes: 5, href: '/journal/best-desks' },
   ],
   quote: 'زیبایی زمانی ماندگار می‌شود که آرامش ایجاد کند.',
+  fullListHeading: 'فهرست کامل',
   cards: [
     { key: 'workspace', title: 'فضای کاری در خانه', displayTitle: 'فضای کاری\nدر خـــانه', excerpt: 'ایده های برای تمرکز بیشتر برای اتاق شما', category: 'سبک زندگی', img: '/journal/card-1.jpg', readingMinutes: 7, href: '/journal/home-workspace' },
     { key: 'nightstand', title: 'بهترین پا تختی', displayTitle: 'بهترین\nپا تـــختی', category: 'راهنمای خرید', img: '/journal/card-2.jpg', readingMinutes: 9, href: '/journal/best-nightstands' },
@@ -79,7 +86,45 @@ const SEED: JournalContent = {
   },
 };
 
-/** Returns the journal index content. Async so the Payload swap is seamless. */
+/** Returns the journal index content — live from Payload, or SEED as fallback. */
 export async function getJournalContent(): Promise<JournalContent> {
-  return SEED;
+  const g = await fetchJournal();
+  if (!g || !g.featuredArticle) return SEED;
+
+  const cats =
+    g.categoryTabs && g.categoryTabs.length ? g.categoryTabs : await fetchJournalCategories();
+  const tabs: JournalCategoryTab[] = [
+    { key: 'all', label: 'همه', href: '/journal' },
+    ...cats.map((cat) => ({ key: cat.slug, label: cat.name, href: `/journal/category/${cat.slug}` })),
+  ];
+
+  return {
+    tabs,
+    activeTab: 'all',
+    intro: g.introTitle ?? undefined,
+    featured: mapArticle(g.featuredArticle, 'featured'),
+    topList: (g.listArticles ?? []).map((a, i) => mapArticle(a, `t${i}`)),
+    quote: g.quoteText ?? SEED.quote,
+    fullListHeading: g.fullListHeading ?? SEED.fullListHeading,
+    cards: (g.cardArticles ?? []).map((a, i) => mapArticle(a, `c${i}`)),
+    productCta: {
+      title: g.ctaTitle ?? SEED.productCta.title,
+      cta: g.ctaLabel ?? SEED.productCta.cta,
+      href: g.ctaHref ?? SEED.productCta.href,
+      img: mediaUrl(g.ctaImage) ?? SEED.productCta.img,
+    },
+  };
+}
+
+function mapArticle(a: PayloadArticle, key: string): JournalArticle {
+  return {
+    key,
+    title: a.title,
+    excerpt: a.excerpt ?? undefined,
+    category: a.category?.name ?? '',
+    img: mediaUrl(a.cover) ?? '',
+    readingMinutes: a.readingTimeMinutes ?? 0,
+    date: a.publishedAt ? formatJalaliNumeric(a.publishedAt) : undefined,
+    href: `/journal/${a.slug}`,
+  };
 }
