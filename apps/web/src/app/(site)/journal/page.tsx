@@ -34,7 +34,7 @@ export default async function JournalIndexPage() {
       </div>
 
       <div className="mt-4 px-[13px]">
-        <JournalIntro />
+        <JournalIntro title={c.intro} />
       </div>
       <div className="mt-4 px-[13px]">
         <BrandDivider />
@@ -49,7 +49,7 @@ export default async function JournalIndexPage() {
         <JournalNumberedList articles={c.topList} />
       </div>
       <div className="mt-6 px-[12px]">
-        <JournalSectionHeading title="فهرست کامل" />
+        <JournalSectionHeading title={c.fullListHeading ?? 'فهرست کامل'} />
       </div>
       <div className="mt-4 px-[12px]">
         <JournalQuote quote={c.quote} />
