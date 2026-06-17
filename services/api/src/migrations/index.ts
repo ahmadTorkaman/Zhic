@@ -17,6 +17,7 @@ import * as migration_20260530_220000_add_products_occupancies from './20260530_
 import * as migration_20260605_120000_add_home_about_media from './20260605_120000_add_home_about_media';
 import * as migration_20260606_120000_add_bedroom_set_fields from './20260606_120000_add_bedroom_set_fields';
 import * as migration_20260615_120000_add_bedroom_set_intros from './20260615_120000_add_bedroom_set_intros';
+import * as migration_20260617_120000_add_design_detail_fields from './20260617_120000_add_design_detail_fields';
 
 export const migrations = [
   {
@@ -113,5 +114,10 @@ export const migrations = [
     up: migration_20260615_120000_add_bedroom_set_intros.up,
     down: migration_20260615_120000_add_bedroom_set_intros.down,
     name: '20260615_120000_add_bedroom_set_intros'
+  },
+  {
+    up: migration_20260617_120000_add_design_detail_fields.up,
+    down: migration_20260617_120000_add_design_detail_fields.down,
+    name: '20260617_120000_add_design_detail_fields'
   },
 ];
