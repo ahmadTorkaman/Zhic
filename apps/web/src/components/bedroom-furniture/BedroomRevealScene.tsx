@@ -42,10 +42,28 @@ export function BedroomRevealScene({ hero, showcase }: { hero: ReactNode; showca
       if (!raf) raf = requestAnimationFrame(update);
     };
 
+    // «مشاهده» CTA (href="#bf-categories"): rather than jumping to the top of
+    // the scene (the START of the reveal), smooth-scroll through the whole
+    // reveal so the card animates out to its final full-bleed width with the
+    // hero covered behind it. Scrubbing is driven by the scroll handler above,
+    // so the zoom plays as the page scrolls.
+    const scene = wrap.parentElement;
+    const cta = scene?.querySelector<HTMLAnchorElement>('a[href="#bf-categories"]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const onCtaClick = (e: Event) => {
+      e.preventDefault();
+      // Land where the wrapper top reaches the viewport top — the point where
+      // --bf-spread maxes out and the card is at its final width.
+      const target = Math.max(0, window.scrollY + wrap.getBoundingClientRect().top);
+      window.scrollTo({ top: target, behavior: reduceMotion ? 'auto' : 'smooth' });
+    };
+    cta?.addEventListener('click', onCtaClick);
+
     update();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     return () => {
+      cta?.removeEventListener('click', onCtaClick);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
       cancelAnimationFrame(raf);
