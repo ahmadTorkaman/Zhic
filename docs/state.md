@@ -419,6 +419,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
 | FU-PDV-k | PDV | /contact form to read product+variant+axes query params and prefill |
 | FU-PDV-l | PDV | Variant-aware dimensions in SpecsAccordion ابعاد row (spec §11.7) |
 | FU-IMG-a | filmstrip perf | Sitewide image right-sizing. `PayloadImage` is a plain `<img>` (no optimization) used in ~10 components, and source art is multi-megapixel (2700² / 3840×2160) — so PDPs, moodboards, journal, etc. all ship full-res. Only `DesignsSlider` uses `next/image` now (`d8b38cd`). Either make `PayloadImage` wrap `next/image` (verify the optimizer works through the `/api/media` proxy + add a `:3000` remotePattern or pass relative paths; **note** `q` must be in the configured `images.qualities` allowlist — `q=75` works, `q=70` 400s), or generate Payload image sizes and serve the right variant. Bandwidth win is large for IR mobile. |
+| FU-SHD-a | series-hub | **After the bedroom-set detail CMS wiring lands, run a one-pass "unhide empty sections" content audit.** Temporarily render the intro / story / materials / designDetails sections even when their content is empty (with a visible «needs content» placeholder) across every non-iron design, so we can inventory exactly which design is missing which media/copy to upload or write. **Diagnostic only — must NOT ship to production** (empty sections read as broken to customers); gate behind a dev/query flag or revert before deploy. |
 
 ---
 
