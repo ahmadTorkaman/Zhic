@@ -23,6 +23,7 @@ export {
   PERSIAN_WEEKDAYS,
   formatDate,
   formatDateRange,
+  formatJalaliNumeric,
 } from './date';
 export type { FormatDateOptions } from './date';
 export {

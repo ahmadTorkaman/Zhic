@@ -4,6 +4,7 @@ import {
   PERSIAN_WEEKDAYS,
   formatDate,
   formatDateRange,
+  formatJalaliNumeric,
 } from '../src/date';
 
 describe('Persian calendar tables', () => {
@@ -52,6 +53,18 @@ describe('formatDate', () => {
 
   it('throws on invalid input', () => {
     expect(() => formatDate('not-a-date')).toThrow(RangeError);
+  });
+});
+
+describe('formatJalaliNumeric', () => {
+  it('formats Nowruz 1405 (2026-03-21) as 1405/01/01', () => {
+    expect(formatJalaliNumeric('2026-03-21', { digits: 'en' })).toBe('1405/01/01');
+  });
+  it('zero-pads month and day (2026-03-30 → 1405/01/10)', () => {
+    expect(formatJalaliNumeric('2026-03-30', { digits: 'en' })).toBe('1405/01/10');
+  });
+  it('uses Persian digits by default', () => {
+    expect(formatJalaliNumeric('2026-03-21')).toBe('۱۴۰۵/۰۱/۰۱');
   });
 });
 

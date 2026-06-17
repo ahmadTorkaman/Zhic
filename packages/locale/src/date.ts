@@ -78,6 +78,21 @@ export function formatDate(iso: string | Date, opts: FormatDateOptions = {}): st
 }
 
 /**
+ * Format an ISO / Date as numeric Jalali: "۱۴۰۵/۰۵/۱۰" (zero-padded month/day).
+ * `digits: 'en'` → "1405/05/10". Used by compact contexts (journal card date).
+ */
+export function formatJalaliNumeric(
+  iso: string | Date,
+  opts: Pick<FormatDateOptions, 'digits'> = {},
+): string {
+  const { digits = 'fa' } = opts;
+  const { jy, jm, jd } = toJalaliUtc(asDate(iso));
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const core = `${jy}/${pad(jm)}/${pad(jd)}`;
+  return digits === 'fa' ? toPersianDigits(core) : core;
+}
+
+/**
  * Format a date range. If year and month match, collapse: "۸ تا ۱۲ فروردین ۱۴۰۵".
  * If only year matches: "۲۸ اسفند تا ۳ فروردین ۱۴۰۵".
  * Else both fully qualified.
