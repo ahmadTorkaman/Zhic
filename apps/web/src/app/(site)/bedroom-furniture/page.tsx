@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@zhic/ui';
 import { getBedroomFurnitureContent } from '@/lib/bedroom-furniture';
 import { BedroomHero } from '@/components/bedroom-furniture/BedroomHero';
 import { CategoryShowcase } from '@/components/bedroom-furniture/CategoryShowcase';
+import { BedroomRevealScene } from '@/components/bedroom-furniture/BedroomRevealScene';
 import { RoomCategoryGrid } from '@/components/bedroom-furniture/RoomCategoryGrid';
 import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
 
@@ -29,13 +30,13 @@ export default async function BedroomFurnitureRootPage() {
         <Breadcrumbs items={[{ label: 'خانه', href: '/' }, { label: 'مبلمان اتاق خواب' }]} />
       </div>
 
-      <div className="mt-4">
-        <BedroomHero />
-      </div>
-
-      {/* Showcase pulls up over the hero photo via its own transform. */}
-      <div className="relative z-[3] px-[11px]" id="bf-categories">
-        <CategoryShowcase slides={showcase} lorem={lorem} initialActive={showcaseInitial} />
+      {/* Scroll reveal: the hero pins while the showcase card rises over it and
+          zooms to full-bleed, then releases locked behind the card. */}
+      <div className="mt-4" id="bf-categories">
+        <BedroomRevealScene
+          hero={<BedroomHero />}
+          showcase={<CategoryShowcase slides={showcase} lorem={lorem} initialActive={showcaseInitial} />}
+        />
       </div>
 
       <div className="mt-5 px-[11px]">
