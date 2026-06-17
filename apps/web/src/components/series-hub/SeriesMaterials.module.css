@@ -1,0 +1,70 @@
+/* «متریال های استفاده شده» — Figma 261:175. Cream card, 3 circular swatches
+   (ø 81.98px) each over a bold name + light spec sub-line; thin gold dividers. */
+
+.card {
+  margin-inline: 2.89cqw; /* 12.42px gutters */
+  background: var(--color-cream-panel);
+  border-radius: var(--radius-panel);
+  padding: 2.85cqw 2cqw 3.4cqw;
+}
+
+.heading {
+  text-align: center;
+  font-weight: 700; /* Bold */
+  font-size: 4.46cqw; /* 19.196px */
+  line-height: 1.4;
+  color: var(--color-forest-deep);
+}
+
+.row {
+  margin-top: 2.5cqw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.item {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.6cqw;
+}
+
+.swatch {
+  position: relative;
+  width: 19.07cqw; /* 81.98px */
+  height: 19.07cqw;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.img {
+  object-fit: cover;
+}
+
+.name {
+  margin-top: 0.7cqw;
+  font-weight: 700; /* Bold */
+  font-size: 2.89cqw; /* 12.421px */
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.sub {
+  font-weight: 300; /* Light */
+  font-size: 2.1cqw; /* 9.034px */
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  max-width: 24cqw;
+}
+
+.divider {
+  align-self: center;
+  margin-top: 21cqw; /* drop below the swatch, beside the labels */
+  width: 1px;
+  height: 8.7cqw; /* 37.489px */
+  background: var(--color-gold);
+  opacity: 0.6;
+  flex: 0 0 auto;
+}

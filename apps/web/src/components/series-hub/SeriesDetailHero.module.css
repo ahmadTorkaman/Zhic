@@ -1,0 +1,46 @@
+/* Detail hero — Figma 261:151 (photo 430×232) + 261:152 title card (405×117,
+   cream, radius 16.712, soft shadow) overlapping the photo's bottom by ~24px. */
+
+.hero {
+  position: relative;
+}
+
+.photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 430 / 232;
+  overflow: hidden;
+}
+.img {
+  object-fit: cover;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  margin-inline: 2.89cqw; /* 12.42px gutters */
+  margin-top: -5.58cqw; /* overlap the photo bottom by ~24px */
+  background: var(--color-cream-panel);
+  border-radius: var(--radius-panel);
+  box-shadow: 0 0.9cqw 0.7cqw 0.16cqw rgba(0, 0, 0, 0.25);
+  padding-block: 6.9cqw 5.5cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2cqw;
+  text-align: center;
+}
+
+.title {
+  font-weight: 900; /* Ayandeh Black */
+  font-size: 9.66cqw; /* 41.555px @430 */
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.subtitle {
+  font-weight: 400; /* Regular */
+  font-size: 2.89cqw; /* 12.421px */
+  line-height: 1.4;
+  color: var(--color-ink-soft);
+}

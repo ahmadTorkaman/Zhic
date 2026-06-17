@@ -1,0 +1,96 @@
+/* «قطعات سرویس» collection grid — Figma 261:203. Card 194×252, gold 1px
+   border. The photo fills the card; a short frosted-glass label floats over its
+   bottom edge (reuses the global `.float-card` boundary-glass — same material as
+   the homepage stat card) with name, struck original price, and sale price. */
+
+.section {
+  padding-inline: 2.89cqw; /* 12.42px gutters */
+}
+
+.heading {
+  margin-bottom: 4.5cqw;
+  text-align: center;
+  font-weight: 700; /* Bold */
+  font-size: 4.73cqw; /* 20.326px */
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.89cqw; /* 16.72px */
+}
+
+.card {
+  position: relative;
+  display: block;
+  height: 58.66cqw; /* 252.264px @430 */
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+
+/* Soft scrim over the photo's bottom edge — gives the (very transparent)
+   glass label a consistently darker base so the ivory text stays legible
+   regardless of the photo behind it. Sits above the photo, below the label. */
+.card::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 52%;
+  background: linear-gradient(to top, rgba(20, 17, 15, 0.55), rgba(20, 17, 15, 0));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  background: var(--color-ivory); /* clean base behind the contained (letterboxed) photo */
+}
+.img {
+  object-fit: contain;
+}
+
+/* Short floating glass label — positioning + type only; the glass material
+   (bg, blur, border, shadow, 16px radius) comes from the global `.float-card`. */
+.label {
+  position: absolute;
+  inset-inline: 2.6cqw;
+  bottom: 2.6cqw;
+  z-index: 2; /* above the scrim */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.4cqw 2cqw 2.8cqw;
+  text-align: center;
+  color: var(--color-ivory);
+  /* soft shadow keeps the ivory text crisp over any photo behind the glass */
+  text-shadow: 0 1px 3px rgba(20, 17, 15, 0.45);
+}
+
+.name {
+  font-weight: 700; /* Bold */
+  font-size: 5.51cqw; /* 23.713px */
+  line-height: 1.3;
+}
+
+.orig {
+  margin-top: 0.8cqw;
+  font-weight: 400;
+  font-size: 3.68cqw; /* 15.809px */
+  line-height: 1.2;
+  text-decoration: line-through;
+  text-decoration-color: var(--color-gold);
+  text-decoration-thickness: 0.4cqw;
+  opacity: 0.85;
+}
+
+.price {
+  margin-top: 0.6cqw;
+  font-weight: 400;
+  font-size: 4.2cqw; /* 18.067px */
+  line-height: 1.3;
+}

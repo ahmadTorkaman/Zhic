@@ -1,0 +1,63 @@
+/* Intro / story editorial card — Figma 261:196 (photo left) & 261:189 (photo
+   right). Cream card, radius 16.712, photo + text-column with «بیشتر بخوانید →». */
+
+.card {
+  display: flex;
+  margin-inline: 2.89cqw; /* 12.42px gutters */
+  background: var(--color-cream-panel);
+  border-radius: var(--radius-panel);
+  padding: 1.31cqw; /* 5.65px inset around the photo */
+  gap: 2.6cqw;
+  aspect-ratio: 405 / 177;
+}
+
+.photo {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: stretch;
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+.img {
+  object-fit: cover;
+}
+
+.text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding-block: 1.1cqw 1.6cqw;
+  padding-inline: 0.6cqw;
+  text-align: right;
+}
+
+.title {
+  font-weight: 700; /* Bold */
+  font-size: 2.89cqw; /* 12.421px */
+  line-height: 1.4;
+  color: var(--color-forest-deep);
+}
+
+.body {
+  margin-top: 1.6cqw;
+  font-weight: 400; /* Regular */
+  font-size: 2.1cqw; /* 9.034px */
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.more {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2cqw;
+  font-weight: 400;
+  font-size: 2.1cqw; /* 9.034px */
+  color: var(--color-forest-muted);
+}
+.arrow {
+  width: 4.25cqw; /* ~18.3px */
+  height: auto;
+  color: var(--color-gold);
+}

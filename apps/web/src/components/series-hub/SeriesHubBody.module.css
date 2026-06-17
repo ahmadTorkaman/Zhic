@@ -1,0 +1,8 @@
+/* Vertical rhythm for the detail-page body — ~25px (5.8cqw) between sections,
+   a generous bottom gap before the global consultation CTA (Figma 261:90). */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 5.8cqw;
+  padding-bottom: 14cqw;
+}
