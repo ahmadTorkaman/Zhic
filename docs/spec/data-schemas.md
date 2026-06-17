@@ -1119,6 +1119,24 @@ JSON-LD: `Article` with `headline`, `image`, `author`,
 | `slug` | text (unique) |
 | `description` (L) | textarea |
 
+## §62b `journal` (global) — journal-index page config
+
+Curates the `/journal` index. Article cards reference Articles (content lives on the Article); only page copy lives here. Added 2026-06-18.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `introTitle` | textarea | hero headline (newline = line break); empty → default brand headline |
+| `featuredArticle` | relationship → `articles` | the big featured card; empty → whole page falls back to the static default |
+| `listArticles` | relationship[] → `articles` | numbered list (rendered 02, 03 …), order preserved |
+| `fullListHeading` | text | «فهرست کامل» section heading |
+| `quoteText` | textarea | quote block |
+| `cardArticles` | relationship[] → `articles` | the 2-up editorial cards, order preserved |
+| `categoryTabs` | relationship[] → `journal-categories` | tab strip (after «همه»); empty → all categories |
+| `ctaTitle` / `ctaLabel` / `ctaHref` | text | product-CTA banner copy + link |
+| `ctaImage` | upload → media | product-CTA banner image |
+
+Each referenced Article supplies the card's title / excerpt / cover / `category.name` / `readingTimeMinutes` / Jalali(`publishedAt`) / `/journal/<slug>`. DB: a `journal` table (scalar copy + `featured_article_id` + `cta_image_id` FK columns) and a `journal_rels` table for the hasMany relations (mirrors `home`/`home_rels`).
+
 ## §63 `pages`
 
 CMS-driven page collection used for low-frequency pages (legal,
