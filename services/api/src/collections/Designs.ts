@@ -181,6 +181,71 @@ export const Designs: CollectionConfig = {
       label: 'گالری',
     },
     {
+      type: 'collapsible',
+      label: 'محتوای صفحه‌ی جزئیات طرح',
+      admin: { initCollapsed: true },
+      fields: [
+        { name: 'introTitle', type: 'text', label: 'عنوان کارت معرفی' },
+        { name: 'introBody', type: 'textarea', label: 'متن کوتاه کارت معرفی' },
+        {
+          name: 'introMedia',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'تصویر کارت معرفی',
+          admin: { description: 'بدون این تصویر، کارت معرفی نمایش داده نمی‌شود.' },
+        },
+        {
+          name: 'storyBody',
+          type: 'textarea',
+          label: 'متن داستان طراحی',
+          admin: { description: 'پاراگراف کوتاه کارت «داستان طراحی» در صفحه‌ی جزئیات؛ جدا از فیلد «داستان طرح» (storyBlocks).' },
+        },
+        {
+          name: 'storyMedia',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'تصویر داستان طراحی',
+          admin: { description: 'تصویر کارت «داستان طراحی» در صفحه‌ی جزئیات (جدا از فیلد «داستان طرح»/storyBlocks). بدون این تصویر، کارت داستان نمایش داده نمی‌شود.' },
+        },
+        {
+          name: 'materialCallouts',
+          type: 'array',
+          label: 'متریال‌های استفاده‌شده',
+          labels: { singular: 'متریال', plural: 'متریال‌ها' },
+          admin: {
+            description: 'متریال‌های شاخص کارت «متریال‌های استفاده‌شده». ترتیب از راست به چپ. هر ردیف به یک تصویر دایره‌ای نیاز دارد.',
+          },
+          fields: [
+            { name: 'image', type: 'upload', relationTo: 'media', required: true, label: 'تصویر دایره‌ای' },
+            { name: 'label', type: 'text', required: true, label: 'نام (مثلاً فلز)' },
+            { name: 'sub', type: 'text', label: 'زیرنویس (مثلاً رنگ پودری الکترواستاتیک پوشش مات)' },
+          ],
+        },
+        {
+          name: 'designDetails',
+          type: 'array',
+          label: 'جزئیات طراحی',
+          labels: { singular: 'کاشی جزئیات', plural: 'جزئیات طراحی' },
+          admin: {
+            description: 'کاشی‌های تصویری نوار «جزئیات طراحی». ترتیب از راست به چپ. هر ردیف به یک تصویر نیاز دارد.',
+          },
+          fields: [
+            { name: 'image', type: 'upload', relationTo: 'media', required: true, label: 'تصویر کاشی' },
+            { name: 'label', type: 'text', required: true, label: 'عنوان' },
+            { name: 'description', type: 'textarea', label: 'توضیح کوتاه' },
+            {
+              name: 'span',
+              type: 'number',
+              defaultValue: 100,
+              min: 1,
+              label: 'وزن عرض کاشی',
+              admin: { description: 'عرض نسبی کاشی در نوار. پیش‌فرض ۱۰۰ = عرض برابر.' },
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: 'featured',
       type: 'checkbox',
       defaultValue: false,
