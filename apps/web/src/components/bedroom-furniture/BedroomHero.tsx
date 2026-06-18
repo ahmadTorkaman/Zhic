@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import type { HeroContent } from '@/lib/bedroom-furniture';
 import styles from './BedroomHero.module.css';
 
 /** Small downward chevron flanking the «مشاهده» CTA (comp vectors 191:240–243). */
@@ -13,14 +14,16 @@ function Chevron({ className }: { className?: string }) {
 /**
  * Bedroom-furniture page hero (Figma frame 191:207).
  * Full-bleed photo with a 73% scrim + caramel bottom-fade, white right-aligned
- * headline/sub/tagline, and a centered «مشاهده» call-to-action.
+ * headline/sub/tagline, and a centered «مشاهده» CTA. All copy/image default to
+ * the comp values; pass `hero` (from the CMS) to override.
  */
-export function BedroomHero() {
+export function BedroomHero({ hero }: { hero?: HeroContent }) {
+  const titleLines = (hero?.title ?? 'مُبلمان\nاتاق خواب').split('\n').filter(Boolean);
   return (
     <section className={styles.hero} aria-labelledby="bf-hero-title">
       <Image
-        src="/bedroom-furniture/hero.jpg"
-        alt="اتاق خواب چوبی ژیک با نورپردازی گرم"
+        src={hero?.img ?? '/bedroom-furniture/hero.jpg'}
+        alt={hero?.imgAlt ?? 'اتاق خواب چوبی ژیک با نورپردازی گرم'}
         fill
         priority
         sizes="(max-width: 480px) 100vw, 480px"
@@ -30,16 +33,19 @@ export function BedroomHero() {
 
       <div className={styles.content}>
         <h1 id="bf-hero-title" className={styles.title}>
-          مُبلمان
-          <br />
-          اتاق خواب
+          {titleLines.map((line, i) => (
+            <span key={i}>
+              {line}
+              {i < titleLines.length - 1 ? <br /> : null}
+            </span>
+          ))}
         </h1>
-        <p className={styles.subtitle}>از تخت خواب تا آینه و میز آرایش</p>
-        <p className={styles.tagline}>همه چیز با طراحی منظم و کیفیت ساخت بالا</p>
+        <p className={styles.subtitle}>{hero?.subtitle ?? 'از تخت خواب تا آینه و میز آرایش'}</p>
+        <p className={styles.tagline}>{hero?.tagline ?? 'همه چیز با طراحی منظم و کیفیت ساخت بالا'}</p>
 
-        <a href="#bf-categories" className={styles.cta}>
+        <a href={hero?.ctaHref ?? '#bf-categories'} className={styles.cta}>
           <Chevron className={styles.chev} />
-          <span className={styles.ctaLabel}>مشاهده</span>
+          <span className={styles.ctaLabel}>{hero?.ctaLabel ?? 'مشاهده'}</span>
           <Chevron className={styles.chev} />
         </a>
       </div>

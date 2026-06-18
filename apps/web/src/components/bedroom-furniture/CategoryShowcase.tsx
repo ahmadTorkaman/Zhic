@@ -12,6 +12,8 @@ export type CategoryShowcaseProps = {
   lorem: string;
   /** Slide centered on first render. */
   initialActive?: number;
+  /** Section heading; defaults to the comp value. */
+  heading?: string;
 };
 
 /**
@@ -20,7 +22,7 @@ export type CategoryShowcaseProps = {
  * side arch to bring it to center, or use the dots; the centered arch links to
  * its category.
  */
-export function CategoryShowcase({ slides, lorem, initialActive = 0 }: CategoryShowcaseProps) {
+export function CategoryShowcase({ slides, lorem, initialActive = 0, heading }: CategoryShowcaseProps) {
   const n = slides.length;
   const [active, setActive] = useState(initialActive);
   const dragStart = useRef<number | null>(null);
@@ -56,7 +58,7 @@ export function CategoryShowcase({ slides, lorem, initialActive = 0 }: CategoryS
   return (
     <section className={styles.card} aria-label="دسته‌بندی محصولات">
       <BrandDivider />
-      <h2 className={styles.heading}>دسته بندی محصولات</h2>
+      <h2 className={styles.heading}>{heading ?? 'دسته بندی محصولات'}</h2>
 
       <div
         className={styles.coverflow}

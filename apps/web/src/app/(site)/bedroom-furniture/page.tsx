@@ -22,7 +22,7 @@ export const metadata: Metadata = {
  * (see lib/bedroom-furniture) and swaps to Payload later without touching this.
  */
 export default async function BedroomFurnitureRootPage() {
-  const { showcase, showcaseInitial, rooms, lorem } = await getBedroomFurnitureContent();
+  const { showcase, showcaseInitial, rooms, lorem, hero, showcaseHeading } = await getBedroomFurnitureContent();
 
   return (
     <div className="mx-auto w-full max-w-[430px]" style={{ containerType: 'inline-size' }}>
@@ -34,8 +34,8 @@ export default async function BedroomFurnitureRootPage() {
           zooms to full-bleed, then releases locked behind the card. */}
       <div className="mt-4" id="bf-categories">
         <BedroomRevealScene
-          hero={<BedroomHero />}
-          showcase={<CategoryShowcase slides={showcase} lorem={lorem} initialActive={showcaseInitial} />}
+          hero={<BedroomHero hero={hero} />}
+          showcase={<CategoryShowcase slides={showcase} lorem={lorem} initialActive={showcaseInitial} heading={showcaseHeading} />}
         />
       </div>
 
