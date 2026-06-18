@@ -509,6 +509,24 @@ Bedroom-set series. Drives `/bedroom-set/<slug>` hubs and `/bedroom-set/[age]/[d
 
 The **bold** fields back the detail page's intro / story / materials / design-details sections (added 2026-06-17). `(L)` = localized.
 
+### `bedroom-furniture` (global) — catalog-root page config
+
+Curates the `/bedroom-furniture` root index. Showcase cards reference Categories (label + link come from the category); room cards are self-contained cross-links to `/bedroom-set` hubs. Added 2026-06-18.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `heroTitle` | textarea | hero headline (newline = line break); empty → default |
+| `heroSubtitle` / `heroTagline` | text | hero sub + tagline |
+| `heroCtaLabel` / `heroCtaHref` | text | hero CTA («مشاهده»); empty href → scrolls to the showcase |
+| `heroMedia` | upload → media | hero photo |
+| `showcaseHeading` | text | «دسته بندی محصولات» |
+| `showcaseBody` | textarea | paragraph under the coverflow |
+| `showcaseInitial` | number | which card centers first (0-based); empty → middle; out-of-range is clamped |
+| `showcase` | array `{ category(rel→categories,req), archImage(upload,req) }` | coverflow cards; label + `/bedroom-furniture/<slug>` link from the category |
+| `rooms` | array `{ name(req), display, image(upload,req), href(req) }` | room cards (link to `/bedroom-set/<occupancy>`); bg color is a component ramp |
+
+Empty `showcase` → the page falls back to its static default. DB: a `bedroom_furniture` table (scalar + `hero_media_id` FK) plus `bedroom_furniture_showcase` (`category_id`+`arch_image_id` FK cols) and `bedroom_furniture_rooms` (`image_id` FK col) array tables — single relation/upload subfields become FK columns on the array table (mirrors `home_hero_slides`).
+
 ## §15 `carts`
 
 Live shopping carts. One cart per session; merges with the customer
