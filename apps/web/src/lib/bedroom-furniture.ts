@@ -6,6 +6,8 @@
  * with a CMS query that returns the same shape (the components stay untouched).
  */
 
+import { fetchBedroomFurniture, mediaUrl, categoryPath } from '@/lib/payload';
+
 export type ShowcaseSlide = {
   key: string;
   /** Pill label (e.g. «تخت خواب»). */
@@ -25,12 +27,26 @@ export type RoomCard = {
   href: string;
 };
 
+export type HeroContent = {
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  img?: string;
+  imgAlt?: string;
+};
+
 export type BedroomFurnitureContent = {
   showcase: ShowcaseSlide[];
   /** Slide centered on first render (the comp features تخت خواب). */
   showcaseInitial: number;
   rooms: RoomCard[];
   lorem: string;
+  /** Hero copy/image override; when unset, BedroomHero renders its defaults. */
+  hero?: HeroContent;
+  /** Showcase section heading; when unset, CategoryShowcase uses its default. */
+  showcaseHeading?: string;
 };
 
 const SEED: BedroomFurnitureContent = {
@@ -51,9 +67,52 @@ const SEED: BedroomFurnitureContent = {
 };
 
 /**
- * Returns the page content. Async so the Payload swap is seamless later
- * (e.g. `return mapCategoriesToContent(await fetchAllCategories())`).
+ * Returns the page content. Fetches the bedroom-furniture global from Payload
+ * and maps it to the page shape. Falls back to SEED when unconfigured.
  */
 export async function getBedroomFurnitureContent(): Promise<BedroomFurnitureContent> {
-  return SEED;
+  const g = await fetchBedroomFurniture();
+  if (!g || !g.showcase || g.showcase.length === 0) return SEED;
+
+  const showcase: ShowcaseSlide[] = g.showcase
+    .map((s): ShowcaseSlide | null => {
+      const slug = s.category?.slug;
+      const img = mediaUrl(s.archImage);
+      if (!slug || !img) return null;
+      return { key: slug, label: s.category?.name ?? '', img, href: categoryPath(slug) };
+    })
+    .filter((x): x is ShowcaseSlide => x !== null);
+  if (showcase.length === 0) return SEED;
+
+  const rooms: RoomCard[] = (g.rooms ?? [])
+    .map((r, i): RoomCard | null => {
+      const img = mediaUrl(r.image);
+      if (!img) return null;
+      return { key: `r${i}`, name: r.name ?? '', display: r.display ?? undefined, img, href: r.href ?? '#' };
+    })
+    .filter((x): x is RoomCard => x !== null);
+
+  // hero is built when any hero field is set; heroCtaHref is intentionally not a
+  // trigger (it's only meaningful alongside a label).
+  const hero: HeroContent | undefined =
+    g.heroTitle || g.heroSubtitle || g.heroTagline || g.heroCtaLabel || g.heroMedia
+      ? {
+          title: g.heroTitle ?? undefined,
+          subtitle: g.heroSubtitle ?? undefined,
+          tagline: g.heroTagline ?? undefined,
+          ctaLabel: g.heroCtaLabel ?? undefined,
+          ctaHref: g.heroCtaHref ?? undefined,
+          img: mediaUrl(g.heroMedia) ?? undefined,
+          imgAlt: g.heroMedia?.alt ?? undefined,
+        }
+      : undefined;
+
+  return {
+    showcase,
+    showcaseInitial: Math.max(0, Math.min(g.showcaseInitial ?? Math.floor(showcase.length / 2), showcase.length - 1)),
+    rooms: rooms.length ? rooms : SEED.rooms,
+    lorem: g.showcaseBody ?? SEED.lorem,
+    hero,
+    showcaseHeading: g.showcaseHeading ?? undefined,
+  };
 }
