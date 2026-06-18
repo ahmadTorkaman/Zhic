@@ -593,6 +593,26 @@ export async function fetchJournal(): Promise<PayloadJournalGlobal | null> {
   return payloadFetch<PayloadJournalGlobal>('/api/globals/journal?depth=2', 'journal');
 }
 
+export type PayloadBedroomFurniture = {
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+  heroTagline?: string | null;
+  heroCtaLabel?: string | null;
+  heroCtaHref?: string | null;
+  heroMedia?: PayloadMedia | null;
+  showcaseHeading?: string | null;
+  showcaseBody?: string | null;
+  showcaseInitial?: number | null;
+  showcase?: { category?: PayloadCategory | null; archImage?: PayloadMedia | null }[] | null;
+  rooms?: { name?: string | null; display?: string | null; image?: PayloadMedia | null; href?: string | null }[] | null;
+};
+
+/** /bedroom-furniture root config global. depth=2 populates each showcase
+ *  card's category + archImage, each room's image, and the hero image. */
+export async function fetchBedroomFurniture(): Promise<PayloadBedroomFurniture | null> {
+  return payloadFetch<PayloadBedroomFurniture>('/api/globals/bedroom-furniture?depth=2', 'bedroom-furniture');
+}
+
 export async function fetchShowrooms(limit = 4): Promise<PayloadShowroom[]> {
   const list = await payloadFetch<PayloadList<PayloadShowroom>>(
     `/api/showrooms?limit=${limit}&depth=2&sort=-is_central`,
