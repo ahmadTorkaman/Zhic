@@ -18,8 +18,9 @@ export const metadata: Metadata = {
  * /bedroom-furniture — rebuilt from Figma frame 191:207 (see
  * docs/superpowers/figma-kaveh/bedroom-furniture-rebuild-spec-430.md).
  * Body sits in a 430-standard column; the global SiteHeader/Footer (and the
- * consultation CTA) wrap it via (site)/layout.tsx. Content is seeded for now
- * (see lib/bedroom-furniture) and swaps to Payload later without touching this.
+ * consultation CTA) wrap it via (site)/layout.tsx. Content comes from
+ * `getBedroomFurnitureContent` (the `bedroom-furniture` Payload global, with a
+ * static SEED fallback when unconfigured).
  */
 export default async function BedroomFurnitureRootPage() {
   const { showcase, showcaseInitial, rooms, lorem, hero, showcaseHeading } = await getBedroomFurnitureContent();

@@ -1,9 +1,10 @@
 /**
  * Content for the /bedroom-furniture page (Figma 191:207).
  *
- * SEEDED for now — static data + local media under /public/bedroom-furniture.
- * To wire Payload later, replace only the body of `getBedroomFurnitureContent`
- * with a CMS query that returns the same shape (the components stay untouched).
+ * `getBedroomFurnitureContent` fetches the `bedroom-furniture` Payload global
+ * (showcase cards → Categories, rooms, hero copy/image) and falls back to the
+ * local `SEED` (static data + media under /public/bedroom-furniture) when the
+ * global is unconfigured.
  */
 
 import { fetchBedroomFurniture, mediaUrl, categoryPath } from '@/lib/payload';
