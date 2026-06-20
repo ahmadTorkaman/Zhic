@@ -52,12 +52,22 @@ const META: Record<OccHubSlug, { title: string; tagline: string; short: string; 
   },
 };
 
-/** First image-mime cover (skip animated sliderMedia for the static prototype). */
-function staticCover(d: PayloadDesign): string | null {
-  const isImg = (m?: PayloadMedia | null): m is PayloadMedia =>
-    !!m && (!m.mimeType || m.mimeType.startsWith('image/'));
-  const pick = [d.heroMedia, d.gallery?.[0], d.sliderMedia].find(isImg);
-  return mediaUrl(pick ?? null);
+const isImg = (m?: PayloadMedia | null): m is PayloadMedia =>
+  !!m && (!m.mimeType || m.mimeType.startsWith('image/'));
+
+/** The design's per-occupancy card image for THIS hub (e.g. the baby card on
+ *  /bedroom-set/baby), if the artist made one. This is what keeps the baby hub
+ *  showing baby imagery instead of the design's generic teen/adult scene. */
+function occupancyCard(d: PayloadDesign, slug: OccHubSlug): PayloadMedia | null {
+  const m = (d.occupancyMedia ?? []).find((o) => o.occupancy === slug)?.image;
+  return isImg(m) ? m : null;
+}
+
+/** Tile cover: the per-occupancy card → else the design's generic static cover
+ *  (heroMedia ?? gallery[0] ?? sliderMedia, image-mime only). */
+function staticCover(d: PayloadDesign, slug: OccHubSlug): string | null {
+  const pick = occupancyCard(d, slug) ?? [d.heroMedia, d.gallery?.[0], d.sliderMedia].find(isImg) ?? null;
+  return mediaUrl(pick);
 }
 
 export type OccupancyHubContent = {
@@ -100,21 +110,26 @@ export async function getOccupancyHubContent(
   const cmsHeroImg = mediaUrl(cmsHeroMedia ?? null) ?? undefined;
 
   // Every design of the age (operator: show image-less ones too, as «به‌زودی»
-  // sand tiles). Cover-first ordering so the featured tile lands on a photo and
-  // the photo-less tiles trail.
+  // sand tiles). Ordered: designs with a per-occupancy card first (so the
+  // featured tile + hero land on age-appropriate imagery — e.g. a baby card on
+  // /bedroom-set/baby, not the design's teen scene), then designs with only a
+  // generic cover, then the photo-less «به‌زودی» tiles.
+  const withOccCard: SimpleTile[] = [];
   const withCover: SimpleTile[] = [];
   const withoutCover: SimpleTile[] = [];
   for (const d of designs) {
-    const img = staticCover(d) ?? undefined;
+    const img = staticCover(d, slug) ?? undefined;
     const tile: SimpleTile = {
       key: d.slug,
       name: d.name,
       href: `/bedroom-set/${slug}/${d.slug}`,
       ...(img ? { img } : { comingSoon: true }),
     };
-    (img ? withCover : withoutCover).push(tile);
+    if (!img) withoutCover.push(tile);
+    else if (occupancyCard(d, slug)) withOccCard.push(tile);
+    else withCover.push(tile);
   }
-  const tiles = [...withCover, ...withoutCover];
+  const tiles = [...withOccCard, ...withCover, ...withoutCover];
 
   const others: StripItem[] = OCCUPANCY_HUB_SLUGS.filter((o) => o !== slug).map((o) => ({
     key: o,
@@ -133,7 +148,7 @@ export async function getOccupancyHubContent(
     tagline: heroOverride?.tagline || meta.tagline,
     ctaLabel: 'مشاهده',
     ctaHref: '#hub-designs',
-    img: heroOverride?.image ?? cmsHeroImg ?? withCover[0]?.img,
+    img: heroOverride?.image ?? cmsHeroImg ?? withOccCard[0]?.img ?? withCover[0]?.img,
     imgAlt: meta.title,
   };
 
