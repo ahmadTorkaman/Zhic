@@ -73,6 +73,29 @@ describe('deriveAxisOptions', () => {
     const out = deriveAxisOptions(variants, ['size', 'footboard']);
     expect(out.map((a) => a.key)).toEqual(['size']);
   });
+  it('sorts fully-numeric axis values ascending regardless of variant order', () => {
+    // Regression: iron-bed variants carry a scrambled displayOrder
+    // (100,140,120,160,90,180), which used to leak into the size chips.
+    // Numeric axes must read low→high independent of that data.
+    const variants: PayloadProductVariant[] = [
+      { id: 1, product: 10, sku: 'A', axes: [{ key: 'size', value: '100' }], displayOrder: 0 },
+      { id: 2, product: 10, sku: 'B', axes: [{ key: 'size', value: '140' }], displayOrder: 0 },
+      { id: 3, product: 10, sku: 'C', axes: [{ key: 'size', value: '120' }], displayOrder: 10 },
+      { id: 4, product: 10, sku: 'D', axes: [{ key: 'size', value: '160' }], displayOrder: 10 },
+      { id: 5, product: 10, sku: 'E', axes: [{ key: 'size', value: '90' }], displayOrder: 20 },
+      { id: 6, product: 10, sku: 'F', axes: [{ key: 'size', value: '180' }], displayOrder: 20 },
+    ];
+    const out = deriveAxisOptions(variants, ['size']);
+    expect(out[0]!.values).toEqual(['90', '100', '120', '140', '160', '180']);
+  });
+  it('keeps non-numeric axis values in first-seen order', () => {
+    const variants: PayloadProductVariant[] = [
+      { id: 1, product: 10, sku: 'X', axes: [{ key: 'finish', value: 'green' }], displayOrder: 0 },
+      { id: 2, product: 10, sku: 'Y', axes: [{ key: 'finish', value: 'cream' }], displayOrder: 1 },
+    ];
+    const out = deriveAxisOptions(variants, ['finish']);
+    expect(out[0]!.values).toEqual(['green', 'cream']);
+  });
   it('drops axis groups with only one value (single-choice — not a real picker)', () => {
     // Catalog reality: 56 of 285 products have exactly 1 variant. Each
     // axis on that single variant shows up with one value. Without this

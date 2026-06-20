@@ -135,7 +135,10 @@ export function resolveVariant(
  *  (b) allowedAxes lists an axis (e.g. `footboard`) but no variant
  *      provides a value for it. Drop the empty group.
  *
- * Values per axis are deduped and preserve first-seen order.
+ * Values per axis are deduped. Fully-numeric axes (size, doors, drawers,
+ * pieces) are sorted ASCENDING so chips read 90·100·120·140·160·180
+ * regardless of the variants' displayOrder data; non-numeric axes
+ * (finish, footboard, …) preserve first-seen order.
  */
 export function deriveAxisOptions(
   variants: PayloadProductVariant[],
@@ -150,14 +153,21 @@ export function deriveAxisOptions(
   }
 
   return orderedKeys
-    .map((key) => ({
-      key,
-      values: dedupe(
+    .map((key) => {
+      const values = dedupe(
         variants.flatMap((v) =>
           v.axes.filter((a) => a.key === key).map((a) => a.value),
         ),
-      ),
-    }))
+      );
+      const allNumeric =
+        values.length > 0 && values.every((v) => /^-?\d+(\.\d+)?$/.test(v));
+      return {
+        key,
+        values: allNumeric
+          ? [...values].sort((a, b) => Number(a) - Number(b))
+          : values,
+      };
+    })
     .filter((group) => group.values.length >= 2);
 }
 
