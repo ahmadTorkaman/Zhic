@@ -1,39 +1,43 @@
 #!/usr/bin/env python3
 """
-Populate the `bedroom-furniture` global's category coverflow + room grid with
-the PARLA set's renders (operator request 2026-06-20). Keeps the page design as
-is; only fills showcase[] (top-level category card + parla arch image) and
-rooms[] (per-age parla bed render).
+Populate the `bedroom-furniture` global's category coverflow + room grid.
 
-parla has no `seating`/chair render, so that 8th category card is omitted.
-Media ids were resolved from the box (all parla files already uploaded).
+Carousel (8 top-level category cards) + the نوزاد/نوجوان room cards use LOOF
+`picture`/scene renders (operator request 2026-06-20; images chosen by a visual
+selection pass). loof is a baby/teen set, so the بزرگسال/دو طبقه room cards keep
+PARLA bed renders (loof has no double/bunk). Keeps the page design as-is.
+
+Idempotent: media reused by filename, uploaded from ~/zhic-media/loof if absent.
 
   Dry:    python3 seed-bedroom-furniture-carousel.py
   Apply:  ZHIC_EMAIL=... ZHIC_PASSWORD=... python3 seed-bedroom-furniture-carousel.py --apply
 """
-import os, sys, json, time, urllib.request
+import os, sys, json, time, subprocess, urllib.request, urllib.parse
 
 BOX = os.environ.get('ZHIC_BOX', 'http://80.240.31.146:3001')
+LOOF = os.path.expanduser('~/zhic-media/loof')
 APPLY = '--apply' in sys.argv
 TOKEN = os.environ.get('ZHIC_TOKEN')
 
-# top-level category id -> (label for log, parla arch media id)
+# top-level category id -> (loof filename, persian alt)
 SHOWCASE = [
-    (11, 'تخت خواب', 823),    # bed        ← parla-double-bed-160-cream
-    (12, 'پاتختی', 825),       # nightstand ← parla-nightstand-cream
-    (13, 'میز', 831),          # table      ← parla-study-desk-cream
-    (14, 'ذخیره‌سازی', 820),   # storage    ← parla-combined-wardrobe-cream
-    (16, 'آینه', 830),         # mirror     ← parla-standing-mirror-cream
-    (15, 'نمایش', 822),        # display    ← parla-display-cabinet-cream
-    (18, 'مکمل تخت', 819),     # complement ← parla-changing-table-cream
+    (11, 'تخت خواب',        'loof-single-bed-120-picture-cream.webp',            'تخت یک‌نفره لوف'),
+    (12, 'پاتختی',          'loof-nightstand-picture-cream.webp',                'پاتختی لوف'),
+    (13, 'میز',             'loof-study-desk-picture-cream.webp',                'میز تحریر لوف'),
+    (14, 'ذخیره‌سازی',      'loof-wardrobe-2-doors-mdf-open-picture-v2-cream.webp','کمد لوف'),
+    (16, 'آینه',            'loof-standing-mirror-picture-cream.webp',           'آینه قدی لوف'),
+    (15, 'نمایش',           'loof-display-cabinet-picture-cream-v2.webp',         'ویترین لوف'),
+    (17, 'صندلی',           'loof-study-chair-picture-v4.webp',                   'صندلی تحریر لوف'),
+    (18, 'مکمل تخت',        'loof-wall-shelf-picture-cream.webp',                 'شلف دیواری لوف'),
 ]
-SHOWCASE_INITIAL = 0  # feature تخت خواب (bed) centered
+SHOWCASE_INITIAL = 0  # feature تخت خواب (bed)
 
+# rooms: name, display(kashida), source ('loof' file or existing parla media id), href
 ROOMS = [
-    {'name': 'بزرگسال', 'display': 'بزرگــســــال', 'image': 823, 'href': '/bedroom-set/double'},
-    {'name': 'نوجوان',  'display': 'نـــــــوجوان', 'image': 821, 'href': '/bedroom-set/teen'},
-    {'name': 'نوزاد',   'display': 'نــــــــــــــوزاد', 'image': 816, 'href': '/bedroom-set/baby'},
-    {'name': 'دو طبقه', 'display': 'دو طــــــبقه', 'image': 812, 'href': '/bedroom-set/bunk'},
+    {'name': 'بزرگسال', 'display': 'بزرگــســــال', 'parla_id': 823, 'href': '/bedroom-set/double'},          # loof has no double
+    {'name': 'نوجوان',  'display': 'نـــــــوجوان', 'loof': ('loof-cream-teen-loof-scene-half-picture-cream.webp', 'اتاق خواب نوجوان لوف'), 'href': '/bedroom-set/teen'},
+    {'name': 'نوزاد',   'display': 'نــــــــــــــوزاد', 'loof': ('loof-cream-kid-loof-scene-half-picture-cream.webp', 'اتاق خواب نوزاد لوف'), 'href': '/bedroom-set/baby'},
+    {'name': 'دو طبقه', 'display': 'دو طــــــبقه', 'parla_id': 812, 'href': '/bedroom-set/bunk'},               # loof has no bunk
 ]
 
 def login():
@@ -45,33 +49,56 @@ def login():
     req = urllib.request.Request(f'{BOX}/api/users/login', body, {'Content-Type': 'application/json'})
     TOKEN = json.load(urllib.request.urlopen(req, timeout=30))['token']
 
-def post_global(payload):
-    req = urllib.request.Request(f'{BOX}/api/globals/bedroom-furniture',
-                                 json.dumps(payload).encode(), method='POST')
-    req.add_header('Content-Type', 'application/json')
-    req.add_header('Authorization', f'JWT {TOKEN}')
-    return json.load(urllib.request.urlopen(req, timeout=40))
+def api_get(path):
+    for _ in range(5):
+        try:
+            req = urllib.request.Request(f'{BOX}{path}')
+            if TOKEN: req.add_header('Authorization', f'JWT {TOKEN}')
+            with urllib.request.urlopen(req, timeout=40) as r: return json.load(r)
+        except Exception: time.sleep(2)
+    return None
 
-payload = {
-    'showcase': [{'category': cid, 'archImage': mid} for cid, _, mid in SHOWCASE],
-    'rooms': ROOMS,
-    'showcaseInitial': SHOWCASE_INITIAL,
-}
+def find_media(fn):
+    r = api_get(f'/api/media?where[filename][equals]={urllib.parse.quote(fn)}&depth=0&limit=1')
+    return r['docs'][0]['id'] if r and r['docs'] else None
 
-print('=== bedroom-furniture carousel + rooms (parla renders) ===')
-print('\nSHOWCASE (category coverflow):')
-for cid, label, mid in SHOWCASE:
-    print(f'  category {cid:2d} «{label}»  archImage={mid}')
-print('  (omitted: seating/صندلی — parla has no chair render)')
+def upload(fn, alt):
+    path = os.path.join(LOOF, fn)
+    cmd = ['curl','-s','-X','POST',f'{BOX}/api/media','-H',f'Authorization: JWT {TOKEN}',
+           '-F',f'file=@{path};type=image/webp','-F',f'_payload={json.dumps({"alt":alt},ensure_ascii=False)}']
+    return json.loads(subprocess.run(cmd, capture_output=True, text=True).stdout)['doc']['id']
+
+def resolve(fn, alt):
+    mid = find_media(fn)
+    if mid: return mid, 'reused'
+    if not APPLY: return '<upload>', 'would-upload'
+    return upload(fn, alt), 'uploaded'
+
+if APPLY: login()
+
+print('=== bedroom-furniture carousel + rooms (loof renders) ===\nSHOWCASE:')
+showcase = []
+for cid, label, fn, alt in SHOWCASE:
+    mid, how = resolve(fn, alt)
+    print(f'  cat {cid:2d} «{label:10s}»  {fn}  -> {mid} ({how})')
+    showcase.append({'category': cid, 'archImage': mid})
+
 print('\nROOMS:')
+rooms = []
 for r in ROOMS:
-    print(f'  «{r["name"]}»  image={r["image"]}  -> {r["href"]}')
+    if 'loof' in r:
+        fn, alt = r['loof']; mid, how = resolve(fn, alt); src = f'{fn} ({how})'
+    else:
+        mid = r['parla_id']; src = f'parla media {mid} (loof has none for this age)'
+    print(f'  «{r["name"]}»  {src}  -> {r["href"]}')
+    rooms.append({'name': r['name'], 'display': r['display'], 'image': mid, 'href': r['href']})
 
 if not APPLY:
-    print('\n(dry run — re-run with --apply + creds)')
-    sys.exit(0)
+    print('\n(dry run — re-run with --apply + creds)'); sys.exit(0)
 
-login()
-res = post_global(payload)
+payload = {'showcase': showcase, 'rooms': rooms, 'showcaseInitial': SHOWCASE_INITIAL}
+req = urllib.request.Request(f'{BOX}/api/globals/bedroom-furniture', json.dumps(payload).encode(), method='POST')
+req.add_header('Content-Type', 'application/json'); req.add_header('Authorization', f'JWT {TOKEN}')
+res = json.load(urllib.request.urlopen(req, timeout=40))
 g = res.get('result', res)
 print(f'\n✓ updated. showcase={len(g.get("showcase") or [])} cards, rooms={len(g.get("rooms") or [])}')
