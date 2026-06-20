@@ -15,29 +15,32 @@ Idempotent: media reused by filename, uploaded from ~/zhic-media/loof if absent.
 import os, sys, json, time, subprocess, urllib.request, urllib.parse
 
 BOX = os.environ.get('ZHIC_BOX', 'http://80.240.31.146:3001')
-LOOF = os.path.expanduser('~/zhic-media/loof')
+MEDIA = os.path.expanduser('~/zhic-media')
 APPLY = '--apply' in sys.argv
 TOKEN = os.environ.get('ZHIC_TOKEN')
 
-# top-level category id -> (loof filename, persian alt)
+# top-level category id -> (relpath under ~/zhic-media, persian alt). loof picture
+# shots, chosen by a visual selection pass.
 SHOWCASE = [
-    (11, 'تخت خواب',        'loof-single-bed-120-picture-cream.webp',            'تخت یک‌نفره لوف'),
-    (12, 'پاتختی',          'loof-nightstand-picture-cream.webp',                'پاتختی لوف'),
-    (13, 'میز',             'loof-study-desk-picture-cream.webp',                'میز تحریر لوف'),
-    (14, 'ذخیره‌سازی',      'loof-wardrobe-2-doors-mdf-open-picture-v2-cream.webp','کمد لوف'),
-    (16, 'آینه',            'loof-standing-mirror-picture-cream.webp',           'آینه قدی لوف'),
-    (15, 'نمایش',           'loof-display-cabinet-picture-cream-v2.webp',         'ویترین لوف'),
-    (17, 'صندلی',           'loof-study-chair-picture-v4.webp',                   'صندلی تحریر لوف'),
-    (18, 'مکمل تخت',        'loof-wall-shelf-picture-cream.webp',                 'شلف دیواری لوف'),
+    (11, 'تخت خواب',        'loof/loof-single-bed-120-picture-cream.webp',            'تخت یک‌نفره لوف'),
+    (12, 'پاتختی',          'loof/loof-nightstand-picture-cream.webp',                'پاتختی لوف'),
+    (13, 'میز',             'loof/loof-study-desk-picture-cream.webp',                'میز تحریر لوف'),
+    (14, 'ذخیره‌سازی',      'loof/loof-wardrobe-2-doors-mdf-open-picture-v2-cream.webp','کمد لوف'),
+    (16, 'آینه',            'loof/loof-standing-mirror-picture-cream.webp',           'آینه قدی لوف'),
+    (15, 'نمایش',           'loof/loof-display-cabinet-picture-cream-v2.webp',         'ویترین لوف'),
+    (17, 'صندلی',           'loof/loof-study-chair-picture-v4.webp',                   'صندلی تحریر لوف'),
+    (18, 'مکمل تخت',        'loof/loof-wall-shelf-picture-cream.webp',                 'شلف دیواری لوف'),
 ]
 SHOWCASE_INITIAL = 0  # feature تخت خواب (bed)
 
-# rooms: name, display(kashida), source ('loof' file or existing parla media id), href
+# rooms: name, display(kashida), (relpath, alt) source, href. loof has only
+# baby/teen scenes; بزرگسال uses a jacqueline double room scene, دو طبقه a parla
+# bunk poster (the only styled bunk scene in the library) — both chosen visually.
 ROOMS = [
-    {'name': 'بزرگسال', 'display': 'بزرگــســــال', 'parla_id': 823, 'href': '/bedroom-set/double'},          # loof has no double
-    {'name': 'نوجوان',  'display': 'نـــــــوجوان', 'loof': ('loof-cream-teen-loof-scene-half-picture-cream.webp', 'اتاق خواب نوجوان لوف'), 'href': '/bedroom-set/teen'},
-    {'name': 'نوزاد',   'display': 'نــــــــــــــوزاد', 'loof': ('loof-cream-kid-loof-scene-half-picture-cream.webp', 'اتاق خواب نوزاد لوف'), 'href': '/bedroom-set/baby'},
-    {'name': 'دو طبقه', 'display': 'دو طــــــبقه', 'parla_id': 812, 'href': '/bedroom-set/bunk'},               # loof has no bunk
+    {'name': 'بزرگسال', 'display': 'بزرگــســــال', 'src': ('jacqueline/jacqueline-scene-all-picture.webp', 'اتاق خواب دونفره ژاکلین'), 'href': '/bedroom-set/double'},
+    {'name': 'نوجوان',  'display': 'نـــــــوجوان', 'src': ('loof/loof-cream-teen-loof-scene-half-picture-cream.webp', 'اتاق خواب نوجوان لوف'), 'href': '/bedroom-set/teen'},
+    {'name': 'نوزاد',   'display': 'نــــــــــــــوزاد', 'src': ('loof/loof-cream-kid-loof-scene-half-picture-cream.webp', 'اتاق خواب نوزاد لوف'), 'href': '/bedroom-set/baby'},
+    {'name': 'دو طبقه', 'display': 'دو طــــــبقه', 'src': ('bedroom-set/bedroom-set-parla-bunk-poster.webp', 'سرویس خواب دوطبقه پارلا'), 'href': '/bedroom-set/bunk'},
 ]
 
 def login():
@@ -62,35 +65,33 @@ def find_media(fn):
     r = api_get(f'/api/media?where[filename][equals]={urllib.parse.quote(fn)}&depth=0&limit=1')
     return r['docs'][0]['id'] if r and r['docs'] else None
 
-def upload(fn, alt):
-    path = os.path.join(LOOF, fn)
+def upload(relpath, alt):
+    path = os.path.join(MEDIA, relpath)
     cmd = ['curl','-s','-X','POST',f'{BOX}/api/media','-H',f'Authorization: JWT {TOKEN}',
            '-F',f'file=@{path};type=image/webp','-F',f'_payload={json.dumps({"alt":alt},ensure_ascii=False)}']
     return json.loads(subprocess.run(cmd, capture_output=True, text=True).stdout)['doc']['id']
 
-def resolve(fn, alt):
-    mid = find_media(fn)
+def resolve(relpath, alt):
+    mid = find_media(os.path.basename(relpath))
     if mid: return mid, 'reused'
     if not APPLY: return '<upload>', 'would-upload'
-    return upload(fn, alt), 'uploaded'
+    return upload(relpath, alt), 'uploaded'
 
 if APPLY: login()
 
 print('=== bedroom-furniture carousel + rooms (loof renders) ===\nSHOWCASE:')
 showcase = []
-for cid, label, fn, alt in SHOWCASE:
-    mid, how = resolve(fn, alt)
-    print(f'  cat {cid:2d} «{label:10s}»  {fn}  -> {mid} ({how})')
+for cid, label, relpath, alt in SHOWCASE:
+    mid, how = resolve(relpath, alt)
+    print(f'  cat {cid:2d} «{label:10s}»  {os.path.basename(relpath)}  -> {mid} ({how})')
     showcase.append({'category': cid, 'archImage': mid})
 
 print('\nROOMS:')
 rooms = []
 for r in ROOMS:
-    if 'loof' in r:
-        fn, alt = r['loof']; mid, how = resolve(fn, alt); src = f'{fn} ({how})'
-    else:
-        mid = r['parla_id']; src = f'parla media {mid} (loof has none for this age)'
-    print(f'  «{r["name"]}»  {src}  -> {r["href"]}')
+    relpath, alt = r['src']
+    mid, how = resolve(relpath, alt)
+    print(f'  «{r["name"]}»  {relpath}  -> {mid} ({how})')
     rooms.append({'name': r['name'], 'display': r['display'], 'image': mid, 'href': r['href']})
 
 if not APPLY:
