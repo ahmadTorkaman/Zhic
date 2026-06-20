@@ -74,7 +74,7 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
             <MosaicStrip heading="گروه‌های دیگر" items={hub.others} seeAll={hub.othersSeeAll} />
           </div>
         )}
-        <div className="mt-[34px] px-[11px] pb-12">
+        <div className="mt-[34px] px-[11px] pb-[18px]">
           <BrandDivider />
         </div>
       </div>
