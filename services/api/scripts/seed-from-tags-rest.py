@@ -56,10 +56,16 @@ def api(method, path, payload=None):
         return json.load(r)
 
 def api_get(path):
-    req = urllib.request.Request(f'{BOX}{path}')
-    if TOKEN: req.add_header('Authorization', f'JWT {TOKEN}')
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.load(r)
+    last = None
+    for _ in range(5):  # box flakes intermittently; retry reads
+        try:
+            req = urllib.request.Request(f'{BOX}{path}')
+            if TOKEN: req.add_header('Authorization', f'JWT {TOKEN}')
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return json.load(r)
+        except Exception as e:
+            last = e; time.sleep(2)
+    raise last
 
 def find_media_by_filename(fn):
     q = urllib.parse.quote(fn)
