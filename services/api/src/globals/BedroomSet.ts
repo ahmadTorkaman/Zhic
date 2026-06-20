@@ -33,5 +33,20 @@ export const BedroomSet: GlobalConfig = {
       label: 'معرفی صفحه‌ی جدیدترین‌ها',
       admin: { description: 'متن کوتاه زیر شبکه‌ی تصاویر در صفحه‌ی «جدیدترین محصولات» اورلی ویژه. از نیم‌فاصله (ZWNJ) استفاده کنید.' },
     },
+    {
+      type: 'collapsible',
+      label: 'تصاویر سربرگ هاب‌های سنی',
+      admin: {
+        initCollapsed: true,
+        description:
+          'تصویر تمام‌قاب سربرگ برای هر هاب گروه سنی (مثلاً /bedroom-set/teen). اگر خالی بماند، از تصویر طرح شاخص همان گروه استفاده می‌شود.',
+      },
+      fields: [
+        { name: 'heroTeenMedia', type: 'upload', relationTo: 'media', label: 'سربرگ نوجوان' },
+        { name: 'heroDoubleMedia', type: 'upload', relationTo: 'media', label: 'سربرگ دونفره' },
+        { name: 'heroBabyMedia', type: 'upload', relationTo: 'media', label: 'سربرگ نوزاد' },
+        { name: 'heroBunkMedia', type: 'upload', relationTo: 'media', label: 'سربرگ دوطبقه' },
+      ],
+    },
   ],
 }

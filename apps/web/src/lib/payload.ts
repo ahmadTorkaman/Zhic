@@ -613,6 +613,20 @@ export async function fetchBedroomFurniture(): Promise<PayloadBedroomFurniture |
   return payloadFetch<PayloadBedroomFurniture>('/api/globals/bedroom-furniture?depth=2', 'bedroom-furniture');
 }
 
+export type PayloadBedroomSetHeroes = {
+  heroTeenMedia?: PayloadMedia | null;
+  heroDoubleMedia?: PayloadMedia | null;
+  heroBabyMedia?: PayloadMedia | null;
+  heroBunkMedia?: PayloadMedia | null;
+};
+
+/** Per-occupancy uploaded hero images for the /bedroom-set/{occupancy} hubs
+ *  (bedroom-set global). depth=2 inflates each media url. Returns nulls until
+ *  the operator uploads them (and the migration is applied on the box). */
+export async function fetchBedroomSetHeroes(): Promise<PayloadBedroomSetHeroes | null> {
+  return payloadFetch<PayloadBedroomSetHeroes>('/api/globals/bedroom-set?depth=2', 'bedroom-set');
+}
+
 export async function fetchShowrooms(limit = 4): Promise<PayloadShowroom[]> {
   const list = await payloadFetch<PayloadList<PayloadShowroom>>(
     `/api/showrooms?limit=${limit}&depth=2&sort=-is_central`,

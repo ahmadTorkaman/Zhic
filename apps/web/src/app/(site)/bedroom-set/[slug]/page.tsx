@@ -5,7 +5,7 @@ import { OCCUPANCY_PERSIAN, isOccupancySlug } from './occupancy';
 import { SeriesHub, seriesHubMetadata } from './series-hub';
 import { buildMosaicRows } from '@/lib/bedroom-furniture-mosaic';
 import { getOccupancyHubContent } from '@/lib/occupancy-hub-content';
-import { MosaicHero } from '@/components/bedroom-furniture-mosaic/MosaicHero';
+import { BedroomHero } from '@/components/bedroom-furniture/BedroomHero';
 import { CategoryMosaic } from '@/components/bedroom-furniture-mosaic/CategoryMosaic';
 import { MosaicStrip } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
 import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
@@ -59,18 +59,14 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
             items={[
               { label: 'خانه', href: '/' },
               { label: 'سرویس خواب', href: '/bedroom-set' },
-              { label: hub.hero.title.replace('سرویس خواب ', '') },
+              { label: hub.shortName },
             ]}
           />
         </div>
-        <div className="mt-[30px]">
-          <MosaicHero
-            title={hub.hero.title}
-            subtitle={hub.hero.subtitle}
-            tagline={hub.hero.tagline}
-          />
+        <div className="mt-4">
+          <BedroomHero hero={hub.hero} />
         </div>
-        <div className="mt-[26px]">
+        <div className="mt-[34px]" id="hub-designs">
           <CategoryMosaic heading={hub.heading} rows={buildMosaicRows(hub.tiles)} />
         </div>
         {hub.others.length > 0 && (

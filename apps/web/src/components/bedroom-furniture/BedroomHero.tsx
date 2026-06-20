@@ -19,6 +19,11 @@ function Chevron({ className }: { className?: string }) {
  */
 export function BedroomHero({ hero }: { hero?: HeroContent }) {
   const titleLines = (hero?.title ?? 'مُبلمان\nاتاق خواب').split('\n').filter(Boolean);
+  // `?? default` keeps the /bedroom-furniture defaults when a prop is absent;
+  // an explicit empty string skips that line (e.g. the occupancy hubs drop the
+  // subtitle entirely).
+  const subtitle = hero?.subtitle ?? 'از تخت خواب تا آینه و میز آرایش';
+  const tagline = hero?.tagline ?? 'همه چیز با طراحی منظم و کیفیت ساخت بالا';
   return (
     <section className={styles.hero} aria-labelledby="bf-hero-title">
       <Image
@@ -40,8 +45,8 @@ export function BedroomHero({ hero }: { hero?: HeroContent }) {
             </span>
           ))}
         </h1>
-        <p className={styles.subtitle}>{hero?.subtitle ?? 'از تخت خواب تا آینه و میز آرایش'}</p>
-        <p className={styles.tagline}>{hero?.tagline ?? 'همه چیز با طراحی منظم و کیفیت ساخت بالا'}</p>
+        {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
+        {tagline ? <p className={styles.tagline}>{tagline}</p> : null}
 
         <a href={hero?.ctaHref ?? '#bf-categories'} className={styles.cta}>
           <Chevron className={styles.chev} />

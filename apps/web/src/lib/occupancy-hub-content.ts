@@ -10,13 +10,14 @@
  * Self-contained so /lab can import it; the live route's occupancy.ts owns the
  * SEO branch + slug guards. Wire-up replaces only the route body, not these maps.
  */
-import { toPersianDigits } from '@zhic/locale';
 import {
   fetchDesignsByOccupancy,
+  fetchBedroomSetHeroes,
   mediaUrl,
   type PayloadDesign,
   type PayloadMedia,
 } from '@/lib/payload';
+import type { HeroContent } from '@/lib/bedroom-furniture';
 import type { SimpleTile } from '@/lib/bedroom-furniture-mosaic';
 import type { StripItem } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
 
@@ -61,7 +62,10 @@ function staticCover(d: PayloadDesign): string | null {
 
 export type OccupancyHubContent = {
   slug: OccHubSlug;
-  hero: { title: string; subtitle: string; tagline: string };
+  /** Clean occupancy word for the breadcrumb (e.g. «نوجوان»). */
+  shortName: string;
+  /** Full-bleed photo hero (BedroomHero shape, like /bedroom-furniture). */
+  hero: HeroContent;
   heading: string;
   tiles: SimpleTile[];
   /** Cross-links to the other occupancy hubs. */
@@ -69,9 +73,31 @@ export type OccupancyHubContent = {
   othersSeeAll: { label: string; href: string };
 };
 
-export async function getOccupancyHubContent(slug: OccHubSlug): Promise<OccupancyHubContent> {
+/** Per-occupancy uploaded hero override (CMS) — image + optional copy.
+ *  Empty until the operator populates the bedroom-set global; the hero then
+ *  falls back to the featured design's cover. */
+export type OccupancyHeroOverride = { image?: string | null; title?: string | null; tagline?: string | null };
+
+export async function getOccupancyHubContent(
+  slug: OccHubSlug,
+  heroOverride?: OccupancyHeroOverride,
+): Promise<OccupancyHubContent> {
   const meta = META[slug];
-  const designs = await fetchDesignsByOccupancy(slug);
+  const [designs, heroes] = await Promise.all([
+    fetchDesignsByOccupancy(slug),
+    fetchBedroomSetHeroes(),
+  ]);
+
+  // Operator-uploaded hero image for this occupancy (bedroom-set global), if any.
+  const cmsHeroMedia =
+    slug === 'teen'
+      ? heroes?.heroTeenMedia
+      : slug === 'double'
+        ? heroes?.heroDoubleMedia
+        : slug === 'baby'
+          ? heroes?.heroBabyMedia
+          : heroes?.heroBunkMedia;
+  const cmsHeroImg = mediaUrl(cmsHeroMedia ?? null) ?? undefined;
 
   // Every design of the age (operator: show image-less ones too, as «به‌زودی»
   // sand tiles). Cover-first ordering so the featured tile lands on a photo and
@@ -97,13 +123,24 @@ export async function getOccupancyHubContent(slug: OccHubSlug): Promise<Occupanc
     href: `/bedroom-set/${o}`,
   }));
 
+  // Hero image: operator-uploaded override → else the featured design's cover
+  // (the first photo tile). 2-line title splits the last word onto its own line
+  // (like the comp «مُبلمان / اتاق خواب»). No subtitle — the «گروه سنی · N طرح»
+  // count line is intentionally dropped.
+  const hero: HeroContent = {
+    title: heroOverride?.title || meta.title.replace(/ (\S+)$/, '\n$1'),
+    subtitle: '',
+    tagline: heroOverride?.tagline || meta.tagline,
+    ctaLabel: 'مشاهده',
+    ctaHref: '#hub-designs',
+    img: heroOverride?.image ?? cmsHeroImg ?? withCover[0]?.img,
+    imgAlt: meta.title,
+  };
+
   return {
     slug,
-    hero: {
-      title: meta.title,
-      subtitle: `${meta.eyebrow} · ${toPersianDigits(String(designs.length))} طرح`,
-      tagline: meta.tagline,
-    },
+    shortName: meta.short,
+    hero,
     heading: 'طرح‌ها',
     tiles,
     others,

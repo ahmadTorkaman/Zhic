@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Breadcrumbs } from '@zhic/ui';
 import { buildMosaicRows } from '@/lib/bedroom-furniture-mosaic';
 import { getOccupancyHubContent, OCCUPANCY_HUB_SLUGS } from '@/lib/occupancy-hub-content';
-import { MosaicHero } from '@/components/bedroom-furniture-mosaic/MosaicHero';
+import { BedroomHero } from '@/components/bedroom-furniture/BedroomHero';
 import { CategoryMosaic } from '@/components/bedroom-furniture-mosaic/CategoryMosaic';
 import { MosaicStrip } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
 import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
  * covers; no global chrome. Real route wire-up pending operator review.
  */
 export default async function LabBedroomSetHubPage() {
-  const hubs = await Promise.all(OCCUPANCY_HUB_SLUGS.map(getOccupancyHubContent));
+  const hubs = await Promise.all(OCCUPANCY_HUB_SLUGS.map((s) => getOccupancyHubContent(s)));
 
   return (
     <main className="min-h-screen bg-ivory">
@@ -31,21 +31,17 @@ export default async function LabBedroomSetHubPage() {
                 items={[
                   { label: 'خانه', href: '/' },
                   { label: 'سرویس خواب', href: '/bedroom-set' },
-                  { label: hub.hero.title.replace('سرویس خواب ', '') },
+                  { label: hub.shortName },
                 ]}
               />
               <p className="mt-2 text-[11px] text-stone">
                 /bedroom-set/{hub.slug} — {hub.tiles.length} طرح
               </p>
             </div>
-            <div className="mt-[30px]">
-              <MosaicHero
-                title={hub.hero.title}
-                subtitle={hub.hero.subtitle}
-                tagline={hub.hero.tagline}
-              />
+            <div className="mt-4">
+              <BedroomHero hero={hub.hero} />
             </div>
-            <div className="mt-[26px]">
+            <div className="mt-[34px]">
               <CategoryMosaic heading={hub.heading} rows={buildMosaicRows(hub.tiles)} />
             </div>
             {hub.others.length > 0 && (
