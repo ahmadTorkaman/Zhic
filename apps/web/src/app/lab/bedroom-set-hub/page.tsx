@@ -39,14 +39,18 @@ export default async function LabBedroomSetHubPage() {
               </p>
             </div>
             <div className="mt-[30px]">
-              <MosaicHero title={hub.hero.title} tagline={hub.hero.tagline} />
+              <MosaicHero
+                title={hub.hero.title}
+                subtitle={hub.hero.subtitle}
+                tagline={hub.hero.tagline}
+              />
             </div>
             <div className="mt-[26px]">
               <CategoryMosaic heading={hub.heading} rows={buildMosaicRows(hub.tiles)} />
             </div>
             {hub.others.length > 0 && (
               <div className="mt-[40px]">
-                <MosaicStrip heading="گروه‌های دیگر" items={hub.others} />
+                <MosaicStrip heading="گروه‌های دیگر" items={hub.others} seeAll={hub.othersSeeAll} />
               </div>
             )}
             <div className="mt-[34px] px-[11px] pb-4">

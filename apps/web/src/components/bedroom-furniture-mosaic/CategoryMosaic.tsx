@@ -54,6 +54,20 @@ function Tile({
         }}
       >
         {/* Every tile: label only — no «مشاهده»/arrow (operator). */}
+        {tile.comingSoon && (
+          <span
+            style={{
+              display: 'block',
+              fontSize: '9px',
+              fontWeight: 700,
+              letterSpacing: '0.16em',
+              opacity: 0.75,
+              marginBottom: '3px',
+            }}
+          >
+            به‌زودی
+          </span>
+        )}
         <span className={styles.label}>{tile.display ?? tile.name}</span>
       </span>
     </a>

@@ -21,6 +21,9 @@ export type MosaicTile = {
   aspect: string;
   /** object-position for the cover crop (matches the comp's pan). */
   pos?: string;
+  /** Photo-less design awaiting renders → show a «به‌زودی» badge (opt-in;
+   *  empty /bedroom-furniture categories leave this unset). */
+  comingSoon?: boolean;
 };
 
 export type MosaicRow =
@@ -164,6 +167,8 @@ export type SimpleTile = {
   href: string;
   /** object-position for the cover crop (default center). */
   pos?: string;
+  /** Photo-less design → «به‌زودی» badge on the tile. */
+  comingSoon?: boolean;
 };
 
 // Per-variant aspect ratios from the comp; pairs/wides alternate tall↔short

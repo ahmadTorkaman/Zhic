@@ -10,6 +10,7 @@
  * Self-contained so /lab can import it; the live route's occupancy.ts owns the
  * SEO branch + slug guards. Wire-up replaces only the route body, not these maps.
  */
+import { toPersianDigits } from '@zhic/locale';
 import {
   fetchDesignsByOccupancy,
   mediaUrl,
@@ -60,26 +61,34 @@ function staticCover(d: PayloadDesign): string | null {
 
 export type OccupancyHubContent = {
   slug: OccHubSlug;
-  hero: { title: string; tagline: string };
+  hero: { title: string; subtitle: string; tagline: string };
   heading: string;
   tiles: SimpleTile[];
   /** Cross-links to the other occupancy hubs. */
   others: StripItem[];
+  othersSeeAll: { label: string; href: string };
 };
 
 export async function getOccupancyHubContent(slug: OccHubSlug): Promise<OccupancyHubContent> {
   const meta = META[slug];
   const designs = await fetchDesignsByOccupancy(slug);
 
-  const tiles: SimpleTile[] = designs
-    .map((d) => ({ d, img: staticCover(d) }))
-    .filter((x): x is { d: PayloadDesign; img: string } => x.img != null)
-    .map(({ d, img }) => ({
+  // Every design of the age (operator: show image-less ones too, as «به‌زودی»
+  // sand tiles). Cover-first ordering so the featured tile lands on a photo and
+  // the photo-less tiles trail.
+  const withCover: SimpleTile[] = [];
+  const withoutCover: SimpleTile[] = [];
+  for (const d of designs) {
+    const img = staticCover(d) ?? undefined;
+    const tile: SimpleTile = {
       key: d.slug,
       name: d.name,
-      img,
       href: `/bedroom-set/${slug}/${d.slug}`,
-    }));
+      ...(img ? { img } : { comingSoon: true }),
+    };
+    (img ? withCover : withoutCover).push(tile);
+  }
+  const tiles = [...withCover, ...withoutCover];
 
   const others: StripItem[] = OCCUPANCY_HUB_SLUGS.filter((o) => o !== slug).map((o) => ({
     key: o,
@@ -88,5 +97,16 @@ export async function getOccupancyHubContent(slug: OccHubSlug): Promise<Occupanc
     href: `/bedroom-set/${o}`,
   }));
 
-  return { slug, hero: { title: meta.title, tagline: meta.tagline }, heading: 'طرح‌ها', tiles, others };
+  return {
+    slug,
+    hero: {
+      title: meta.title,
+      subtitle: `${meta.eyebrow} · ${toPersianDigits(String(designs.length))} طرح`,
+      tagline: meta.tagline,
+    },
+    heading: 'طرح‌ها',
+    tiles,
+    others,
+    othersSeeAll: { label: 'همه‌ی طرح‌ها', href: '/bedroom-set' },
+  };
 }
