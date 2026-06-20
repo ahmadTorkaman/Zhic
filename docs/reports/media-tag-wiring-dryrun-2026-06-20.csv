@@ -536,7 +536,7 @@ iron,iron-scene-half-4-picture.webp,scene,teen,,,{},design,iron,gallery(scene),,
 iron,iron-vanity-3-drawers-picture.webp,picture,all-occupencies,,"vanity,wall-mirror","{""drawers"": ""3""}",product,iron-vanity,variant.image,iron-vanity-drawers-3,matched,,"vanity,all-occupencies,wall-mirror,3drawers,product,picture"
 iron,iron-file-5-drawers-picture-v2.webp,picture,all-occupencies,,file,"{""drawers"": ""5""}",product,iron-file,variant.image,iron-file-drawers-5,matched,,"file,all-occupencies,5drawers,product,picture"
 iron,iron-standing-mirror.webp,main,all-occupencies,,standing-mirror,{},product,iron-standing-mirror,gallery[0](main),,matched,,"standing-mirror,all-occupencies,product,main"
-iron,iron-standing-mirror-regal-picture.webp,picture,all-occupencies,,standing-mirror-regal,{},product,iron-standing-mirror-regal,gallery(picture),,new-product,"create product first, then wire","standing-mirror-regal,all-occupencies,product,picture"
+iron,iron-standing-mirror-regal-picture.webp,picture,all-occupencies,,standing-mirror-regal,{},product,iron-standing-mirror-regal,gallery(picture),,matched,,"standing-mirror-regal,all-occupencies,product,picture"
 iron,iron-wardrobe-1-doors-mdf.webp,main,all-occupencies,,wardrobe,"{""doors"": ""1"", ""door_material"": ""mdf""}",product,iron-wardrobe,gallery[0](main),,matched,"axes {'doors': '1', 'door_material': 'mdf'} -> no variant","wardrobe,all-occupencies,1door,mdf,product,main"
 iron,iron-wardrobe-2-doors-glass.webp,main,all-occupencies,,wardrobe,"{""doors"": ""2"", ""door_material"": ""glass""}",product,iron-wardrobe,variant.image,iron-wardrobe-doors-2-door_material-glass,matched,,"wardrobe,all-occupencies,2doors,glass,product,main"
 iron,iron-scene-half-2-picture.webp,scene,teen,,,{},design,iron,gallery(scene),,design-scene,scene/teen -> design gallery (one may be promoted to occupancyMedia/sliderMedia),"teen,scene"
@@ -545,7 +545,7 @@ iron,iron-single-bed-120-picture.webp,picture,teen,,single-bed,"{""size"": ""120
 iron,iron-single-bed-120-picture-v3.webp,detail,teen,,single-bed,"{""size"": ""120""}",product,iron-bed,variant.image,iron-bed-size-120,matched,,"single-bed,teen,120,product,detail"
 iron,iron-nightstand-picture-v3.webp,picture,all-occupencies,,nightstand,{},product,iron-nightstand,gallery(picture),,matched,,"nightstand,all-occupencies,product,picture"
 iron,iron-vanity-3-drawers-picture-v2.webp,picture,all-occupencies,,"vanity,wall-mirror","{""drawers"": ""3""}",product,iron-vanity,variant.image,iron-vanity-drawers-3,matched,,"vanity,all-occupencies,wall-mirror,3drawers,product,picture"
-iron,iron-standing-mirror-regal.webp,main,all-occupencies,,standing-mirror-regal,{},product,iron-standing-mirror-regal,gallery[0](main),,new-product,"create product first, then wire","standing-mirror-regal,all-occupencies,product,main"
+iron,iron-standing-mirror-regal.webp,main,all-occupencies,,standing-mirror-regal,{},product,iron-standing-mirror-regal,gallery[0](main),,matched,,"standing-mirror-regal,all-occupencies,product,main"
 iron,iron-bookcase-accessory.webp,main,teen,,bookcase,{},product,iron-bookcase,gallery[0](main),,matched,,"bookcase,teen,product,main"
 iron,iron-study-desk-picture.webp,picture,teen,,study-desk,{},product,iron-study-desk,gallery(picture),,matched,,"study-desk,teen,product,picture"
 iron,iron-nightstand-picture-v2.webp,picture,all-occupencies,,nightstand,{},product,iron-nightstand,gallery(picture),,matched,,"nightstand,all-occupencies,product,picture"
@@ -573,7 +573,7 @@ iron,iron-vanity-chair-picture-v2.webp,main,all-occupencies,,vanity-chair,{},pro
 iron,iron-study-desk-picture-v2.webp,picture,teen,,study-desk,{},product,iron-study-desk,gallery(picture),,matched,,"study-desk,teen,product,picture"
 showrooms,showroom-babol.webp,showroom-card,,,,{},showroom,babol-amirkala,cover,,matched-fallback,babol -> babol-amirkala,showroom-card
 showrooms,showroom-sari.webp,showroom-card,,,,{},showroom,sari,cover,,matched,,showroom-card
-showrooms,showroom-hamedan.webp,showroom-card,,,,{},showroom,"hamedan-maryanaj,hamedan-taleghani",cover,,review-city,hamedan -> 2 showrooms (pick),showroom-card
+showrooms,showroom-hamedan.webp,showroom-card,,,,{},showroom,"hamedan-taleghani,hamedan-maryanaj",cover,,review-city,hamedan -> 2 showrooms (pick),showroom-card
 showrooms,showroom-isfahan.webp,showroom-card,,,,{},showroom,isfahan,cover,,matched,,showroom-card
 showrooms,showroom-arak.webp,showroom-card,,,,{},showroom,arak,cover,,matched,,showroom-card
 showrooms,showroom-rasht.webp,showroom-card,,,,{},showroom,rasht,cover,,matched,,showroom-card
