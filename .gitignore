@@ -55,3 +55,6 @@ services/api/media/
 
 # superpowers
 .superpowers/
+
+# media re-sync operational backups (machine-local)
+services/api/scripts/backups/
