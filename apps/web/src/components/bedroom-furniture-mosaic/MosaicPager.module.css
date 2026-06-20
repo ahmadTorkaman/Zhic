@@ -1,0 +1,79 @@
+/* Mosaic-aesthetic pager — gold arrows + round forest/cream page pills. */
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3cqw;
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 1.6cqw;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* page pill (link) */
+.page,
+.active {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 9.3cqw; /* ~40px @430 */
+  height: 9.3cqw;
+  padding-inline: 1.8cqw;
+  border-radius: 999px;
+  font-size: 3.6cqw; /* ~15.5px */
+  line-height: 1;
+  font-weight: 700;
+}
+.page {
+  color: var(--color-forest-deep);
+  transition:
+    background-color var(--dur-fast) var(--ease-out-soft),
+    color var(--dur-fast) var(--ease-out-soft);
+}
+.page:hover {
+  background: var(--color-cream);
+  color: var(--color-forest);
+}
+.active {
+  background: var(--color-forest-deep);
+  color: var(--color-ivory);
+}
+
+.ellipsis {
+  color: var(--color-stone);
+  font-size: 3.6cqw;
+  padding-inline: 0.8cqw;
+  user-select: none;
+}
+
+/* prev/next gold arrows */
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 9.3cqw;
+  width: 9.3cqw;
+  border-radius: 999px;
+  color: var(--color-gold);
+  transition: background-color var(--dur-fast) var(--ease-out-soft);
+}
+.arrow:hover {
+  background: var(--color-cream);
+}
+.icon {
+  width: 5.6cqw; /* ~24px */
+  height: auto;
+}
+.prev {
+  transform: scaleX(-1); /* GoldArrow points RTL-forward (left); flip for prev */
+}
+.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}

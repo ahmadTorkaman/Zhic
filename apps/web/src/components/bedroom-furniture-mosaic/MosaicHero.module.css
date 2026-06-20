@@ -1,0 +1,36 @@
+/* Bedroom-furniture mosaic hero — Figma Kaveh 334:136/143/151.
+   Centered text block on the cream page. Type sized in cqw against the 430
+   column → pixel-exact at 430, fluid below. */
+
+.hero {
+  text-align: center;
+  padding-inline: 6.5cqw;
+}
+
+.title {
+  margin: 0;
+  font-weight: 900; /* Ayandeh Black */
+  font-size: 9.66cqw; /* 41.555px @430 */
+  line-height: 1.4;
+  letter-spacing: -0.02em; /* tracking -0.8311px */
+  color: var(--color-forest-deep); /* #2E3B2F */
+}
+.title span {
+  display: block;
+}
+
+.subtitle {
+  margin: 2.6cqw 0 0; /* ~11px under the title */
+  font-weight: 700; /* Bold */
+  font-size: 3.94cqw; /* 16.938px */
+  line-height: 1.49;
+  color: var(--color-gold);
+}
+
+.tagline {
+  margin: 1cqw 0 0;
+  font-weight: 400; /* Regular */
+  font-size: 3.15cqw; /* 13.55px */
+  line-height: 1.49;
+  color: var(--color-gold);
+}

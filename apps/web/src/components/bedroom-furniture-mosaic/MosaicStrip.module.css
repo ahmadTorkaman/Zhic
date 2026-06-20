@@ -1,0 +1,104 @@
+/* Secondary cross-link strip — gold-marked heading + horizontal glass tiles. */
+
+.section {
+  padding-inline: 5.47cqw;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.8cqw;
+  margin-bottom: 4.6cqw;
+}
+.heading {
+  font-weight: 700; /* Ayandeh Bold */
+  font-size: 4cqw; /* ~17px */
+  line-height: 1.4;
+  color: var(--color-forest-deep);
+  white-space: nowrap;
+}
+.mark {
+  display: block;
+  width: 7cqw;
+  height: 1px;
+  background: var(--color-gold);
+  opacity: 0.85;
+}
+
+.row {
+  display: flex;
+  gap: 3.4cqw;
+  overflow-x: auto;
+  padding-bottom: 2cqw;
+  scrollbar-width: none;
+  /* let tiles bleed to the column edge on scroll */
+  margin-inline: -1cqw;
+  padding-inline: 1cqw;
+}
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+.tile {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38cqw; /* ~163px @430 */
+  aspect-ratio: 163 / 198;
+  border-radius: 3.15cqw;
+  overflow: hidden;
+  color: #fff;
+  isolation: isolate;
+}
+.photo {
+  object-fit: cover;
+}
+.fallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, var(--color-cream) 0%, var(--color-sand, #e8e0d8) 100%);
+}
+
+.caption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  border-radius: 3.15cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.6cqw 2cqw 3cqw;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.22);
+  background-image:
+    linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 92%),
+    linear-gradient(160deg, var(--glass-sheen), rgba(255, 255, 255, 0) 55%);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+.eyebrow {
+  font-weight: 400;
+  font-size: 2.8cqw; /* ~12px */
+  color: var(--color-gold);
+  margin-bottom: 0.4cqw;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+.name {
+  font-weight: 700;
+  font-size: 4.2cqw; /* ~18px */
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.55);
+}
+
+.seeAll {
+  display: block;
+  margin-top: 4cqw;
+  text-align: center;
+  font-size: 3.4cqw;
+  font-weight: 400;
+  color: var(--color-gold);
+}

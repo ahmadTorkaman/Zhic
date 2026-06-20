@@ -1,7 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { Container, Breadcrumbs, Pagination } from '@zhic/ui';
-import { toPersianDigits } from '@zhic/locale';
+import { Breadcrumbs } from '@zhic/ui';
 import {
   fetchCategory,
   fetchProducts,
@@ -10,28 +9,71 @@ import {
 } from '@/lib/payload';
 import {
   fetchChildCategories,
-  fetchSiblingCategories,
-  fetchSiblingParents,
-  fetchDesignsForCategory,
-  fetchDesignsForParentCategory,
+  fetchChildTilePhotos,
   fetchAvailableDesigns,
   fetchAvailableMaterials,
+  fetchDesignsForCategory,
+  fetchDesignsForParentCategory,
+  fetchSiblingCategories,
+  fetchSiblingParents,
 } from '@/lib/category-fetchers';
-import { buildCrumbs, deriveDescriptionFromIntro, countActiveFilters } from '@/lib/category-helpers';
+import { buildCrumbs, deriveDescriptionFromIntro } from '@/lib/category-helpers';
 import { buildMetadata } from '@/lib/seo';
-import { ProductGrid } from '@/components/product/ProductGrid';
-import { CategoryHero } from '@/components/category/CategoryHero';
-import { CategoryIntro } from '@/components/category/CategoryIntro';
-import { CategoryCallouts, type Callout } from '@/components/category/CategoryCallouts';
-import { ChildCategoriesGrid } from '@/components/category/ChildCategoriesGrid';
-import { DesignsWithType } from '@/components/category/DesignsWithType';
-import { SiblingCategoriesStrip } from '@/components/category/SiblingCategoriesStrip';
-import { CategoryFilterSidebar } from '@/components/category/CategoryFilterSidebar';
-import { CategoryFilterProvider } from '@/components/category/category-filter-state';
-import { CategoryFilterTrigger } from '@/components/category/CategoryFilterTrigger';
-import { CategoryFilterSheet } from '@/components/category/CategoryFilterSheet';
 import { buildFilterHref } from '@/lib/category-filter-url';
 import { categoryCollectionPageLd, breadcrumbListLd } from '@/lib/category-jsonld';
+import { buildMosaicRows } from '@/lib/bedroom-furniture-mosaic';
+import { hubContentFromPayload } from '@/lib/category-hub-content';
+import { leafContentFromPayload } from '@/lib/leaf-content';
+import { MosaicHero } from '@/components/bedroom-furniture-mosaic/MosaicHero';
+import { CategoryMosaic } from '@/components/bedroom-furniture-mosaic/CategoryMosaic';
+import { ProductMosaic } from '@/components/bedroom-furniture-mosaic/ProductMosaic';
+import { MosaicPager } from '@/components/bedroom-furniture-mosaic/MosaicPager';
+import {
+  MosaicFilterBar,
+  type ConfigGroup,
+} from '@/components/bedroom-furniture-mosaic/MosaicFilterBar';
+import { MosaicStrip, type StripItem } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
+import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
+
+type DesignLike = {
+  slug: string;
+  name: string;
+  heroMedia?: { url?: string | null } | null;
+  sliderMedia?: { url?: string | null } | null;
+  gallery?: ({ url?: string | null } | null)[] | null;
+};
+
+/** designs → cross-link strip tiles (photo from hero/slider/gallery). */
+function designStripItems(designs: DesignLike[]): StripItem[] {
+  return designs.map((d) => ({
+    key: d.slug,
+    name: d.name,
+    img: d.heroMedia?.url ?? d.sliderMedia?.url ?? d.gallery?.[0]?.url ?? undefined,
+    href: `/bedroom-set/${d.slug}`,
+    eyebrow: 'طرح',
+  }));
+}
+
+/** sibling categories → strip tiles (photo from cover ?? a representative product). */
+function siblingStripItems(
+  siblings: PayloadCategory[],
+  photos: Map<string, string>,
+  basePrefix: string,
+): StripItem[] {
+  return siblings.map((s) => ({
+    key: s.slug,
+    name: s.name,
+    img: s.cover?.url ?? photos.get(s.slug) ?? undefined,
+    href: `${basePrefix}/${s.slug}`,
+  }));
+}
+
+const LEAF_SORT_OPTIONS = [
+  { value: 'newest', label: 'جدیدترین' },
+  { value: 'price_asc', label: 'ارزان‌ترین' },
+  { value: 'price_desc', label: 'گران‌ترین' },
+  { value: 'name', label: 'نام' },
+];
 
 type PageProps = {
   params: Promise<{ slug: string[] }>;
@@ -63,11 +105,6 @@ function categoryCanonicalPath(category: PayloadCategory): string[] | null {
     cur = cur.parent;
   }
   return chain;
-}
-
-function parentPath(urlSlugs: string[]): string {
-  if (urlSlugs.length <= 1) return '/bedroom-furniture';
-  return '/bedroom-furniture/' + urlSlugs.slice(0, -1).join('/');
 }
 
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
@@ -184,36 +221,49 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     const hasOwnProducts = probe.totalDocs > 0;
 
     if (!hasOwnProducts) {
-      const [designsWithType, siblings] = await Promise.all([
+      // Hub mosaic (Kaveh 334:105 language): children → adaptive tile mosaic,
+      // each tile photo = cover ?? a representative product in its subtree.
+      const photos = await fetchChildTilePhotos(childCats);
+      const hub = hubContentFromPayload(category, childCats, photos, canonicalPath);
+
+      const [designsWithType, siblingParents] = await Promise.all([
         fetchDesignsForParentCategory(leafSlug),
         fetchSiblingParents(category.id),
       ]);
-
-      const callouts: Callout[] = [
-        { num: toPersianDigits(childCats.length), lbl: 'زیرنوع' },
-        { num: toPersianDigits(designsWithType.length), lbl: 'طرح' },
-      ];
+      const siblingPhotos = await fetchChildTilePhotos(siblingParents);
+      const designItems = designStripItems(designsWithType);
+      const siblingItems = siblingStripItems(siblingParents, siblingPhotos, '/bedroom-furniture');
 
       return (
         <>
-          <CategoryHero category={category} />
-          <Container>
-            <div className="pb-4 pt-6">
+          <div className="mx-auto w-full max-w-[430px]" style={{ containerType: 'inline-size' }}>
+            <div className="px-4 pt-[calc(var(--header-height)+var(--space-5))]">
               <Breadcrumbs items={buildCrumbs(category)} />
             </div>
-            <main className="mt-6">
-              <CategoryIntro intro={category.intro} variant="parent" />
-              <CategoryCallouts callouts={callouts} variant="parent" />
-              <ChildCategoriesGrid items={childCats} />
-              <DesignsWithType
-                designs={designsWithType}
-                contextLabel={category.name}
-                eyebrow="★ این دسته در"
+            <div className="mt-[34px]">
+              <MosaicHero
+                title={hub.hero.title}
+                subtitle={hub.hero.subtitle}
+                tagline={hub.hero.tagline}
               />
-              <SiblingCategoriesStrip siblings={siblings} variant="parent" />
-            </main>
-          </Container>
-          <div className="pb-12" />
+            </div>
+            <div className="mt-[26px]">
+              <CategoryMosaic heading={hub.heading} rows={buildMosaicRows(hub.tiles)} />
+            </div>
+            {designItems.length > 0 && (
+              <div className="mt-[40px]">
+                <MosaicStrip heading="طرح‌های مرتبط" items={designItems} />
+              </div>
+            )}
+            {siblingItems.length > 0 && (
+              <div className="mt-[36px]">
+                <MosaicStrip heading="دیگر دسته‌ها" items={siblingItems} />
+              </div>
+            )}
+            <div className="mt-[34px] px-[11px] pb-12">
+              <BrandDivider />
+            </div>
+          </div>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryCollectionPageLd(category)) }}
@@ -234,7 +284,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const parentRef =
     category.parent && typeof category.parent === 'object' ? category.parent : null;
 
-  const [productsPage, designsWithType, siblings, availableDesigns, availableMaterials] =
+  const [productsPage, availableDesigns, availableMaterials, designsWithType, siblings] =
     await Promise.all([
       fetchProducts({
         category: leafSlug,
@@ -244,235 +294,137 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         sort,
         productIds: facetProductIds,
       }),
+      fetchAvailableDesigns(leafSlug),
+      fetchAvailableMaterials(leafSlug),
       fetchDesignsForCategory(leafSlug),
       parentRef
         ? fetchSiblingCategories(parentRef.id, category.id)
         : Promise.resolve([] as PayloadCategory[]),
-      fetchAvailableDesigns(leafSlug),
-      fetchAvailableMaterials(leafSlug),
     ]);
+  const siblingPhotos = await fetchChildTilePhotos(siblings);
 
-  const fallbackCoverUrl = productsPage.docs[0]?.gallery?.[0]?.url ?? null;
-  const isHybrid = hasChildren && !isFacet;
+  const leaf = leafContentFromPayload(category, productsPage.docs, productsPage.totalDocs);
+  const designItems = designStripItems(designsWithType);
+  const parentBase =
+    canonicalChain.length > 1
+      ? '/bedroom-furniture/' + canonicalChain.slice(0, -1).join('/')
+      : '/bedroom-furniture';
+  const siblingItems = siblingStripItems(siblings, siblingPhotos, parentBase);
 
-  const callouts: Callout[] = [
-    { num: toPersianDigits(productsPage.totalDocs), lbl: 'محصول' },
-    { num: toPersianDigits(designsWithType.length), lbl: 'طرح' },
-    { num: toPersianDigits(availableMaterials.length), lbl: 'روکش چوب' },
+  // Configuration selector for hybrid / facet pages → drives the existing
+  // variant sub-pages from inside the filter sheet (operator: navigate-to-page).
+  let configGroup: ConfigGroup | undefined;
+  if (isFacet && parentRef) {
+    const parentChildren = await fetchChildCategories(parentRef.id);
+    if (parentChildren.length > 0) {
+      configGroup = {
+        label: 'پیکربندی',
+        parentHref: parentBase,
+        active: category.slug,
+        options: parentChildren.map((c) => ({
+          value: c.slug,
+          label: c.name,
+          href: `${parentBase}/${c.slug}`,
+        })),
+      };
+    }
+  } else if (hasChildren && childCats.length > 0) {
+    configGroup = {
+      label: 'پیکربندی',
+      parentHref: basePath,
+      active: null,
+      options: childCats.map((c) => ({
+        value: c.slug,
+        label: c.name,
+        href: `${basePath}/${c.slug}`,
+      })),
+    };
+  }
+
+  const filterGroups = [
+    {
+      key: 'design' as const,
+      label: 'طرح',
+      options: availableDesigns.map((d) => ({ value: d.slug, label: d.name, count: d.count })),
+    },
+    {
+      key: 'material' as const,
+      label: 'روکش چوب',
+      options: availableMaterials.map((m) => ({ value: m.slug, label: m.name, count: m.count })),
+    },
   ];
 
-  const activeCount = countActiveFilters(sp);
-
   return (
-    <CategoryFilterProvider>
-      <CategoryHero category={category} fallbackCoverUrl={fallbackCoverUrl} />
-
-      <Container>
-        <div className="pb-4 pt-6">
+    <>
+      <div className="mx-auto w-full max-w-[430px]" style={{ containerType: 'inline-size' }}>
+        <div className="px-4 pt-[calc(var(--header-height)+var(--space-5))]">
           <Breadcrumbs items={buildCrumbs(category)} />
         </div>
 
-        {/* ★ FACET scope strip — between breadcrumb and layout grid.
-            Per v1 mockup (category-facet-mockup.html). */}
-        {isFacet && (
-          <div
-            role="status"
-            aria-label="محدوده‌ی صفحه"
-            className="mt-7 flex flex-wrap items-center gap-3.5 rounded border border-sand p-4"
-            style={{ background: 'var(--color-cream)' }}
-          >
-            <span
-              aria-hidden="true"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white"
-              style={{ background: 'var(--color-forest)' }}
-            >
-              <svg
-                className="h-3.5 w-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="5" y="11" width="14" height="10" rx="1.5" />
-                <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-              </svg>
-            </span>
-            <div className="min-w-0 flex-1">
-              <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-forest">
-                محدوده‌ی این صفحه
-              </span>
-              <span className="text-[14px] text-charcoal">
-                فقط <strong className="font-bold text-ink">{category.name}</strong>{' '}
-                — صفحه‌ی اختصاصی برای این پیکربندی
-              </span>
-            </div>
-            {parentRef && (
+        <div className="mt-[34px]">
+          <MosaicHero
+            title={leaf.hero.title}
+            subtitle={leaf.hero.subtitle}
+            tagline={leaf.hero.tagline}
+          />
+        </div>
+
+        <div className="mt-[22px]">
+          <MosaicFilterBar
+            basePath={basePath}
+            searchParams={sp}
+            sortOptions={LEAF_SORT_OPTIONS}
+            activeSort={sortRaw}
+            groups={filterGroups}
+            active={{ design, material: materialParam }}
+            config={configGroup}
+          />
+        </div>
+
+        <div className="mt-[18px]">
+          {leaf.products.length === 0 ? (
+            <div className="px-6 py-16 text-center">
+              <p className="text-[15px] text-stone">محصولی با این انتخاب پیدا نشد.</p>
               <a
-                href={parentPath(slugs)}
-                className="shrink-0 rounded-full border border-forest px-3.5 py-1.5 text-[12px] text-forest transition-colors hover:bg-forest hover:text-white"
+                href={isFacet ? parentBase : basePath}
+                className="mt-4 inline-block text-[13px] text-gold underline underline-offset-4"
               >
-                همه‌ی {parentRef.name} ←
+                {isFacet ? `مشاهده‌ی همه‌ی ${parentRef?.name ?? 'دسته'} ←` : 'پاک کردن فیلترها ←'}
               </a>
-            )}
+            </div>
+          ) : (
+            <ProductMosaic heading={leaf.heading} products={leaf.products} />
+          )}
+        </div>
+
+        {productsPage.totalPages > 1 && (
+          <div className="mt-9">
+            <MosaicPager
+              currentPage={productsPage.page}
+              totalPages={productsPage.totalPages}
+              hrefFor={(n) => buildFilterHref(basePath, sp, { page: n })}
+            />
           </div>
         )}
 
-        {/* 2-col layout: [main | 280px sidebar] at lg+ */}
-        <div className="mt-6 grid grid-cols-1 gap-0 lg:grid-cols-[1fr_280px] lg:gap-16">
-          <main className="min-w-0">
-            <CategoryIntro intro={category.intro} variant="leaf" />
-            <CategoryCallouts callouts={callouts} variant="leaf" />
-
-            {/* ★ HYBRID narrow-down rail — sub-category navigation between
-                callouts and the result-bar. Per v1 mockup
-                (category-hybrid-mockup.html). Distinct from filter chips
-                (these navigate to facet sub-leaves, not filter the page). */}
-            {isHybrid && (
-              <section
-                aria-label="پیکربندی‌های اختصاصی"
-                className="mb-9 border-b border-sand pb-8"
-              >
-                <header className="mb-5 flex items-baseline gap-3">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-forest">
-                    ★ محدود کنید
-                  </span>
-                  <span className="text-[14px] font-bold text-charcoal">
-                    {category.allowed_axes?.[0] ? `بر اساس ${category.allowed_axes[0]}` : 'صفحات اختصاصی'}
-                  </span>
-                  <span className="me-auto" />
-                  <span className="text-[11px] italic text-stone">
-                    یا پایین‌تر همه را ببینید
-                  </span>
-                </header>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-3.5">
-                  {childCats.map((child) => (
-                    <a
-                      key={child.id}
-                      href={`${basePath}/${child.slug}`}
-                      className="group relative flex flex-col gap-1 rounded p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white"
-                      style={{
-                        background: 'var(--color-cream)',
-                        border: '1px solid rgba(232, 224, 216, 0.55)',
-                      }}
-                    >
-                      <span className="text-[13px] font-bold leading-tight text-ink">
-                        {child.name}
-                      </span>
-                      {child.tagline && (
-                        <span className="text-[11px] text-stone">{child.tagline}</span>
-                      )}
-                      <span
-                        aria-hidden="true"
-                        className="absolute end-3 top-3 text-[12px] text-sand-2 transition-colors group-hover:text-forest"
-                      >
-                        ←
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <span className="text-[13px] text-stone">
-                نمایش {toPersianDigits(productsPage.docs.length)} از{' '}
-                {toPersianDigits(productsPage.totalDocs)}{' '}
-                {isFacet ? category.name : 'محصول'}
-              </span>
-            </div>
-
-            {productsPage.docs.length === 0 ? (
-              <p className="py-10 text-center text-stone">
-                هیچ محصولی با این فیلترها یافت نشد.{' '}
-                <a href={basePath} className="text-forest underline underline-offset-4">
-                  پاک کردن فیلترها
-                </a>
-              </p>
-            ) : (
-              <ProductGrid products={productsPage.docs} />
-            )}
-
-            {productsPage.totalPages > 1 && (
-              <Pagination
-                currentPage={productsPage.page}
-                totalPages={productsPage.totalPages}
-                hrefFor={(n) => buildFilterHref(basePath, sp, { page: n })}
-              />
-            )}
-
-            <DesignsWithType
-              designs={designsWithType}
-              contextLabel={category.name}
-              eyebrow="★ این نوع در"
-            />
-
-            {parentRef && (
-              <SiblingCategoriesStrip
-                siblings={siblings}
-                variant="leaf"
-                parentName={isFacet ? `دیگر ${parentRef.name}` : parentRef.name}
-                seeAllHref={parentPath(slugs)}
-              />
-            )}
-          </main>
-
-          <div className="lg:block">
-            {/* ★ FACET locked-axis tag in sidebar — above the standard filter
-                groups. Communicates the page's intrinsic filter without
-                offering a deselect; "همه" link escapes to the parent leaf. */}
-            {isFacet && (
-              <div
-                className="mb-5 hidden border-b border-sand pb-3 lg:block"
-                aria-label="محور قفل‌شده"
-              >
-                <div className="flex items-center gap-2 text-[12px] text-stone">
-                  <svg
-                    className="h-3.5 w-3.5 shrink-0 text-forest"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <rect x="5" y="11" width="14" height="10" rx="1.5" />
-                    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-                  </svg>
-                  <span>این صفحه:</span>
-                  <span className="font-bold text-ink">{category.name}</span>
-                  {parentRef && (
-                    <a
-                      href={parentPath(slugs)}
-                      className="ms-auto text-[11px] text-forest underline underline-offset-2"
-                    >
-                      همه
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-            <CategoryFilterSidebar
-              basePath={basePath}
-              searchParams={sp}
-              availableDesigns={availableDesigns}
-              availableMaterials={availableMaterials}
+        {designItems.length > 0 && (
+          <div className="mt-[44px]">
+            <MosaicStrip heading="طرح‌های مرتبط" items={designItems} />
+          </div>
+        )}
+        {siblingItems.length > 0 && (
+          <div className="mt-[36px]">
+            <MosaicStrip
+              heading={`دیگر ${parentRef?.name ?? 'دسته‌ها'}`}
+              items={siblingItems}
             />
           </div>
+        )}
+
+        <div className="mt-[34px] px-[11px] pb-12">
+          <BrandDivider />
         </div>
-      </Container>
-
-      <CategoryFilterTrigger activeCount={activeCount} />
-      <CategoryFilterSheet
-        basePath={basePath}
-        searchParams={sp}
-        availableDesigns={availableDesigns}
-        availableMaterials={availableMaterials}
-      />
-
-      <div className="pb-12" />
+      </div>
 
       <script
         type="application/ld+json"
@@ -482,6 +434,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbListLd(buildCrumbs(category))) }}
       />
-    </CategoryFilterProvider>
+    </>
   );
 }

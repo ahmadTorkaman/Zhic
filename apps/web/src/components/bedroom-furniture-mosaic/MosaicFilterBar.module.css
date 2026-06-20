@@ -1,0 +1,197 @@
+/* Leaf filter control — «مرتب‌سازی»/«فیلترها» bar + bottom sheet (Direction 2).
+   px/rem (not cqw): the sheet is position:fixed and escapes the 430 container. */
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-ivory);
+  border: 1px solid var(--color-sand, #e8e0d8);
+  border-radius: 14px;
+  margin-inline: 12px;
+  padding: 4px;
+}
+.trigger {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 10px 8px;
+  border-radius: 10px;
+  color: var(--color-forest-deep);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out-soft);
+}
+.trigger:hover {
+  background: var(--color-cream);
+}
+.icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tlabel {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.tsub {
+  font-size: 12px;
+  color: var(--color-stone);
+}
+.count {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--color-gold);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--color-sand);
+  margin: 6px 0;
+}
+
+/* ── bottom sheet ── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(20, 17, 15, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: zf-fade 0.2s ease;
+}
+.sheet {
+  width: 100%;
+  max-width: 430px;
+  display: flex;
+  flex-direction: column;
+  max-height: 86vh;
+  background: var(--color-ivory);
+  border-radius: 22px 22px 0 0;
+  padding: 8px 18px max(18px, env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.18);
+  animation: zf-up 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes zf-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes zf-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+.grab {
+  display: block;
+  width: 42px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--color-sand);
+  margin: 6px auto 12px;
+}
+.shead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.stitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-forest-deep);
+}
+.clear {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--color-gold);
+  cursor: pointer;
+  padding: 4px;
+}
+.body {
+  flex: 1;
+  overflow-y: auto;
+}
+.group {
+  margin-bottom: 18px;
+}
+.glabel {
+  font-size: 12px;
+  color: var(--color-stone);
+  margin: 0 2px 9px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--color-cream);
+  color: var(--color-forest-deep);
+  border: 1px solid var(--color-sand);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out-soft),
+    border-color var(--dur-fast) var(--ease-out-soft),
+    color var(--dur-fast) var(--ease-out-soft);
+}
+.chip:hover {
+  border-color: var(--color-gold);
+}
+.on {
+  background: var(--color-forest-deep);
+  color: var(--color-ivory);
+  border-color: var(--color-forest-deep);
+}
+.gold {
+  background: var(--color-gold);
+  color: #fff;
+  border-color: var(--color-gold);
+}
+.cnum {
+  font-size: 11px;
+  opacity: 0.65;
+}
+.on .cnum,
+.gold .cnum {
+  opacity: 0.85;
+}
+.apply {
+  margin-top: 8px;
+  width: 100%;
+  background: var(--color-forest-deep);
+  color: var(--color-ivory);
+  border: none;
+  border-radius: 13px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out-soft);
+}
+.apply:hover {
+  background: var(--color-forest);
+}

@@ -26,6 +26,14 @@ const nextConfig: NextConfig = {
         port: '3001',
         pathname: '/api/media/**',
       },
+      // Box serves media on its public storefront origin (:3000) via the
+      // /api/media rewrite; allow it so local dev can render live catalog photos.
+      {
+        protocol: 'http',
+        hostname: '80.240.31.146',
+        port: '3000',
+        pathname: '/api/media/**',
+      },
     ],
   },
   async rewrites() {

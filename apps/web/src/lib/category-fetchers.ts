@@ -1,5 +1,11 @@
 import { payloadFetch } from './payload-internal';
-import type { PayloadCategory, PayloadDesign, PayloadMaterial, PayloadList } from './payload';
+import type {
+  PayloadCategory,
+  PayloadDesign,
+  PayloadMaterial,
+  PayloadMedia,
+  PayloadList,
+} from './payload';
 
 // type alias for clarity
 type Id = string | number;
@@ -29,6 +35,62 @@ export async function fetchSiblingParents(excludeId: Id): Promise<PayloadCategor
     'categories',
   );
   return res?.docs ?? [];
+}
+
+/**
+ * Representative tile photo for each child category, for the hub mosaic.
+ * Resolution per child: `cover` (set in CMS) wins; else the first published
+ * product photo found in the child's SUBTREE (so a pure-parent child such as
+ * `baby` borrows a photo from a descendant like `convertible`). Children with
+ * no cover and no product fall out of the map → the tile renders a sand
+ * fallback. Returns slug → image URL.
+ */
+export async function fetchChildTilePhotos(
+  children: PayloadCategory[],
+): Promise<Map<string, string>> {
+  const photos = new Map<string, string>();
+  if (!children.length) return photos;
+
+  // covers first (no query needed — already inflated on the children).
+  for (const c of children) {
+    const url = c.cover?.url;
+    if (url) photos.set(c.slug, url);
+  }
+
+  // grandchildren → map each descendant slug up to its top child slug.
+  const childIds = children.map((c) => String(c.id));
+  const gc = await payloadFetch<PayloadList<PayloadCategory>>(
+    `/api/categories?where[parent][in]=${encodeURIComponent(childIds.join(','))}&depth=1&limit=200`,
+    'categories',
+  );
+  const topBySlug = new Map<string, string>();
+  for (const c of children) topBySlug.set(c.slug, c.slug);
+  for (const g of gc?.docs ?? []) {
+    const p = g.parent;
+    const pslug = p && typeof p === 'object' ? p.slug : null;
+    if (pslug) topBySlug.set(g.slug, pslug);
+  }
+
+  // one product query over the whole subtree; first photo per top child wins.
+  const needPhoto = children.some((c) => !photos.has(c.slug));
+  if (needPhoto) {
+    const allSlugs = Array.from(topBySlug.keys());
+    const prods = await payloadFetch<
+      PayloadList<{ categoryIds?: PayloadCategory[] | null; gallery?: PayloadMedia[] | null }>
+    >(
+      `/api/products?where[categoryIds.slug][in]=${encodeURIComponent(allSlugs.join(','))}&where[status][equals]=published&depth=1&limit=500`,
+      'products',
+    );
+    for (const p of prods?.docs ?? []) {
+      const url = p.gallery?.[0]?.url;
+      if (!url) continue;
+      for (const c of p.categoryIds ?? []) {
+        const top = topBySlug.get(c.slug);
+        if (top && !photos.has(top)) photos.set(top, url);
+      }
+    }
+  }
+  return photos;
 }
 
 /**

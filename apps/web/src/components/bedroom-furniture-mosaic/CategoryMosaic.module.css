@@ -1,0 +1,134 @@
+/* Bedroom-furniture category mosaic — Figma Kaveh 334:105.
+   «دسته بندی محصولات» heading + 5 rows (featured / pair / wide / pair / wide).
+   cqw against the 430 column; logical props for RTL. */
+
+.section {
+  padding-inline: 5.47cqw; /* ~23.5px side inset @430 */
+}
+
+/* ── Section heading «دسته بندی محصولات» with flanking gold marks ── */
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.8cqw;
+  margin-bottom: 9.5cqw; /* heading → first tile gap (~41px to photo top, comp 362→403) */
+}
+.headingText {
+  font-weight: 300; /* Ayandeh Light */
+  font-size: 3.15cqw; /* 13.55px */
+  line-height: 1.49;
+  color: var(--color-forest-deep);
+  white-space: nowrap;
+}
+/* small gold hairline marks on each side of the heading (comp vectors 152–155). */
+.mark {
+  display: block;
+  width: 8.5cqw;
+  height: 1px;
+  background: var(--color-gold);
+  opacity: 0.85;
+}
+
+/* ── Grid ── */
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3.8cqw; /* ~16px inter-row @430 */
+}
+.pairRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4.79cqw; /* ~20.6px pair column gap @430 */
+}
+
+/* ── Tile ── */
+.tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: 3.15cqw; /* 13.55px */
+  overflow: hidden;
+  color: #fff;
+  isolation: isolate;
+}
+.photo {
+  object-fit: cover;
+}
+/* Real product renders sit on white with wide margins — a gentle zoom crops the
+   margins so the product fills more of the tile (most noticeable on the big
+   featured/wide tiles). */
+.featured .photo {
+  transform: scale(1.12);
+}
+.wide .photo {
+  transform: scale(1.06);
+}
+/* Empty-category fallback: warm sand surface (no product photo yet). */
+.fallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, var(--color-cream) 0%, var(--color-sand, #e8e0d8) 100%);
+}
+
+/* ── Frosted-glass caption band (comp 334:114–120) ──
+   A glass strip straddling the bottom of each photo: blurred photo behind +
+   light neutral tint (comp's rgba(0,0,0,.1)) + diagonal sheen + top rim
+   highlight (reuses the DS boundary-glass cues). Caption is a horizontal split:
+   label on the inline-start (RIGHT in RTL), «مشاهده» + arrow on the inline-end. */
+.caption {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center; /* label only on every tile → centered */
+  text-align: center;
+  color: #fff;
+  /* glass material — tint is stronger than the comp's literal rgba(0,0,0,.1)
+     because real product photos sit on WHITE backgrounds (comp used dark room
+     scenes); a vertical darken keeps white labels legible on any photo. */
+  background-color: rgba(0, 0, 0, 0.22);
+  background-image:
+    linear-gradient(to top, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 90%),
+    linear-gradient(160deg, var(--glass-sheen), rgba(255, 255, 255, 0) 55%);
+  backdrop-filter: blur(9px) saturate(1.2);
+  -webkit-backdrop-filter: blur(9px) saturate(1.2);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+.label {
+  font-weight: 700; /* Ayandeh Bold */
+  line-height: 1.49;
+  white-space: nowrap; /* single-line labels (comp); prevents «پا تختی» wrapping at its space */
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Uniform caption: a full-width bottom glass band on EVERY tile (featured,
+      wide AND pair), ALL FOUR corners rounded, centered label. No floating
+      pills — all cards' captions look the same. ── */
+.featured .caption,
+.wide .caption,
+.pair .caption {
+  inset-inline: 0;
+  bottom: 0;
+  border-radius: 3.15cqw;
+}
+.featured .caption {
+  padding: 5.2cqw 6cqw;
+}
+.wide .caption {
+  padding: 4cqw 5.4cqw;
+}
+.pair .caption {
+  padding: 3.6cqw 4cqw;
+}
+
+/* ── Label scale per variant ── */
+.featured .label {
+  font-size: 7.41cqw; /* 31.843px */
+}
+.wide .label {
+  font-size: 6.15cqw; /* 26.423px */
+}
+.pair .label {
+  font-size: 5.04cqw; /* 21.681px */
+}

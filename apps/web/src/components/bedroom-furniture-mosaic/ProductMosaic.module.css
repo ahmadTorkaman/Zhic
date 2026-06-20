@@ -1,0 +1,91 @@
+/* Leaf product grid — uniform 2-col cards in the hub glass-tile language.
+   Contained product photo on cream + full-width rounded glass caption band
+   (name + struck original + price). cqw against the 430 column. */
+
+.section {
+  padding-inline: 5.47cqw; /* ~23.5px side inset @430, matches the hub mosaic */
+}
+
+.heading {
+  margin-bottom: 4.6cqw;
+  text-align: center;
+  font-weight: 300; /* Light — matches the hub section heading */
+  font-size: 3.15cqw; /* 13.55px */
+  line-height: 1.49;
+  color: var(--color-forest-deep);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4.79cqw; /* ~20.6px, matches the hub pair gap */
+}
+
+/* ── Card ── */
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 178 / 240;
+  border-radius: 3.15cqw; /* 13.55px, matches hub tiles */
+  overflow: hidden;
+  color: #fff;
+  isolation: isolate;
+}
+.photoWrap {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cream); /* clean base behind the contained product */
+}
+.photo {
+  object-fit: contain;
+  object-position: center 42%; /* lift the product above the caption band */
+}
+
+/* ── Glass caption band (same recipe as the hub CategoryMosaic caption) ── */
+.caption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  border-radius: 3.15cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3cqw 3cqw 3.4cqw;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.22);
+  background-image:
+    linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 90%),
+    linear-gradient(160deg, var(--glass-sheen), rgba(255, 255, 255, 0) 55%);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.name {
+  font-weight: 700; /* Bold */
+  font-size: 4.4cqw; /* ~19px */
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+}
+.orig {
+  margin-top: 0.6cqw;
+  font-weight: 400;
+  font-size: 3cqw; /* ~13px */
+  line-height: 1.2;
+  text-decoration: line-through;
+  text-decoration-color: var(--color-gold);
+  text-decoration-thickness: 0.4cqw;
+  opacity: 0.82;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.price {
+  margin-top: 0.5cqw;
+  font-weight: 400;
+  font-size: 3.6cqw; /* ~15.5px */
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
