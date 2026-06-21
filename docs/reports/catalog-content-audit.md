@@ -101,3 +101,42 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
       intro/story copy+media, hero/logo art, gallery, materialCallouts all empty;
       `occupancyMedia` empty though it declares `double, teen`.
 - [ ] 🧑‍💼 **publishedAt null** on some published items (housekeeping).
+
+---
+
+## پارلا (parla) — reviewed 2026-06-22 · 19 products
+
+### Fixed this session
+- **Tags** — `modern` on all 19; `storage` on wardrobe, combined-wardrobe,
+  sliding-wardrobe, nightstand, vanity, changing-table, display-cabinet, bed-box.
+- **SEO ogImage** — seeded on the 14 with galleries (5 image-less drafts skipped).
+- **Cross-sell** — `pairsWith` (bed↔nightstand, bunk-bed↔bed-guard, vanity↔vanity-chair,
+  vanity↔console-mirror, study-desk↔study-chair, study-desk↔bookcase) +
+  `relatedProductIds` same-series (6 each).
+- **Published** parla-convertible-teen (#504); price left 0.
+- **parla-bed placeholder images** — finish-less variants: size 90 → 100-cream (#826),
+  sizes 140 & 180 → 160-cream (#823). TEMP. `reconcile-14-parla-content.mts`
+
+### Decisions recorded
+- **5 image-less drafts HELD** (not published): bed-guard, console-vanity-mirror,
+  sliding-wardrobe, study-chair, vanity-chair.
+- **`storage` applied to display-cabinet + bed-box** too (operator call). Tagging is
+  data-only (a `products_rels` row) — **no schema change**.
+- **Bed placeholder finish** = cream for the finish-less 90/140/180 variants.
+
+### Deferred worklist
+- [ ] 🎨 **5 image-less drafts → need gallery images**, then publish: bed-guard,
+      console-vanity-mirror, sliding-wardrobe, study-chair, vanity-chair.
+- [ ] 🧑‍💼 **Contradictory draft trio** — sliding-wardrobe (135,993,000﷼), study-chair,
+      vanity-chair are `in_stock` + priced but `draft` + image-less. Resolve once imaged.
+- [ ] 🧑‍💼 **Dimension copy-pastes** — vanity-chair=vanity (100×78×45), bed-guard=bed-box
+      (120×110×210), wardrobe=combined-wardrobe (120×220×60, confirm if legit). Need real dims.
+- [ ] 🎨 **parla-bed photos** — real shots for sizes 90 / 140 / 180 (cream placeholders now).
+- [ ] 🧑‍💼 **Prices** — bed-guard / console-vanity-mirror / convertible-teen are 0/made_to_order
+      (convertible-teen now published at 0).
+- [ ] ✍️ **SEO meta title + description** — all 19.
+- [ ] 🧑‍💼 **Editorial copy** — all 19.
+- [ ] 🧑‍💼 **Materials** — all 19 (blocked on missing material records).
+- [ ] ✍️ / 🧑‍💼 **Hub designs/36 (پارلا)** — has hero/slider/logo + 3 occupancyMedia, but
+      tagline, description, hubIntro, intro/story copy, gallery, materialCallouts, and
+      designDetails are all empty; declares 4 occupancies (baby/bunk/double/teen) vs 3 media.
