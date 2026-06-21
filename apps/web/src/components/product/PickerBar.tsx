@@ -56,15 +56,20 @@ export function PickerBar({ product, variants, allowedAxes, onInquiry }: PickerB
 
     const update = () => {
       raf = 0;
-      // Park above the dark footer wrapper (bg-forest-dark pb-6 pt-9), not
-      // just .zh-fcs — the footer's pt-9 = 48px of padding above the contact
-      // section is part of the footer too and the bar should clear that too.
-      const footer = document.querySelector<HTMLElement>('footer');
-      if (!footer) {
+      // Park above the consultation CTA band (.zh-foot-cta), which sits between
+      // the product content and the dark <footer>. Anchoring to <footer> would
+      // let the bar float over that CTA card and overlay .zh-foot-cta__body, so
+      // anchor to the CTA section's top instead (fall back to <footer>, then the
+      // base offset). The bar comes to rest just above the CTA and scrolls away
+      // with it rather than covering it.
+      const stop =
+        document.querySelector<HTMLElement>('.zh-foot-cta') ??
+        document.querySelector<HTMLElement>('footer');
+      if (!stop) {
         bar.style.bottom = `${baseBottom}px`;
         return;
       }
-      const rect = footer.getBoundingClientRect();
+      const rect = stop.getBoundingClientRect();
       const intrusion = Math.max(0, window.innerHeight - rect.top);
       bar.style.bottom = `${baseBottom + intrusion}px`;
     };
