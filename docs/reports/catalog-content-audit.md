@@ -60,3 +60,44 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
       ("توضیحات کوتاه سرویس خواب نوجوان آیرون"); story is bed-only; `occupancyMedia`
       and `description` empty.
 - [ ] 🧑‍💼 *(optional curation)* — vanity↔mirror pairing not wired.
+
+---
+
+## ورنا (verna) — reviewed 2026-06-21 · 7 products
+
+### Fixed this session
+- **Tags** — `modern` on all 7; `storage` on wardrobe/nightstand/vanity.
+- **SEO ogImage** — seeded from first gallery image (6; the mirror has no gallery → skipped).
+- **Cross-sell** — `pairsWith` (bed↔nightstand, vanity↔console-mirror, desk↔bookcase);
+  `relatedProductIds` same-series (6 each).
+- **Published** verna-vanity (#577); price left 0.
+- **verna-bed placeholder images** — sizes 90/100 → the 120 single shot, size 140 → the
+  160 double shot (TEMP). `reconcile-13-verna-content.mts`
+
+### Decisions recorded
+- **verna-console-vanity-mirror (#576) NOT published** — 0 gallery images; publishing
+  would render blank. Held pending a 3D asset.
+- **verna-vanity (#577)** published with `basePriceRials=0` (its only variant #439 also
+  has `priceDeltaRials=null`) — real price pending.
+- **`storage` tag NOT applied to verna-bookcase** (open shelving) — `modern` only.
+
+### Deferred worklist
+- [ ] 🎨 **verna-console-vanity-mirror** — needs gallery images, then publish (held). It's
+      priced + in_stock but draft & imageless.
+- [ ] 🧑‍💼 **verna-vanity price** — base + variant #439 delta both null/0; enter a real price.
+- [ ] 🎨 **verna-bed per-size photos** — replace placeholders on sizes 90 / 100 / 140
+      (140 is a *priced* tier with no real shot).
+- [ ] 🧑‍💼 **verna-bed price buckets** — confirm 90/100/120 = 419,690,000 vs 140/160 =
+      528,650,000 are intentional; encode single/double in structured data (today only in filenames).
+- [ ] 🧑‍💼 **verna-bed dimensions** — stored width 160 applies to all sizes; make variant-aware.
+- [ ] 🧑‍💼 **verna-study-desk filenames** — `verna-study-deskwebp.webp` (missing dot),
+      `verna-study-desk-detial.webp` (typo) — rename.
+- [ ] 🧑‍💼 **verna-wardrobe materials** → MDF (alt text + filename say MDF). Blocked: MDF
+      material record doesn't exist (see conventions).
+- [ ] ✍️ **SEO meta title + description** — all 7.
+- [ ] 🧑‍💼 **Editorial copy** — tagline/short/long/specs empty on all 7.
+- [ ] 🧑‍💼 **Materials** — all 7 (blocked on missing فلز/MDF records as above).
+- [ ] ✍️ / 🧑‍💼 **Hub designs/40 (ورنا)** — near-empty shell: description, tagline, hubIntro,
+      intro/story copy+media, hero/logo art, gallery, materialCallouts all empty;
+      `occupancyMedia` empty though it declares `double, teen`.
+- [ ] 🧑‍💼 **publishedAt null** on some published items (housekeeping).
