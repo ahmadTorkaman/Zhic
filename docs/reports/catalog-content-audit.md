@@ -140,3 +140,43 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
 - [ ] ✍️ / 🧑‍💼 **Hub designs/36 (پارلا)** — has hero/slider/logo + 3 occupancyMedia, but
       tagline, description, hubIntro, intro/story copy, gallery, materialCallouts, and
       designDetails are all empty; declares 4 occupancies (baby/bunk/double/teen) vs 3 media.
+
+---
+
+## لوف (loof) — reviewed 2026-06-22 · 17 products
+
+### Fixed this session
+- **Tags** — `modern` ×17; `storage` on wardrobe/nightstand/vanity/changing-table/display-cabinet/bed-box.
+- **SEO ogImage** — seeded on the 15 with galleries.
+- **Cross-sell** — `pairsWith` (bed↔nightstand, convertible-teen↔bed-guard, vanity↔vanity-chair,
+  vanity↔console-mirror, study-desk↔study-chair, study-desk↔bookcase, changing-table↔changing-top)
+  + `relatedProductIds` (6 each).
+- **Published** bed-box, study-chair, vanity (price 0).
+- **loof-bed placeholders** — sizes 90/100/140 → single-120-cream (#625).
+- **Finish variants (decision A)** — created cream+green `finish` variants for the 7 products that
+  showed both finishes in-gallery but had no variant (so green was unselectable): bookcase,
+  changing-table, display-cabinet, nightstand, standing-mirror, study-desk, wall-shelf. Each
+  mapped to its existing cream/green image, delta 0. `reconcile-15-loof-content.mts`
+
+### Decisions recorded
+- **2 image-less drafts HELD**: bed-guard, vanity-chair.
+- **loof-bed size 140** (a double) given the single-120-cream shot as a **stopgap** (operator
+  call) — flagged for a real double-bed photo.
+
+### Deferred worklist
+- [ ] 🎨 **2 image-less drafts** → bed-guard (also price 0) and vanity-chair (draft but in_stock +
+      163,930,000﷼ — contradictory) need images, then publish/fix availability.
+- [ ] 🧑‍💼 **loof-bed finish modeling** — cream/green offered **only on size 120**; extend to all
+      sizes or drop the split. Also its declared axis is `footboard`, not `finish`.
+- [ ] 🎨 **loof-bed real photos** for sizes 90/100/140 (single-120 stopgap now; 140 is a double).
+- [ ] 🎨 **Green-only galleries** — changing-top & console-vanity-mirror have only a green image
+      (cream missing); add the cream lead shot.
+- [ ] 🧑‍💼 **Dimension copy-pastes** — bed-guard = bed-box (120×110×210), vanity-chair = vanity
+      (100×78×45). Need real dims.
+- [ ] 🧑‍💼 **loof-bed classification** — filed under `تخت دونفره` (double) despite baby/teen ≤140; confirm.
+- [ ] 🧑‍💼 **loof-convertible-teen** — single cream-only variant; `size`/conversion axis unmodeled.
+- [ ] 🧑‍💼 **loof-wardrobe filenames** — `loof-cream-kid-loof-wardrobe-…` / `loof-cream-teen-…` (doubled prefix); rename.
+- [ ] 🧑‍💼 **loof-display-cabinet occupancy** — baby-only vs baby+teen siblings; confirm.
+- [ ] ✍️ SEO meta title/description · 🧑‍💼 editorial copy · 🧑‍💼 materials — all 17 (materials blocked on missing records).
+- [ ] ✍️ / 🧑‍💼 **Hub designs/31** — empty copy (tagline/description/hubIntro/intro/story), null alt on all
+      16 gallery images, empty materialCallouts/designDetails. (Deep audit: identical on jacqueline #30 & lorena #32.)
