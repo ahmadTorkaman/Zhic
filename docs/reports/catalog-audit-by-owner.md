@@ -3,7 +3,7 @@
 Auto-generated from `catalog-content-audit.md` (per-design deferred worklists),
 grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 
-## ✍️ SEO specialist — 14 item(s)
+## ✍️ SEO specialist — 26 item(s)
 
 **آیرون (iron)**
 - [ ] **SEO meta title + description** — empty on all 12 (ogImage already seeded).
@@ -26,8 +26,26 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 **بلوط (baloot)**
 - [ ] SEO meta title/description — all 15.
 - [ ] **Hub designs/22** — completely empty shell (every editorial/media field null/empty).
+**لوکاپلاس (lukaplus)**
+- [ ] SEO meta title/description — all 12.
+- [ ] hub designs/34 — placeholder/empty shell.
+**بلک‌اند‌وایت (bw)**
+- [ ] SEO meta title/description — all 12.
+- [ ] hub designs/23 — placeholder/empty shell.
+**اسکیت (skate)**
+- [ ] SEO meta title/description — all 11.
+- [ ] hub designs/39 — placeholder/empty shell.
+**موکا (mocha)**
+- [ ] SEO meta title/description — all 11.
+- [ ] hub designs/35 — placeholder/empty shell.
+**لوتوس (lotus)**
+- [ ] SEO meta title/description — all 11.
+- [ ] hub designs/33 — placeholder/empty shell.
+**الگانس (elegance)**
+- [ ] SEO meta title/description — all 11.
+- [ ] hub designs/26 — placeholder/empty shell.
 
-## 🎨 3D artist — 13 item(s)
+## 🎨 3D artist — 24 item(s)
 
 **آیرون (iron)**
 - [ ] **iron-bed per-size photos** — replace the closest-size placeholders on sizes
@@ -49,8 +67,25 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 **بلوط (baloot)**
 - [ ] **3 image-less drafts → need images**, then publish/fix availability: changing-top
 - [ ] **baloot-bed correct per-size photos** — the 160 pair currently shares the `160-180`
+**لوکاپلاس (lukaplus)**
+- [ ] image-less drafts → images, then publish: **bed-guard, study-chair**.
+- [ ] lukaplus-bed real per-size photos (90/100/140 are placeholders).
+**بلک‌اند‌وایت (bw)**
+- [ ] image-less draft → images, then publish: **vanity-chair**.
+**اسکیت (skate)**
+- [ ] image-less drafts → images, then publish/fix availability: **convertible-sofa, standing-mirror, study-chair, wall-shelf** (last three are draft+in_stock+priced contradictions).
+- [ ] skate-bed real photos for 90/120; skate-convertible-sofa has no image.
+**موکا (mocha)**
+- [ ] image-less draft → images, then publish: **console** (draft+in_stock contradiction).
+- [ ] mocha-bed real photo for size 100.
+**لوتوس (lotus)**
+- [ ] image-less drafts → images, then publish/fix availability: **bed-guard, wall-mirror, wall-shelf** (wall-mirror/shelf are draft+in_stock+priced contradictions).
+- [ ] lotus-bed real photos for 90/140.
+**الگانس (elegance)**
+- [ ] image-less drafts → images, then publish: **console, console-vanity-mirror, study-chair**.
+- [ ] elegance-bed real photo for size 120.
 
-## 🧑‍💼 Operator — 52 item(s)
+## 🧑‍💼 Operator — 81 item(s)
 
 **آیرون (iron)**
 - [ ] **Editorial copy** — tagline / shortDescription / longDescription / specs empty on all 12.
@@ -111,3 +146,38 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 - [ ] draft prices; `publishedAt`/`occupancy` housekeeping.
 - [ ] editorial copy — all 15.
 - [ ] **Hub designs/22** — completely empty shell (every editorial/media field null/empty).
+**لوکاپلاس (lukaplus)**
+- [ ] copied dims: **bed-guard** = bed footprint; **vanity-chair** = vanity (100×78×45).
+- [ ] real prices for the 2 drafts published at 0.
+- [ ] editorial copy — all 12.
+- [ ] materials — all 12 (operator to assign per-product).
+- [ ] hub designs/34 — placeholder/empty shell.
+**بلک‌اند‌وایت (bw)**
+- [ ] copied dims: **vanity-chair** = vanity (100×78×45).
+- [ ] real prices for the 3 drafts published at 0.
+- [ ] editorial copy — all 12.
+- [ ] materials — all 12 (operator to assign per-product).
+- [ ] hub designs/23 — placeholder/empty shell.
+**اسکیت (skate)**
+- [ ] real price for the draft published at 0.
+- [ ] editorial copy — all 11.
+- [ ] materials — all 11 (operator to assign per-product).
+- [ ] hub designs/39 — placeholder/empty shell.
+**موکا (mocha)**
+- [ ] copied dims: **vanity-chair** = vanity (100×78×45).
+- [ ] real price for the draft published at 0.
+- [ ] editorial copy — all 11.
+- [ ] materials — all 11 (operator to assign per-product).
+- [ ] hub designs/35 — placeholder/empty shell.
+**لوتوس (lotus)**
+- [ ] copied dims: **bed-guard** = bed footprint.
+- [ ] lotus-wardrobe single-finish (mdf) — category allows `finish` but only one finish exists, so no variant needed (noted, not a gap).
+- [ ] editorial copy — all 11.
+- [ ] materials — all 11 (operator to assign per-product).
+- [ ] hub designs/33 — placeholder/empty shell.
+**الگانس (elegance)**
+- [ ] **elegance-vanity `basePriceRials=0`** — a real error (every sibling is priced); needs a real price (published at 0 for now).
+- [ ] real prices for the 2 drafts published at 0.
+- [ ] editorial copy — all 11.
+- [ ] materials — all 11 (operator to assign per-product).
+- [ ] hub designs/26 — placeholder/empty shell.

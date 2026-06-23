@@ -276,40 +276,80 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
 
 ---
 
-## لوکاپلاس / lukaplus · بلک‌اند‌وایت / bw · اسکیت / skate · موکا / mocha · لوتوس / lotus · الگانس / elegance — reviewed 2026-06-22
+_Six series done together (`reconcile-19-six-series.mts`), all deep-audited. Per design: `modern` on all + `storage` on closed-storage pieces, `seo.ogImage` seeded, cross-sell wired (pairs + 6 related), imaged drafts published (price 0), bed placeholders. None had a finish-variant gap._
 
-Six series done together (`reconcile-19-six-series.mts`), all deep-audited. **Common to all six** (not repeated per design): `modern` tag on every product; `storage` on the closed-storage pieces; `seo.ogImage` seeded on imaged products; cross-sell wired (functional pairs + 6 related); **no finish-variant gap** (all single-finish). **Deferred for all six:** ✍️ SEO meta title/description; 🧑‍💼 editorial copy; 🧑‍💼 materials (operator to assign per-product); 🧑‍💼 real prices for the drafts published at 0; ✍️/🧑‍💼 the series hubs are placeholder/empty shells.
-
-### لوکاپلاس (lukaplus) · 12
-- **Fixed:** published vanity, vanity-chair (price 0); bed placeholders 90/100→single-120 (#768), 140→double-160 (#766).
+## لوکاپلاس (lukaplus) — reviewed 2026-06-22 · 12 products
+### Fixed this session
+- Published vanity, vanity-chair (price 0); bed placeholders 90/100→single-120 (#768), 140→double-160 (#766); tags/og/cross-sell.
+### Deferred worklist
 - [ ] 🎨 image-less drafts → images, then publish: **bed-guard, study-chair**.
 - [ ] 🎨 lukaplus-bed real per-size photos (90/100/140 are placeholders).
 - [ ] 🧑‍💼 copied dims: **bed-guard** = bed footprint; **vanity-chair** = vanity (100×78×45).
+- [ ] 🧑‍💼 real prices for the 2 drafts published at 0.
+- [ ] ✍️ SEO meta title/description — all 12.
+- [ ] 🧑‍💼 editorial copy — all 12.
+- [ ] 🧑‍💼 materials — all 12 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/34 — placeholder/empty shell.
 
-### بلک‌اند‌وایت (bw) · 12
-- **Fixed:** published console-mirror, study-chair, vanity (price 0). **bw-wardrobe → clean 2×2** doors×door_material (added door_material=mdf to the two bare variants; created the missing 1-door/glass on #367).
+## بلک‌اند‌وایت (bw) — reviewed 2026-06-22 · 12 products
+### Fixed this session
+- Published console-mirror, study-chair, vanity (price 0); **bw-wardrobe rebuilt into a clean 2×2** doors×door_material (added door_material=mdf to the two bare variants; created the missing 1-door/glass on #367); tags/og/cross-sell.
+### Deferred worklist
 - [ ] 🎨 image-less draft → images, then publish: **vanity-chair**.
 - [ ] 🧑‍💼 copied dims: **vanity-chair** = vanity (100×78×45).
+- [ ] 🧑‍💼 real prices for the 3 drafts published at 0.
+- [ ] ✍️ SEO meta title/description — all 12.
+- [ ] 🧑‍💼 editorial copy — all 12.
+- [ ] 🧑‍💼 materials — all 12 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/23 — placeholder/empty shell.
 
-### اسکیت (skate) · 11
-- **Fixed:** published vanity (price 0); bed placeholders 90/120→single-100 (#890).
-- [ ] 🎨 image-less drafts → images, then publish/fix availability: **convertible-sofa, standing-mirror, study-chair, wall-shelf** (the latter three are draft+in_stock+priced contradictions).
+## اسکیت (skate) — reviewed 2026-06-22 · 11 products
+### Fixed this session
+- Published vanity (price 0); bed placeholders 90/120→single-100 (#890); tags/og/cross-sell.
+### Deferred worklist
+- [ ] 🎨 image-less drafts → images, then publish/fix availability: **convertible-sofa, standing-mirror, study-chair, wall-shelf** (last three are draft+in_stock+priced contradictions).
 - [ ] 🎨 skate-bed real photos for 90/120; skate-convertible-sofa has no image.
+- [ ] 🧑‍💼 real price for the draft published at 0.
+- [ ] ✍️ SEO meta title/description — all 11.
+- [ ] 🧑‍💼 editorial copy — all 11.
+- [ ] 🧑‍💼 materials — all 11 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/39 — placeholder/empty shell.
 
-### موکا (mocha) · 11
-- **Fixed:** published vanity-chair (price 0); bed placeholder 100→single-120 (#802).
+## موکا (mocha) — reviewed 2026-06-22 · 11 products
+### Fixed this session
+- Published vanity-chair (price 0); bed placeholder 100→single-120 (#802); tags/og/cross-sell.
+### Deferred worklist
 - [ ] 🎨 image-less draft → images, then publish: **console** (draft+in_stock contradiction).
 - [ ] 🧑‍💼 copied dims: **vanity-chair** = vanity (100×78×45).
 - [ ] 🎨 mocha-bed real photo for size 100.
+- [ ] 🧑‍💼 real price for the draft published at 0.
+- [ ] ✍️ SEO meta title/description — all 11.
+- [ ] 🧑‍💼 editorial copy — all 11.
+- [ ] 🧑‍💼 materials — all 11 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/35 — placeholder/empty shell.
 
-### لوتوس (lotus) · 11
-- **Fixed:** (no publishable drafts); bed placeholders 90→single-100 (#694), 140→double-160 (#690).
+## لوتوس (lotus) — reviewed 2026-06-22 · 11 products
+### Fixed this session
+- Bed placeholders 90→single-100 (#694), 140→double-160 (#690); tags/og/cross-sell. (No publishable drafts.)
+### Deferred worklist
 - [ ] 🎨 image-less drafts → images, then publish/fix availability: **bed-guard, wall-mirror, wall-shelf** (wall-mirror/shelf are draft+in_stock+priced contradictions).
 - [ ] 🧑‍💼 copied dims: **bed-guard** = bed footprint.
-- [ ] 🧑‍💼 lotus-wardrobe is single-finish (mdf) — category allows `finish` but only one finish exists, so no variant needed (noted, not a gap).
+- [ ] 🧑‍💼 lotus-wardrobe single-finish (mdf) — category allows `finish` but only one finish exists, so no variant needed (noted, not a gap).
+- [ ] 🎨 lotus-bed real photos for 90/140.
+- [ ] ✍️ SEO meta title/description — all 11.
+- [ ] 🧑‍💼 editorial copy — all 11.
+- [ ] 🧑‍💼 materials — all 11 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/33 — placeholder/empty shell.
 
-### الگانس (elegance) · 11
-- **Fixed:** published vanity, wall-mirror (price 0); bed placeholder 120→single-100 (#453).
+## الگانس (elegance) — reviewed 2026-06-22 · 11 products
+### Fixed this session
+- Published vanity, wall-mirror (price 0); bed placeholder 120→single-100 (#453); tags/og/cross-sell.
+### Deferred worklist
 - [ ] 🎨 image-less drafts → images, then publish: **console, console-vanity-mirror, study-chair**.
-- [ ] 🧑‍💼 **elegance-vanity `basePriceRials=0`** — flagged as a real error (every sibling is priced); needs a real price (published at 0 for now).
+- [ ] 🧑‍💼 **elegance-vanity `basePriceRials=0`** — a real error (every sibling is priced); needs a real price (published at 0 for now).
 - [ ] 🎨 elegance-bed real photo for size 120.
+- [ ] 🧑‍💼 real prices for the 2 drafts published at 0.
+- [ ] ✍️ SEO meta title/description — all 11.
+- [ ] 🧑‍💼 editorial copy — all 11.
+- [ ] 🧑‍💼 materials — all 11 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/26 — placeholder/empty shell.
