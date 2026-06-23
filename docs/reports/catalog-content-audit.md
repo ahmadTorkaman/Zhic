@@ -180,3 +180,31 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
 - [ ] ✍️ SEO meta title/description · 🧑‍💼 editorial copy · 🧑‍💼 materials — all 17 (materials blocked on missing records).
 - [ ] ✍️ / 🧑‍💼 **Hub designs/31** — empty copy (tagline/description/hubIntro/intro/story), null alt on all
       16 gallery images, empty materialCallouts/designDetails. (Deep audit: identical on jacqueline #30 & lorena #32.)
+
+---
+
+## کارولین (caroline) — reviewed 2026-06-22 · 16 products
+
+### Fixed this session
+- **Tags** — `modern` ×16; `storage` on wardrobe/nightstand/vanity/file/bed-box.
+- **SEO ogImage** — seeded on all 16.
+- **Cross-sell** — `pairsWith` (bed↔nightstand, vanity↔vanity-chair, vanity↔console-mirror,
+  study-desk↔study-chair, study-desk↔bookcase) + `relatedProductIds` (6 each).
+- **Published all 5 drafts** (price 0): changing-top, convertible-sofa, convertible-teen,
+  study-chair, vanity-chair.
+- **caroline-bed placeholders** — size 90 → single-100 (#410); sizes 140 & 180 → double-160 (#407).
+- **Bonus** — surfaced the existing double-160 photo (#407) in the bed gallery. `reconcile-16-caroline-content.mts`
+
+### Decisions recorded
+- **No image-less products & no finish-variant gap** — all 5 drafts published outright.
+- Bed placeholders clean (a real double-160 image existed, unlike loof).
+
+### Deferred worklist
+- [ ] 🧑‍💼 **Prices** — 4 drafts published at 0 (changing-top, convertible-sofa, convertible-teen, study-chair).
+- [ ] 🧑‍💼 **Dimension copy-pastes** — convertible-sofa = convertible-teen (90×105×195),
+      vanity-chair = vanity (100×78×45). Need real dims.
+- [ ] 🎨 **caroline-bed photos** — real shots for sizes 90/140/180 (placeholders now); gallery is thin.
+- [ ] 🧑‍💼 **Convertibles** — convertible-sofa & convertible-teen have single no-axis variants; model the conversion/size.
+- [ ] ✍️ SEO meta title/description · 🧑‍💼 editorial copy · 🧑‍💼 materials — all 16 (materials blocked on missing records).
+- [ ] ✍️ / 🧑‍💼 **Hub designs/24** — empty editorial (description/tagline/hubIntro/intro/story/materialCallouts/designDetails);
+      `occupancyMedia` missing the baby card though it declares baby/double/teen.
