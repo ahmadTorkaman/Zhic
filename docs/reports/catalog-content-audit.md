@@ -353,3 +353,72 @@ _Six series done together (`reconcile-19-six-series.mts`), all deep-audited. Per
 - [ ] 🧑‍💼 editorial copy — all 11.
 - [ ] 🧑‍💼 materials — all 11 (operator to assign per-product).
 - [ ] ✍️ / 🧑‍💼 hub designs/26 — placeholder/empty shell.
+
+---
+
+## شایلین (shaylin) — reviewed 2026-06-22 · 8 products
+### Fixed this session
+- `modern`×8; `storage` on file/nightstand/vanity; ogImage×8; cross-sell; bed placeholder size-180→double-160 (#878). No drafts. `reconcile-20-six-more.mts`
+### Deferred worklist
+- [ ] 🎨 shaylin-bed real photo for size 180 (placeholder now).
+- [ ] 🧑‍💼 copied dims: **vanity-chair** = vanity (100×78×45).
+- [ ] ✍️ SEO meta title/description — all 8.
+- [ ] 🧑‍💼 editorial copy — all 8.
+- [ ] 🧑‍💼 materials — all 8 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/38 — placeholder/empty shell.
+
+## سنتو (sento) — reviewed 2026-06-22 · 10 products
+### Fixed this session
+- `modern`×10; `storage` on file/nightstand/vanity/wardrobe; ogImage×9; cross-sell; bed placeholder size-90→single-100 (#862). `reconcile-20-six-more.mts`
+### Deferred worklist
+- [ ] 🎨 image-less draft → images, then publish: **nightstand**.
+- [ ] 🎨 sento-bed double sizes (140/160/180) have **no double image** — need real double-bed photos (left image-less, not stopgapped with a single shot).
+- [ ] ✍️ SEO meta title/description — all 10.
+- [ ] 🧑‍💼 editorial copy — all 10.
+- [ ] 🧑‍💼 materials — all 10 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/37 — placeholder/empty shell.
+
+## ژاکلین (jacqueline) — reviewed 2026-06-22 · 9 products
+### Fixed this session
+- `modern`×9; `storage` on file/nightstand/vanity/wardrobe; ogImage×8; cross-sell; published vanity (price 0); bed placeholders 90→single-100 (#554), 140/180→double-160 (#551). `reconcile-20-six-more.mts`
+### Deferred worklist
+- [ ] 🎨 image-less draft → images, then publish: **convertible-teen**.
+- [ ] 🎨 jacqueline-bed real photos for 90/140/180; convertible-teen has no image.
+- [ ] 🧑‍💼 real price for vanity (published at 0).
+- [ ] ✍️ SEO meta title/description — all 9.
+- [ ] 🧑‍💼 editorial copy — all 9.
+- [ ] 🧑‍💼 materials — all 9 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/30 — placeholder/empty shell.
+
+## سلین (celine) — reviewed 2026-06-22 · 7 products
+### Fixed this session
+- `modern`×7; `storage` on file/nightstand/vanity; ogImage×6; cross-sell; bed placeholder size-180→double-160 (#423). `reconcile-20-six-more.mts`
+### Deferred worklist
+- [ ] 🎨 image-less draft → images, then publish: **standing-mirror**.
+- [ ] 🎨 celine-bed real photo for size 180.
+- [ ] 🧑‍💼 copied dims: **vanity-chair** = vanity (100×78×45).
+- [ ] ✍️ SEO meta title/description — all 7.
+- [ ] 🧑‍💼 editorial copy — all 7.
+- [ ] 🧑‍💼 materials — all 7 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/25 — placeholder/empty shell.
+
+## لورنا (lorena) — reviewed 2026-06-22 · 6 products
+### Fixed this session
+- `modern`×6; `storage` on console/nightstand; ogImage×6; cross-sell; published vanity-chair (price 0); bed placeholder size-180→double-160 (#679). `reconcile-20-six-more.mts`
+### Deferred worklist
+- [ ] 🎨 lorena-bed real photo for size 180.
+- [ ] 🧑‍💼 real price for vanity-chair (published at 0).
+- [ ] ✍️ SEO meta title/description — all 6.
+- [ ] 🧑‍💼 editorial copy — all 6.
+- [ ] 🧑‍💼 materials — all 6 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/32 — placeholder/empty shell.
+
+## گندم (gandom) — reviewed 2026-06-22 · 5 products
+### Fixed this session
+- `modern`×5; `storage` on file/wardrobe; ogImage×4; related wired (no functional pairs in this small set). `reconcile-20-six-more.mts`
+### Deferred worklist
+- [ ] 🎨 image-less draft → images, then publish: **display-cabinet**.
+- [ ] ✍️ SEO meta title/description — all 5.
+- [ ] 🧑‍💼 editorial copy — all 5.
+- [ ] 🧑‍💼 materials — all 5 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 hub designs/28 — placeholder/empty shell.

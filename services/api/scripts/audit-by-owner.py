@@ -56,12 +56,11 @@ for emoji, name in OWNERS:
         lines.append("_None yet._")
         lines.append("")
         continue
-    cur = None
+    lines.append("| Design | Task |")
+    lines.append("| --- | --- |")
     for d, txt in items:
-        if d != cur:
-            lines.append(f"**{d}**")
-            cur = d
-        lines.append(f"- [ ] {txt}")
+        safe = txt.replace("|", "\\|").strip()
+        lines.append(f"| {d} | {safe} |")
     lines.append("")
 
 OUT.write_text("\n".join(lines), encoding="utf-8")
