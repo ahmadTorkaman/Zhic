@@ -422,3 +422,21 @@ _Six series done together (`reconcile-19-six-series.mts`), all deep-audited. Per
 - [ ] 🧑‍💼 editorial copy — all 5.
 - [ ] 🧑‍💼 materials — all 5 (operator to assign per-product).
 - [ ] ✍️ / 🧑‍💼 hub designs/28 — placeholder/empty shell.
+
+---
+
+## نیکان (nikan) — reviewed 2026-06-22 · 3 products
+### Fixed this session
+- Media was uploaded via the CMS and already wired (full galleries). **Published all 3**
+  (bunk-bed, study-desk, wardrobe — each with a real price + variants); `modern`×3,
+  `storage` on wardrobe; ogImage×3; cross-sell related. `reconcile-21-nikan.mts`
+### Decisions recorded
+- All 3 products complete (images + variants + real prices) — published outright (not price-0).
+- No functional cross-sell pairs in this 3-piece set (related links the full roster).
+- **No 3D work needed** — products are fully imaged.
+### Deferred worklist
+- [ ] ✍️ SEO meta title/description — all 3 (ogImage already set).
+- [ ] 🧑‍💼 editorial copy — all 3.
+- [ ] 🧑‍💼 materials — all 3 (operator to assign per-product).
+- [ ] ✍️ / 🧑‍💼 **Hub designs/45** — no editorial copy at all (description/tagline/hubIntro/intro/story
+      all empty) and `occupancyMedia`/`materialCallouts`/`designDetails` empty; renders hero + 9-image gallery but zero words.

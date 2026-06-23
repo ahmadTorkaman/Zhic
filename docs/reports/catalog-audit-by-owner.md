@@ -4,7 +4,7 @@ Auto-generated from `catalog-content-audit.md`. Regenerate: `python3 services/ap
 
 Per-specialist files: [SEO specialist](catalog-audit-seo.md), [3D artist](catalog-audit-3d.md), [Operator](catalog-audit-operator.md).
 
-## ✍️ SEO specialist — 38 item(s)
+## ✍️ SEO specialist — 40 item(s)
 
 | Design | Task |
 | --- | --- |
@@ -46,6 +46,8 @@ Per-specialist files: [SEO specialist](catalog-audit-seo.md), [3D artist](catalo
 | لورنا (lorena) | hub designs/32 — placeholder/empty shell. |
 | گندم (gandom) | SEO meta title/description — all 5. |
 | گندم (gandom) | hub designs/28 — placeholder/empty shell. |
+| نیکان (nikan) | SEO meta title/description — all 3 (ogImage already set). |
+| نیکان (nikan) | **Hub designs/45** — no editorial copy at all (description/tagline/hubIntro/intro/story all empty) and `occupancyMedia`/`materialCallouts`/`designDetails` empty; renders hero + 9-image gallery but zero words. |
 
 ## 🎨 3D artist — 33 item(s)
 
@@ -85,7 +87,7 @@ Per-specialist files: [SEO specialist](catalog-audit-seo.md), [3D artist](catalo
 | لورنا (lorena) | lorena-bed real photo for size 180. |
 | گندم (gandom) | image-less draft → images, then publish: **display-cabinet**. |
 
-## 🧑‍💼 Operator — 103 item(s)
+## 🧑‍💼 Operator — 106 item(s)
 
 | Design | Task |
 | --- | --- |
@@ -192,3 +194,6 @@ Per-specialist files: [SEO specialist](catalog-audit-seo.md), [3D artist](catalo
 | گندم (gandom) | editorial copy — all 5. |
 | گندم (gandom) | materials — all 5 (operator to assign per-product). |
 | گندم (gandom) | hub designs/28 — placeholder/empty shell. |
+| نیکان (nikan) | editorial copy — all 3. |
+| نیکان (nikan) | materials — all 3 (operator to assign per-product). |
+| نیکان (nikan) | **Hub designs/45** — no editorial copy at all (description/tagline/hubIntro/intro/story all empty) and `occupancyMedia`/`materialCallouts`/`designDetails` empty; renders hero + 9-image gallery but zero words. |

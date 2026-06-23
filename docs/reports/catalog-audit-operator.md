@@ -2,7 +2,7 @@
 
 Auto-generated from `catalog-content-audit.md`. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 
-## 🧑‍💼 Operator — 103 item(s)
+## 🧑‍💼 Operator — 106 item(s)
 
 | Design | Task |
 | --- | --- |
@@ -109,3 +109,6 @@ Auto-generated from `catalog-content-audit.md`. Regenerate: `python3 services/ap
 | گندم (gandom) | editorial copy — all 5. |
 | گندم (gandom) | materials — all 5 (operator to assign per-product). |
 | گندم (gandom) | hub designs/28 — placeholder/empty shell. |
+| نیکان (nikan) | editorial copy — all 3. |
+| نیکان (nikan) | materials — all 3 (operator to assign per-product). |
+| نیکان (nikan) | **Hub designs/45** — no editorial copy at all (description/tagline/hubIntro/intro/story all empty) and `occupancyMedia`/`materialCallouts`/`designDetails` empty; renders hero + 9-image gallery but zero words. |
