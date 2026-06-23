@@ -50,29 +50,31 @@ for raw in _merged:
                 txt = re.sub(r"\s+", " ", txt).strip(" ·/")
                 buckets[emoji].append((design, txt))
 
-lines = [
-    "# Catalog audit — by owner",
-    "",
-    "Auto-generated from `catalog-content-audit.md` (per-design deferred worklists),",
-    "grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.",
-    "",
-]
-for emoji, name in OWNERS:
-    items = buckets[emoji]
-    lines.append(f"## {emoji} {name} — {len(items)} item(s)")
-    lines.append("")
-    if not items:
-        lines.append("_None yet._")
-        lines.append("")
-        continue
-    lines.append("| Design | Task |")
-    lines.append("| --- | --- |")
-    for d, txt in items:
-        safe = txt.replace("|", "\\|").strip()
-        lines.append(f"| {d} | {safe} |")
-    lines.append("")
+OWNER_FILE = {"✍️": "catalog-audit-seo.md", "🎨": "catalog-audit-3d.md", "🧑‍💼": "catalog-audit-operator.md"}
+GEN_NOTE = "Auto-generated from `catalog-content-audit.md`. Regenerate: `python3 services/api/scripts/audit-by-owner.py`."
 
-OUT.write_text("\n".join(lines), encoding="utf-8")
-print(f"wrote {OUT.relative_to(ROOT)}")
+
+def table(emoji, name, items):
+    out = [f"## {emoji} {name} — {len(items)} item(s)", ""]
+    if not items:
+        return out + ["_None yet._", ""]
+    out += ["| Design | Task |", "| --- | --- |"]
+    for d, txt in items:
+        out.append(f"| {d} | {txt.replace('|', chr(92) + '|').strip()} |")
+    return out + [""]
+
+
+# Combined overview (all owners) — links to the per-specialist files.
+combined = ["# Catalog audit — by owner", "", GEN_NOTE, "",
+            "Per-specialist files: " + ", ".join(f"[{n}]({OWNER_FILE[e]})" for e, n in OWNERS) + ".", ""]
 for emoji, name in OWNERS:
-    print(f"  {emoji} {name}: {len(buckets[emoji])}")
+    combined += table(emoji, name, buckets[emoji])
+OUT.write_text("\n".join(combined), encoding="utf-8")
+print(f"wrote {OUT.relative_to(ROOT)}")
+
+# One standalone file per specialist (shareable).
+for emoji, name in OWNERS:
+    path = OUT.parent / OWNER_FILE[emoji]
+    doc = [f"# Catalog audit — {name}", "", GEN_NOTE, ""] + table(emoji, name, buckets[emoji])
+    path.write_text("\n".join(doc), encoding="utf-8")
+    print(f"  wrote {path.relative_to(ROOT)}  ({len(buckets[emoji])} items)")
