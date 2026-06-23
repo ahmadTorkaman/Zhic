@@ -208,3 +208,36 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
 - [ ] ✍️ SEO meta title/description · 🧑‍💼 editorial copy · 🧑‍💼 materials — all 16 (materials blocked on missing records).
 - [ ] ✍️ / 🧑‍💼 **Hub designs/24** — empty editorial (description/tagline/hubIntro/intro/story/materialCallouts/designDetails);
       `occupancyMedia` missing the baby card though it declares baby/double/teen.
+
+---
+
+## الیزابت (elizabeth) — reviewed 2026-06-22 · 15 products
+
+### Fixed this session
+- **Tags** — `modern` ×15; `storage` on wardrobe/nightstand/vanity/file/console.
+- **SEO ogImage** — seeded on the 14 with galleries.
+- **Cross-sell** — `pairsWith` (bed↔nightstand, vanity↔vanity-chair, vanity↔console-mirror,
+  study-desk↔study-chair, study-desk↔bookcase) + `relatedProductIds` (6 each).
+- **Published** console, vanity, vanity-chair (price 0).
+- **elizabeth-bed** size-180 (finish-less, image-less) → double-160-cream (#462).
+- **Colour variants (decision A)** — `finish`=cream/gray for bookcase, nightstand,
+  standing-mirror, study-desk, wall-shelf; `fabric`=cream/gray for loveseat (added `fabric`
+  axis + value labels to `apps/web/src/lib/variant-helpers.ts`). 12 variants. `reconcile-17-elizabeth-content.mts`
+
+### Decisions recorded
+- **HELD study-chair** (image-less; in_stock + priced + draft contradiction).
+- **console-vanity-mirror EXCLUDED from colour variants** — its category allows only `size`;
+  the cream/gray are frame photos. Modeling finish there would need a shared-category change.
+
+### Deferred worklist
+- [ ] 🎨 **study-chair** → needs images, then publish + resolve the draft/in_stock/price contradiction.
+- [ ] 🧑‍💼 **elizabeth-bed size-180** — missing its cream/gray finish split (every other size has it).
+- [ ] 🧑‍💼 **elizabeth-console** — gallery shows **3 drawers** (`elizabeth-console-3-drawes-cream.webp`,
+      also a filename typo) but its variant is **2 drawers**; reconcile + rename.
+- [ ] 🧑‍💼 **elizabeth-vanity** — drawers/finish matrix gap (drawers=2 cream/gray images exist with no matching variant).
+- [ ] 🧑‍💼 **console-vanity-mirror finish** — decide: add `finish` to the (shared) category, or leave size-only.
+- [ ] 🧑‍💼 **vanity = vanity-chair copied dims** (100×78×45).
+- [ ] 🧑‍💼 **`baby` occupancy over-tag** on bed/bookcase (design declares only double/teen).
+- [ ] 🧑‍💼 draft prices; `publishedAt` null on published items (housekeeping).
+- [ ] ✍️ SEO meta title/description · 🧑‍💼 editorial copy · 🧑‍💼 materials — all 15.
+- [ ] ✍️ / 🧑‍💼 **Hub designs/27** — empty shell (only name/slug/occupancies/heroMedia populated).

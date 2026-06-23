@@ -20,6 +20,7 @@ const AXIS_LABEL: Record<string, string> = {
   door_material: 'جنس درب',
   doors: 'تعداد درب',
   drawers: 'تعداد کشو',
+  fabric: 'پارچه',
   finish: 'روکش',
   footboard: 'تاج',
   glass: 'شیشه',
@@ -47,6 +48,9 @@ const VALUE_LABEL: Record<string, string> = {
   // door_material
   'door_material:glass': 'شیشه',
   'door_material:mdf': 'ام‌دی‌اف',
+  // fabric
+  'fabric:cream': 'کرم',
+  'fabric:gray': 'خاکستری',
   // finish
   'finish:cream': 'کرم',
   'finish:gray': 'خاکستری',
