@@ -3,7 +3,7 @@
 Auto-generated from `catalog-content-audit.md` (per-design deferred worklists),
 grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 
-## ✍️ SEO specialist — 12 item(s)
+## ✍️ SEO specialist — 14 item(s)
 
 **آیرون (iron)**
 - [ ] **SEO meta title + description** — empty on all 12 (ogImage already seeded).
@@ -23,8 +23,11 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 **الیزابت (elizabeth)**
 - [ ] SEO meta title/description · editorial copy · materials — all 15.
 - [ ] **Hub designs/27** — empty shell (only name/slug/occupancies/heroMedia populated).
+**بلوط (baloot)**
+- [ ] SEO meta title/description — all 15.
+- [ ] **Hub designs/22** — completely empty shell (every editorial/media field null/empty).
 
-## 🎨 3D artist — 11 item(s)
+## 🎨 3D artist — 13 item(s)
 
 **آیرون (iron)**
 - [ ] **iron-bed per-size photos** — replace the closest-size placeholders on sizes
@@ -43,8 +46,11 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 - [ ] **caroline-bed photos** — real shots for sizes 90/140/180 (placeholders now); gallery is thin.
 **الیزابت (elizabeth)**
 - [ ] **study-chair** → needs images, then publish + resolve the draft/in_stock/price contradiction.
+**بلوط (baloot)**
+- [ ] **3 image-less drafts → need images**, then publish/fix availability: changing-top
+- [ ] **baloot-bed correct per-size photos** — the 160 pair currently shares the `160-180`
 
-## 🧑‍💼 Operator — 45 item(s)
+## 🧑‍💼 Operator — 52 item(s)
 
 **آیرون (iron)**
 - [ ] **Editorial copy** — tagline / shortDescription / longDescription / specs empty on all 12.
@@ -97,3 +103,11 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 - [ ] draft prices; `publishedAt` null on published items (housekeeping).
 - [ ] SEO meta title/description · editorial copy · materials — all 15.
 - [ ] **Hub designs/27** — empty shell (only name/slug/occupancies/heroMedia populated).
+**بلوط (baloot)**
+- [ ] **baloot-vanity** — gallery shows a 5-drawer image but the only variant is `drawers=4`; reconcile.
+- [ ] **vanity = vanity-chair copied dims** (100×78×45).
+- [ ] **Materials = oak** — baloot is بلوط (oak) and the `oak` material record **exists** (NOT
+- [ ] **Occupancies** uncurated — all 15 carry baby/double/teen with no per-product curation.
+- [ ] draft prices; `publishedAt`/`occupancy` housekeeping.
+- [ ] editorial copy — all 15.
+- [ ] **Hub designs/22** — completely empty shell (every editorial/media field null/empty).

@@ -241,3 +241,35 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
 - [ ] 🧑‍💼 draft prices; `publishedAt` null on published items (housekeeping).
 - [ ] ✍️ SEO meta title/description · 🧑‍💼 editorial copy · 🧑‍💼 materials — all 15.
 - [ ] ✍️ / 🧑‍💼 **Hub designs/27** — empty shell (only name/slug/occupancies/heroMedia populated).
+
+---
+
+## بلوط (baloot) — reviewed 2026-06-22 · 15 products
+
+### Fixed this session
+- **Tags** — `modern` ×15; `storage` on wardrobe/nightstand/vanity/console.
+- **SEO ogImage** — seeded on the 12 with galleries.
+- **Cross-sell** — `pairsWith` (bed↔nightstand, vanity↔vanity-chair, vanity↔console-mirror,
+  study-desk↔study-chair, study-desk↔bookcase) + `relatedProductIds` (6 each).
+- **Published** vanity (price 0).
+- **baloot-bed** — attached the existing `double-160-180` shots to the two image-less 160
+  variants (160/high → #994, 160/low → #995); image-only update, no new variant/axis. `reconcile-18-baloot-content.mts`
+
+### Decisions recorded
+- **HELD 3 image-less drafts** (changing-top, loveseat, wall-shelf) — all in_stock + priced + draft.
+- **No finish-variant gap** (no decision A) — baloot pieces are single-finish.
+
+### Deferred worklist
+- [ ] 🎨 **3 image-less drafts → need images**, then publish/fix availability: changing-top
+      (135,030,000﷼), loveseat (203,420,000﷼), wall-shelf (176,740,000﷼).
+- [ ] 🎨 **baloot-bed correct per-size photos** — the 160 pair currently shares the `160-180`
+      double shot; real per-size images to be added later (operator).
+- [ ] 🧑‍💼 **baloot-vanity** — gallery shows a 5-drawer image but the only variant is `drawers=4`; reconcile.
+- [ ] 🧑‍💼 **vanity = vanity-chair copied dims** (100×78×45).
+- [ ] 🧑‍💼 **Materials = oak** — baloot is بلوط (oak) and the `oak` material record **exists** (NOT
+      blocked, unlike iron/loof): wire `oak` on the wood pieces (loveseat/chairs are fabric → per-product).
+- [ ] 🧑‍💼 **Occupancies** uncurated — all 15 carry baby/double/teen with no per-product curation.
+- [ ] 🧑‍💼 draft prices; `publishedAt`/`occupancy` housekeeping.
+- [ ] ✍️ SEO meta title/description — all 15.
+- [ ] 🧑‍💼 editorial copy — all 15.
+- [ ] ✍️ / 🧑‍💼 **Hub designs/22** — completely empty shell (every editorial/media field null/empty).
