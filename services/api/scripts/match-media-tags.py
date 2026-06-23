@@ -137,6 +137,10 @@ def match_product(design, catset, stem):
 
 def axes_from(tags, stem):
     ax={}
+    # bunk bed configuration is encoded in the filename (…-bunk-bed-full/lower/trundle…)
+    if 'bunk-bed-full' in stem: ax['bunk_configuration']='full_bunk'
+    elif 'bunk-bed-lower' in stem: ax['bunk_configuration']='lower_bed'
+    elif 'bunk-bed-trundle' in stem: ax['bunk_configuration']='bunk_with_trundle'
     for t in tags:
         if t in DOOR: ax['doors']=DOOR[t][1]
         if t in DRAW: ax['drawers']=DRAW[t][1]
