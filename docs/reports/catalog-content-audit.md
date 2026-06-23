@@ -6,6 +6,18 @@ made (so we don't re-litigate them), and the **deferred** worklist with an owner
 
 **Owners:** 🧑‍💼 Operator · ✍️ SEO specialist · 🎨 3D artist
 
+## On hold — intentionally draft (operator decision, 2026-06-22)
+
+These 7 designs are **deliberately kept unpublished** for now — **do not run the standard
+publish pass on them** until the operator makes a launch decision:
+
+- Fully-draft series: **catherine** (14), **roco** (11), **romantic** (10), **eliza** (9), **classic** (9)
+- Draft singletons: **general** (1), **adrian** (1)
+
+When one is ready to launch, the path is the same as nikan: confirm the CMS media is
+uploaded + wired, then publish + standard pass + audit. **20 of 27 designs are reconciled;**
+these 7 are the remainder, held by choice (not incomplete review).
+
 ## Conventions (don't re-flag these as bugs)
 
 - **0 variants is normal.** 167 of 272 products have no variants — under the
