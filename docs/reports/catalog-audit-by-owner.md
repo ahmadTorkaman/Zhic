@@ -8,15 +8,15 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 | Design | Task |
 | --- | --- |
 | آیرون (iron) | **SEO meta title + description** — empty on all 12 (ogImage already seeded). |
-| آیرون (iron) | **Hub #29 (آیرون)** — `introBody` is placeholder scaffolding |
+| آیرون (iron) | **Hub #29 (آیرون)** — `introBody` is placeholder scaffolding ("توضیحات کوتاه سرویس خواب نوجوان آیرون"); story is bed-only; `occupancyMedia` and `description` empty. |
 | ورنا (verna) | **SEO meta title + description** — all 7. |
-| ورنا (verna) | **Hub designs/40 (ورنا)** — near-empty shell: description, tagline, hubIntro, |
+| ورنا (verna) | **Hub designs/40 (ورنا)** — near-empty shell: description, tagline, hubIntro, intro/story copy+media, hero/logo art, gallery, materialCallouts all empty; `occupancyMedia` empty though it declares `double, teen`. |
 | پارلا (parla) | **SEO meta title + description** — all 19. |
-| پارلا (parla) | **Hub designs/36 (پارلا)** — has hero/slider/logo + 3 occupancyMedia, but |
+| پارلا (parla) | **Hub designs/36 (پارلا)** — has hero/slider/logo + 3 occupancyMedia, but tagline, description, hubIntro, intro/story copy, gallery, materialCallouts, and designDetails are all empty; declares 4 occupancies (baby/bunk/double/teen) vs 3 media. |
 | لوف (loof) | SEO meta title/description · editorial copy · materials — all 17 (materials blocked on missing records). |
-| لوف (loof) | **Hub designs/31** — empty copy (tagline/description/hubIntro/intro/story), null alt on all |
+| لوف (loof) | **Hub designs/31** — empty copy (tagline/description/hubIntro/intro/story), null alt on all 16 gallery images, empty materialCallouts/designDetails. (Deep audit: identical on jacqueline #30 & lorena #32.) |
 | کارولین (caroline) | SEO meta title/description · editorial copy · materials — all 16 (materials blocked on missing records). |
-| کارولین (caroline) | **Hub designs/24** — empty editorial (description/tagline/hubIntro/intro/story/materialCallouts/designDetails); |
+| کارولین (caroline) | **Hub designs/24** — empty editorial (description/tagline/hubIntro/intro/story/materialCallouts/designDetails); `occupancyMedia` missing the baby card though it declares baby/double/teen. |
 | الیزابت (elizabeth) | SEO meta title/description · editorial copy · materials — all 15. |
 | الیزابت (elizabeth) | **Hub designs/27** — empty shell (only name/slug/occupancies/heroMedia populated). |
 | بلوط (baloot) | SEO meta title/description — all 15. |
@@ -50,19 +50,19 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 
 | Design | Task |
 | --- | --- |
-| آیرون (iron) | **iron-bed per-size photos** — replace the closest-size placeholders on sizes |
-| آیرون (iron) | **iron-standing-mirror-regal** — empty dimensions; and define what "رگال" |
-| ورنا (verna) | **verna-console-vanity-mirror** — needs gallery images, then publish (held). It's |
-| ورنا (verna) | **verna-bed per-size photos** — replace placeholders on sizes 90 / 100 / 140 |
-| پارلا (parla) | **5 image-less drafts → need gallery images**, then publish: bed-guard, |
+| آیرون (iron) | **iron-bed per-size photos** — replace the closest-size placeholders on sizes 90 / 140 / 180 with real shots. |
+| آیرون (iron) | **iron-standing-mirror-regal** — empty dimensions; and define what "رگال" differentiates from the base standing-mirror (identical 305,820,000 price). |
+| ورنا (verna) | **verna-console-vanity-mirror** — needs gallery images, then publish (held). It's priced + in_stock but draft & imageless. |
+| ورنا (verna) | **verna-bed per-size photos** — replace placeholders on sizes 90 / 100 / 140 (140 is a *priced* tier with no real shot). |
+| پارلا (parla) | **5 image-less drafts → need gallery images**, then publish: bed-guard, console-vanity-mirror, sliding-wardrobe, study-chair, vanity-chair. |
 | پارلا (parla) | **parla-bed photos** — real shots for sizes 90 / 140 / 180 (cream placeholders now). |
-| لوف (loof) | **2 image-less drafts** → bed-guard (also price 0) and vanity-chair (draft but in_stock + |
+| لوف (loof) | **2 image-less drafts** → bed-guard (also price 0) and vanity-chair (draft but in_stock + 163,930,000﷼ — contradictory) need images, then publish/fix availability. |
 | لوف (loof) | **loof-bed real photos** for sizes 90/100/140 (single-120 stopgap now; 140 is a double). |
-| لوف (loof) | **Green-only galleries** — changing-top & console-vanity-mirror have only a green image |
+| لوف (loof) | **Green-only galleries** — changing-top & console-vanity-mirror have only a green image (cream missing); add the cream lead shot. |
 | کارولین (caroline) | **caroline-bed photos** — real shots for sizes 90/140/180 (placeholders now); gallery is thin. |
 | الیزابت (elizabeth) | **study-chair** → needs images, then publish + resolve the draft/in_stock/price contradiction. |
-| بلوط (baloot) | **3 image-less drafts → need images**, then publish/fix availability: changing-top |
-| بلوط (baloot) | **baloot-bed correct per-size photos** — the 160 pair currently shares the `160-180` |
+| بلوط (baloot) | **3 image-less drafts → need images**, then publish/fix availability: changing-top (135,030,000﷼), loveseat (203,420,000﷼), wall-shelf (176,740,000﷼). |
+| بلوط (baloot) | **baloot-bed correct per-size photos** — the 160 pair currently shares the `160-180` double shot; real per-size images to be added later (operator). |
 | لوکاپلاس (lukaplus) | image-less drafts → images, then publish: **bed-guard, study-chair**. |
 | لوکاپلاس (lukaplus) | lukaplus-bed real per-size photos (90/100/140 are placeholders). |
 | بلک‌اند‌وایت (bw) | image-less draft → images, then publish: **vanity-chair**. |
@@ -89,43 +89,43 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 | Design | Task |
 | --- | --- |
 | آیرون (iron) | **Editorial copy** — tagline / shortDescription / longDescription / specs empty on all 12. |
-| آیرون (iron) | **Materials** — wire metal (فلز) + MDF + linen on all 12. **Blocked:** فلز and |
+| آیرون (iron) | **Materials** — wire metal (فلز) + MDF + linen on all 12. **Blocked:** فلز and MDF material records don't exist yet — create them first, then relate. |
 | آیرون (iron) | **Draft-trio prices** — set real `basePriceRials` for #419/#421/#422 (currently 0). |
-| آیرون (iron) | **footboard axis** — the bed's category declares a `footboard` axis that isn't |
-| آیرون (iron) | **iron-standing-mirror-regal** — empty dimensions; and define what "رگال" |
-| آیرون (iron) | **iron-vanity-chair dimensions** — width=100 is copy-pasted from the vanity; |
-| آیرون (iron) | **Hub #29 (آیرون)** — `introBody` is placeholder scaffolding |
+| آیرون (iron) | **footboard axis** — the bed's category declares a `footboard` axis that isn't offered. Confirm whether iron beds have a footboard option; if yes, add variants. |
+| آیرون (iron) | **iron-standing-mirror-regal** — empty dimensions; and define what "رگال" differentiates from the base standing-mirror (identical 305,820,000 price). |
+| آیرون (iron) | **iron-vanity-chair dimensions** — width=100 is copy-pasted from the vanity; needs real seat dimensions. |
+| آیرون (iron) | **Hub #29 (آیرون)** — `introBody` is placeholder scaffolding ("توضیحات کوتاه سرویس خواب نوجوان آیرون"); story is bed-only; `occupancyMedia` and `description` empty. |
 | آیرون (iron) | *(optional curation)* — vanity↔mirror pairing not wired. |
 | ورنا (verna) | **verna-vanity price** — base + variant #439 delta both null/0; enter a real price. |
-| ورنا (verna) | **verna-bed price buckets** — confirm 90/100/120 = 419,690,000 vs 140/160 = |
+| ورنا (verna) | **verna-bed price buckets** — confirm 90/100/120 = 419,690,000 vs 140/160 = 528,650,000 are intentional; encode single/double in structured data (today only in filenames). |
 | ورنا (verna) | **verna-bed dimensions** — stored width 160 applies to all sizes; make variant-aware. |
-| ورنا (verna) | **verna-study-desk filenames** — `verna-study-deskwebp.webp` (missing dot), |
-| ورنا (verna) | **verna-wardrobe materials** → MDF (alt text + filename say MDF). Blocked: MDF |
+| ورنا (verna) | **verna-study-desk filenames** — `verna-study-deskwebp.webp` (missing dot), `verna-study-desk-detial.webp` (typo) — rename. |
+| ورنا (verna) | **verna-wardrobe materials** → MDF (alt text + filename say MDF). Blocked: MDF material record doesn't exist (see conventions). |
 | ورنا (verna) | **Editorial copy** — tagline/short/long/specs empty on all 7. |
 | ورنا (verna) | **Materials** — all 7 (blocked on missing فلز/MDF records as above). |
-| ورنا (verna) | **Hub designs/40 (ورنا)** — near-empty shell: description, tagline, hubIntro, |
+| ورنا (verna) | **Hub designs/40 (ورنا)** — near-empty shell: description, tagline, hubIntro, intro/story copy+media, hero/logo art, gallery, materialCallouts all empty; `occupancyMedia` empty though it declares `double, teen`. |
 | ورنا (verna) | **publishedAt null** on some published items (housekeeping). |
-| پارلا (parla) | **Contradictory draft trio** — sliding-wardrobe (135,993,000﷼), study-chair, |
-| پارلا (parla) | **Dimension copy-pastes** — vanity-chair=vanity (100×78×45), bed-guard=bed-box |
-| پارلا (parla) | **Prices** — bed-guard / console-vanity-mirror / convertible-teen are 0/made_to_order |
+| پارلا (parla) | **Contradictory draft trio** — sliding-wardrobe (135,993,000﷼), study-chair, vanity-chair are `in_stock` + priced but `draft` + image-less. Resolve once imaged. |
+| پارلا (parla) | **Dimension copy-pastes** — vanity-chair=vanity (100×78×45), bed-guard=bed-box (120×110×210), wardrobe=combined-wardrobe (120×220×60, confirm if legit). Need real dims. |
+| پارلا (parla) | **Prices** — bed-guard / console-vanity-mirror / convertible-teen are 0/made_to_order (convertible-teen now published at 0). |
 | پارلا (parla) | **Editorial copy** — all 19. |
 | پارلا (parla) | **Materials** — all 19 (blocked on missing material records). |
-| پارلا (parla) | **Hub designs/36 (پارلا)** — has hero/slider/logo + 3 occupancyMedia, but |
-| لوف (loof) | **loof-bed finish modeling** — cream/green offered **only on size 120**; extend to all |
-| لوف (loof) | **Dimension copy-pastes** — bed-guard = bed-box (120×110×210), vanity-chair = vanity |
+| پارلا (parla) | **Hub designs/36 (پارلا)** — has hero/slider/logo + 3 occupancyMedia, but tagline, description, hubIntro, intro/story copy, gallery, materialCallouts, and designDetails are all empty; declares 4 occupancies (baby/bunk/double/teen) vs 3 media. |
+| لوف (loof) | **loof-bed finish modeling** — cream/green offered **only on size 120**; extend to all sizes or drop the split. Also its declared axis is `footboard`, not `finish`. |
+| لوف (loof) | **Dimension copy-pastes** — bed-guard = bed-box (120×110×210), vanity-chair = vanity (100×78×45). Need real dims. |
 | لوف (loof) | **loof-bed classification** — filed under `تخت دونفره` (double) despite baby/teen ≤140; confirm. |
 | لوف (loof) | **loof-convertible-teen** — single cream-only variant; `size`/conversion axis unmodeled. |
 | لوف (loof) | **loof-wardrobe filenames** — `loof-cream-kid-loof-wardrobe-…` / `loof-cream-teen-…` (doubled prefix); rename. |
 | لوف (loof) | **loof-display-cabinet occupancy** — baby-only vs baby+teen siblings; confirm. |
 | لوف (loof) | SEO meta title/description · editorial copy · materials — all 17 (materials blocked on missing records). |
-| لوف (loof) | **Hub designs/31** — empty copy (tagline/description/hubIntro/intro/story), null alt on all |
+| لوف (loof) | **Hub designs/31** — empty copy (tagline/description/hubIntro/intro/story), null alt on all 16 gallery images, empty materialCallouts/designDetails. (Deep audit: identical on jacqueline #30 & lorena #32.) |
 | کارولین (caroline) | **Prices** — 4 drafts published at 0 (changing-top, convertible-sofa, convertible-teen, study-chair). |
-| کارولین (caroline) | **Dimension copy-pastes** — convertible-sofa = convertible-teen (90×105×195), |
+| کارولین (caroline) | **Dimension copy-pastes** — convertible-sofa = convertible-teen (90×105×195), vanity-chair = vanity (100×78×45). Need real dims. |
 | کارولین (caroline) | **Convertibles** — convertible-sofa & convertible-teen have single no-axis variants; model the conversion/size. |
 | کارولین (caroline) | SEO meta title/description · editorial copy · materials — all 16 (materials blocked on missing records). |
-| کارولین (caroline) | **Hub designs/24** — empty editorial (description/tagline/hubIntro/intro/story/materialCallouts/designDetails); |
+| کارولین (caroline) | **Hub designs/24** — empty editorial (description/tagline/hubIntro/intro/story/materialCallouts/designDetails); `occupancyMedia` missing the baby card though it declares baby/double/teen. |
 | الیزابت (elizabeth) | **elizabeth-bed size-180** — missing its cream/gray finish split (every other size has it). |
-| الیزابت (elizabeth) | **elizabeth-console** — gallery shows **3 drawers** (`elizabeth-console-3-drawes-cream.webp`, |
+| الیزابت (elizabeth) | **elizabeth-console** — gallery shows **3 drawers** (`elizabeth-console-3-drawes-cream.webp`, also a filename typo) but its variant is **2 drawers**; reconcile + rename. |
 | الیزابت (elizabeth) | **elizabeth-vanity** — drawers/finish matrix gap (drawers=2 cream/gray images exist with no matching variant). |
 | الیزابت (elizabeth) | **console-vanity-mirror finish** — decide: add `finish` to the (shared) category, or leave size-only. |
 | الیزابت (elizabeth) | **vanity = vanity-chair copied dims** (100×78×45). |
@@ -135,7 +135,7 @@ grouped by owner. Regenerate: `python3 services/api/scripts/audit-by-owner.py`.
 | الیزابت (elizabeth) | **Hub designs/27** — empty shell (only name/slug/occupancies/heroMedia populated). |
 | بلوط (baloot) | **baloot-vanity** — gallery shows a 5-drawer image but the only variant is `drawers=4`; reconcile. |
 | بلوط (baloot) | **vanity = vanity-chair copied dims** (100×78×45). |
-| بلوط (baloot) | **Materials = oak** — baloot is بلوط (oak) and the `oak` material record **exists** (NOT |
+| بلوط (baloot) | **Materials = oak** — baloot is بلوط (oak) and the `oak` material record **exists** (NOT blocked, unlike iron/loof): wire `oak` on the wood pieces (loveseat/chairs are fabric → per-product). |
 | بلوط (baloot) | **Occupancies** uncurated — all 15 carry baby/double/teen with no per-product curation. |
 | بلوط (baloot) | draft prices; `publishedAt`/`occupancy` housekeeping. |
 | بلوط (baloot) | editorial copy — all 15. |

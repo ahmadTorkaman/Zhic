@@ -19,7 +19,16 @@ design = None
 buckets = {emoji: [] for emoji, _ in OWNERS}
 in_deferred = False
 
-for raw in SRC.read_text(encoding="utf-8").splitlines():
+# Merge wrapped continuation lines (indented text that isn't a new list item/heading)
+# into the preceding line so multi-line "- [ ]" items aren't truncated.
+_merged = []
+for _ln in SRC.read_text(encoding="utf-8").splitlines():
+    if _merged and _ln[:1] in (" ", "\t") and _ln.strip() and not _ln.lstrip()[:1] in ("-", "#", "|"):
+        _merged[-1] = _merged[-1].rstrip() + " " + _ln.strip()
+    else:
+        _merged.append(_ln)
+
+for raw in _merged:
     line = raw.rstrip()
     # Design heading: "## <name> — reviewed ..." (not "###", not the intro/conventions)
     m = re.match(r"^##\s+(.*?)\s+—\s+reviewed", line)
