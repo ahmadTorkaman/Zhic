@@ -1,7 +1,9 @@
-/* «قطعات سرویس» collection grid — Figma 261:203. Card 194×252, gold 1px
-   border. The photo fills the card; a short frosted-glass label floats over its
-   bottom edge (reuses the global `.float-card` boundary-glass — same material as
-   the homepage stat card) with name, struck original price, and sale price. */
+/* «قطعات سرویس» collection grid — redesigned from Figma 398:87 (Group 12).
+   Layered card: a cream panel rises from the bottom with rounded top corners
+   (coming up *under* the photo), and the borderless (transparent) product webp
+   floats over it on a clean ivory base. Name + struck original price + sale
+   price sit centered at the foot of the cream panel. Gold 1px border, 17px
+   radius. Replaces the previous frosted-glass floating label (Figma 261:203). */
 
 .section {
   padding-inline: 2.89cqw; /* 12.42px gutters */
@@ -24,75 +26,67 @@
 
 .card {
   position: relative;
-  display: block;
   height: 58.66cqw; /* 252.264px @430 */
   border: 1px solid var(--color-gold);
-  border-radius: var(--radius-panel);
+  border-radius: var(--radius-panel); /* 17px (comp 16.712px) */
   overflow: hidden;
+  background: var(--color-ivory); /* base behind the floating photo (top region) */
 }
 
-/* Soft scrim over the photo's bottom edge — gives the (very transparent)
-   glass label a consistently darker base so the ivory text stays legible
-   regardless of the photo behind it. Sits above the photo, below the label. */
-.card::after {
-  content: '';
+/* Cream panel — rises from the bottom with rounded TOP corners, under the photo.
+   Holds the centered name + prices pinned to its foot. */
+.info {
   position: absolute;
   inset-inline: 0;
   bottom: 0;
-  height: 52%;
-  background: linear-gradient(to top, rgba(20, 17, 15, 0.55), rgba(20, 17, 15, 0));
-  pointer-events: none;
-  z-index: 1;
-}
-
-.photo {
-  position: absolute;
-  inset: 0;
-  background: var(--color-ivory); /* clean base behind the contained (letterboxed) photo */
-}
-.img {
-  object-fit: contain;
-}
-
-/* Short floating glass label — positioning + type only; the glass material
-   (bg, blur, border, shadow, 16px radius) comes from the global `.float-card`. */
-.label {
-  position: absolute;
-  inset-inline: 2.6cqw;
-  bottom: 2.6cqw;
-  z-index: 2; /* above the scrim */
+  height: 62.3%; /* 157.18/252.26 — top edge lands at ~37.7% */
+  z-index: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.9cqw 1.8cqw 2.1cqw;
+  justify-content: flex-end;
+  gap: 1cqw;
+  padding: 0 2cqw 2.2cqw;
+  background: var(--color-cream-panel); /* #F2EEE8 */
+  border-radius: var(--radius-panel) var(--radius-panel) 0 0;
   text-align: center;
-  color: var(--color-ivory);
-  /* soft shadow keeps the ivory text crisp over any photo behind the glass */
-  text-shadow: 0 1px 3px rgba(20, 17, 15, 0.45);
+  color: var(--color-ink);
 }
 
-/* Type sized to match the sibling ProductMosaic glass caption (operator: the
-   previous 23.7px name / 18px price made the glass band too tall). */
+/* Photo band — transparent on purpose: the borderless product webp floats over
+   the ivory base + the cream panel rising behind it. No scrim, no glass. */
+.photo {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 60.7%; /* 153/252.26 — the photo sits above the panel's text foot */
+  z-index: 1;
+}
+.img {
+  object-fit: contain;
+  padding: 2.4cqw; /* keep the cutout off the gold border (comp inset ~7.6%) */
+}
+
 .name {
-  font-weight: 700; /* Bold */
-  font-size: 4.4cqw; /* ~18.9px */
-  line-height: 1.25;
+  font-weight: 700; /* Ayandeh Bold */
+  font-size: 5.51cqw; /* 23.713px */
+  line-height: 1.4;
 }
 
+/* Struck original price — gold line-through (sale only). The comp draws a
+   hand-drawn double-wavy strike; a CSS line-through scales to any price width
+   and the gold colour matches the flourish. */
 .orig {
-  margin-top: 0.6cqw;
-  font-weight: 400;
-  font-size: 3cqw; /* ~12.9px */
-  line-height: 1.2;
+  font-weight: 400; /* Ayandeh Regular */
+  font-size: 3.68cqw; /* 15.809px */
+  line-height: 1.4;
   text-decoration: line-through;
   text-decoration-color: var(--color-gold);
   text-decoration-thickness: 0.4cqw;
-  opacity: 0.85;
 }
 
 .price {
-  margin-top: 0.5cqw;
-  font-weight: 400;
-  font-size: 3.6cqw; /* ~15.5px */
-  line-height: 1.3;
+  font-weight: 400; /* Ayandeh Regular */
+  font-size: 4.2cqw; /* 18.067px */
+  line-height: 1.4;
 }

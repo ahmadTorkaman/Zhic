@@ -8,8 +8,10 @@ export type SeriesCollectionProps = {
 };
 
 /**
- * «قطعات سرویس» — 2-column grid of gold-bordered product cards: photo + cream
- * label band with name, struck original price, and sale price. Figma 261:203.
+ * «قطعات سرویس» — 2-column grid of gold-bordered product cards: a contained
+ * photo in a top band, then a cream info panel with the name, struck original
+ * price, and sale price (centered, black ink). Figma 398:87 (redesign of 261:203
+ * — the old frosted-glass floating label is gone).
  */
 export function SeriesCollection({ heading, items }: SeriesCollectionProps) {
   if (items.length === 0) return null;
@@ -24,7 +26,7 @@ export function SeriesCollection({ heading, items }: SeriesCollectionProps) {
                 <Image src={it.img} alt={it.name} fill sizes="195px" className={styles.img} />
               ) : null}
             </div>
-            <div className={`${styles.label} float-card`}>
+            <div className={styles.info}>
               <p className={styles.name}>{it.name}</p>
               {it.originalPrice ? (
                 <p className={styles.orig} dir="ltr">
