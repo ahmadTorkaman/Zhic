@@ -24,6 +24,7 @@ import * as migration_20260621_120000_add_bedroom_set_occupancy_heroes from './2
 import * as migration_20260625_120000_create_bedroom_set_hubs from './20260625_120000_create_bedroom_set_hubs';
 import * as migration_20260625_120000_add_home_about_background from './20260625_120000_add_home_about_background';
 import * as migration_20260625_130000_create_series_occupancies from './20260625_130000_create_series_occupancies';
+import * as migration_20260625_140000_register_bedroom_set_hubs_locked_docs from './20260625_140000_register_bedroom_set_hubs_locked_docs';
 
 export const migrations = [
   {
@@ -155,5 +156,10 @@ export const migrations = [
     up: migration_20260625_130000_create_series_occupancies.up,
     down: migration_20260625_130000_create_series_occupancies.down,
     name: '20260625_130000_create_series_occupancies'
+  },
+  {
+    up: migration_20260625_140000_register_bedroom_set_hubs_locked_docs.up,
+    down: migration_20260625_140000_register_bedroom_set_hubs_locked_docs.down,
+    name: '20260625_140000_register_bedroom_set_hubs_locked_docs'
   },
 ];
