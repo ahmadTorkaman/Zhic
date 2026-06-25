@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { GoldArrow } from '@zhic/ui';
+import { GoldArrow, BlurInText } from '@zhic/ui';
 import { toPersianDigits } from '@zhic/locale';
 import type { JournalArticle } from '@/lib/journal-content';
 import styles from './JournalNumberedList.module.css';
@@ -24,7 +24,9 @@ export function JournalNumberedList({ articles, startNumber = 2 }: JournalNumber
           </div>
           <div className={styles.body}>
             <span className={styles.cat}>{a.category}</span>
-            <h3 className={styles.title}>{a.title}</h3>
+            <BlurInText as="h3" className={styles.title}>
+              {a.title}
+            </BlurInText>
             <span className={styles.meta}>
               {toPersianDigits(a.readingMinutes)} دقیقه مطالعه
               <GoldArrow className={styles.metaArrow} />

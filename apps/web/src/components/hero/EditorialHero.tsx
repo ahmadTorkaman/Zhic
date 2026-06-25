@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { BlurInText } from '@zhic/ui';
 import { HeroOverlayText } from './HeroOverlayText';
 
 type Height = 'sm' | 'md' | 'lg' | 'xl';
@@ -44,10 +45,19 @@ export function EditorialHero({
       />
 
       <HeroOverlayText pb={7}>
-        <div className="mb-3 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
+        <BlurInText
+          as="div"
+          className="mb-3 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest"
+        >
           {eyebrow}
-        </div>
-        <h1 className="text-balance text-h1 font-black leading-[1.2] text-ink">{title}</h1>
+        </BlurInText>
+        <BlurInText
+          as="h1"
+          className="text-balance text-h1 font-black leading-[1.2] text-ink"
+          delay={120}
+        >
+          {title}
+        </BlurInText>
       </HeroOverlayText>
     </section>
   );

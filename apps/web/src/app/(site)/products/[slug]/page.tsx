@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Container } from '@zhic/ui';
+import { Container, BlurInText } from '@zhic/ui';
 import { StickyBreadcrumb } from '@/components/layout/StickyBreadcrumb';
 import { CinematicHero } from '@/components/hero/CinematicHero';
 import { ProductThumbnails } from '@/components/product/ProductThumbnails';
@@ -83,10 +83,22 @@ export default async function ProductPage({ params }: PageProps) {
                 <ProductThumbnails images={gallery} activeIndex={0} />
               </div>
             ) : null}
-            <h1 className="mb-4 text-h2 font-black text-ink">{product.name}</h1>
-            {product.tagline ? <p className="mb-6 text-lead font-light text-stone">{product.tagline}</p> : null}
+            <BlurInText as="h1" className="mb-4 text-h2 font-black text-ink">
+              {product.name}
+            </BlurInText>
+            {product.tagline ? (
+              <BlurInText as="p" className="mb-6 text-lead font-light text-stone" delay={120}>
+                {product.tagline}
+              </BlurInText>
+            ) : null}
             {product.shortDescription ? (
-              <p className="mb-7 max-w-[560px] text-body leading-[1.85] text-charcoal">{product.shortDescription}</p>
+              <BlurInText
+                as="p"
+                className="mb-7 max-w-[560px] text-body leading-[1.85] text-charcoal"
+                delay={200}
+              >
+                {product.shortDescription}
+              </BlurInText>
             ) : null}
             {product.longDescription ? (
               <div className="mb-7 max-w-[560px] text-body leading-[1.85] text-charcoal">
@@ -95,7 +107,9 @@ export default async function ProductPage({ params }: PageProps) {
             ) : null}
             {specs.length > 0 ? (
               <div className="mt-7 border-t border-sand pt-6">
-                <h2 className="mb-5 text-h4 font-bold text-charcoal">مشخصات</h2>
+                <BlurInText as="h2" className="mb-5 text-h4 font-bold text-charcoal">
+                  مشخصات
+                </BlurInText>
                 <SpecsAccordion specs={specs} />
               </div>
             ) : null}
@@ -108,7 +122,9 @@ export default async function ProductPage({ params }: PageProps) {
         {/* Related products */}
         {product.relatedProductIds && product.relatedProductIds.length > 0 ? (
           <section className="border-t border-sand py-9">
-            <h2 className="mb-6 text-h3 font-bold text-ink">محصولات مرتبط</h2>
+            <BlurInText as="h2" className="mb-6 text-h3 font-bold text-ink">
+              محصولات مرتبط
+            </BlurInText>
             <div className="grid grid-cols-2 gap-[var(--space-5)] md:grid-cols-4">
               {product.relatedProductIds.slice(0, 4).map((rp) => (
                 <Tile

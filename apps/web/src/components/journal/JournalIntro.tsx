@@ -1,22 +1,18 @@
+import { BlurInText } from '@zhic/ui';
 import styles from './JournalIntro.module.css';
 
 /**
  * Journal intro headline (Figma 227:497). Default: forest-green concept words
- * with gold connectors (brand copy). When a CMS `title` is provided, it renders
- * that text uniformly (forest), splitting on newlines into lines.
+ * with gold connectors (brand copy). When a `title` is provided (category/tag
+ * name), it reveals word-by-word in uniform forest, matching the site-wide
+ * blur-in. The default bicolor brand headline is decorative and stays static.
  */
 export function JournalIntro({ title }: { title?: string }) {
   if (title) {
-    const lines = title.split('\n').filter(Boolean);
     return (
-      <p className={styles.intro}>
-        {lines.map((line, i) => (
-          <span key={i} className={styles.big}>
-            {line}
-            {i < lines.length - 1 ? <br /> : null}
-          </span>
-        ))}
-      </p>
+      <BlurInText as="p" className={`${styles.intro} ${styles.big}`}>
+        {title}
+      </BlurInText>
     );
   }
   return (

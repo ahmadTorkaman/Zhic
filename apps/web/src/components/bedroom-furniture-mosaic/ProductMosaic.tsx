@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { BlurInText } from '@zhic/ui';
 import type { LeafProduct } from '@/lib/leaf-content';
 import styles from './ProductMosaic.module.css';
 
@@ -19,7 +20,9 @@ export function ProductMosaic({ heading, products }: ProductMosaicProps) {
   if (products.length === 0) return null;
   return (
     <section className={styles.section} aria-label={heading}>
-      <h2 className={styles.heading}>{heading}</h2>
+      <BlurInText as="h2" className={styles.heading}>
+        {heading}
+      </BlurInText>
       <div className={styles.grid}>
         {products.map((p) => (
           <a key={p.key} href={p.href} className={styles.card} aria-label={p.name}>

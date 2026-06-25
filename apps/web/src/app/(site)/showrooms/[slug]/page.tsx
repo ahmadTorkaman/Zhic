@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { fetchShowroom } from '@/lib/payload';
-import { Container } from '@zhic/ui';
+import { Container, BlurInText } from '@zhic/ui';
 import { ShowroomInfoCards } from '@/components/showroom/ShowroomInfoCards';
 import { GlassOverlayHero } from '@/components/hero/GlassOverlayHero';
 import { PayloadImage } from '@/components/PayloadImage';
@@ -54,7 +54,9 @@ export default async function ShowroomDetailPage({ params }: PageProps) {
       {showroom.gallery && showroom.gallery.length > 1 ? (
         <section className="pb-9">
           <Container>
-            <h2 className="mb-5 text-h3 font-bold text-ink">گالری شعبه</h2>
+            <BlurInText as="h2" className="mb-5 text-h3 font-bold text-ink">
+              گالری شعبه
+            </BlurInText>
             <div className="flex gap-[var(--space-4)] overflow-x-auto pb-3">
               {showroom.gallery.map((m, i) => (
                 <div

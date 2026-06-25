@@ -1,3 +1,4 @@
+import { BlurInText } from '@zhic/ui';
 import styles from './JournalSectionHeading.module.css';
 
 /**
@@ -7,7 +8,9 @@ import styles from './JournalSectionHeading.module.css';
 export function JournalSectionHeading({ title }: { title: string }) {
   return (
     <div className={styles.wrap}>
-      <h2 className={styles.title}>{title}</h2>
+      <BlurInText as="h2" className={styles.title}>
+        {title}
+      </BlurInText>
       <svg
         className={styles.line}
         viewBox="0 0 412.61 17.5022"

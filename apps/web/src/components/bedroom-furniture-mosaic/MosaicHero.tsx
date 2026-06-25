@@ -1,3 +1,4 @@
+import { BlurInText } from '@zhic/ui';
 import styles from './MosaicHero.module.css';
 
 export type MosaicHeroProps = {
@@ -22,15 +23,27 @@ export function MosaicHero({ title, titleLines, subtitle, tagline }: MosaicHeroP
       <h1 id="bfm-hero-title" className={styles.title} aria-label={title}>
         {titleLines ? (
           <>
-            <span aria-hidden="true">{titleLines[0]}</span>
-            <span aria-hidden="true">{titleLines[1]}</span>
+            <span aria-hidden="true">
+              <BlurInText>{titleLines[0]}</BlurInText>
+            </span>
+            <span aria-hidden="true">
+              <BlurInText delay={90}>{titleLines[1]}</BlurInText>
+            </span>
           </>
         ) : (
-          title
+          <BlurInText>{title}</BlurInText>
         )}
       </h1>
-      {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
-      {tagline ? <p className={styles.tagline}>{tagline}</p> : null}
+      {subtitle ? (
+        <BlurInText as="p" className={styles.subtitle} delay={140}>
+          {subtitle}
+        </BlurInText>
+      ) : null}
+      {tagline ? (
+        <BlurInText as="p" className={styles.tagline} delay={220}>
+          {tagline}
+        </BlurInText>
+      ) : null}
     </section>
   );
 }

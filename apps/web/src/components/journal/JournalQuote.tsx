@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { BlurInText } from '@zhic/ui';
 import styles from './JournalQuote.module.css';
 
 /**
@@ -19,7 +20,9 @@ export function JournalQuote({ quote }: { quote: string }) {
         className={styles.plant}
       />
       <blockquote className={styles.card}>
-        <p className={styles.text}>{quote}</p>
+        <BlurInText as="p" className={styles.text}>
+          {quote}
+        </BlurInText>
       </blockquote>
     </div>
   );

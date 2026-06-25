@@ -1,4 +1,4 @@
-import { Container } from '@zhic/ui';
+import { Container, BlurInText } from '@zhic/ui';
 import { ArticleRichText } from '@/lib/richtext';
 import { EditorialHero } from '@/components/hero/EditorialHero';
 import type { LexicalRoot } from '@/lib/payload';
@@ -30,7 +30,9 @@ export function EditorialPage({
         <Container>
           <div className="mx-auto max-w-[680px]">
             {lead ? (
-              <p className="mb-[var(--space-7)] text-lead font-light text-stone">{lead}</p>
+              <BlurInText as="p" className="mb-[var(--space-7)] text-lead font-light text-stone">
+                {lead}
+              </BlurInText>
             ) : null}
             <div className="text-body leading-[1.85] text-charcoal">
               <ArticleRichText value={body} />

@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { BlurInText } from '@zhic/ui';
 import type { MosaicRow, MosaicTile } from '@/lib/bedroom-furniture-mosaic';
 import styles from './CategoryMosaic.module.css';
 
@@ -86,7 +87,9 @@ export function CategoryMosaic({ heading, rows }: CategoryMosaicProps) {
     <section className={styles.section} aria-label={heading}>
       <div className={styles.heading}>
         <span className={styles.mark} aria-hidden="true" />
-        <span className={styles.headingText}>{heading}</span>
+        <BlurInText as="span" className={styles.headingText}>
+          {heading}
+        </BlurInText>
         <span className={styles.mark} aria-hidden="true" />
       </div>
 

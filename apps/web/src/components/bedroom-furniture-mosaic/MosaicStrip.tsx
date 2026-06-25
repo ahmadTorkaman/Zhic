@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { BlurInText } from '@zhic/ui';
 import styles from './MosaicStrip.module.css';
 
 export type StripItem = {
@@ -29,7 +30,9 @@ export function MosaicStrip({ heading, items, seeAll }: MosaicStripProps) {
     <section className={styles.section} aria-label={heading}>
       <div className={styles.head}>
         <span className={styles.mark} aria-hidden="true" />
-        <span className={styles.heading}>{heading}</span>
+        <BlurInText as="span" className={styles.heading}>
+          {heading}
+        </BlurInText>
         <span className={styles.mark} aria-hidden="true" />
       </div>
 

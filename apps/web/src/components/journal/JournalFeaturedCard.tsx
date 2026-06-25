@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { GoldArrow } from '@zhic/ui';
+import { GoldArrow, BlurInText } from '@zhic/ui';
 import { toPersianDigits } from '@zhic/locale';
 import type { JournalArticle } from '@/lib/journal-content';
 import styles from './JournalFeaturedCard.module.css';
@@ -30,8 +30,14 @@ export function JournalFeaturedCard({ article }: { article: JournalArticle }) {
 
       <div className={styles.content}>
         <span className={styles.tag}>{article.category}</span>
-        <h2 className={styles.title}>{article.title}</h2>
-        {article.excerpt ? <p className={styles.excerpt}>{article.excerpt}</p> : null}
+        <BlurInText as="h2" className={styles.title}>
+          {article.title}
+        </BlurInText>
+        {article.excerpt ? (
+          <BlurInText as="p" className={styles.excerpt} delay={120}>
+            {article.excerpt}
+          </BlurInText>
+        ) : null}
 
         <div className={styles.meta}>
           <span>

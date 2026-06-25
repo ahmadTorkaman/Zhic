@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { BlurInText } from '@zhic/ui';
 import type { HeroContent } from '@/lib/bedroom-furniture';
 import styles from './BedroomHero.module.css';
 
@@ -40,13 +41,21 @@ export function BedroomHero({ hero }: { hero?: HeroContent }) {
         <h1 id="bf-hero-title" className={styles.title}>
           {titleLines.map((line, i) => (
             <span key={i}>
-              {line}
+              <BlurInText delay={i * 90}>{line}</BlurInText>
               {i < titleLines.length - 1 ? <br /> : null}
             </span>
           ))}
         </h1>
-        {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
-        {tagline ? <p className={styles.tagline}>{tagline}</p> : null}
+        {subtitle ? (
+          <BlurInText as="p" className={styles.subtitle} delay={140}>
+            {subtitle}
+          </BlurInText>
+        ) : null}
+        {tagline ? (
+          <BlurInText as="p" className={styles.tagline} delay={220}>
+            {tagline}
+          </BlurInText>
+        ) : null}
 
         <a href={hero?.ctaHref ?? '#bf-categories'} className={styles.cta}>
           <Chevron className={styles.chev} />

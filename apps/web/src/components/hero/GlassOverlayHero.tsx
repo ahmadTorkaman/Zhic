@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Button } from '@zhic/ui';
+import { Button, BlurInText } from '@zhic/ui';
 
 export type GlassOverlayHeroProps = {
   /** Slot for the hero photo. Fills the whole section behind the scrim + glass card. */
@@ -40,13 +40,20 @@ export function GlassOverlayHero({
       {/* Glass overlay card (centered) */}
       <div className="relative z-[var(--z-raised)] mx-4 w-full max-w-[520px] rounded-lg p-8 text-center glass-card shadow-card">
         {city ? (
-          <div className="mb-3 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest">
+          <BlurInText
+            as="div"
+            className="mb-3 text-eyebrow font-bold uppercase tracking-[var(--tracking-eyebrow-wide)] text-forest"
+          >
             {city}
-          </div>
+          </BlurInText>
         ) : null}
-        <h1 className="mb-3 text-balance text-h2 font-black text-ink">{title}</h1>
+        <BlurInText as="h1" className="mb-3 text-balance text-h2 font-black text-ink" delay={120}>
+          {title}
+        </BlurInText>
         {headline ? (
-          <p className="mb-5 text-body font-light text-stone">{headline}</p>
+          <BlurInText as="p" className="mb-5 text-body font-light text-stone" delay={220}>
+            {headline}
+          </BlurInText>
         ) : null}
         <Button as="a" href={ctaHref} variant="accent" size="md">{ctaLabel}</Button>
       </div>

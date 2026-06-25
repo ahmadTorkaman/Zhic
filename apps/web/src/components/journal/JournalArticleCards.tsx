@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { GoldArrow } from '@zhic/ui';
+import { GoldArrow, BlurInText } from '@zhic/ui';
 import { toPersianDigits } from '@zhic/locale';
 import type { JournalArticle } from '@/lib/journal-content';
 import styles from './JournalArticleCards.module.css';
@@ -16,8 +16,14 @@ export function JournalArticleCards({ cards }: { cards: JournalArticle[] }) {
           <Image src={a.img} alt="" fill sizes="(max-width: 480px) 48vw, 210px" />
           <div className={`${styles.panel} ${i === 0 ? styles.right : styles.left}`}>
             <span className={styles.cat}>{a.category}</span>
-            <h3 className={styles.title}>{a.displayTitle ?? a.title}</h3>
-            {a.excerpt ? <p className={styles.subtitle}>{a.excerpt}</p> : null}
+            <BlurInText as="h3" className={styles.title}>
+              {a.displayTitle ?? a.title}
+            </BlurInText>
+            {a.excerpt ? (
+              <BlurInText as="p" className={styles.subtitle} delay={120}>
+                {a.excerpt}
+              </BlurInText>
+            ) : null}
             <span className={styles.meta}>
               {toPersianDigits(a.readingMinutes)} دقیقه مطالعه
               <GoldArrow className={styles.metaArrow} />
