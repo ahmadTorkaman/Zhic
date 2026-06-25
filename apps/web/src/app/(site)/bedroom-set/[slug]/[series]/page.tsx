@@ -1,25 +1,18 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { isOccupancySlug } from '../occupancy';
-import { SeriesHub, seriesHubMetadata } from '../series-hub';
+import { isOccupancySlug, type OccupancySlug } from '../occupancy';
+import { SeriesHub, seriesOccupancyMetadata } from '../series-hub';
 
-/** /bedroom-set/[age]/[series] — a series hub viewed through one of the 4
- *  reserved occupancy slugs, nested age-FIRST per the IA spec
- *  (zhicwood-url-list.xlsx, e.g. /bedroom-set/baby/skate). UNPROMOTED facet
- *  for now (conservative default per the SEO playbook): seriesHubMetadata
- *  canonicalizes to the bare series URL, so these views never compete with
- *  the parent in search. Promote an age view only by giving it its own
- *  canonical + sitemap entry, deliberately. */
-type PageProps = {
-  params: Promise<{ slug: string; series: string }>;
-};
+/** /bedroom-set/[occupancy]/[series] — the canonical detail page. Age-FIRST per
+ *  the IA spec (e.g. /bedroom-set/teen/iron). */
+type PageProps = { params: Promise<{ slug: string; series: string }> };
 
 function parse(rawSlug: string, rawSeries: string) {
-  const age = decodeURIComponent(rawSlug);
+  const occupancy = decodeURIComponent(rawSlug);
   const series = decodeURIComponent(rawSeries);
-  // Age-first nesting: the first segment must be a reserved occupancy slug
-  // and the second must NOT be one (it's a design/series slug).
-  if (isOccupancySlug(age) && !isOccupancySlug(series)) return { age, series } as const;
+  if (isOccupancySlug(occupancy) && !isOccupancySlug(series)) {
+    return { occupancy: occupancy as OccupancySlug, series } as const;
+  }
   return null;
 }
 
@@ -27,16 +20,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug, series } = await params;
   const parsed = parse(slug, series);
   if (!parsed) return { title: 'یافت نشد' };
-  return seriesHubMetadata(parsed.series);
+  return seriesOccupancyMetadata(parsed.occupancy, parsed.series);
 }
 
-export default async function BedroomSetAgeSeriesPage({ params }: PageProps) {
+export default async function BedroomSetOccupancySeriesPage({ params }: PageProps) {
   const { slug, series } = await params;
   const parsed = parse(slug, series);
 
   if (!parsed) {
-    // The briefly-shipped series-first shape (/bedroom-set/baloot/teen) —
-    // flip it to the canonical age-first order.
+    // Legacy series-first shape (/bedroom-set/iron/teen) → flip to age-first.
     const a = decodeURIComponent(slug);
     const b = decodeURIComponent(series);
     if (!isOccupancySlug(a) && isOccupancySlug(b)) {
@@ -45,5 +37,5 @@ export default async function BedroomSetAgeSeriesPage({ params }: PageProps) {
     notFound();
   }
 
-  return <SeriesHub slug={parsed.series} ageFilter={parsed.age} />;
+  return <SeriesHub occupancy={parsed.occupancy} series={parsed.series} />;
 }

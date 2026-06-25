@@ -1,23 +1,24 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@zhic/ui';
-import { getSeriesHubContent } from '@/lib/series-hub-content';
+import { getSeriesOccupancyContent } from '@/lib/series-hub-content';
 import { SeriesHubBody } from '@/components/series-hub/SeriesHubBody';
 import type { OccupancySlug } from './occupancy';
 
-/** Series-hub metadata. The canonical ALWAYS points at the bare series URL —
- *  the /bedroom-set/[age]/[series] views are unpromoted facets (conservative
- *  default per the SEO playbook's facet-page promotion rule), so they
- *  canonicalize to the parent instead of indexing themselves. Title/description/
- *  OG come from the same content getter the page renders (iron → static seed,
- *  other designs → Payload), so metadata never disagrees with the page. */
-export async function seriesHubMetadata(slug: string): Promise<Metadata> {
-  const content = await getSeriesHubContent(slug);
-  if (!content) return { title: 'یافت نشد' };
+/** Metadata for /bedroom-set/{occupancy}/{series}. The page is SELF-canonical and
+ *  indexable once the combo is differentiated (published with its own products or
+ *  overrides); otherwise it's noindex,follow. Title/description/OG come from the
+ *  same resolver the page renders, so they never disagree. */
+export async function seriesOccupancyMetadata(occupancy: OccupancySlug, series: string): Promise<Metadata> {
+  const result = await getSeriesOccupancyContent(occupancy, series);
+  if (!result) return { title: 'یافت نشد' };
+  const { content, differentiated } = result;
+  const canonical = `/bedroom-set/${occupancy}/${series}`;
   return {
     title: content.title.name,
     description: content.title.subtitle ?? `طرح ${content.title.name} — مبلمان دست‌ساز ژیک`,
-    alternates: { canonical: `/bedroom-set/${slug}` },
+    alternates: { canonical },
+    robots: differentiated ? undefined : { index: false, follow: true },
     openGraph: {
       title: content.title.name,
       description: content.title.subtitle ?? undefined,
@@ -26,26 +27,15 @@ export async function seriesHubMetadata(slug: string): Promise<Metadata> {
   };
 }
 
-export type SeriesHubProps = {
-  slug: string;
-  /** Occupancy the visitor arrived through (first path segment on
-   *  /bedroom-set/[age]/[series]). Occupancy is a DESIGN-level property, so it
-   *  doesn't filter the set — it only colours the page's age context (subtitle,
-   *  sibling links). */
-  ageFilter?: OccupancySlug;
-};
-
 /**
- * Design-detail page, rebuilt from the Kaveh @430 comp (Figma 261:90). The body
- * is a 430-standard centered column (container-type: inline-size, cqw units),
- * fed by the props-driven `getSeriesHubContent` getter — iron is a pixel-exact
- * static seed; every other design maps live from Payload into the same shape.
- * Global chrome (header / consultation CTA / footer) comes from the (site)
- * layout.
+ * Design-detail page for one (occupancy × series), rebuilt from the Kaveh @430
+ * comp (Figma 261:90). Content is resolved from the published series-occupancies
+ * doc overlaid on the design base; un-authored combos render the inherited base.
  */
-export async function SeriesHub({ slug, ageFilter }: SeriesHubProps) {
-  const content = await getSeriesHubContent(slug, ageFilter);
-  if (!content) notFound();
+export async function SeriesHub({ occupancy, series }: { occupancy: OccupancySlug; series: string }) {
+  const result = await getSeriesOccupancyContent(occupancy, series);
+  if (!result) notFound();
+  const { content } = result;
 
   return (
     <div className="mx-auto w-full max-w-[430px]" style={{ containerType: 'inline-size' }}>
