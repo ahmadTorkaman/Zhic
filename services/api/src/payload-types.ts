@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     designs: Design;
     products: Product;
+    'series-occupancies': SeriesOccupancy;
     'product-variants': ProductVariant;
     showrooms: Showroom;
     articles: Article;
@@ -93,6 +94,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     designs: DesignsSelect<false> | DesignsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    'series-occupancies': SeriesOccupanciesSelect<false> | SeriesOccupanciesSelect<true>;
     'product-variants': ProductVariantsSelect<false> | ProductVariantsSelect<true>;
     showrooms: ShowroomsSelect<false> | ShowroomsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
@@ -435,6 +437,82 @@ export interface Product {
     /**
      * اگر روشن باشد، این صفحه در نتایج گوگل نمایش داده نمی‌شود. برای صفحات تست یا در حال ساخت مفید است.
      */
+    noindex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "series-occupancies".
+ */
+export interface SeriesOccupancy {
+  id: number;
+  /**
+   * عنوان ادمینی — خودکار به صورت «{طرح} — {گروه}» محاسبه می‌شود.
+   */
+  title?: string | null;
+  design: number | Design;
+  occupancy: 'baby' | 'teen' | 'double' | 'bunk';
+  /**
+   * محصولات این صفحه را به ترتیب دلخواه انتخاب کنید. این فهرست کاملاً دستی است.
+   */
+  products?: (number | Product)[] | null;
+  /**
+   * اگر خالی بماند، از تصویر اصلی طرح ارث می‌برد.
+   */
+  heroMedia?: (number | null) | Media;
+  /**
+   * اگر خالی بماند، از شعار طرح ارث می‌برد.
+   */
+  subtitle?: string | null;
+  introTitle?: string | null;
+  introBody?: string | null;
+  introMedia?: (number | null) | Media;
+  storyBody?: string | null;
+  storyMedia?: (number | null) | Media;
+  materialCallouts?:
+    | {
+        image: number | Media;
+        label: string;
+        sub?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  designDetails?:
+    | {
+        image: number | Media;
+        label: string;
+        description?: string | null;
+        /**
+         * @default 100
+         */
+        span?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  siblings?:
+    | {
+        image?: (number | null) | Media;
+        kicker?: string | null;
+        name?: string | null;
+        link?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * فقط صفحات منتشرشده روی سایت دیده می‌شوند. فقط ویراستار می‌تواند منتشر کند.
+   */
+  status: 'draft' | 'published';
+  publishedAt?: string | null;
+  /**
+   * این فیلدها برای بهینه‌سازی موتورهای جستجو هستند. اگر خالی بگذارید، از عنوان و توضیح اصلی صفحه استفاده می‌شود.
+   */
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
     noindex?: boolean | null;
   };
   updatedAt: string;
@@ -1290,6 +1368,62 @@ export interface ProductsSelect<T extends boolean = true> {
   inquiry_enabled?: T;
   featured?: T;
   featuredOrder?: T;
+  status?: T;
+  publishedAt?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+        noindex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "series-occupancies_select".
+ */
+export interface SeriesOccupanciesSelect<T extends boolean = true> {
+  title?: T;
+  design?: T;
+  occupancy?: T;
+  products?: T;
+  heroMedia?: T;
+  subtitle?: T;
+  introTitle?: T;
+  introBody?: T;
+  introMedia?: T;
+  storyBody?: T;
+  storyMedia?: T;
+  materialCallouts?:
+    | T
+    | {
+        image?: T;
+        label?: T;
+        sub?: T;
+        id?: T;
+      };
+  designDetails?:
+    | T
+    | {
+        image?: T;
+        label?: T;
+        description?: T;
+        span?: T;
+        id?: T;
+      };
+  siblings?:
+    | T
+    | {
+        image?: T;
+        kicker?: T;
+        name?: T;
+        link?: T;
+        id?: T;
+      };
   status?: T;
   publishedAt?: T;
   seo?:
