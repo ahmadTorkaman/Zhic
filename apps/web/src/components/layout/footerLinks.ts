@@ -35,5 +35,7 @@ export const FOOTER_LEGAL: FooterLink[] = [
 // Legal bar — verbatim from the Figma footer.
 export const FOOTER_SINCE = 'SINCE 2008';
 export const FOOTER_TAGLINE = 'ساخته شده برای ماندن';
+// Kashida-elongated display form (Figma 401:104); plain form stays in aria-label.
+export const FOOTER_TAGLINE_KASHIDA = 'ساخـــــته شــــده بـــــرای مـــــــــــاندن';
 export const FOOTER_PITCH = 'طراحی‌شده برای آرامش روزهای شما.';
 export const FOOTER_COPYRIGHT_LINE = '© شرکت هنر چوب ژیک، تمامی حقوق محفوظ است';

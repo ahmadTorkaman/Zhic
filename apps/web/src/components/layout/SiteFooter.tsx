@@ -3,19 +3,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Container } from '@zhic/ui';
 import {
   FOOTER_COLUMNS,
-  FOOTER_LEGAL,
   FOOTER_COPYRIGHT_LINE,
   FOOTER_SINCE,
   FOOTER_TAGLINE,
+  FOOTER_TAGLINE_KASHIDA,
   FOOTER_PITCH,
 } from './footerLinks';
-import { SOCIAL_LABELS, VALID_SOCIAL_PLATFORMS, SocialIcon, type SocialLink } from './socials';
+import { SOCIAL_LABELS, VALID_SOCIAL_PLATFORMS, type SocialLink } from './socials';
 import { Modal } from '@/components/shared/Modal';
 import { InquiryForm } from '@/components/inquiry/InquiryForm';
-import { NewsletterSignup } from './NewsletterSignup';
 import type { PayloadSiteConfig } from '@/lib/payload';
 import './site-footer.css';
 
@@ -26,14 +24,30 @@ const FOOTER_HIDDEN_ROUTES = new Set<string>(['/bedroom-set']);
 // Static fallback city list for the consultation form (mirrors /contact).
 const CITIES = ['تهران', 'اصفهان', 'همدان', 'مشهد', 'شیراز', 'تبریز', 'سایر شهرها'];
 
+/** Gold left-chevron bullet before each footer link (Figma 402:139 vectors). */
+function FootChevron() {
+  return (
+    <svg className="zh-foot__bullet" viewBox="0 0 4 6" fill="none" aria-hidden>
+      <path d="M3.2 0.6 0.8 3l2.4 2.4" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export type SiteFooterProps = {
   siteConfig?: PayloadSiteConfig | null;
 };
 
+/**
+ * Site footer, rebuilt exactly from Figma 402:139 (Group 13): cream top strip +
+ * ZHIC wordmark, a vase-photo consultation card straddling the cream→forest
+ * seam, then the forest body — ژیک mark, «ساخته شده برای ماندن», three
+ * chevron-bulleted columns (فروشگاه / برند / ارتباط با ما) with vertical
+ * dividers, and a SINCE 2008 / © bottom bar. Data unchanged (siteConfig socials
+ * + phone, FOOTER_COLUMNS, the consultation modal).
+ */
 export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
   const pathname = usePathname();
   const [consultOpen, setConsultOpen] = useState(false);
-  const [newsletterOpen, setNewsletterOpen] = useState(false);
 
   if (pathname && FOOTER_HIDDEN_ROUTES.has(pathname)) return null;
 
@@ -42,11 +56,26 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
   );
   const phone = siteConfig?.contactPhone ?? undefined;
 
+  // Comp column order (RTL grid → first child lands right): فروشگاه, برند,
+  // then ارتباط با ما last (renders left).
+  const linkColumns = [...FOOTER_COLUMNS].reverse();
+
   return (
     <>
-      {/* Consultation CTA card — opens the consultation / showroom-visit form. */}
+      {/* Top wordmark strip */}
+      <div className="zh-foot-top">
+        <div className="zh-foot-inner">
+          <div className="zh-foot-top__row">
+            <span aria-hidden className="zh-foot-top__rule" />
+            <img src="/footer/zhic-wordmark.webp" alt="ژیک" className="zh-foot-top__mark" />
+            <span aria-hidden className="zh-foot-top__rule" />
+          </div>
+        </div>
+      </div>
+
+      {/* Consultation card — opens the consultation / showroom-visit form. */}
       <section className="zh-foot-cta">
-        <Container>
+        <div className="zh-foot-inner">
           <div className="zh-foot-cta__card">
             <div className="zh-foot-cta__body">
               <p className="zh-foot-cta__h">زیبایی</p>
@@ -57,30 +86,46 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
               </button>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
 
+      {/* Forest body */}
       <footer className="zh-foot">
-        <Container>
+        <div className="zh-foot-inner">
           <div className="zh-foot__brand">
-            <img src="/zhic-logo-footer.svg" alt="ژیک" className="zh-foot__logo" />
-            <p className="zh-foot__brandline">ژیک — تولیدی سرویس خواب و وسایل اتاق خواب</p>
+            <img src="/footer/zhic-mark.webp" alt="ژیک" className="zh-foot__mark" />
             <div className="zh-foot__tagline">
               <span aria-hidden className="zh-foot__dash" />
-              {FOOTER_TAGLINE}
+              <span aria-label={FOOTER_TAGLINE}>{FOOTER_TAGLINE_KASHIDA}</span>
               <span aria-hidden className="zh-foot__dash" />
             </div>
           </div>
 
           <div className="zh-foot__cols">
-            {/* ارتباط با ما — built from siteConfig (socials + phone + newsletter). */}
+            {linkColumns.map((col) => (
+              <div key={col.heading} className="zh-foot__col">
+                <h4 className="zh-foot__h">{col.heading}</h4>
+                <ul className="zh-foot__list">
+                  {col.links.map((link) => (
+                    <li key={`${col.heading}-${link.label}`}>
+                      <Link href={link.href} className="zh-foot__link">
+                        <FootChevron />
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            {/* ارتباط با ما — socials + phone (comp has no newsletter row). */}
             <div className="zh-foot__col">
               <h4 className="zh-foot__h">ارتباط با ما</h4>
               <ul className="zh-foot__list">
                 {socials.map((s, i) => (
                   <li key={s.platform + i}>
                     <Link href={s.url} target="_blank" rel="noopener noreferrer" className="zh-foot__link">
-                      <span className="zh-foot__ico"><SocialIcon platform={s.platform} /></span>
+                      <FootChevron />
                       {SOCIAL_LABELS[s.platform]}
                     </Link>
                   </li>
@@ -88,36 +133,13 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
                 {phone && (
                   <li>
                     <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} className="zh-foot__link">
-                      <span className="zh-foot__ico" aria-hidden>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 005 5L19 13l5 2v3a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>
-                      </span>
+                      <FootChevron />
                       تلفن
                     </a>
                   </li>
                 )}
-                <li>
-                  <button type="button" className="zh-foot__link zh-foot__link--btn" onClick={() => setNewsletterOpen(true)}>
-                    <span className="zh-foot__ico" aria-hidden>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-                    </span>
-                    خبرنامه
-                  </button>
-                </li>
               </ul>
             </div>
-
-            {FOOTER_COLUMNS.map((col) => (
-              <div key={col.heading} className="zh-foot__col">
-                <h4 className="zh-foot__h">{col.heading}</h4>
-                <ul className="zh-foot__list">
-                  {col.links.map((link) => (
-                    <li key={`${col.heading}-${link.label}`}>
-                      <Link href={link.href} className="zh-foot__link">{link.label}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
           </div>
 
           <div className="zh-foot__legal">
@@ -127,28 +149,13 @@ export function SiteFooter({ siteConfig }: SiteFooterProps = {}) {
               <span aria-hidden className="zh-foot__dash" />
             </div>
             <p className="zh-foot__pitch">{FOOTER_PITCH}</p>
-            <p className="zh-foot__copy">
-              {FOOTER_COPYRIGHT_LINE}
-              {FOOTER_LEGAL.map((link) => (
-                <span key={link.href}>
-                  <span aria-hidden className="zh-foot__sep">·</span>
-                  <Link href={link.href} className="zh-foot__link">{link.label}</Link>
-                </span>
-              ))}
-            </p>
+            <p className="zh-foot__copy">{FOOTER_COPYRIGHT_LINE}</p>
           </div>
-        </Container>
+        </div>
       </footer>
 
       <Modal open={consultOpen} onClose={() => setConsultOpen(false)} title="دریافت مشاوره رایگان">
         <InquiryForm cities={CITIES} tone="light" />
-      </Modal>
-
-      <Modal open={newsletterOpen} onClose={() => setNewsletterOpen(false)} title="عضویت در خبرنامه">
-        <p className="mb-4 text-small text-stone">
-          شماره‌ی موبایل خود را وارد کنید تا از تازه‌ها و کلکسیون‌های جدید باخبر شوید.
-        </p>
-        <NewsletterSignup />
       </Modal>
     </>
   );

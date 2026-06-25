@@ -1,134 +1,207 @@
-/* apps/web/src/components/layout/site-footer.css */
-/* Figma "zhic wood .com" footer: cream CTA band + dark-green 3-column footer. */
+/* apps/web/src/components/layout/site-footer.css
+   Footer rebuilt exactly from Figma 402:139 (Group 13). A cream top strip with
+   the ZHIC wordmark, a vase-photo consultation card straddling the cream→forest
+   seam, then the forest-green body: ژیک mark, «ساخته شده برای ماندن», three
+   chevron-bulleted link columns with vertical dividers, and a SINCE 2008 / ©
+   bottom bar. Sized in cqw against a 430 column (1cqw = comp px ÷ 4.3 → pixel-
+   exact at 430). Spacings match the comp's measured deltas: card body top-
+   aligned (زیبایی at card-top+10.5px), link rows at the 19.94px pitch, etc. */
 
-/* ── Consultation CTA card ──────────────────────────────────────────────── */
-/* The card straddles the ivory→footer boundary: top half on ivory, bottom
-   half on the forest green (which then flows straight into the footer).
-   Equal padding centers the card on the 50% seam. */
-.zh-foot-cta {
-  background: linear-gradient(to bottom, var(--color-ivory) 50%, var(--color-forest-dark) 50%);
-  padding-block: var(--space-7);
+/* shared 430 content column */
+.zh-foot-inner {
+  max-width: 430px;
+  margin-inline: auto;
+  container-type: inline-size;
 }
+
+/* ── Top wordmark strip (cream) ──────────────────────────────────────────── */
+.zh-foot-top {
+  background: var(--color-ivory);
+  padding-block: 3cqw 6cqw; /* the cream space above the card lives here */
+}
+.zh-foot-top__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3.5cqw;
+}
+.zh-foot-top__rule {
+  width: 18.07cqw; /* 77.73px each (comp Line 13/14) */
+  height: 1px;
+  background: var(--color-gold);
+  opacity: 0.85;
+}
+.zh-foot-top__mark { height: 3.1cqw; width: auto; }
+
+/* ── Consultation card (straddles the cream→forest seam) ─────────────────── */
+/* Seam at comp y=138.89 from the footer top; card top at 40.32 → padding-top
+   6.3cqw places the card, and the gradient flips at the seam. Card bottom
+   (241.04) sits on the forest with no bottom padding so the ژیک mark lands
+   ~6px below it. */
+/* The card straddles: forest is the section base, a cream band covers the top
+   half of the card (continuing the cream top strip), so the green comes up to
+   the card's midpoint and the card sits on top of the boundary. The band is
+   sized in the inner's cqw (430-relative) so it tracks the card at any width. */
+.zh-foot-cta {
+  position: relative;
+  overflow-x: clip;
+  background: var(--color-forest-deep);
+  padding-block: 0; /* card sits at the section top; cream space is in .zh-foot-top */
+}
+.zh-foot-cta > .zh-foot-inner { position: relative; }
+.zh-foot-cta > .zh-foot-inner::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 0; /* exactly the card top — no padding mismatch, no green sliver */
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  height: 23.34cqw; /* half the 46.68cqw card → cream covers the top half, green the bottom half */
+  background: var(--color-ivory);
+}
+.zh-foot-cta__card { z-index: 1; }
 .zh-foot-cta__card {
   position: relative;
   overflow: hidden;
-  /* Kaveh consult card (19:133): uniform 25.75px radius. */
-  border-radius: 25.75px;
-  background-color: var(--color-cream);
-  /* Vase-and-branches lifestyle photo (fades to cream on the text side). */
+  margin-inline: 5.99cqw; /* inset 25.76px each side (comp 378.36 wide) */
+  border-radius: 6.41cqw; /* 27.554px */
   background-image: url('/footer/consult-card.webp');
   background-size: cover;
-  background-position: left center; /* vase sits visual-left; text fills the right */
-  min-height: 260px;
-  display: flex;
+  background-position: left center; /* vase on the visual left; text fills the right */
+  height: 46.68cqw; /* 200.718px */
 }
-@media (max-width: 767px) {
-  .zh-foot-cta__sub { font-size: 0.8375rem; }
-  /* Phone: cover leaves the vase tiny — zoom the photo and anchor it to the
-     bottom corner so it fills the card properly. */
-  /* Kaveh phone card (19:133) ≈ 188px tall — tighter than the 260px desktop floor. */
-  .zh-foot-cta__card { background-size: auto 135%; background-position: left bottom; min-height: 188px; }
-}
+/* Body pinned to the inline-start (visual right in RTL); text top-aligned. */
 .zh-foot-cta__body {
-  position: relative;
-  z-index: 1;
-  margin-inline-end: auto;          /* keep at inline-start (visual right in RTL) */
-  width: min(100%, 460px);
-  padding: var(--space-6) var(--space-6) var(--space-6) var(--space-4);
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
-  gap: 0.12rem;
+  padding-block-start: 4.3cqw; /* زیبایی sits lower in the card (operator) */
+  padding-inline: 8.7cqw 4cqw; /* text right edge ~37px from the card right */
   text-align: start;
 }
-/* Kaveh consultation CTA (nodes 19:158/148/134): all text muted-forest #657767.
-   زیبایی 34.966px, sub 13.4px, eyebrow 8.27px (eyebrow very small — flagged). Button stays gold. */
-.zh-foot-cta__h { margin: 0; font-size: clamp(2.185rem, 6vw, 3.5rem); font-weight: 900; color: var(--color-forest-muted); }
-.zh-foot-cta__sub { margin: 0; font-size: 0.8375rem; font-weight: 700; color: var(--color-forest-muted); }
-.zh-foot-cta__eyebrow { margin: 0 0 var(--space-2); font-size: 0.517rem; font-weight: 500; color: var(--color-forest-muted); max-width: 46ch; white-space: nowrap; }
+.zh-foot-cta__h {
+  margin: 0 4.24cqw 4.4cqw 0; /* زیبایی sits a touch further from the right edge */
+  font-size: 8.7cqw; /* 37.411px */
+  font-weight: 900; /* Ayandeh Black */
+  line-height: 1;
+  color: var(--color-sage);
+}
+.zh-foot-cta__sub {
+  margin: 0 0 1.4cqw;
+  font-size: 3.335cqw; /* 14.337px */
+  font-weight: 700; /* Bold */
+  line-height: 1.2;
+  color: var(--color-sage);
+}
+.zh-foot-cta__eyebrow {
+  margin: 0 0 4.7cqw;
+  font-size: 2.06cqw; /* 8.849px */
+  font-weight: 300; /* Light */
+  line-height: 1.2;
+  color: var(--color-sage);
+  white-space: nowrap;
+}
 .zh-foot-cta__btn {
-  /* Kaveh button (19:135): hugs its label (~171px), right-aligned, short. NOT full-bleed. */
   align-self: flex-start;
-  padding: 0.28rem 1rem;
+  padding: 0 4.5cqw;
+  height: 7.09cqw; /* 30.466px */
   background: var(--color-gold);
-  color: var(--color-ivory);
+  color: #fff;
   font-family: inherit;
-  font-size: 0.864rem;
+  font-size: 3.44cqw; /* 14.785px */
   font-weight: 700;
+  line-height: 1;
   border: 0;
-  border-radius: 6.28px;
+  border-radius: 1.56cqw; /* 6.72px */
   cursor: pointer;
   transition: background-color var(--dur-hover) var(--ease-out-soft);
 }
-.zh-foot-cta__btn:hover { background: #b08c5e; }
+.zh-foot-cta__btn:hover { background: #b0895f; }
 
-/* ── Footer ─────────────────────────────────────────────────────────────── */
-.zh-foot { background: var(--color-forest-dark); color: var(--color-ivory); padding-block: var(--space-6) var(--space-5); }
+/* ── Forest body ─────────────────────────────────────────────────────────── */
+.zh-foot { background: var(--color-forest-deep); color: #fff; padding-block: 1.4cqw 5cqw; }
 
-.zh-foot__brand { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); margin-bottom: var(--space-5); }
-.zh-foot__logo { height: 34px; width: auto; }
-/* Kaveh brand line under the logo (node 19:256) = 6.909px (very small — flagged). */
-.zh-foot__brandline { margin: 0; font-size: 0.432rem; font-weight: 400; color: var(--color-sand); text-align: center; }
+.zh-foot__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.2cqw; /* mark → tagline */
+  margin-bottom: 8.5cqw; /* tagline → column headings (comp 36.5px) */
+}
+.zh-foot__mark { width: 11.36cqw; height: auto; } /* 48.84px */
 .zh-foot__tagline {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
-  font-size: 0.517rem;
-  letter-spacing: 0.35em;
-  color: var(--color-sand);
+  gap: 2.8cqw;
+  font-size: 2.06cqw; /* 8.849px */
+  font-weight: 400;
+  color: #fff;
 }
-.zh-foot__dash { display: inline-block; width: 2.2rem; height: 1px; background: var(--color-gold); opacity: 0.6; }
+.zh-foot__dash { display: inline-block; width: 2.76cqw; height: 1px; background: var(--color-gold); }
 
-/* Columns — 3-up with hairline dividers (RTL: borders on the inline-start). */
+/* Columns — 3-up, RTL (first child = right). Vertical hairline dividers. */
 .zh-foot__cols {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-5);
-  max-width: 760px;
-  margin-inline: auto;
-  padding-block: var(--space-4);
+}
+.zh-foot__col { padding-inline: 3.5cqw; }
+.zh-foot__col + .zh-foot__col { border-inline-start: 1px solid rgba(255, 255, 255, 0.18); }
+.zh-foot__h {
+  margin: 0 0 3cqw; /* heading → first link (comp 30.5px box pitch) */
+  font-size: 2.813cqw; /* 12.097px */
+  font-weight: 700; /* Bold */
+  color: var(--color-gold);
   text-align: center;
 }
-.zh-foot__col + .zh-foot__col { border-inline-start: 1px solid rgba(250, 250, 247, 0.12); }
-.zh-foot__h { margin: 0 0 var(--space-3); font-size: 0.706rem; font-weight: 700; color: var(--color-gold); }
-.zh-foot__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.zh-foot__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.31cqw; /* row pitch ≈ 19.94px (comp) — link height + gap */
+  font-size: 2.06cqw; /* collapse the inherited line box so each row = the link height */
+  line-height: 1;
+}
 .zh-foot__link {
   display: inline-flex;
   align-items: center;
-  gap: 0.45em;
-  font-size: 0.517rem;
-  font-weight: 300;
-  color: var(--color-sand);
+  gap: 1cqw;
+  font-size: 2.06cqw; /* 8.849px */
+  font-weight: 400; /* Regular */
+  line-height: 1.2;
+  color: #fff;
   text-decoration: none;
+  background: none;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
   transition: color var(--dur-hover) var(--ease-out-soft);
 }
-.zh-foot__link:hover { color: var(--color-ivory); }
-.zh-foot__link--btn { background: none; border: 0; font-family: inherit; cursor: pointer; padding: 0; }
-/* Contact-column glyphs (socials + phone + newsletter) — Figma renders an
-   icon beside each contact method. Warm gold at rest, brighten with the label. */
-.zh-foot__ico { display: inline-flex; width: 15px; height: 15px; flex: none; color: var(--color-gold); transition: color var(--dur-hover) var(--ease-out-soft); }
-.zh-foot__ico svg { width: 100%; height: 100%; }
-.zh-foot__link:hover .zh-foot__ico { color: var(--color-ivory); }
+.zh-foot__link:hover { color: var(--color-gold); }
+.zh-foot__bullet { flex: none; width: 0.6cqw; height: auto; color: var(--color-gold); } /* ~2.6px — matches the comp's tiny vectors */
 
-/* ── Legal bar ──────────────────────────────────────────────────────────── */
+/* ── Bottom bar ──────────────────────────────────────────────────────────── */
 .zh-foot__legal {
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid rgba(250, 250, 247, 0.08);
+  margin-top: 9.8cqw; /* last link → divider (comp 42.2px) */
+  padding-top: 3.2cqw; /* divider → SINCE (comp 7.1px) */
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
   text-align: center;
-  color: rgba(250, 250, 247, 0.45);
 }
 .zh-foot__since {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  font-size: 0.517rem;
-  letter-spacing: 0.3em;
+  gap: 2.4cqw;
+  font-family: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+  font-size: 2.06cqw; /* 8.849px */
+  letter-spacing: 0.33cqw;
   color: var(--color-gold);
-  margin-bottom: var(--space-2);
+  margin-bottom: 3.6cqw; /* SINCE → pitch (comp 15.5px) */
 }
-.zh-foot__pitch { margin: 0 0 var(--space-2); font-size: 0.393rem; font-weight: 300; }
-.zh-foot__copy { margin: 0; font-size: 0.393rem; }
-.zh-foot__copy .zh-foot__link { font-size: 0.393rem; color: rgba(250, 250, 247, 0.45); }
-.zh-foot__sep { margin-inline: 0.5rem; }
+.zh-foot__since .zh-foot__dash { width: 2.76cqw; }
+.zh-foot__pitch { margin: 0 0 3.5cqw; font-size: 1.563cqw; font-weight: 300; line-height: 1; color: #fff; } /* pitch → copy (comp 15.2px) */
+.zh-foot__copy { margin: 0; font-size: 1.563cqw; font-weight: 300; line-height: 1; color: #fff; }
