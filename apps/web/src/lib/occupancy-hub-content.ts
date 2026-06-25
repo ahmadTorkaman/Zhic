@@ -76,6 +76,10 @@ export type OccupancyHubContent = {
   shortName: string;
   /** Full-bleed photo hero (BedroomHero shape, like /bedroom-furniture). */
   hero: HeroContent;
+  /** Editorial/content paragraph(s) under the tiles (CMS occupancyHubs.body). */
+  body: string | null;
+  /** SEO meta for the hub page (CMS occupancyHubs; description falls back to the tagline). */
+  seo: { title: string | null; description: string };
   heading: string;
   tiles: SimpleTile[];
   /** Cross-links to the other occupancy hubs. */
@@ -108,6 +112,9 @@ export async function getOccupancyHubContent(
           ? heroes?.heroBabyMedia
           : heroes?.heroBunkMedia;
   const cmsHeroImg = mediaUrl(cmsHeroMedia ?? null) ?? undefined;
+
+  // Per-occupancy hub copy + SEO (bedroom-set global → occupancyHubs), if set.
+  const hub = heroes?.occupancyHubs?.find((o) => o.occupancy === slug) ?? null;
 
   // Every design of the age (operator: show image-less ones too, as «به‌زودی»
   // sand tiles). Ordered: designs with a per-occupancy card first (so the
@@ -143,9 +150,9 @@ export async function getOccupancyHubContent(
   // (like the comp «مُبلمان / اتاق خواب»). No subtitle — the «گروه سنی · N طرح»
   // count line is intentionally dropped.
   const hero: HeroContent = {
-    title: heroOverride?.title || meta.title.replace(/ (\S+)$/, '\n$1'),
+    title: (heroOverride?.title || hub?.title || meta.title).replace(/ (\S+)$/, '\n$1'),
     subtitle: '',
-    tagline: heroOverride?.tagline || meta.tagline,
+    tagline: heroOverride?.tagline || hub?.tagline || meta.tagline,
     ctaLabel: 'مشاهده',
     ctaHref: '#hub-designs',
     img: heroOverride?.image ?? cmsHeroImg ?? withOccCard[0]?.img ?? withCover[0]?.img,
@@ -156,6 +163,11 @@ export async function getOccupancyHubContent(
     slug,
     shortName: meta.short,
     hero,
+    body: hub?.body?.trim() || null,
+    seo: {
+      title: hub?.seoTitle?.trim() || null,
+      description: hub?.seoDescription?.trim() || hub?.tagline?.trim() || meta.tagline,
+    },
     heading: 'طرح‌ها',
     tiles,
     others,

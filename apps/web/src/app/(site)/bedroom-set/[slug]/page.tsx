@@ -22,14 +22,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
 
-  // Occupancy hub
+  // Occupancy hub — title/description from the CMS (bedroom-set global →
+  // occupancyHubs SEO fields), falling back to the hardcoded copy.
   if (isOccupancySlug(slug)) {
-    const { title, tagline } = OCCUPANCY_PERSIAN[slug];
+    const hub = await getOccupancyHubContent(slug);
+    const title = hub.seo.title || OCCUPANCY_PERSIAN[slug].title;
+    const description = hub.seo.description;
     return {
       title,
-      description: tagline,
+      description,
       alternates: { canonical: `/bedroom-set/${slug}` },
-      openGraph: { title, description: tagline },
+      openGraph: { title, description },
     };
   }
 
@@ -72,6 +75,15 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
           <div className="mt-[40px]">
             <MosaicStrip heading="گروه‌های دیگر" items={hub.others} seeAll={hub.othersSeeAll} />
           </div>
+        )}
+        {hub.body && (
+          <section className="mt-[40px] px-4 pb-[22px] text-stone" aria-label="درباره‌ی این سرویس‌ها">
+            {hub.body.split(/\n{2,}/).map((para, i) => (
+              <p key={i} className="mb-3 text-[13.5px] leading-[2] last:mb-0">
+                {para}
+              </p>
+            ))}
+          </section>
         )}
       </div>
     );

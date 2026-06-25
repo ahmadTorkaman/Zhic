@@ -48,5 +48,63 @@ export const BedroomSet: GlobalConfig = {
         { name: 'heroBunkMedia', type: 'upload', relationTo: 'media', label: 'سربرگ دوطبقه' },
       ],
     },
+    {
+      name: 'occupancyHubs',
+      type: 'array',
+      label: 'محتوای هاب‌های سنی (عنوان، متن، سئو)',
+      labels: { singular: 'هاب سنی', plural: 'هاب‌های سنی' },
+      admin: {
+        initCollapsed: true,
+        description:
+          'برای هر گروه سنی (/bedroom-set/baby|teen|double|bunk): عنوان و توضیح سربرگ، یک بخش متن محتوایی، و فیلدهای سئو. هر گروه سنی یک ردیف. اگر خالی بماند، از متن پیش‌فرض استفاده می‌شود.',
+      },
+      fields: [
+        {
+          name: 'occupancy',
+          type: 'select',
+          required: true,
+          label: 'گروه سنی',
+          options: [
+            { label: 'سرویس خواب نوزاد', value: 'baby' },
+            { label: 'سرویس خواب نوجوان', value: 'teen' },
+            { label: 'سرویس خواب دونفره', value: 'double' },
+            { label: 'سرویس خواب دوطبقه', value: 'bunk' },
+          ],
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'عنوان سربرگ',
+          admin: { description: 'عنوان بزرگ هاب (پیش‌فرض: «سرویس خواب نوزاد» و …).' },
+        },
+        {
+          name: 'tagline',
+          type: 'textarea',
+          label: 'توضیح کوتاه (تگ‌لاین)',
+          admin: { description: 'یک جمله زیر عنوان. از نیم‌فاصله (ZWNJ) استفاده کنید.' },
+        },
+        {
+          name: 'body',
+          type: 'textarea',
+          label: 'متن صفحه (محتوایی)',
+          admin: {
+            description:
+              'متن توضیحی/محتوایی که زیر فهرست طرح‌ها نمایش داده می‌شود — جای متن برای تیم محتوا/سئو. هر پاراگراف را با یک خط خالی جدا کنید.',
+          },
+        },
+        {
+          name: 'seoTitle',
+          type: 'text',
+          label: 'عنوان سئو (متا تایتل)',
+          admin: { description: 'عنوان صفحه در نتایج جستجو و تب مرورگر. اگر خالی بماند از عنوان سربرگ استفاده می‌شود.' },
+        },
+        {
+          name: 'seoDescription',
+          type: 'textarea',
+          label: 'توضیحات سئو (متا دیسکریپشن)',
+          admin: { description: 'توضیح کوتاه صفحه برای موتورهای جستجو (حدود ۱۵۰ کاراکتر). اگر خالی بماند از تگ‌لاین استفاده می‌شود.' },
+        },
+      ],
+    },
   ],
 }

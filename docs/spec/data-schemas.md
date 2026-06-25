@@ -509,6 +509,19 @@ Bedroom-set series. Drives `/bedroom-set/<slug>` hubs and `/bedroom-set/[age]/[d
 
 The **bold** fields back the detail page's intro / story / materials / design-details sections (added 2026-06-17). `(L)` = localized.
 
+### `bedroom-set` (global) — «هاب سرویس خواب» page config
+
+Editorial copy for the `/bedroom-set` landing + the per-occupancy hub pages (`/bedroom-set/<occupancy>`). Designs, logos, and the featured overlay come from Designs/Products; only this prose + the occupancy hub copy lives here.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `writingHeading` / `writingBody` | text / textarea | the «درباره‌ی این سرویس‌ها» writing section under the `/bedroom-set` carousel |
+| `featuredBestsellersIntro` / `featuredNewestIntro` | textarea | intro under the featured-overlay grids (bestsellers / newest) |
+| `heroTeenMedia` / `heroDoubleMedia` / `heroBabyMedia` / `heroBunkMedia` | upload → media | full-bleed hero per `/bedroom-set/<occupancy>` hub; empty → the featured design's cover (collapsible group → FK columns on `bedroom_set`). Added 2026-06-21. |
+| `occupancyHubs` | array `{ occupancy(select: baby/teen/double/bunk, req), title, tagline, body, seoTitle, seoDescription }` | per-occupancy hub copy + SEO. `title`/`tagline` override the hardcoded hub heading; `body` renders as a content paragraph block under the tiles (split on blank lines); `seoTitle`/`seoDescription` feed the page `<title>`/meta (description falls back to `tagline`). One row per occupancy. Added 2026-06-25. |
+
+Consumed by `getOccupancyHubContent` (`apps/web/src/lib/occupancy-hub-content.ts`); unset rows/fields fall back to the hardcoded `META`. DB: scalar fields + the four `hero_*_media_id` FK cols on `bedroom_set`, plus a `bedroom_set_occupancy_hubs` array table (`occupancy` pg enum + varchar copy cols, `_parent_id` FK → `bedroom_set` CASCADE) — migration `20260625_120000_add_bedroom_set_occupancy_hubs`.
+
 ### `bedroom-furniture` (global) — catalog-root page config
 
 Curates the `/bedroom-furniture` root index. Showcase cards reference Categories (label + link come from the category); room cards are self-contained cross-links to `/bedroom-set` hubs. Added 2026-06-18.

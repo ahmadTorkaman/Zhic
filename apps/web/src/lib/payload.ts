@@ -618,6 +618,17 @@ export type PayloadBedroomSetHeroes = {
   heroDoubleMedia?: PayloadMedia | null;
   heroBabyMedia?: PayloadMedia | null;
   heroBunkMedia?: PayloadMedia | null;
+  /** Per-occupancy hub copy + SEO (bedroom-set global → occupancyHubs array). */
+  occupancyHubs?:
+    | {
+        occupancy: 'baby' | 'teen' | 'double' | 'bunk';
+        title?: string | null;
+        tagline?: string | null;
+        body?: string | null;
+        seoTitle?: string | null;
+        seoDescription?: string | null;
+      }[]
+    | null;
 };
 
 /** Per-occupancy uploaded hero images for the /bedroom-set/{occupancy} hubs
