@@ -481,7 +481,7 @@ Reusable material descriptors.
 
 ### `designs` (§14)
 
-Bedroom-set series. Drives `/bedroom-set/<slug>` hubs and `/bedroom-set/[age]/[design]` detail pages.
+Bedroom-set series. Drives the `/bedroom-set` carousel and the `/bedroom-set/<occupancy>` hubs, and supplies the **base content inherited** by the per-occupancy detail pages (now backed by the `series-occupancies` collection below — blank override fields fall back here).
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -508,6 +508,29 @@ Bedroom-set series. Drives `/bedroom-set/<slug>` hubs and `/bedroom-set/[age]/[d
 | **`designDetails`** | array `{ image(upload,req), label(text,req), description(textarea), span(number,def 100) }` | 4 design-detail tiles (span = relative width) |
 
 The **bold** fields back the detail page's intro / story / materials / design-details sections (added 2026-06-17). `(L)` = localized.
+
+### `series-occupancies` (§14b)
+
+One document per **(design × occupancy)** pair — the page at `/bedroom-set/<occupancy>/<design>` (e.g. `/bedroom-set/teen/iron`). The document **is** the page: blank override fields inherit from the parent `designs` row, so `teen/iron` and `double/iron` can differ in products + copy while sharing whatever isn't overridden. Added 2026-06-25.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `title` | text (computed, read-only) | «{design} — {occupancy}» admin list title |
+| `design` | relation → designs (req) | which series; unique together with `occupancy` |
+| `occupancy` | select (req) | baby / teen / double / bunk |
+| `products` | relation[] → products (ordered) | the «قطعات سرویس» row — **fully manual curation** (no auto-by-tag) |
+| `heroMedia` | upload → media | override; blank ⇒ design hero chain |
+| `subtitle` | text | override; blank ⇒ design tagline |
+| `introTitle` / `introBody` / `introMedia` | text / textarea / upload | intro card override; blank ⇒ design's |
+| `storyBody` / `storyMedia` | textarea / upload | story card override; blank ⇒ design's |
+| `materialCallouts` | array `{ image(req), label(req), sub }` | override; **blank ⇒ design's materials** |
+| `designDetails` | array `{ image(req), label(req), description, span(def 100) }` | override; blank ⇒ design's |
+| `siblings` | array `{ image(upload), kicker, name, link }` | editable sibling cards; blank ⇒ auto-generated from the design's other occupancies |
+| `status` | select draft/published (editor-only publish) | only published docs are read by the storefront |
+| `publishedAt` | date | — |
+| `seo` | group | shared SEO fields |
+
+**Inheritance:** blank string / empty array ⇒ inherit from `designs`; a non-empty value overrides. **SEO — auto-promote when differentiated:** a combo is self-canonical, indexable, and in the sitemap once it is published **and** has ≥1 curated product or any content override; otherwise `noindex`. Un-authored combos render the inherited design base (graceful fallback — nothing 404s) and upgrade automatically on publish. The bare `/bedroom-set/<design>` page is **removed** (301 → the design's first occupancy). Resolver: `getSeriesOccupancyContent` in `apps/web/src/lib/series-hub-content.ts`; migration `20260625_130000_create_series_occupancies`.
 
 ### `bedroom-set` (global) — «هاب سرویس خواب» page config
 
