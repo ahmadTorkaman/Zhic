@@ -1,11 +1,10 @@
-import { permanentRedirect } from 'next/navigation';
+import { permanentRedirect, notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@zhic/ui';
 import { OCCUPANCY_PERSIAN, isOccupancySlug } from './occupancy';
-import { SeriesHub, seriesHubMetadata } from './series-hub';
 import { buildMosaicRows } from '@/lib/bedroom-furniture-mosaic';
 import { getOccupancyHubContent } from '@/lib/occupancy-hub-content';
-import { fetchBedroomSetHub, mediaUrl } from '@/lib/payload';
+import { fetchBedroomSetHub, mediaUrl, fetchDesign, bareSeriesRedirectTarget } from '@/lib/payload';
 import { BedroomHero } from '@/components/bedroom-furniture/BedroomHero';
 import { CategoryMosaic } from '@/components/bedroom-furniture-mosaic/CategoryMosaic';
 import { MosaicStrip } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
@@ -40,8 +39,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  // Series hub
-  return seriesHubMetadata(slug);
+  // Bare series URL is removed (page redirects); metadata is moot.
+  return { title: 'سرویس خواب', robots: { index: false, follow: true } };
 }
 
 export default async function BedroomSetSlugPage({ params, searchParams }: PageProps) {
@@ -95,13 +94,13 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // SERIES HUB BRANCH
+  // SERIES SLUG — bare /bedroom-set/[series] page removed. Redirect age-first if
+  // a legacy ?age= is present, else to the design's first occupancy combo.
   // ═══════════════════════════════════════════════════════════════════════════
-  // Legacy ?age= URLs move permanently to the age-first nested path so old
-  // links and history keep working.
   if (ageRaw && isOccupancySlug(ageRaw)) {
     permanentRedirect(`/bedroom-set/${ageRaw}/${encodeURIComponent(slug)}`);
   }
-
-  return <SeriesHub slug={slug} />;
+  const design = await fetchDesign(slug);
+  if (!design) notFound();
+  permanentRedirect(bareSeriesRedirectTarget(design));
 }
