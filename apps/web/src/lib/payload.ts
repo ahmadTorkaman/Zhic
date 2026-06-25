@@ -329,6 +329,30 @@ export type PayloadProduct = {
   seo?: PayloadSeo | null;
 };
 
+export type PayloadSeriesOccupancy = {
+  id: string | number;
+  title?: string | null;
+  /** Relationship → designs. Object at depth ≥ 1. */
+  design?: { id: string | number; name: string; slug: string } | string | number | null;
+  occupancy: 'baby' | 'teen' | 'double' | 'bunk';
+  /** Curated, ordered «قطعات سرویس». Inflated to objects at depth ≥ 1. */
+  products?: PayloadProduct[] | null;
+  heroMedia?: PayloadMedia | null;
+  subtitle?: string | null;
+  introTitle?: string | null;
+  introBody?: string | null;
+  introMedia?: PayloadMedia | null;
+  storyBody?: string | null;
+  storyMedia?: PayloadMedia | null;
+  materialCallouts?: { image?: PayloadMedia | null; label?: string | null; sub?: string | null }[] | null;
+  designDetails?: { image?: PayloadMedia | null; label?: string | null; description?: string | null; span?: number | null }[] | null;
+  siblings?: { image?: PayloadMedia | null; kicker?: string | null; name?: string | null; link?: string | null }[] | null;
+  status?: 'draft' | 'published' | null;
+  publishedAt?: string | null;
+  seo?: PayloadSeo | null;
+  updatedAt?: string;
+};
+
 export type PayloadCollection = {
   id: string | number;
   name: string;
@@ -1061,6 +1085,42 @@ export async function fetchDesignsByOccupancy(
   return res?.docs ?? [];
 }
 
+/** The published (design × occupancy) page doc. depth=2 inflates the curated
+ *  products (+ their gallery), hero/intro/story media, and the callout/detail/
+ *  sibling images. Returns null when no published doc exists for the pair. */
+export async function fetchSeriesOccupancy(
+  occupancy: string,
+  series: string,
+): Promise<PayloadSeriesOccupancy | null> {
+  const params = new URLSearchParams({
+    'where[occupancy][equals]': occupancy,
+    'where[design.slug][equals]': series,
+    'where[status][equals]': 'published',
+    depth: '2',
+    limit: '1',
+  });
+  const res = await payloadFetch<PayloadList<PayloadSeriesOccupancy>>(
+    `/api/series-occupancies?${params.toString()}`,
+    'series-occupancies',
+  );
+  return res?.docs[0] ?? null;
+}
+
+/** All published combos, for the sitemap. depth=1 inflates design (→ slug) and
+ *  products (→ count) without pulling every nested media object. */
+export async function fetchPublishedSeriesOccupancies(): Promise<PayloadSeriesOccupancy[]> {
+  const params = new URLSearchParams({
+    'where[status][equals]': 'published',
+    depth: '1',
+    limit: '500',
+  });
+  const res = await payloadFetch<PayloadList<PayloadSeriesOccupancy>>(
+    `/api/series-occupancies?${params.toString()}`,
+    'series-occupancies',
+  );
+  return res?.docs ?? [];
+}
+
 /**
  * Returns the product IDs whose `productVariants.axes` contains a matching
  * (key, value) pair. Used to AND with a category filter on the facet pages
@@ -1271,4 +1331,48 @@ export function collectionPath(slug: string): string {
 
 export function inquiryHref(product: Pick<PayloadProduct, 'slug'>): string {
   return `/contact?product=${encodeURIComponent(product.slug)}&reason=quote`;
+}
+
+/** A combo "earns" its own indexable page once it has a curated product or any
+ *  content override. Drives canonical/robots on the page and sitemap inclusion. */
+export function isSeriesOccupancyDifferentiated(combo: PayloadSeriesOccupancy): boolean {
+  const productCount = (combo.products ?? []).length;
+  const hasOverride = Boolean(
+    combo.heroMedia ||
+      combo.subtitle ||
+      combo.introTitle ||
+      combo.introBody ||
+      combo.introMedia ||
+      combo.storyBody ||
+      combo.storyMedia ||
+      combo.materialCallouts?.length ||
+      combo.designDetails?.length ||
+      combo.siblings?.length,
+  );
+  return productCount > 0 || hasOverride;
+}
+
+/** Where the removed bare /bedroom-set/[series] URL sends visitors: the design's
+ *  first occupancy combo, or the hub if it belongs to no occupancy. */
+export function bareSeriesRedirectTarget(
+  design: { slug: string; occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null },
+): string {
+  const first = design.occupancies?.[0];
+  return first ? `/bedroom-set/${first}/${design.slug}` : '/bedroom-set';
+}
+
+/** Sitemap entries for published+differentiated combos. `design` must be inflated
+ *  (depth ≥ 1) so we can read its slug; non-inflated rows are skipped. */
+export function seriesOccupancySitemapEntries(
+  combos: PayloadSeriesOccupancy[],
+  siteUrl: string,
+): { url: string; priority: number }[] {
+  const out: { url: string; priority: number }[] = [];
+  for (const c of combos) {
+    if (!isSeriesOccupancyDifferentiated(c)) continue;
+    const slug = typeof c.design === 'object' && c.design ? c.design.slug : undefined;
+    if (!slug || !c.occupancy) continue;
+    out.push({ url: `${siteUrl}/bedroom-set/${c.occupancy}/${slug}`, priority: 0.75 });
+  }
+  return out;
 }
