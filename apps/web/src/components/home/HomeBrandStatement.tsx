@@ -17,6 +17,10 @@ export type HomeBrandStatementProps = {
   eyebrow?: string;
   aboutHref?: string;
   aboutMedia?: PayloadMedia | null;
+  /** Faint full-bleed texture laid over the forest layer at 20% opacity
+      (carved-walnut craft detail by default — swap for any /public asset,
+      or pass null to drop it). */
+  backgroundTexture?: string | null;
 };
 
 const DEFAULT_STATS: BrandStat[] = [
@@ -32,13 +36,23 @@ export function HomeBrandStatement({
   eyebrow = 'درباره‌ی ژیک',
   aboutHref = '/about',
   aboutMedia = null,
+  backgroundTexture = '/hero-details/celine.webp',
 }: HomeBrandStatementProps) {
   return (
     /* NO overflow-hidden here — it would clip the pulled-up stats card.
        The decorative glow is clipped by its own inset-0 wrapper instead. */
     /* No bottom padding either — the CTA positioner line must sit exactly
        on the section's bottom edge; the about grid carries the spacing. */
-    <section className="relative bg-forest-dark text-ivory">
+    <section className="relative isolate bg-forest-dark text-ivory">
+      {/* Faint craft texture over the forest layer. -z-10 (the section is an
+          `isolate` stacking context) keeps it above the green fill but behind
+          all content; 20% opacity so it reads as grain, not a photo. */}
+      {backgroundTexture ? (
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static decorative texture, no LCP concern */}
+          <img src={backgroundTexture} alt="" className="h-full w-full object-cover opacity-20" />
+        </div>
+      ) : null}
       {/* Caramel radial glow in bottom-start corner (RTL: start = right visually) */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
@@ -76,7 +90,7 @@ export function HomeBrandStatement({
             </BlurInText>
             <div className="mb-6">
               {statement ? (
-                <div className="text-body font-light leading-[1.85] text-sand">
+                <div className="font-light [&_p]:mb-2 [&_p]:text-[0.78rem] [&_p]:leading-[1.5] [&_p]:text-white">
                   <RichText value={statement} />
                 </div>
               ) : (
@@ -84,7 +98,7 @@ export function HomeBrandStatement({
                    Operator-supplied copy with intentional kashida (tatweel ـ)
                    elongations preserved verbatim per their request. The CMS
                    `statement` should be updated to match for parity. */
-                <div className="space-y-4 text-[0.8375rem] font-light leading-[1.85] text-sand">
+                <div className="space-y-2 text-[0.78rem] font-light leading-[1.5] text-white">
                   <BlurInText as="p">
                     شرکت هنر چوب ژیک، تولیدی سرویس خواب و وسایــــــل اتاق خواب است. ما هر تخت، پاتختی، میز آرایش و کمد را از چـــــــــــوب و ام‌دی‌اف باکیفیت با روکش وکیوم می‌سازیم و بدون واســــــــــــــطه، مستقیم از کارخانه به دست شما می‌رسانیم.
                   </BlurInText>

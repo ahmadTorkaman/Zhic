@@ -66,6 +66,16 @@ export const Home: GlobalConfig = {
       },
     },
     {
+      name: 'about_background',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'تصویر پس‌زمینه‌ی بخش درباره',
+      admin: {
+        description:
+          'اختیاری — روی لایه‌ی سبز پشت متن «درباره‌ی ژیک» با شفافیت کم نمایش داده می‌شود. اگر خالی باشد، تصویر پیش‌فرض (منبت سلین) استفاده می‌شود.',
+      },
+    },
+    {
       name: 'featured_designs',
       type: 'relationship',
       relationTo: 'designs',
