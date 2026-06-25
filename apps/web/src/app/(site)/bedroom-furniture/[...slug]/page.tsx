@@ -33,7 +33,6 @@ import {
   type ConfigGroup,
 } from '@/components/bedroom-furniture-mosaic/MosaicFilterBar';
 import { MosaicStrip, type StripItem } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
-import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
 
 type DesignLike = {
   slug: string;
@@ -260,9 +259,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                 <MosaicStrip heading="دیگر دسته‌ها" items={siblingItems} />
               </div>
             )}
-            <div className="mt-[34px] px-[11px] pb-12">
-              <BrandDivider />
-            </div>
           </div>
           <script
             type="application/ld+json"
@@ -420,10 +416,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             />
           </div>
         )}
-
-        <div className="mt-[34px] px-[11px] pb-12">
-          <BrandDivider />
-        </div>
       </div>
 
       <script

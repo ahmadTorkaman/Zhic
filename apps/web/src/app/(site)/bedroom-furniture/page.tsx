@@ -5,7 +5,6 @@ import { BedroomHero } from '@/components/bedroom-furniture/BedroomHero';
 import { CategoryShowcase } from '@/components/bedroom-furniture/CategoryShowcase';
 import { BedroomRevealScene } from '@/components/bedroom-furniture/BedroomRevealScene';
 import { RoomCategoryGrid } from '@/components/bedroom-furniture/RoomCategoryGrid';
-import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
 
 export const metadata: Metadata = {
   title: 'مبلمان اتاق خواب',
@@ -42,11 +41,6 @@ export default async function BedroomFurnitureRootPage() {
 
       <div className="mt-5 px-[11px]">
         <RoomCategoryGrid rooms={rooms} />
-      </div>
-
-      {/* zhic wordmark divider beneath the grid (Figma 191:246) */}
-      <div className="mt-[28px] px-[11px] pb-10">
-        <BrandDivider />
       </div>
     </div>
   );

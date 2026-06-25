@@ -8,7 +8,6 @@ import { getOccupancyHubContent } from '@/lib/occupancy-hub-content';
 import { BedroomHero } from '@/components/bedroom-furniture/BedroomHero';
 import { CategoryMosaic } from '@/components/bedroom-furniture-mosaic/CategoryMosaic';
 import { MosaicStrip } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
-import { BrandDivider } from '@/components/bedroom-furniture/BrandDivider';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -74,9 +73,6 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
             <MosaicStrip heading="گروه‌های دیگر" items={hub.others} seeAll={hub.othersSeeAll} />
           </div>
         )}
-        <div className="mt-[34px] px-[11px] pb-[18px]">
-          <BrandDivider />
-        </div>
       </div>
     );
   }

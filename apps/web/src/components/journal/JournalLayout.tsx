@@ -83,9 +83,6 @@ export function JournalLayout({
       <div className="mt-4 px-[12px]">
         <JournalProductCTA cta={c.productCta} />
       </div>
-      <div className="mt-6 px-[12px] pb-[40px]">
-        <BrandDivider />
-      </div>
     </div>
   );
 }
