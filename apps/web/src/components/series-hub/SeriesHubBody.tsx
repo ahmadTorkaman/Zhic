@@ -23,7 +23,9 @@ export function SeriesHubBody({ content }: { content: SeriesHubContent }) {
         <SeriesLinkCard title={intro.title} body={intro.body} href={intro.href} img={intro.img} imageWidthPct={57} showMore={false} />
       ) : null}
 
-      <SeriesCollection heading={collection.heading} items={collection.items} />
+      {collection.items.length > 0 ? (
+        <SeriesCollection heading={collection.heading} items={collection.items} />
+      ) : null}
 
       {materials ? <SeriesMaterials heading={materials.heading} items={materials.items} /> : null}
 
