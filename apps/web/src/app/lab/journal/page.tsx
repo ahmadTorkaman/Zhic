@@ -42,9 +42,11 @@ export default async function LabJournalPage() {
           <JournalTabs tabs={c.tabs} activeKey={c.activeTab} />
         </div>
 
-        <div className="mt-5 px-[12px]">
-          <JournalFeaturedCard article={c.featured} />
-        </div>
+        {c.featured ? (
+          <div className="mt-5 px-[12px]">
+            <JournalFeaturedCard article={c.featured} />
+          </div>
+        ) : null}
 
         <div className="mt-3 px-[12px]">
           <JournalNumberedList articles={c.topList} />

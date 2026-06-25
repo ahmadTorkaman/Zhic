@@ -1,62 +1,42 @@
 import { notFound } from 'next/navigation';
-import { Container, Breadcrumbs, Pagination } from '@zhic/ui';
-import { PageHeader } from '@/components/hero/PageHeader';
-import { JournalGrid } from '@/components/journal/JournalGrid';
-import { fetchTag, fetchArticles, journalTagPath } from '@/lib/payload';
+import type { Metadata } from 'next';
+import { getJournalTagContent } from '@/lib/journal-content';
+import { JournalLayout } from '@/components/journal/JournalLayout';
+import { fetchTag } from '@/lib/payload';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function JournalTagPage({ params, searchParams }: PageProps) {
-  const [{ slug }, sp] = await Promise.all([params, searchParams]);
-  const page = Number(sp.page) > 0 ? Number(sp.page) : 1;
+/**
+ * /journal/tag/[slug] — the /journal index template (JournalLayout), filled with
+ * this tag's articles. Tag pages omit the category pills (tabs are a
+ * category-only concept). The old Container/PageHeader/JournalGrid listing is gone.
+ */
+export default async function JournalTagPage({ params }: PageProps) {
+  const { slug: raw } = await params;
+  // Next leaves Persian dynamic segments URL-encoded; decode to match the slug.
+  const slug = decodeURIComponent(raw);
 
-  const [tag, articlesPage] = await Promise.all([
-    fetchTag(slug),
-    fetchArticles({ tag: slug, page }),
-  ]);
-
-  if (!tag) notFound();
-
-  const hrefForPage = (n: number) => (n <= 1 ? journalTagPath(slug) : `${journalTagPath(slug)}?page=${n}`);
+  const data = await getJournalTagContent(slug);
+  if (!data) notFound();
 
   return (
-    <>
-      <Container>
-        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
-          <Breadcrumbs items={[
-            { label: 'خانه', href: '/' },
-            { label: 'ژورنال', href: '/journal' },
-            { label: tag.name },
-          ]} />
-        </div>
-      </Container>
-
-      <PageHeader
-        title={tag.name}
-        subtitle={`مقاله‌های برچسب «${tag.name}»`}
-      />
-
-      <Container>
-        <JournalGrid articles={articlesPage.docs} />
-        <Pagination
-          currentPage={articlesPage.page}
-          totalPages={articlesPage.totalPages}
-          hrefFor={hrefForPage}
-        />
-      </Container>
-
-      <div className="pb-12" />
-    </>
+    <JournalLayout
+      content={data.content}
+      breadcrumbs={[
+        { label: 'خانه', href: '/' },
+        { label: 'ژورنال', href: '/journal' },
+        { label: data.tag.name },
+      ]}
+      showTabs={false}
+    />
   );
 }
 
-export async function generateMetadata({ params }: PageProps) {
-  const { slug: rawSlug } = await params;
-  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
-  const slug = decodeURIComponent(rawSlug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug: raw } = await params;
+  const slug = decodeURIComponent(raw);
   const tag = await fetchTag(slug);
   return { title: tag?.name ?? 'برچسب' };
 }

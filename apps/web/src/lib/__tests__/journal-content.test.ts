@@ -33,13 +33,13 @@ describe('getJournalContent', () => {
   it('falls back to SEED when the global is null', async () => {
     mockFetchJournal.mockResolvedValueOnce(null);
     const c = await getJournalContent();
-    expect(c.featured.title).toBe('چگونه یک اتاق خواب آرامش‌بخش طراحی کنیم؟');
+    expect(c.featured?.title).toBe('چگونه یک اتاق خواب آرامش‌بخش طراحی کنیم؟');
   });
 
   it('falls back to SEED when no featuredArticle is set', async () => {
     mockFetchJournal.mockResolvedValueOnce({ introTitle: 'x' });
     const c = await getJournalContent();
-    expect(c.featured.title).toBe('چگونه یک اتاق خواب آرامش‌بخش طراحی کنیم؟');
+    expect(c.featured?.title).toBe('چگونه یک اتاق خواب آرامش‌بخش طراحی کنیم؟');
   });
 
   it('maps the featured article (date via formatJalaliNumeric) and copy from the global', async () => {

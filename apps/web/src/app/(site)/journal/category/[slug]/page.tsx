@@ -1,73 +1,43 @@
 import { notFound } from 'next/navigation';
-import { Container, Breadcrumbs, Pagination } from '@zhic/ui';
-import { PageHeader } from '@/components/hero/PageHeader';
-import { JournalCategoryNav } from '@/components/journal/JournalCategoryNav';
-import { JournalGrid } from '@/components/journal/JournalGrid';
-import {
-  fetchJournalCategory,
-  fetchJournalCategories,
-  fetchArticles,
-  journalCategoryPath,
-} from '@/lib/payload';
+import type { Metadata } from 'next';
+import { getJournalCategoryContent } from '@/lib/journal-content';
+import { JournalLayout } from '@/components/journal/JournalLayout';
+import { fetchJournalCategory } from '@/lib/payload';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function JournalCategoryPage({ params, searchParams }: PageProps) {
-  const [{ slug }, sp] = await Promise.all([params, searchParams]);
-  const page = Number(sp.page) > 0 ? Number(sp.page) : 1;
+/**
+ * /journal/category/[slug] — the /journal index template (JournalLayout),
+ * filled with this category's articles and its filter pill active. The old
+ * Container/PageHeader/JournalGrid listing is gone.
+ */
+export default async function JournalCategoryPage({ params }: PageProps) {
+  const { slug: raw } = await params;
+  // Next leaves Persian dynamic segments URL-encoded; decode to match the slug.
+  const slug = decodeURIComponent(raw);
 
-  const [category, articlesPage, categories] = await Promise.all([
-    fetchJournalCategory(slug),
-    fetchArticles({ category: slug, page }),
-    fetchJournalCategories(),
-  ]);
-
-  if (!category) notFound();
-
-  const hrefForPage = (n: number) => (n <= 1 ? journalCategoryPath(slug) : `${journalCategoryPath(slug)}?page=${n}`);
+  const data = await getJournalCategoryContent(slug);
+  if (!data) notFound();
 
   return (
-    <>
-      <Container>
-        <div className="pt-[calc(var(--header-height)+var(--space-5))]">
-          <Breadcrumbs items={[
-            { label: 'خانه', href: '/' },
-            { label: 'ژورنال', href: '/journal' },
-            { label: category.name },
-          ]} />
-        </div>
-      </Container>
-
-      <PageHeader
-        title={category.name}
-        subtitle={category.description ?? 'مقاله‌های این دسته‌بندی.'}
-      />
-
-      <Container>
-        {categories.length > 0 ? (
-          <JournalCategoryNav categories={categories} activeSlug={slug} />
-        ) : null}
-
-        <JournalGrid articles={articlesPage.docs} />
-        <Pagination
-          currentPage={articlesPage.page}
-          totalPages={articlesPage.totalPages}
-          hrefFor={hrefForPage}
-        />
-      </Container>
-
-      <div className="pb-12" />
-    </>
+    <JournalLayout
+      content={data.content}
+      breadcrumbs={[
+        { label: 'خانه', href: '/' },
+        { label: 'ژورنال', href: '/journal' },
+        { label: data.category.name },
+      ]}
+      showTabs
+      activeTab={slug}
+    />
   );
 }
 
-export async function generateMetadata({ params }: PageProps) {
-  const { slug: rawSlug } = await params;
-  // Decode Persian/non-ASCII slugs (Next.js leaves the dynamic segment URL-encoded).
-  const slug = decodeURIComponent(rawSlug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug: raw } = await params;
+  const slug = decodeURIComponent(raw);
   const category = await fetchJournalCategory(slug);
   return { title: category?.name ?? 'دسته‌بندی' };
 }

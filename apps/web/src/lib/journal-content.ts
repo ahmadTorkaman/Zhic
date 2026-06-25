@@ -6,7 +6,18 @@
  * global is unconfigured (no featuredArticle), so the page never breaks.
  */
 
-import { fetchJournal, fetchJournalCategories, mediaUrl, type PayloadArticle } from '@/lib/payload';
+import {
+  fetchJournal,
+  fetchJournalCategories,
+  fetchJournalCategory,
+  fetchTag,
+  fetchArticles,
+  journalCategoryPath,
+  mediaUrl,
+  type PayloadArticle,
+  type PayloadJournalCategory,
+  type PayloadTag,
+} from '@/lib/payload';
 import { formatJalaliNumeric } from '@zhic/locale';
 
 export type JournalCategoryTab = {
@@ -34,7 +45,8 @@ export type JournalContent = {
   tabs: JournalCategoryTab[];
   /** Active tab key (همه by default). */
   activeTab: string;
-  featured: JournalArticle;
+  /** Lead article; omitted when a category/tag has no published articles. */
+  featured?: JournalArticle;
   /** Numbered top list (rendered 02..N; featured is #01). */
   topList: JournalArticle[];
   quote: string;
@@ -116,7 +128,7 @@ export async function getJournalContent(): Promise<JournalContent> {
   };
 }
 
-function mapArticle(a: PayloadArticle, key: string): JournalArticle {
+export function mapArticle(a: PayloadArticle, key: string): JournalArticle {
   return {
     key,
     title: a.title,
@@ -126,5 +138,74 @@ function mapArticle(a: PayloadArticle, key: string): JournalArticle {
     readingMinutes: a.readingTimeMinutes ?? 0,
     date: a.publishedAt ? formatJalaliNumeric(a.publishedAt) : undefined,
     href: `/journal/${a.slug}`,
+  };
+}
+
+/** Slot a category/tag's own articles (newest first) into the index template's
+ *  7 fixed slots: #01 featured, #02–#05 numbered list, then two editorial cards.
+ *  Brand chrome (quote, product CTA) is reused from the journal global. */
+function withArticleSlots(
+  articles: JournalArticle[],
+): Pick<JournalContent, 'featured' | 'topList' | 'cards'> {
+  return {
+    featured: articles[0],
+    topList: articles.slice(1, 5),
+    cards: articles.slice(5, 7),
+  };
+}
+
+/** Journal content for a category page: the index template, filled with this
+ *  category's articles and its pill active. null when the slug is unknown. */
+export async function getJournalCategoryContent(
+  slug: string,
+): Promise<{ content: JournalContent; category: PayloadJournalCategory } | null> {
+  const [base, category, articlesPage, cats] = await Promise.all([
+    getJournalContent(),
+    fetchJournalCategory(slug),
+    fetchArticles({ category: slug }),
+    fetchJournalCategories(),
+  ]);
+  if (!category) return null;
+
+  const tabs: JournalCategoryTab[] = [
+    { key: 'all', label: 'همه', href: '/journal' },
+    ...cats.map((c) => ({ key: c.slug, label: c.name, href: journalCategoryPath(c.slug) })),
+  ];
+  const articles = articlesPage.docs.map((a, i) => mapArticle(a, `cat-${a.id ?? i}`));
+
+  return {
+    category,
+    content: {
+      ...base,
+      tabs,
+      intro: category.name,
+      activeTab: slug,
+      ...withArticleSlots(articles),
+    },
+  };
+}
+
+/** Journal content for a tag page: the index template (no category pills),
+ *  filled with this tag's articles. null when the slug is unknown. */
+export async function getJournalTagContent(
+  slug: string,
+): Promise<{ content: JournalContent; tag: PayloadTag } | null> {
+  const [base, tag, articlesPage] = await Promise.all([
+    getJournalContent(),
+    fetchTag(slug),
+    fetchArticles({ tag: slug }),
+  ]);
+  if (!tag) return null;
+
+  const articles = articlesPage.docs.map((a, i) => mapArticle(a, `tag-${a.id ?? i}`));
+
+  return {
+    tag,
+    content: {
+      ...base,
+      intro: tag.name,
+      activeTab: '',
+      ...withArticleSlots(articles),
+    },
   };
 }
