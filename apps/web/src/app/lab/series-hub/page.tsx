@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@zhic/ui';
-import { getSeriesHubContent } from '@/lib/series-hub-content';
+import { getSeriesOccupancyContent } from '@/lib/series-hub-content';
 import { SeriesHubBody } from '@/components/series-hub/SeriesHubBody';
 
 export const metadata: Metadata = {
@@ -15,8 +15,9 @@ export const metadata: Metadata = {
  * column (pixel-exact at 430, fluid below).
  */
 export default async function LabSeriesHubPage() {
-  const content = await getSeriesHubContent('iron', 'teen');
-  if (!content) return null;
+  const result = await getSeriesOccupancyContent('teen', 'iron');
+  if (!result) return null;
+  const { content } = result;
 
   return (
     <main className="min-h-screen bg-ivory">
