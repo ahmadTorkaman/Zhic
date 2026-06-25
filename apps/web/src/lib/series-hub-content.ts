@@ -107,7 +107,14 @@ export async function getSeriesHubContent(
   ]);
   if (!design) return null;
 
-  const heroMedia = design.heroMedia ?? design.sliderMedia ?? design.gallery?.[0] ?? null;
+  // Per-occupancy hero: when the URL carries an age (/bedroom-set/[age]/[design]),
+  // use that occupancy's card (occupancyMedia — the same image the
+  // /bedroom-set/[occupancy] hub tile shows) so /baby/X and /teen/X differ.
+  // Falls back to the generic heroMedia when the occupancy has no card.
+  const occHero = ageFilter
+    ? design.occupancyMedia?.find((o) => o.occupancy === ageFilter)?.image ?? null
+    : null;
+  const heroMedia = occHero ?? design.heroMedia ?? design.sliderMedia ?? design.gallery?.[0] ?? null;
   const ageTitle = ageFilter ? OCCUPANCY_TITLE[ageFilter] : undefined;
 
   const items: SeriesProductCard[] = productsPage.docs.map((p) => {
