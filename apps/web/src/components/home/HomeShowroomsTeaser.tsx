@@ -97,11 +97,12 @@ export function HomeShowroomsTeaser({ showrooms }: HomeShowroomsTeaserProps) {
         )}
       </Container>
 
-      {/* Figma export Vector 6 — full-width forest ribbon at the seam into the
-          consultation section: tapered ends + a downward point at center. */}
+      {/* Figma Vector — full-width forest ribbon at the seam into the
+          consultation section: tapered ends + a downward point at center.
+          Shape from zh-dropdown.svg (fill comes from .zh-st__divider → --color-forest #5F7760 @ 0.88). */}
       <div className="zh-st__divider" aria-hidden>
-        <svg viewBox="0 0 383 17" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 0H382.528C382.528 0 380.748 1.98907 378.131 4.60625C375.514 7.22344 372.792 7.32813 372.792 7.32813C372.792 7.32813 201.523 7.32801 200.581 7.32813C194.89 7.32885 189.275 16.2262 189.275 16.2262C189.275 16.2262 184.2 7.32958 179.016 7.32813C177.341 7.32766 10.1981 7.32813 10.1981 7.32813C10.1981 7.32813 6.13138 6.26336 4.75494 4.94805C3.37851 3.63275 0 0 0 0Z" />
+        <svg viewBox="0 0 1828 79" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1806.15 22C1793.65 34.5 1791.83 35 1780.65 35C1593.15 35 972.149 36.0014 967.649 36.002C940.468 36.0054 913.649 78.5 913.649 78.5C913.649 78.5 886.83 36.0054 859.649 36.002C855.149 36.0014 234.149 35.0001 46.6493 35.0001C35.4714 35.0001 33.6493 34.5001 21.1493 22.0001C8.64929 9.50006 -1.35059 -0.0116617 0.149292 4.48227e-05C1.64917 0.0117513 26.5601 22.0001 46.6493 22.0001L78.3077 22.0002C202.823 22.0008 656.148 22.003 859.649 22.0001C885.548 21.9997 913.649 68.0137 913.649 68.0137C913.649 68.0137 941.75 21.9996 967.649 22C1200.65 22.0034 1761.15 22 1780.65 22C1800.74 22 1825.65 0.0117173 1827.15 1.0794e-05C1828.65 -0.0116957 1818.65 9.50002 1806.15 22Z" />
         </svg>
       </div>
     </section>
