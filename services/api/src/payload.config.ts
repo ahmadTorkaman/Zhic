@@ -10,6 +10,7 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Designs } from './collections/Designs'
 import { Products } from './collections/Products'
+import { SeriesOccupancies } from './collections/SeriesOccupancies'
 import { ProductVariants } from './collections/ProductVariants'
 import { Showrooms } from './collections/Showrooms'
 import { Articles } from './collections/Articles'
@@ -77,6 +78,7 @@ export default buildConfig({
     Users,
     Designs,
     Products,
+    SeriesOccupancies,
     ProductVariants,
     Showrooms,
     Articles,
