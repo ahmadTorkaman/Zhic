@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/env';
 import { API_URL } from '@/lib/env';
-import { fetchAllCategories } from '@/lib/payload';
+import { fetchAllCategories, fetchPublishedSeriesOccupancies, seriesOccupancySitemapEntries } from '@/lib/payload';
 
 type PayloadDoc = { slug: string; updatedAt?: string };
 type PayloadList = { docs: PayloadDoc[] };
@@ -21,11 +21,11 @@ async function fetchSlugs(collection: string, query = ''): Promise<PayloadDoc[]>
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, collections, designs, showrooms, articles, journalCategories, tags, allCategories] =
+  const [products, collections, seriesOccupancies, showrooms, articles, journalCategories, tags, allCategories] =
     await Promise.all([
       fetchSlugs('products'),
       fetchSlugs('collections'),
-      fetchSlugs('designs'),
+      fetchPublishedSeriesOccupancies(),
       fetchSlugs('showrooms'),
       fetchSlugs('articles', '&where[status][equals]=published'),
       fetchSlugs('journal-categories'),
@@ -71,13 +71,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  for (const d of designs) {
-    entries.push({
-      url: `${SITE_URL}/bedroom-set/${d.slug}`,
-      lastModified: d.updatedAt,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    });
+  for (const e of seriesOccupancySitemapEntries(seriesOccupancies, SITE_URL)) {
+    entries.push({ url: e.url, changeFrequency: 'monthly', priority: e.priority });
   }
 
   for (const c of allCategories) {
