@@ -620,11 +620,54 @@ export type PayloadBedroomSetHeroes = {
   heroBunkMedia?: PayloadMedia | null;
 };
 
+/** A `/bedroom-set/{occupancy}` hub document (bedroom-set-hubs collection).
+ *  Relationship fields come back populated at depth 2 (PayloadDesign) but may be
+ *  a bare id — callers normalize with relId(). */
+export type PayloadDesignRef = PayloadDesign | string | number;
+export type PayloadBedroomSetHub = {
+  id: string | number;
+  occupancy: 'baby' | 'teen' | 'double' | 'bunk';
+  heroImage?: PayloadMedia | null;
+  heroTitle?: string | null;
+  heroTagline?: string | null;
+  heroCtaLabel?: string | null;
+  heroCtaHref?: string | null;
+  introHeading?: string | null;
+  introBody?: string | null;
+  designsHeading?: string | null;
+  featuredDesign?: PayloadDesignRef | null;
+  tileOrder?: PayloadDesignRef[] | null;
+  hiddenDesigns?: PayloadDesignRef[] | null;
+  contentBody?: LexicalRoot | null;
+  crossLinksHeading?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoImage?: PayloadMedia | null;
+};
+
 /** Per-occupancy uploaded hero images for the /bedroom-set/{occupancy} hubs
  *  (bedroom-set global). depth=2 inflates each media url. Returns nulls until
  *  the operator uploads them (and the migration is applied on the box). */
 export async function fetchBedroomSetHeroes(): Promise<PayloadBedroomSetHeroes | null> {
   return payloadFetch<PayloadBedroomSetHeroes>('/api/globals/bedroom-set?depth=2', 'bedroom-set');
+}
+
+/** The per-occupancy hub document (bedroom-set-hubs) for /bedroom-set/{occupancy}.
+ *  Null when the operator hasn't created that doc → the page falls back to the
+ *  built-in copy. */
+export async function fetchBedroomSetHub(
+  occupancy: 'baby' | 'teen' | 'double' | 'bunk',
+): Promise<PayloadBedroomSetHub | null> {
+  const params = new URLSearchParams({
+    'where[occupancy][equals]': occupancy,
+    depth: '2',
+    limit: '1',
+  });
+  const res = await payloadFetch<PayloadList<PayloadBedroomSetHub>>(
+    `/api/bedroom-set-hubs?${params.toString()}`,
+    `bedroom-set-hub:${occupancy}`,
+  );
+  return res?.docs[0] ?? null;
 }
 
 export async function fetchShowrooms(limit = 4): Promise<PayloadShowroom[]> {

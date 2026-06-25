@@ -23,6 +23,7 @@ import { Collections } from './collections/Collections'
 import { Media } from './collections/Media'
 import { Inquiries } from './collections/Inquiries'
 import { Subscribers } from './collections/Subscribers'
+import { BedroomSetHubs } from './collections/BedroomSetHubs'
 
 // Globals
 import { Home } from './globals/Home'
@@ -90,6 +91,7 @@ export default buildConfig({
     Media,
     Inquiries,
     Subscribers,
+    BedroomSetHubs,
   ],
 
   globals: [

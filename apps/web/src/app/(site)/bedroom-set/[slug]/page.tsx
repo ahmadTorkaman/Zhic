@@ -5,9 +5,12 @@ import { OCCUPANCY_PERSIAN, isOccupancySlug } from './occupancy';
 import { SeriesHub, seriesHubMetadata } from './series-hub';
 import { buildMosaicRows } from '@/lib/bedroom-furniture-mosaic';
 import { getOccupancyHubContent } from '@/lib/occupancy-hub-content';
+import { fetchBedroomSetHub, mediaUrl } from '@/lib/payload';
 import { BedroomHero } from '@/components/bedroom-furniture/BedroomHero';
 import { CategoryMosaic } from '@/components/bedroom-furniture-mosaic/CategoryMosaic';
 import { MosaicStrip } from '@/components/bedroom-furniture-mosaic/MosaicStrip';
+import { OccupancyIntro } from '@/components/bedroom-set/OccupancyIntro';
+import { OccupancyContent } from '@/components/bedroom-set/OccupancyContent';
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -22,14 +25,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
 
-  // Occupancy hub
+  // Occupancy hub — CMS SEO fields (bedroom-set-hubs doc) override the defaults.
   if (isOccupancySlug(slug)) {
-    const { title, tagline } = OCCUPANCY_PERSIAN[slug];
+    const fallback = OCCUPANCY_PERSIAN[slug];
+    const hub = await fetchBedroomSetHub(slug);
+    const title = hub?.seoTitle || hub?.heroTitle || fallback.title;
+    const description = hub?.seoDescription || hub?.heroTagline || fallback.tagline;
+    const ogImage = mediaUrl(hub?.seoImage ?? hub?.heroImage ?? null);
     return {
       title,
-      description: tagline,
+      description,
       alternates: { canonical: `/bedroom-set/${slug}` },
-      openGraph: { title, description: tagline },
+      openGraph: { title, description, ...(ogImage ? { images: [{ url: ogImage }] } : {}) },
     };
   }
 
@@ -65,12 +72,22 @@ export default async function BedroomSetSlugPage({ params, searchParams }: PageP
         <div className="mt-4">
           <BedroomHero hero={hub.hero} />
         </div>
+        {hub.intro && (
+          <div className="mt-[28px]">
+            <OccupancyIntro heading={hub.intro.heading} body={hub.intro.body} />
+          </div>
+        )}
         <div className="mt-[34px]" id="hub-designs">
           <CategoryMosaic heading={hub.heading} rows={buildMosaicRows(hub.tiles)} />
         </div>
+        {hub.contentBody && (
+          <div className="mt-[40px]">
+            <OccupancyContent value={hub.contentBody} />
+          </div>
+        )}
         {hub.others.length > 0 && (
           <div className="mt-[40px]">
-            <MosaicStrip heading="گروه‌های دیگر" items={hub.others} seeAll={hub.othersSeeAll} />
+            <MosaicStrip heading={hub.crossHeading} items={hub.others} seeAll={hub.othersSeeAll} />
           </div>
         )}
       </div>

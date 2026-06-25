@@ -1,21 +1,25 @@
 /**
- * Content for the /bedroom-set/[occupancy] middle hubs (teen/double/baby/bunk),
- * rebuilt on the mosaic template (the same one used by /bedroom-furniture).
+ * Content for the /bedroom-set/[occupancy] middle hubs (teen/double/baby/bunk).
  *
- * Each design → a mosaic tile linking to /bedroom-set/[occupancy]/[design].
- * Covers are STATIC (heroMedia ?? gallery[0] ?? sliderMedia, image mime only) —
- * the animated sliderMedia GIFs are deferred per the prototype decision.
- * Designs with no cover are hidden (matches the nav/carousel sliderMedia filter).
+ * Each hub is editable as one document in the `bedroom-set-hubs` collection
+ * (fetchBedroomSetHub). This getter maps that doc onto the page's existing
+ * sections — hero / intro band / design-tiles mosaic / SEO content / cross-links
+ * — and falls back to the built-in `META` copy field-by-field, so an empty or
+ * missing doc never breaks the page. Tile imagery still comes from each design's
+ * occupancyMedia; the doc adds tile CONTROL (featured / order / hide).
  *
  * Self-contained so /lab can import it; the live route's occupancy.ts owns the
- * SEO branch + slug guards. Wire-up replaces only the route body, not these maps.
+ * SEO branch + slug guards.
  */
 import {
   fetchDesignsByOccupancy,
   fetchBedroomSetHeroes,
+  fetchBedroomSetHub,
   mediaUrl,
   type PayloadDesign,
+  type PayloadDesignRef,
   type PayloadMedia,
+  type LexicalRoot,
 } from '@/lib/payload';
 import type { HeroContent } from '@/lib/bedroom-furniture';
 import type { SimpleTile } from '@/lib/bedroom-furniture-mosaic';
@@ -24,7 +28,8 @@ import type { StripItem } from '@/components/bedroom-furniture-mosaic/MosaicStri
 export const OCCUPANCY_HUB_SLUGS = ['teen', 'double', 'baby', 'bunk'] as const;
 export type OccHubSlug = (typeof OCCUPANCY_HUB_SLUGS)[number];
 
-/** Hero copy + cross-link short-name per occupancy (from occupancy.ts). */
+/** Hero copy + cross-link short-name per occupancy — the fallback when the hub
+ *  doc (or a given field) is empty. */
 const META: Record<OccHubSlug, { title: string; tagline: string; short: string; eyebrow: string }> = {
   teen: {
     title: 'سرویس خواب نوجوان',
@@ -55,16 +60,18 @@ const META: Record<OccHubSlug, { title: string; tagline: string; short: string; 
 const isImg = (m?: PayloadMedia | null): m is PayloadMedia =>
   !!m && (!m.mimeType || m.mimeType.startsWith('image/'));
 
-/** The design's per-occupancy card image for THIS hub (e.g. the baby card on
- *  /bedroom-set/baby), if the artist made one. This is what keeps the baby hub
- *  showing baby imagery instead of the design's generic teen/adult scene. */
+/** Normalize a relationship value (populated doc or bare id) to a string id. */
+const relId = (x?: PayloadDesignRef | null): string | null =>
+  x == null ? null : typeof x === 'object' ? String(x.id) : String(x);
+
+/** The design's per-occupancy card image for THIS hub (the baby card on
+ *  /bedroom-set/baby), if the artist made one. */
 function occupancyCard(d: PayloadDesign, slug: OccHubSlug): PayloadMedia | null {
   const m = (d.occupancyMedia ?? []).find((o) => o.occupancy === slug)?.image;
   return isImg(m) ? m : null;
 }
 
-/** Tile cover: the per-occupancy card → else the design's generic static cover
- *  (heroMedia ?? gallery[0] ?? sliderMedia, image-mime only). */
+/** Tile cover: the per-occupancy card → else the design's generic static cover. */
 function staticCover(d: PayloadDesign, slug: OccHubSlug): string | null {
   const pick = occupancyCard(d, slug) ?? [d.heroMedia, d.gallery?.[0], d.sliderMedia].find(isImg) ?? null;
   return mediaUrl(pick);
@@ -74,18 +81,25 @@ export type OccupancyHubContent = {
   slug: OccHubSlug;
   /** Clean occupancy word for the breadcrumb (e.g. «نوجوان»). */
   shortName: string;
-  /** Full-bleed photo hero (BedroomHero shape, like /bedroom-furniture). */
+  /** Full-bleed photo hero (BedroomHero shape). */
   hero: HeroContent;
+  /** Intro band under the hero (CMS) — null when unset. */
+  intro: { heading: string; body: string } | null;
+  /** Design-tiles section heading. */
   heading: string;
   tiles: SimpleTile[];
+  /** Long-form SEO content (rich text) below the tiles — null when unset. */
+  contentBody: LexicalRoot | null;
+  /** «گروه‌های دیگر» strip heading. */
+  crossHeading: string;
   /** Cross-links to the other occupancy hubs. */
   others: StripItem[];
   othersSeeAll: { label: string; href: string };
+  /** SEO meta for the page (generateMetadata) — null when no doc. */
+  seo: { title?: string; description?: string; image?: string } | null;
 };
 
-/** Per-occupancy uploaded hero override (CMS) — image + optional copy.
- *  Empty until the operator populates the bedroom-set global; the hero then
- *  falls back to the featured design's cover. */
+/** @deprecated kept for /lab call-sites; the bedroom-set-hubs doc supersedes it. */
 export type OccupancyHeroOverride = { image?: string | null; title?: string | null; tagline?: string | null };
 
 export async function getOccupancyHubContent(
@@ -93,13 +107,14 @@ export async function getOccupancyHubContent(
   heroOverride?: OccupancyHeroOverride,
 ): Promise<OccupancyHubContent> {
   const meta = META[slug];
-  const [designs, heroes] = await Promise.all([
+  const [designs, heroes, hub] = await Promise.all([
     fetchDesignsByOccupancy(slug),
     fetchBedroomSetHeroes(),
+    fetchBedroomSetHub(slug),
   ]);
 
-  // Operator-uploaded hero image for this occupancy (bedroom-set global), if any.
-  const cmsHeroMedia =
+  // Legacy bedroom-set-global hero image (still honored as a fallback below the doc).
+  const legacyHeroMedia =
     slug === 'teen'
       ? heroes?.heroTeenMedia
       : slug === 'double'
@@ -107,17 +122,20 @@ export async function getOccupancyHubContent(
         : slug === 'baby'
           ? heroes?.heroBabyMedia
           : heroes?.heroBunkMedia;
-  const cmsHeroImg = mediaUrl(cmsHeroMedia ?? null) ?? undefined;
 
-  // Every design of the age (operator: show image-less ones too, as «به‌زودی»
-  // sand tiles). Ordered: designs with a per-occupancy card first (so the
-  // featured tile + hero land on age-appropriate imagery — e.g. a baby card on
-  // /bedroom-set/baby, not the design's teen scene), then designs with only a
-  // generic cover, then the photo-less «به‌زودی» tiles.
-  const withOccCard: SimpleTile[] = [];
-  const withCover: SimpleTile[] = [];
-  const withoutCover: SimpleTile[] = [];
+  // ── Tiles (with operator control: hidden filtered, featured/order pulled up) ──
+  const hiddenIds = new Set((hub?.hiddenDesigns ?? []).map(relId).filter(Boolean) as string[]);
+  const priorityIds = [relId(hub?.featuredDesign ?? null), ...(hub?.tileOrder ?? []).map(relId)].filter(
+    Boolean,
+  ) as string[];
+
+  // Default order (matches the prior behavior): per-occupancy-card designs, then
+  // generic-cover designs, then photo-less «به‌زودی» tiles.
+  const withOccCard: { id: string; tile: SimpleTile }[] = [];
+  const withCover: { id: string; tile: SimpleTile }[] = [];
+  const withoutCover: { id: string; tile: SimpleTile }[] = [];
   for (const d of designs) {
+    if (hiddenIds.has(String(d.id))) continue;
     const img = staticCover(d, slug) ?? undefined;
     const tile: SimpleTile = {
       key: d.slug,
@@ -125,11 +143,43 @@ export async function getOccupancyHubContent(
       href: `/bedroom-set/${slug}/${d.slug}`,
       ...(img ? { img } : { comingSoon: true }),
     };
-    if (!img) withoutCover.push(tile);
-    else if (occupancyCard(d, slug)) withOccCard.push(tile);
-    else withCover.push(tile);
+    const entry = { id: String(d.id), tile };
+    if (!img) withoutCover.push(entry);
+    else if (occupancyCard(d, slug)) withOccCard.push(entry);
+    else withCover.push(entry);
   }
-  const tiles = [...withOccCard, ...withCover, ...withoutCover];
+  let ordered = [...withOccCard, ...withCover, ...withoutCover];
+
+  // Operator override: featured + explicit order first (in that order), rest after.
+  if (priorityIds.length) {
+    const byId = new Map(ordered.map((e) => [e.id, e]));
+    const prioritySet = new Set(priorityIds);
+    const head = priorityIds.map((id) => byId.get(id)).filter(Boolean) as typeof ordered;
+    const tail = ordered.filter((e) => !prioritySet.has(e.id));
+    ordered = [...head, ...tail];
+  }
+  const tiles = ordered.map((e) => e.tile);
+  const firstPhoto = ordered.find((e) => e.tile.img)?.tile.img;
+
+  // ── Hero (doc → legacy global image → first photo tile; copy → doc → META) ──
+  const hero: HeroContent = {
+    title: hub?.heroTitle || heroOverride?.title || meta.title.replace(/ (\S+)$/, '\n$1'),
+    subtitle: '',
+    tagline: hub?.heroTagline || heroOverride?.tagline || meta.tagline,
+    ctaLabel: hub?.heroCtaLabel || 'مشاهده',
+    ctaHref: hub?.heroCtaHref || '#hub-designs',
+    img:
+      mediaUrl(hub?.heroImage ?? null) ??
+      heroOverride?.image ??
+      mediaUrl(legacyHeroMedia ?? null) ??
+      firstPhoto,
+    imgAlt: hub?.heroTitle || meta.title,
+  };
+
+  const intro =
+    hub?.introHeading || hub?.introBody
+      ? { heading: hub.introHeading ?? '', body: hub.introBody ?? '' }
+      : null;
 
   const others: StripItem[] = OCCUPANCY_HUB_SLUGS.filter((o) => o !== slug).map((o) => ({
     key: o,
@@ -138,27 +188,25 @@ export async function getOccupancyHubContent(
     href: `/bedroom-set/${o}`,
   }));
 
-  // Hero image: operator-uploaded override → else the featured design's cover
-  // (the first photo tile). 2-line title splits the last word onto its own line
-  // (like the comp «مُبلمان / اتاق خواب»). No subtitle — the «گروه سنی · N طرح»
-  // count line is intentionally dropped.
-  const hero: HeroContent = {
-    title: heroOverride?.title || meta.title.replace(/ (\S+)$/, '\n$1'),
-    subtitle: '',
-    tagline: heroOverride?.tagline || meta.tagline,
-    ctaLabel: 'مشاهده',
-    ctaHref: '#hub-designs',
-    img: heroOverride?.image ?? cmsHeroImg ?? withOccCard[0]?.img ?? withCover[0]?.img,
-    imgAlt: meta.title,
-  };
+  const seo = hub
+    ? {
+        title: hub.seoTitle ?? undefined,
+        description: hub.seoDescription ?? undefined,
+        image: mediaUrl(hub.seoImage ?? null) ?? undefined,
+      }
+    : null;
 
   return {
     slug,
     shortName: meta.short,
     hero,
-    heading: 'طرح‌ها',
+    intro,
+    heading: hub?.designsHeading || 'طرح‌ها',
     tiles,
+    contentBody: hub?.contentBody ?? null,
+    crossHeading: hub?.crossLinksHeading || 'گروه‌های دیگر',
     others,
     othersSeeAll: { label: 'همه‌ی طرح‌ها', href: '/bedroom-set' },
+    seo,
   };
 }

@@ -527,6 +527,28 @@ Curates the `/bedroom-furniture` root index. Showcase cards reference Categories
 
 Empty `showcase` → the page falls back to its static default. DB: a `bedroom_furniture` table (scalar + `hero_media_id` FK) plus `bedroom_furniture_showcase` (`category_id`+`arch_image_id` FK cols) and `bedroom_furniture_rooms` (`image_id` FK col) array tables — single relation/upload subfields become FK columns on the array table (mirrors `home_hero_slides`).
 
+### `bedroom-set-hubs` (collection) — per-occupancy hub page editor
+
+One document per age group (`occupancy` unique enum: baby/teen/double/bunk) backing the `/bedroom-set/{occupancy}` pages. Each maps 1:1 to the page's existing sections (`BedroomHero` / intro band / `CategoryMosaic` / SEO content / `MosaicStrip`); **every field is optional and falls back to the built-in copy in `occupancy-hub-content.ts`**, so a missing/empty doc never breaks the page. Added 2026-06-25. Tile imagery still comes from each design's `occupancyMedia`; this doc adds tile *control*.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `occupancy` | select (req, **unique**) | baby/teen/double/bunk — the doc's identity + route |
+| `heroImage` | upload → media | hero photo; empty → legacy `bedroom-set` global hero → first photo tile |
+| `heroTitle` / `heroTagline` | text / textarea | hero copy (`\n` = line break); empty → default |
+| `heroCtaLabel` / `heroCtaHref` | text | hero CTA («مشاهده» / `#hub-designs`) |
+| `introHeading` / `introBody` | text / textarea | **new** intro band under the hero (both empty → hidden) |
+| `designsHeading` | text | tiles section heading («طرح‌ها») |
+| `featuredDesign` | rel → designs | pulled to the front of the tile order |
+| `tileOrder` | rel → designs (hasMany) | explicit order; unlisted designs follow in default order |
+| `hiddenDesigns` | rel → designs (hasMany) | excluded from this hub |
+| `contentBody` | richText | **new** long-form SEO block below the tiles (empty → hidden) |
+| `crossLinksHeading` | text | «گروه‌های دیگر» heading; links auto-derive from the other ages |
+| `seoTitle` / `seoDescription` | text / textarea | **new** page `<title>` / meta description |
+| `seoImage` | upload → media | **new** OG image |
+
+DB: `bedroom_set_hubs` table (scalars + `hero_image_id`/`featured_design_id`/`seo_image_id` FK cols + `content_body` jsonb + unique `occupancy` enum) plus `bedroom_set_hubs_rels` for the hasMany `tileOrder`/`hiddenDesigns` (distinguished by `path`, mirrors `journal_rels`). Seeded with the 4 docs via `scripts/seed-bedroom-set-hubs.py`.
+
 ## §15 `carts`
 
 Live shopping carts. One cart per session; merges with the customer
