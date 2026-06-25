@@ -1,87 +1,88 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-// Mock the Payload fetch layer BEFORE importing the module under test.
 const mockFetchDesign = vi.fn();
-const mockFetchProducts = vi.fn();
+const mockFetchSeriesOccupancy = vi.fn();
 vi.mock('@/lib/payload', () => ({
   fetchDesign: (...a: unknown[]) => mockFetchDesign(...a),
-  fetchProducts: (...a: unknown[]) => mockFetchProducts(...a),
-  // simple stub: relative media → a /media/<filename> url, null when absent
+  fetchSeriesOccupancy: (...a: unknown[]) => mockFetchSeriesOccupancy(...a),
   mediaUrl: (m: { url?: string | null; filename?: string | null } | null | undefined) =>
     m ? (m.url ?? `/media/${m.filename ?? 'x'}`) : null,
 }));
 
-import { getSeriesHubContent } from '../series-hub-content';
+import { getSeriesOccupancyContent } from '../series-hub-content';
 
 const baseDesign = {
   id: 7,
   name: 'کارولین',
   slug: 'caroline',
   occupancies: ['teen', 'double'],
+  materialCallouts: [{ image: { filename: 'wood.jpg' }, label: 'چوب', sub: 'بلوط' }],
 };
 
 beforeEach(() => {
   mockFetchDesign.mockReset();
-  mockFetchProducts.mockReset();
-  mockFetchProducts.mockResolvedValue({ docs: [] });
+  mockFetchSeriesOccupancy.mockReset();
+  mockFetchDesign.mockResolvedValue({ ...baseDesign });
+  mockFetchSeriesOccupancy.mockResolvedValue(null);
 });
 
-describe('getSeriesHubContent — non-iron Payload mapping', () => {
-  it('maps materialCallouts (rows with an image) into the materials section', async () => {
-    mockFetchDesign.mockResolvedValueOnce({
-      ...baseDesign,
-      materialCallouts: [
-        { image: { filename: 'metal.jpg' }, label: 'فلز', sub: 'پوشش مات' },
-        { image: { filename: 'mdf.jpg' }, label: 'MDF', sub: 'vispan' },
-        { image: null, label: 'بی‌تصویر', sub: 'حذف می‌شود' }, // dropped (no image)
+describe('getSeriesOccupancyContent — inheritance + curation', () => {
+  it('returns null when the design does not exist', async () => {
+    mockFetchDesign.mockResolvedValueOnce(null);
+    expect(await getSeriesOccupancyContent('teen', 'missing')).toBeNull();
+  });
+
+  it('un-authored combo: inherits design materials, empty products, not differentiated', async () => {
+    const res = await getSeriesOccupancyContent('teen', 'caroline');
+    expect(res).not.toBeNull();
+    expect(res!.differentiated).toBe(false);
+    expect(res!.content.collection.items).toHaveLength(0);
+    // materials inherit from the design
+    expect(res!.content.materials?.items[0]).toMatchObject({ name: 'چوب', img: '/media/wood.jpg' });
+    // siblings auto-generate from the OTHER occupancy (double)
+    expect(res!.content.featuredSibling).toMatchObject({ href: '/bedroom-set/double/caroline' });
+  });
+
+  it('authored combo: curated products map into the collection and mark it differentiated', async () => {
+    mockFetchSeriesOccupancy.mockResolvedValueOnce({
+      id: 1,
+      occupancy: 'teen',
+      products: [
+        { id: 11, name: 'تخت ۱۰۰', slug: 'bed-100', gallery: [{ filename: 'b.jpg' }], basePriceRials: 120000000 },
       ],
     });
-    const content = await getSeriesHubContent('caroline', 'teen');
-    expect(content?.materials).not.toBeNull();
-    expect(content?.materials?.heading).toBe('متریال های استفاده شده');
-    expect(content?.materials?.items).toHaveLength(2);
-    expect(content?.materials?.items[0]).toMatchObject({ name: 'فلز', sub: 'پوشش مات', img: '/media/metal.jpg' });
+    const res = await getSeriesOccupancyContent('teen', 'caroline');
+    expect(res!.differentiated).toBe(true);
+    expect(res!.content.collection.items).toHaveLength(1);
+    expect(res!.content.collection.items[0]).toMatchObject({ name: 'تخت ۱۰۰', href: '/products/bed-100', img: '/media/b.jpg' });
   });
 
-  it('maps designDetails and defaults span to 100 when absent', async () => {
-    mockFetchDesign.mockResolvedValueOnce({
-      ...baseDesign,
-      designDetails: [
-        { image: { filename: 'a.jpg' }, label: 'سر تخت', description: 'کشویی', span: 83 },
-        { image: { filename: 'b.jpg' }, label: 'پگبورد' }, // no span, no description
-      ],
+  it('combo override wins over the design (subtitle + materials)', async () => {
+    mockFetchSeriesOccupancy.mockResolvedValueOnce({
+      id: 1,
+      occupancy: 'teen',
+      subtitle: 'نسخه‌ی نوجوان',
+      materialCallouts: [{ image: { filename: 'metal.jpg' }, label: 'فلز', sub: 'مات' }],
     });
-    const content = await getSeriesHubContent('caroline', 'teen');
-    expect(content?.details?.items).toHaveLength(2);
-    expect(content?.details?.items[0]).toMatchObject({ label: 'سر تخت', desc: 'کشویی', span: 83, img: '/media/a.jpg' });
-    expect(content?.details?.items[1]).toMatchObject({ label: 'پگبورد', desc: '', span: 100 });
+    const res = await getSeriesOccupancyContent('teen', 'caroline');
+    expect(res!.content.title.subtitle).toBe('نسخه‌ی نوجوان');
+    expect(res!.content.materials?.items[0]).toMatchObject({ name: 'فلز', img: '/media/metal.jpg' });
   });
 
-  it('builds the intro card (title falls back to occupancy) and the story card', async () => {
-    mockFetchDesign.mockResolvedValueOnce({
-      ...baseDesign,
-      introBody: 'معرفی کوتاه',
-      introMedia: { filename: 'intro.jpg' },
-      storyBody: 'داستان این طرح',
-      storyMedia: { filename: 'story.jpg' },
+  it('a blank («») combo string field inherits the design value (empty ⇒ inherit)', async () => {
+    mockFetchDesign.mockResolvedValueOnce({ ...baseDesign, tagline: 'شعار طرح' });
+    mockFetchSeriesOccupancy.mockResolvedValueOnce({ id: 1, occupancy: 'teen', subtitle: '' });
+    const res = await getSeriesOccupancyContent('teen', 'caroline');
+    expect(res!.content.title.subtitle).toBe('شعار طرح');
+  });
+
+  it('authored siblings (with media + link) replace the auto-generated ones', async () => {
+    mockFetchSeriesOccupancy.mockResolvedValueOnce({
+      id: 1,
+      occupancy: 'teen',
+      siblings: [{ image: { filename: 's.jpg' }, kicker: 'سرویس دونفره', name: 'آیرون', link: '/bedroom-set/double/iron' }],
     });
-    const content = await getSeriesHubContent('caroline', 'teen');
-    expect(content?.intro).toMatchObject({ title: 'سرویس خواب نوجوان', body: 'معرفی کوتاه', img: '/media/intro.jpg' });
-    expect(content?.story).toMatchObject({ title: 'داستان طراحی', body: 'داستان این طرح', img: '/media/story.jpg' });
-  });
-
-  it('leaves all four sections null when the design has no detail content', async () => {
-    mockFetchDesign.mockResolvedValueOnce({ ...baseDesign });
-    const content = await getSeriesHubContent('caroline', 'teen');
-    expect(content?.materials).toBeNull();
-    expect(content?.details).toBeNull();
-    expect(content?.intro).toBeNull();
-    expect(content?.story).toBeNull();
-  });
-
-  it('omits the story card when storyMedia is set but storyBody is empty', async () => {
-    mockFetchDesign.mockResolvedValueOnce({ ...baseDesign, storyMedia: { filename: 'story.jpg' } });
-    const content = await getSeriesHubContent('caroline', 'teen');
-    expect(content?.story).toBeNull();
+    const res = await getSeriesOccupancyContent('teen', 'caroline');
+    expect(res!.content.featuredSibling).toMatchObject({ kicker: 'سرویس دونفره', img: '/media/s.jpg', href: '/bedroom-set/double/iron' });
   });
 });

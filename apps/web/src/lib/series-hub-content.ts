@@ -1,5 +1,5 @@
 /**
- * Content for the /bedroom-set/[age]/[design] detail page (Figma 261:90).
+ * Content for the /bedroom-set/[occupancy]/[series] detail page (Figma 261:90).
  *
  * Every design — including `iron` (آیرون), the original pixel-exact reference —
  * is mapped live from Payload into the shared SeriesHubContent shape, so the
@@ -11,7 +11,13 @@
  * collection «قطعات سرویس» (261:203), materials (261:175), details (261:155),
  * story (261:189), featured sibling band (261:238), sibling-slug links (261:233).
  */
-import { fetchDesign, fetchProducts, mediaUrl, type PayloadProduct } from '@/lib/payload';
+import {
+  fetchDesign,
+  fetchSeriesOccupancy,
+  mediaUrl,
+  type PayloadProduct,
+  type PayloadSeriesOccupancy,
+} from '@/lib/payload';
 import { formatMoney } from '@zhic/money';
 
 export type SeriesProductCard = {
@@ -92,32 +98,47 @@ function priceString(p: PayloadProduct): { price: string; originalPrice: string 
   return { price: fmt(base), originalPrice: null };
 }
 
+export type OccupancyContentResult = { content: SeriesHubContent; differentiated: boolean };
+
+type CalloutRow = NonNullable<PayloadSeriesOccupancy['materialCallouts']>[number];
+type DetailRow = NonNullable<PayloadSeriesOccupancy['designDetails']>[number];
+
+function mapMaterials(rows: CalloutRow[]): SeriesMaterial[] {
+  return rows
+    .map((m, i): SeriesMaterial | null => {
+      const img = mediaUrl(m.image);
+      return img ? { key: `m-${i}`, name: m.label ?? '', sub: m.sub ?? '', img } : null;
+    })
+    .filter((x): x is SeriesMaterial => x !== null);
+}
+
+function mapDetails(rows: DetailRow[]): SeriesDetail[] {
+  return rows
+    .map((d, i): SeriesDetail | null => {
+      const img = mediaUrl(d.image);
+      return img ? { key: `d-${i}`, label: d.label ?? '', desc: d.description ?? '', img, span: d.span ?? 100 } : null;
+    })
+    .filter((x): x is SeriesDetail => x !== null);
+}
+
 /**
- * Returns the detail-page content for a design slug, mapped from Payload into
- * the shared shape (rich intro/materials/story/details render when those CMS
- * fields are populated). Returns null when the design doesn't exist (→ notFound()).
+ * Resolves the /bedroom-set/{occupancy}/{series} page. Overlays the published
+ * combo doc onto the design base (blank ⇒ inherit). Products are the combo's
+ * curated list only (empty for un-authored combos). Returns `differentiated`
+ * (drives canonical/index) alongside the rendered content. Null when the design
+ * doesn't exist (→ notFound()). Spec: docs/superpowers/specs/2026-06-25-…-design.md.
  */
-export async function getSeriesHubContent(
-  slug: string,
-  ageFilter?: string,
-): Promise<SeriesHubContent | null> {
-  const [design, productsPage] = await Promise.all([
-    fetchDesign(slug),
-    fetchProducts({ design: slug, page: 1 }),
-  ]);
+export async function getSeriesOccupancyContent(
+  occupancy: string,
+  series: string,
+): Promise<OccupancyContentResult | null> {
+  const [design, combo] = await Promise.all([fetchDesign(series), fetchSeriesOccupancy(occupancy, series)]);
   if (!design) return null;
 
-  // Per-occupancy hero: when the URL carries an age (/bedroom-set/[age]/[design]),
-  // use that occupancy's card (occupancyMedia — the same image the
-  // /bedroom-set/[occupancy] hub tile shows) so /baby/X and /teen/X differ.
-  // Falls back to the generic heroMedia when the occupancy has no card.
-  const occHero = ageFilter
-    ? design.occupancyMedia?.find((o) => o.occupancy === ageFilter)?.image ?? null
-    : null;
-  const heroMedia = occHero ?? design.heroMedia ?? design.sliderMedia ?? design.gallery?.[0] ?? null;
-  const ageTitle = ageFilter ? OCCUPANCY_TITLE[ageFilter] : undefined;
+  const ageTitle = OCCUPANCY_TITLE[occupancy];
 
-  const items: SeriesProductCard[] = productsPage.docs.map((p) => {
+  // Products: curated from the published combo only (manual curation; no auto-tag).
+  const items: SeriesProductCard[] = (combo?.products ?? []).map((p) => {
     const { price, originalPrice } = priceString(p);
     return {
       key: String(p.id),
@@ -129,55 +150,64 @@ export async function getSeriesHubContent(
     };
   });
 
-  const siblings: SeriesSibling[] = (design.occupancies ?? [])
-    .filter((o) => o !== ageFilter)
-    .map((o) => ({
-      key: o,
-      kicker: OCCUPANCY_TITLE[o] ?? 'سرویس خواب',
-      name: design.name,
-      img: null,
-      href: `/bedroom-set/${o}/${design.slug}`,
-    }));
+  // Hero: combo override → design chain.
+  const heroMedia = combo?.heroMedia ?? design.heroMedia ?? design.sliderMedia ?? design.gallery?.[0] ?? null;
 
-  const materialItems: SeriesMaterial[] = (design.materialCallouts ?? [])
-    .map((m, i): SeriesMaterial | null => {
-      const img = mediaUrl(m.image);
-      return img ? { key: `m-${i}`, name: m.label ?? '', sub: m.sub ?? '', img } : null;
-    })
-    .filter((x): x is SeriesMaterial => x !== null);
-  const materials = materialItems.length
-    ? { heading: 'متریال های استفاده شده', items: materialItems }
-    : null;
+  // Materials / details: combo override if non-empty, else the design's.
+  const materialItems = mapMaterials(
+    combo?.materialCallouts?.length ? combo.materialCallouts : (design.materialCallouts ?? []),
+  );
+  const materials = materialItems.length ? { heading: 'متریال های استفاده شده', items: materialItems } : null;
 
-  const detailItems: SeriesDetail[] = (design.designDetails ?? [])
-    .map((d, i): SeriesDetail | null => {
-      const img = mediaUrl(d.image);
-      return img
-        ? { key: `d-${i}`, label: d.label ?? '', desc: d.description ?? '', img, span: d.span ?? 100 }
-        : null;
-    })
-    .filter((x): x is SeriesDetail => x !== null);
-  const details = detailItems.length
-    ? { heading: 'جزئیات طراحی', items: detailItems }
-    : null;
+  const detailItems = mapDetails(combo?.designDetails?.length ? combo.designDetails : (design.designDetails ?? []));
+  const details = detailItems.length ? { heading: 'جزئیات طراحی', items: detailItems } : null;
 
-  const introImg = mediaUrl(design.introMedia);
+  // Intro: combo override else design.
+  const introMedia = combo?.introMedia ?? design.introMedia;
+  const introImg = mediaUrl(introMedia);
   const intro: SeriesEditorialCard = introImg
-    ? { title: design.introTitle ?? ageTitle ?? design.name, body: design.introBody ?? '', href: '#', img: introImg }
+    ? {
+        // `||` not `??`: a blank («») CMS field should inherit the design's,
+        // per the spec's "empty ⇒ inherit" rule (?? would treat «» as set).
+        title: combo?.introTitle || design.introTitle || ageTitle || design.name,
+        body: combo?.introBody || design.introBody || '',
+        href: '#',
+        img: introImg,
+      }
     : null;
 
-  const storyImg = mediaUrl(design.storyMedia);
+  // Story: combo override else design. `||` so a blank combo field inherits.
+  const storyBody = combo?.storyBody || design.storyBody;
+  const storyMedia = combo?.storyMedia ?? design.storyMedia;
+  const storyImg = mediaUrl(storyMedia);
   const story: SeriesEditorialCard =
-    storyImg && design.storyBody
-      ? { title: 'داستان طراحی', body: design.storyBody, href: '#', img: storyImg }
-      : null;
+    storyImg && storyBody ? { title: 'داستان طراحی', body: storyBody, href: '#', img: storyImg } : null;
 
-  return {
+  // Siblings: authored cards (with media) win; else auto-generate from the design's
+  // other occupancies (today's behavior).
+  const siblings: SeriesSibling[] = combo?.siblings?.length
+    ? combo.siblings.map((s, i) => ({
+        key: `s-${i}`,
+        kicker: s.kicker ?? '',
+        name: s.name || design.name,
+        img: mediaUrl(s.image) ?? null,
+        href: s.link || '#',
+      }))
+    : (design.occupancies ?? [])
+        .filter((o) => o !== occupancy)
+        .map((o) => ({
+          key: o,
+          kicker: OCCUPANCY_TITLE[o] ?? 'سرویس خواب',
+          name: design.name,
+          img: null,
+          href: `/bedroom-set/${o}/${design.slug}`,
+        }));
+
+  const subtitle = combo?.subtitle || design.tagline || (ageTitle ? `${ageTitle} ${design.name}` : null);
+
+  const content: SeriesHubContent = {
     hero: { img: mediaUrl(heroMedia), alt: design.name },
-    title: {
-      name: design.name,
-      subtitle: design.tagline ?? (ageTitle ? `${ageTitle} ${design.name}` : null),
-    },
+    title: { name: design.name, subtitle },
     intro,
     collection: { heading: 'قطعات سرویس', items },
     materials,
@@ -186,4 +216,22 @@ export async function getSeriesHubContent(
     featuredSibling: siblings[0] ?? null,
     siblings: siblings.slice(1),
   };
+
+  const differentiated = Boolean(combo) && (items.length > 0 || hasComboOverride(combo!));
+  return { content, differentiated };
+}
+
+function hasComboOverride(combo: PayloadSeriesOccupancy): boolean {
+  return Boolean(
+    combo.heroMedia ||
+      combo.subtitle ||
+      combo.introTitle ||
+      combo.introBody ||
+      combo.introMedia ||
+      combo.storyBody ||
+      combo.storyMedia ||
+      combo.materialCallouts?.length ||
+      combo.designDetails?.length ||
+      combo.siblings?.length,
+  );
 }
