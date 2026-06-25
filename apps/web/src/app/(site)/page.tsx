@@ -128,6 +128,7 @@ export default async function HomePage() {
       <HomeBrandStatement
         statement={home?.brand_statement ?? null}
         aboutMedia={home?.about_media ?? null}
+        backgroundTexture={home?.about_background?.url ?? undefined}
       />
       <HomeJournalRows articles={journalArticles} />
       <HomeShowroomsTeaser showrooms={showroomCards} />

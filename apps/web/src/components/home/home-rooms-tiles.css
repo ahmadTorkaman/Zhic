@@ -4,9 +4,9 @@
 /* Mirror the page Container so the bands share the same gutter as every other
    section (1440 max-width + 1rem / 1.5rem inline padding) — no edge-sticking,
    and a real margin on mobile (which previously had none). */
-.zh-rooms { background: var(--color-ivory); padding-block: var(--space-7); padding-inline: 1rem; }
+.zh-rooms { background: var(--color-ivory); padding-top: var(--space-5); padding-bottom: calc(var(--space-7) + var(--space-3)); padding-inline: 1rem; }
 @media (min-width: 768px) {
-  .zh-rooms { padding-block: var(--space-9); }
+  .zh-rooms { padding-top: var(--space-7); padding-bottom: var(--space-9); }
 }
 @media (min-width: 1024px) {
   .zh-rooms { padding-inline: 1.5rem; }
@@ -99,9 +99,12 @@
 .zh-rooms__bar {
   position: absolute;
   z-index: 0;
-  inset-inline-start: -0.25em;
+  /* Stuck to the viewport's inline-start (right in RTL) edge — -1rem cancels
+     the section's 1rem inline padding so the ribbon bleeds to the screen edge —
+     and much shorter than before (was clamp(150px,22vw,280px)). */
+  inset-inline-start: -1rem;
   bottom: 0.02em;
-  width: clamp(150px, 22vw, 280px);
+  width: clamp(56px, 13vw, 96px);
   height: 0.62em;
   background: color-mix(in srgb, var(--color-forest) 88%, transparent);
   clip-path: polygon(0 0, 100% 0, 100% 100%, 13% 100%);

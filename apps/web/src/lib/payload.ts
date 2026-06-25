@@ -192,6 +192,7 @@ export type PayloadHome = {
   heroSlides?: PayloadHomeSlide[] | null;
   brand_statement?: LexicalRoot | null;
   about_media?: PayloadMedia | null;
+  about_background?: PayloadMedia | null;
   featured_designs?: PayloadDesign[] | null;
   journal_teaser_heading?: string | null;
   inquiry_cta_heading?: string | null;

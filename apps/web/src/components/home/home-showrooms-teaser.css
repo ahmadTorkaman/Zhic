@@ -30,9 +30,9 @@
 /* Every row carries the motif: its visually rightmost card (3n+1 in RTL flow)
    curves top-right, its leftmost (3n, or the final card of a partial row)
    curves bottom-left. */
-.zh-st__card:nth-child(3n + 1) { border-top-right-radius: 36px; }
+.zh-st__card:nth-child(3n + 1) { border-top-right-radius: 20px; }
 .zh-st__card:nth-child(3n),
-.zh-st__card:last-child { border-bottom-left-radius: 36px; }
+.zh-st__card:last-child { border-bottom-left-radius: 20px; }
 .zh-st__img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .zh-st__img--ph { background: var(--gradient-glow-caramel); }
 /* اراک illustration ships with dark scanned corners — a slight zoom crops
@@ -58,8 +58,9 @@
   text-align: center;
   padding-inline: 0.5rem;
   color: var(--color-ivory);
-  /* Kaveh city label = 28.27px (node 19:218-220); scales up on wider screens. */
-  font-size: clamp(1.767rem, 7vw, 2.5rem);
+  /* Kaveh city label = 28.27px (node 19:218-220); dialled down per operator
+     2026-06-25 — was clamp(1.767rem, 7vw, 2.5rem). */
+  font-size: clamp(1.4rem, 5.8vw, 2.1rem);
   font-weight: 900;
   line-height: 1.2;
   /* Slight shadow backdrop so the ivory name lifts off the photo. */

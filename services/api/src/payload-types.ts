@@ -1689,6 +1689,7 @@ export interface Home {
    * اختیاری — اگر خالی باشد، بخش درباره فقط متن نمایش می‌دهد.
    */
   about_media?: (number | null) | Media;
+  about_background?: (number | null) | Media;
   featured_designs?: (number | Design)[] | null;
   journal_teaser_heading?: string | null;
   inquiry_cta_heading?: string | null;
@@ -2020,6 +2021,7 @@ export interface HomeSelect<T extends boolean = true> {
       };
   brand_statement?: T;
   about_media?: T;
+  about_background?: T;
   featured_designs?: T;
   journal_teaser_heading?: T;
   inquiry_cta_heading?: T;

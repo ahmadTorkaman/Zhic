@@ -1177,6 +1177,12 @@ care, shipping, atelier). Singletons for `home`, `about`, `contact`,
 > **Note (2026-06-05):** the implemented `home` **global** (services/api/src/globals/Home.ts)
 > additionally carries `about_media` (upload → media, optional) — the photo for the
 > homepage «از همدان، برای ایران» section. When empty the section renders text-only.
+>
+> **Note (2026-06-25):** the `home` global also carries `about_background` (upload → media,
+> optional) — the faint full-bleed texture laid over the forest «درباره‌ی ژیک» layer at
+> ~20% opacity (see `opacity-20` in HomeBrandStatement.tsx). When empty the storefront falls
+> back to the bundled celine carved-walnut default (`/hero-details/celine.webp`).
+> Migration `20260625_120000_add_home_about_background`.
 
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |

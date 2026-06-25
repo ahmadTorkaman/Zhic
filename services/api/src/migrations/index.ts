@@ -22,6 +22,7 @@ import * as migration_20260618_120000_create_journal_global from './20260618_120
 import * as migration_20260618_130000_create_bedroom_furniture_global from './20260618_130000_create_bedroom_furniture_global';
 import * as migration_20260621_120000_add_bedroom_set_occupancy_heroes from './20260621_120000_add_bedroom_set_occupancy_heroes';
 import * as migration_20260625_120000_add_bedroom_set_occupancy_hubs from './20260625_120000_add_bedroom_set_occupancy_hubs';
+import * as migration_20260625_120000_add_home_about_background from './20260625_120000_add_home_about_background';
 
 export const migrations = [
   {
@@ -143,5 +144,10 @@ export const migrations = [
     up: migration_20260625_120000_add_bedroom_set_occupancy_hubs.up,
     down: migration_20260625_120000_add_bedroom_set_occupancy_hubs.down,
     name: '20260625_120000_add_bedroom_set_occupancy_hubs'
+  },
+  {
+    up: migration_20260625_120000_add_home_about_background.up,
+    down: migration_20260625_120000_add_home_about_background.down,
+    name: '20260625_120000_add_home_about_background'
   },
 ];
