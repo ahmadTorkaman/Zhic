@@ -237,6 +237,16 @@ export const Products: CollectionConfig = {
       label: 'گالری',
     },
     {
+      name: 'collectionTileImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'تصویر کارت قطعات سرویس',
+      admin: {
+        description:
+          'تصویر اختصاصی این محصول در ماژول «قطعات سرویس» صفحه‌ی سرویس خواب. مستقل از گالری است و در صفحه‌ی محصول نمایش داده نمی‌شود. اگر خالی بماند، اولین تصویر گالری استفاده می‌شود.',
+      },
+    },
+    {
       name: 'specs',
       type: 'richText',
       label: 'مشخصات فنی',

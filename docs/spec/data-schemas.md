@@ -347,6 +347,7 @@ The product catalog. One product is one model. Variants live in §13.
 | `weightKg` | number | no | |
 | `galleryMediaIds` | relation[] → `media` | yes | min 3 stills, ordered |
 | `coverMediaId` | relation → `media` | yes | inherits from gallery[0] if unset |
+| `collectionTileImage` | upload → `media` | no | Dedicated tile image for the «قطعات سرویس» seriesCollection module on `/bedroom-set/{occupancy}/{slug}`. Separate from `gallery` — NOT shown on the product page. Falls back to `gallery[0]` if empty. (migration `20260626_140000`) |
 | `gifMediaIds` | relation[] → `media` | no | atelier loops, fabric drape |
 | `videoMediaIds` | relation[] → `media` | no | mp4/webm only |
 | `model3d` | group | no | WebXR / 3D viewer config — see §12.1 |

@@ -159,7 +159,7 @@ export async function getSeriesOccupancyContent(
     return {
       key: String(p.id),
       name: stripDesignName(p.name, design.name),
-      img: mediaUrl(p.gallery?.[0]) ?? null,
+      img: mediaUrl(p.collectionTileImage ?? p.gallery?.[0]) ?? null,
       price,
       originalPrice,
       href: `/products/${p.slug}`,

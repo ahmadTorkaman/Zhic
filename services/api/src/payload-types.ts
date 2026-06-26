@@ -380,6 +380,7 @@ export interface Product {
     depth?: number | null;
   };
   gallery?: (number | Media)[] | null;
+  collectionTileImage?: (number | null) | Media;
   specs?: {
     root: {
       type: string;
@@ -1362,6 +1363,7 @@ export interface ProductsSelect<T extends boolean = true> {
         depth?: T;
       };
   gallery?: T;
+  collectionTileImage?: T;
   specs?: T;
   relatedProducts?: T;
   pairsWithProducts?: T;

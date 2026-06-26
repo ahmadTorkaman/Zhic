@@ -324,6 +324,9 @@ export type PayloadProduct = {
   occupancies?: Occupancy[] | null;
   dimensions?: { width?: number; height?: number; depth?: number } | null;
   gallery?: PayloadMedia[] | null;
+  /** Dedicated tile image for the «قطعات سرویس» seriesCollection module — separate
+   *  from `gallery` (not shown on the product page). Falls back to gallery[0]. */
+  collectionTileImage?: PayloadMedia | null;
   inquiryEnabled?: boolean | null;
   featured?: boolean | null;
   featuredOrder?: number | null;
