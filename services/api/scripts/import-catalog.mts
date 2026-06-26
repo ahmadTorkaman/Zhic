@@ -706,7 +706,7 @@ async function runWipe(client: pg.Client) {
     const variants = await client.query(`DELETE FROM product_variants RETURNING id`)
     console.log(`  ✓ Deleted ${variants.rowCount} product_variants (+ axes via CASCADE)`)
 
-    // 2. Products. CASCADE deletes products_rels (gallery refs + categoryIds rels).
+    // 2. Products. CASCADE deletes products_rels (gallery refs + categories rels).
     const products = await client.query(`DELETE FROM products RETURNING id`)
     console.log(`  ✓ Deleted ${products.rowCount} products (+ rels via CASCADE)`)
 
@@ -1481,7 +1481,7 @@ async function runProducts(client: pg.Client) {
       // Link category via products_rels
       await client.query(
         `INSERT INTO products_rels ("order", parent_id, path, categories_id)
-         VALUES (1, $1, 'categoryIds', $2)`,
+         VALUES (1, $1, 'categories', $2)`,
         [productId, categoryId],
       )
 
@@ -1759,7 +1759,7 @@ const PIECE_TYPE_PERSIAN: Record<string, string> = {
   'file': 'فایل',
   'wardrobe': 'کمد',
   'sliding-wardrobe': 'کمد ریلی',
-  'combined-wardrobe': 'کمد ترکیبی',
+  'combined-wardrobe': 'کمد تلفیقی',
   'display-cabinet': 'ویترین',
   'console': 'کنسول',
   'standing-mirror': 'آینه قدی',

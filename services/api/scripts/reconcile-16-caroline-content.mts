@@ -73,8 +73,8 @@ async function main() {
   }
 
   console.log('\nD2) Tags — modern x16; storage x5')
-  for (const p of CAROLINE) if (!(await relExists(p.id, 'tagIds', 'tags_id', TAG_MODERN))) { if (APPLY) { await insRel(p.id, 'tagIds', 'tags_id', TAG_MODERN); inserts++ } }
-  for (const id of STORAGE_PRODUCTS) if (!(await relExists(id, 'tagIds', 'tags_id', TAG_STORAGE))) { if (APPLY) { await insRel(id, 'tagIds', 'tags_id', TAG_STORAGE); inserts++ } }
+  for (const p of CAROLINE) if (!(await relExists(p.id, 'tags', 'tags_id', TAG_MODERN))) { if (APPLY) { await insRel(p.id, 'tags', 'tags_id', TAG_MODERN); inserts++ } }
+  for (const id of STORAGE_PRODUCTS) if (!(await relExists(id, 'tags', 'tags_id', TAG_STORAGE))) { if (APPLY) { await insRel(id, 'tags', 'tags_id', TAG_STORAGE); inserts++ } }
   console.log('   ensured')
 
   console.log('\nD4) seo.ogImage <- first gallery image')
@@ -90,8 +90,8 @@ async function main() {
 
   console.log('\nD3) Cross-sell — pairsWith + related')
   const pe: [number, number][] = []; for (const [a, b] of PAIRS) pe.push([a, b], [b, a])
-  for (const [a, b] of pe) if (!(await relExists(a, 'pairsWithProductIds', 'products_id', b))) { if (APPLY) { await insRel(a, 'pairsWithProductIds', 'products_id', b); inserts++ } }
-  for (const p of CAROLINE) { const rel = CAROLINE.filter((o) => o.id !== p.id).sort((x, y) => x.prio - y.prio).slice(0, RELATED_CAP); for (const r of rel) if (!(await relExists(p.id, 'relatedProductIds', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProductIds', 'products_id', r.id); inserts++ } } }
+  for (const [a, b] of pe) if (!(await relExists(a, 'pairsWithProducts', 'products_id', b))) { if (APPLY) { await insRel(a, 'pairsWithProducts', 'products_id', b); inserts++ } }
+  for (const p of CAROLINE) { const rel = CAROLINE.filter((o) => o.id !== p.id).sort((x, y) => x.prio - y.prio).slice(0, RELATED_CAP); for (const r of rel) if (!(await relExists(p.id, 'relatedProducts', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProducts', 'products_id', r.id); inserts++ } } }
   console.log(`   ${PAIRS.length} pairs + related(${RELATED_CAP}) for all ${CAROLINE.length}`)
 
   console.log('\nD5) caroline-bed placeholders (90->single-100 #410; 140 & 180->double-160 #407)')

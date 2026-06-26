@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { publishedContentAccess, isEditorField } from '../lib/access'
+import { statusGatedContentAccess, isEditorField } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
 
 const OCCUPANCY_OPTIONS = [
@@ -23,7 +23,7 @@ export const SeriesOccupancies: CollectionConfig = {
     defaultColumns: ['title', 'design', 'occupancy', 'status'],
     group: 'کاتالوگ',
   },
-  access: publishedContentAccess,
+  access: statusGatedContentAccess,
   hooks: {
     beforeValidate: [
       async ({ data, req, originalDoc }) => {

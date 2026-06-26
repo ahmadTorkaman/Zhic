@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import { slugify } from '../lib/slugify'
-import { publishedContentAccess, isEditorField } from '../lib/access'
+import { statusGatedContentAccess, isEditorField } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
 import {
   PullQuoteBlock,
@@ -54,7 +54,7 @@ export const Articles: CollectionConfig = {
     defaultColumns: ['title', 'category', 'status', 'publishedAt'],
     group: 'ژورنال',
   },
-  access: publishedContentAccess,
+  access: statusGatedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -143,7 +143,7 @@ export const Articles: CollectionConfig = {
       label: 'دسته‌بندی',
     },
     {
-      name: 'tagIds',
+      name: 'tags',
       type: 'relationship',
       relationTo: 'tags',
       hasMany: true,

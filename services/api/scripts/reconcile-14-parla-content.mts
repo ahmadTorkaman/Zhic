@@ -14,7 +14,7 @@
  *        (Pure data — products_rels rows; no schema change.)
  *   D3 - cross-sell: pairsWith (bed↔nightstand, bunk-bed↔bed-guard, vanity↔vanity-chair,
  *        vanity↔console-mirror, study-desk↔study-chair, study-desk↔bookcase) +
- *        relatedProductIds same-series (priority-ordered, cap 6).
+ *        relatedProducts same-series (priority-ordered, cap 6).
  *   D4 - seo.ogImage from first gallery image (skips the 5 image-less drafts).
  *   D5 - parla-bed (#506) placeholders for its 3 finish-less image-less variants:
  *        size 90 → 100-cream (#826); sizes 140 & 180 → 160-cream (#823). TEMP.
@@ -94,8 +94,8 @@ async function main() {
   }
 
   console.log('\nD2) Tags — modern -> all 19; storage -> 8 closed-storage pieces')
-  for (const p of PARLA) if (!(await relExists(p.id, 'tagIds', 'tags_id', TAG_MODERN))) { console.log(`   +modern  ${p.slug}`); if (APPLY) { await insRel(p.id, 'tagIds', 'tags_id', TAG_MODERN); inserts++ } }
-  for (const id of STORAGE_PRODUCTS) if (!(await relExists(id, 'tagIds', 'tags_id', TAG_STORAGE))) { console.log(`   +storage #${id}`); if (APPLY) { await insRel(id, 'tagIds', 'tags_id', TAG_STORAGE); inserts++ } }
+  for (const p of PARLA) if (!(await relExists(p.id, 'tags', 'tags_id', TAG_MODERN))) { console.log(`   +modern  ${p.slug}`); if (APPLY) { await insRel(p.id, 'tags', 'tags_id', TAG_MODERN); inserts++ } }
+  for (const id of STORAGE_PRODUCTS) if (!(await relExists(id, 'tags', 'tags_id', TAG_STORAGE))) { console.log(`   +storage #${id}`); if (APPLY) { await insRel(id, 'tags', 'tags_id', TAG_STORAGE); inserts++ } }
 
   console.log('\nD4) seo.ogImage <- first gallery image (only when empty)')
   for (const p of PARLA) {
@@ -108,13 +108,13 @@ async function main() {
     if (APPLY) { await client.query(`UPDATE products SET seo_og_image_id=$1, updated_at=NOW() WHERE id=$2`, [mid, p.id]); updates++ }
   }
 
-  console.log('\nD3) Cross-sell — pairsWith + relatedProductIds (same-series)')
+  console.log('\nD3) Cross-sell — pairsWith + relatedProducts (same-series)')
   const pairExpand: [number, number][] = []
   for (const [a, b] of PAIRS) pairExpand.push([a, b], [b, a])
-  for (const [a, b] of pairExpand) if (!(await relExists(a, 'pairsWithProductIds', 'products_id', b))) { console.log(`   pairsWith ${a} -> ${b}`); if (APPLY) { await insRel(a, 'pairsWithProductIds', 'products_id', b); inserts++ } }
+  for (const [a, b] of pairExpand) if (!(await relExists(a, 'pairsWithProducts', 'products_id', b))) { console.log(`   pairsWith ${a} -> ${b}`); if (APPLY) { await insRel(a, 'pairsWithProducts', 'products_id', b); inserts++ } }
   for (const p of PARLA) {
     const related = PARLA.filter((o) => o.id !== p.id).sort((x, y) => x.prio - y.prio).slice(0, RELATED_CAP)
-    for (const r of related) if (!(await relExists(p.id, 'relatedProductIds', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProductIds', 'products_id', r.id); inserts++ } }
+    for (const r of related) if (!(await relExists(p.id, 'relatedProducts', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProducts', 'products_id', r.id); inserts++ } }
   }
   console.log(`   wired related (top ${RELATED_CAP} marquee) for all ${PARLA.length}`)
 

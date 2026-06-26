@@ -85,7 +85,7 @@ describe('fetchDesignsForCategory (two-step join)', () => {
     expect(out).toHaveLength(2);
     expect(out.map((d) => d.slug).sort()).toEqual(['baloot', 'gandom']);
     const [step1Url] = mockPayloadFetch.mock.calls[0]!;
-    expect(step1Url).toContain('where[categoryIds.slug][equals]=wall-mirror');
+    expect(step1Url).toContain('where[categories.slug][equals]=wall-mirror');
     const [step2Url] = mockPayloadFetch.mock.calls[1]!;
     expect(step2Url).toContain('where[id][in]=d1%2Cd2');
   });

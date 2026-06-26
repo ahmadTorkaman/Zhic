@@ -63,8 +63,8 @@ async function main() {
       const r = await client.query<{ status: string }>(`SELECT status FROM products WHERE id=$1`, [id])
       if (r.rows[0]?.status === 'draft') { console.log(`  publish #${id}`); if (APPLY) { await client.query(`UPDATE products SET status='published', published_at=COALESCE(published_at,NOW()), updated_at=NOW() WHERE id=$1`, [id]); updates++ } }
     }
-    for (const p of prods) if (APPLY && await insRel(p.id, 'tagIds', 'tags_id', TAG_MODERN)) inserts++
-    for (const id of d.storage) if (APPLY && await insRel(id, 'tagIds', 'tags_id', TAG_STORAGE)) inserts++
+    for (const p of prods) if (APPLY && await insRel(p.id, 'tags', 'tags_id', TAG_MODERN)) inserts++
+    for (const id of d.storage) if (APPLY && await insRel(id, 'tags', 'tags_id', TAG_STORAGE)) inserts++
     for (const p of prods) {
       const cur = await client.query<{ x: number | null }>(`SELECT seo_og_image_id x FROM products WHERE id=$1`, [p.id])
       if (cur.rows[0]?.x != null) continue
@@ -72,9 +72,9 @@ async function main() {
       if (g.rows[0]?.media_id && APPLY) { await client.query(`UPDATE products SET seo_og_image_id=$1, updated_at=NOW() WHERE id=$2`, [g.rows[0].media_id, p.id]); updates++ }
     }
     const pe: [number, number][] = []; for (const [a, b] of d.pairs) pe.push([a, b], [b, a])
-    for (const [a, b] of pe) if (APPLY && await insRel(a, 'pairsWithProductIds', 'products_id', b)) inserts++
+    for (const [a, b] of pe) if (APPLY && await insRel(a, 'pairsWithProducts', 'products_id', b)) inserts++
     const ranked = [...prods].sort((x, y) => (PT_PRIO[x.piece_type] ?? 99) - (PT_PRIO[y.piece_type] ?? 99))
-    for (const p of prods) { const rel = ranked.filter((o) => o.id !== p.id).slice(0, RELATED_CAP); for (const r of rel) if (APPLY && await insRel(p.id, 'relatedProductIds', 'products_id', r.id)) inserts++ }
+    for (const p of prods) { const rel = ranked.filter((o) => o.id !== p.id).slice(0, RELATED_CAP); for (const r of rel) if (APPLY && await insRel(p.id, 'relatedProducts', 'products_id', r.id)) inserts++ }
     for (const [vid, mid] of d.bedFix) {
       const r = await client.query<{ image_id: number | null }>(`SELECT image_id FROM product_variants WHERE id=$1`, [vid])
       if (r.rows[0] && r.rows[0].image_id == null) { console.log(`  bedFix variant #${vid} <- media #${mid}`); if (APPLY) { await client.query(`UPDATE product_variants SET image_id=$1, updated_at=NOW() WHERE id=$2`, [mid, vid]); updates++ } }

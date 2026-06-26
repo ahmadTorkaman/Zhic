@@ -28,7 +28,7 @@ export const Categories: CollectionConfig = {
         if (!data) return data
         // Only enforce on create, OR on update when `parent` is being
         // explicitly set. Partial updates that don't touch `parent`
-        // (e.g., patching `allowed_axes` on a leaf) must not be rejected.
+        // (e.g., patching `allowedAxes` on a leaf) must not be rejected.
         const isParentBeingSet = operation === 'create' || Object.hasOwn(data, 'parent')
         if (isParentBeingSet && data.parent == null && !data.cover) {
           throw new ValidationError({
@@ -80,7 +80,7 @@ export const Categories: CollectionConfig = {
       admin: { description: '۲ تا ۳ پاراگراف کوتاه پس از hero. متن اصلی SEO صفحه. حدود ۱۰۰ کلمه.' },
     },
     {
-      name: 'allowed_axes',
+      name: 'allowedAxes',
       type: 'text',
       hasMany: true,
       label: 'محورهای واریانت مجاز',
@@ -95,7 +95,7 @@ export const Categories: CollectionConfig = {
       admin: { description: 'از xlsx: یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.' },
     },
     {
-      name: 'axis_filter',
+      name: 'axisFilter',
       type: 'json',
       label: 'فیلتر محور خودکار (facet)',
       admin: {

@@ -359,14 +359,14 @@ try {
         created++
       }
 
-      // Sync categoryIds rels: delete old, insert new
+      // Sync categories rels: delete old, insert new
       await client.query(
-        `DELETE FROM products_rels WHERE parent_id = $1 AND path = 'categoryIds'`,
+        `DELETE FROM products_rels WHERE parent_id = $1 AND path = 'categories'`,
         [productId],
       )
       for (let i = 0; i < catIds.length; i++) {
         await client.query(
-          `INSERT INTO products_rels ("order", parent_id, path, categories_id) VALUES ($1, $2, 'categoryIds', $3)`,
+          `INSERT INTO products_rels ("order", parent_id, path, categories_id) VALUES ($1, $2, 'categories', $3)`,
           [i + 1, productId, catIds[i]],
         )
       }

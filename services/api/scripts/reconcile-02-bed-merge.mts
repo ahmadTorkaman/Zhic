@@ -11,7 +11,7 @@
  *   - absorb the other record's variants, then delete it
  *   - product: slug→{series}-bed, name→"تخت {SeriesFa}" (strip یک‌نفره/دونفره),
  *              sku→{series}-bed, basePriceRials→min effective price,
- *              categoryIds/occupancies/gallery = union, status=published if any
+ *              categories/occupancies/gallery = union, status=published if any
  *   - variants: re-point to survivor, sku prefix →{series}-bed,
  *               priceDeltaRials = effective − newBase (prices preserved exactly)
  *
@@ -87,7 +87,7 @@ for (const [name, pair] of [...series.entries()].sort()) {
 
   const newSlug = `${name}-bed`
   const newName = stripName(survivor.name)
-  const cats = uniq([...(survivor.categoryIds ?? []), ...(absorbed?.categoryIds ?? [])])
+  const cats = uniq([...(survivor.categories ?? []), ...(absorbed?.categories ?? [])])
   const occ = uniq([...(survivor.occupancies ?? []), ...(absorbed?.occupancies ?? [])])
   const gallery = uniq([...(survivor.gallery ?? []), ...(absorbed?.gallery ?? [])])
   const statuses = [survivor.status, absorbed?.status].filter(Boolean)
@@ -126,7 +126,7 @@ for (const [name, pair] of [...series.entries()].sort()) {
         name: newName,
         sku: newSlug,
         basePriceRials: newBase,
-        categoryIds: cats,
+        categories: cats,
         occupancies: occ,
         gallery,
         status,

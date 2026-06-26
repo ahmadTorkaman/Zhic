@@ -13,7 +13,7 @@
  *   - SEO ogImage: seed from first gallery image when empty (the mirror has no
  *     gallery, so it is auto-skipped).
  *   - Cross-sell: pairsWith (bed↔nightstand, vanity↔console-mirror, desk↔bookcase)
- *     + relatedProductIds (same-series, priority-ordered).
+ *     + relatedProducts (same-series, priority-ordered).
  *   - verna-bed (#572) placeholder images: sizes 90/100 → 120's single shot,
  *     size 140 → 160's double shot (TEMP — real per-size photos pending).
  *
@@ -89,8 +89,8 @@ async function main() {
   }
 
   console.log('\n2) Tags — modern -> all 7; storage -> wardrobe/nightstand/vanity')
-  for (const p of VERNA) if (!(await relExists(p.id, 'tagIds', 'tags_id', TAG_MODERN))) { console.log(`   +modern  ${p.slug}`); if (APPLY) { await insRel(p.id, 'tagIds', 'tags_id', TAG_MODERN); inserts++ } }
-  for (const id of STORAGE_PRODUCTS) if (!(await relExists(id, 'tagIds', 'tags_id', TAG_STORAGE))) { console.log(`   +storage #${id}`); if (APPLY) { await insRel(id, 'tagIds', 'tags_id', TAG_STORAGE); inserts++ } }
+  for (const p of VERNA) if (!(await relExists(p.id, 'tags', 'tags_id', TAG_MODERN))) { console.log(`   +modern  ${p.slug}`); if (APPLY) { await insRel(p.id, 'tags', 'tags_id', TAG_MODERN); inserts++ } }
+  for (const id of STORAGE_PRODUCTS) if (!(await relExists(id, 'tags', 'tags_id', TAG_STORAGE))) { console.log(`   +storage #${id}`); if (APPLY) { await insRel(id, 'tags', 'tags_id', TAG_STORAGE); inserts++ } }
 
   console.log('\n3) seo.ogImage <- first gallery image (only when empty; mirror has none -> skipped)')
   for (const p of VERNA) {
@@ -103,13 +103,13 @@ async function main() {
     if (APPLY) { await client.query(`UPDATE products SET seo_og_image_id=$1, updated_at=NOW() WHERE id=$2`, [mid, p.id]); updates++ }
   }
 
-  console.log('\n4) Cross-sell — pairsWith + relatedProductIds (same-series)')
+  console.log('\n4) Cross-sell — pairsWith + relatedProducts (same-series)')
   const pairExpand: [number, number][] = []
   for (const [a, b] of PAIRS) pairExpand.push([a, b], [b, a])
-  for (const [a, b] of pairExpand) if (!(await relExists(a, 'pairsWithProductIds', 'products_id', b))) { console.log(`   pairsWith ${a} -> ${b}`); if (APPLY) { await insRel(a, 'pairsWithProductIds', 'products_id', b); inserts++ } }
+  for (const [a, b] of pairExpand) if (!(await relExists(a, 'pairsWithProducts', 'products_id', b))) { console.log(`   pairsWith ${a} -> ${b}`); if (APPLY) { await insRel(a, 'pairsWithProducts', 'products_id', b); inserts++ } }
   for (const p of VERNA) {
     const related = VERNA.filter((o) => o.id !== p.id).sort((x, y) => x.prio - y.prio).slice(0, RELATED_CAP)
-    for (const r of related) if (!(await relExists(p.id, 'relatedProductIds', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProductIds', 'products_id', r.id); inserts++ } }
+    for (const r of related) if (!(await relExists(p.id, 'relatedProducts', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProducts', 'products_id', r.id); inserts++ } }
     console.log(`   related ${p.slug} -> [${related.map((r) => r.slug.replace('verna-', '')).join(', ')}]`)
   }
 

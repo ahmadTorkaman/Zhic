@@ -28,9 +28,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (isOccupancySlug(slug)) {
     const fallback = OCCUPANCY_PERSIAN[slug];
     const hub = await fetchBedroomSetHub(slug);
-    const title = hub?.seoTitle || hub?.heroTitle || fallback.title;
-    const description = hub?.seoDescription || hub?.heroTagline || fallback.tagline;
-    const ogImage = mediaUrl(hub?.seoImage ?? hub?.heroImage ?? null);
+    const title = hub?.seo?.metaTitle || hub?.heroTitle || fallback.title;
+    const description = hub?.seo?.metaDescription || hub?.heroTagline || fallback.tagline;
+    const ogImage = mediaUrl(hub?.seo?.ogImage ?? hub?.heroImage ?? null);
     return {
       title,
       description,

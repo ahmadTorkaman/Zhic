@@ -57,7 +57,7 @@ if (product) {
         name: 'جک کفی تخت', slug: 'bed-jack', sku: 'bed-jack',
         design: design.id,
         occupancies: [],
-        categoryIds: cat ? [cat.id] : [],
+        categories: cat ? [cat.id] : [],
         basePriceRials: 0, availability: 'made_to_order', leadTimeDays: 56,
         warrantyYears: 5, afterSalesYears: 5, status: 'draft', inquiry_enabled: true,
       },

@@ -14,8 +14,8 @@ export function ProductIndexHero({ products }: ProductIndexHeroProps) {
   const miniCards = products.slice(1, 4);
 
   const featuredMeta = [
-    ...(featured.materialIds?.map((m) => m.name) ?? []),
-    featured.piece_type ?? '',
+    ...(featured.materials?.map((m) => m.name) ?? []),
+    featured.pieceType ?? '',
   ]
     .filter(Boolean)
     .join(' · ') || undefined;
@@ -47,8 +47,8 @@ export function ProductIndexHero({ products }: ProductIndexHeroProps) {
       <div className="flex flex-row gap-5 overflow-x-auto snap-x md:flex-col md:overflow-x-visible">
         {miniCards.map((p) => {
           const meta = [
-            ...(p.materialIds?.map((m) => m.name) ?? []),
-            p.piece_type ?? '',
+            ...(p.materials?.map((m) => m.name) ?? []),
+            p.pieceType ?? '',
           ]
             .filter(Boolean)
             .join(' · ') || undefined;

@@ -53,8 +53,8 @@ async function main() {
     if (r.rows[0]?.status === 'draft') { console.log(`  publish #${id} (price ${r.rows[0].price})`); if (APPLY) { await client.query(`UPDATE products SET status='published', published_at=COALESCE(published_at,NOW()), updated_at=NOW() WHERE id=$1`, [id]); updates++ } }
     else console.log(`  #${id} already ${r.rows[0]?.status}`)
   }
-  for (const p of prods) if (APPLY && await insRel(p.id, 'tagIds', 'tags_id', TAG_MODERN)) inserts++
-  for (const id of STORAGE_PRODUCTS) if (APPLY && await insRel(id, 'tagIds', 'tags_id', TAG_STORAGE)) inserts++
+  for (const p of prods) if (APPLY && await insRel(p.id, 'tags', 'tags_id', TAG_MODERN)) inserts++
+  for (const id of STORAGE_PRODUCTS) if (APPLY && await insRel(id, 'tags', 'tags_id', TAG_STORAGE)) inserts++
   for (const p of prods) {
     const cur = await client.query<{ x: number | null }>(`SELECT seo_og_image_id x FROM products WHERE id=$1`, [p.id])
     if (cur.rows[0]?.x != null) continue
@@ -62,7 +62,7 @@ async function main() {
     if (g.rows[0]?.media_id && APPLY) { await client.query(`UPDATE products SET seo_og_image_id=$1, updated_at=NOW() WHERE id=$2`, [g.rows[0].media_id, p.id]); updates++ }
   }
   const ranked = [...prods].sort((a, b) => (PT_PRIO[a.piece_type] ?? 99) - (PT_PRIO[b.piece_type] ?? 99))
-  for (const p of prods) { const rel = ranked.filter((o) => o.id !== p.id).slice(0, RELATED_CAP); for (const r of rel) if (APPLY && await insRel(p.id, 'relatedProductIds', 'products_id', r.id)) inserts++ }
+  for (const p of prods) { const rel = ranked.filter((o) => o.id !== p.id).slice(0, RELATED_CAP); for (const r of rel) if (APPLY && await insRel(p.id, 'relatedProducts', 'products_id', r.id)) inserts++ }
   console.log(`\n=== ${APPLY ? `applied: ${inserts} rels, ${updates} updates (published ${PUBLISH.length})` : 'dry-run — re-run with --apply'} ===\n`)
   await client.end()
 }

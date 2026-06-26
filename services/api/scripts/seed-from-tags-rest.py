@@ -202,7 +202,7 @@ def main():
                 'slug': slug, 'sku': slug, 'design': design['id'],
                 'piece_type': base.get('piece_type','mirror'),
                 'occupancies': base.get('occupancies',[]),
-                'categoryIds': base.get('categoryIds',[]),
+                'categories': base.get('categories',[]),
                 'basePriceRials': base.get('basePriceRials',0),
                 'availability': base.get('availability','in_stock'),
                 'status': 'published', 'gallery': gimgs}

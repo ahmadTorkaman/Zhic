@@ -128,7 +128,7 @@ export async function getJournalContent(): Promise<JournalContent> {
   };
 }
 
-export function mapArticle(a: PayloadArticle, key: string): JournalArticle {
+function mapArticle(a: PayloadArticle, key: string): JournalArticle {
   return {
     key,
     title: a.title,

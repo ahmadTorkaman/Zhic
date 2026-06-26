@@ -57,6 +57,27 @@ describe('getSeriesOccupancyContent — inheritance + curation', () => {
     expect(res!.content.collection.items[0]).toMatchObject({ name: 'تخت ۱۰۰', href: '/products/bed-100', img: '/media/b.jpg' });
   });
 
+  it('strips the design name from each piece caption in the collection', async () => {
+    mockFetchSeriesOccupancy.mockResolvedValueOnce({
+      id: 1,
+      occupancy: 'teen',
+      products: [
+        // suffix case: «تخت کارولین» → «تخت»
+        { id: 11, name: 'تخت کارولین', slug: 'caroline-bed', basePriceRials: 120000000 },
+        // mid-name case: design name before a parenthetical qualifier
+        { id: 12, name: 'تخت نوزاد دومنظوره کارولین (نوجوان)', slug: 'caroline-convertible-teen', basePriceRials: 120000000 },
+        // no design name in the piece → left untouched
+        { id: 13, name: 'تخت ۱۰۰', slug: 'bed-100', basePriceRials: 120000000 },
+      ],
+    });
+    const res = await getSeriesOccupancyContent('teen', 'caroline');
+    expect(res!.content.collection.items.map((i) => i.name)).toEqual([
+      'تخت',
+      'تخت نوزاد دومنظوره (نوجوان)',
+      'تخت ۱۰۰',
+    ]);
+  });
+
   it('combo override wins over the design (subtitle + materials)', async () => {
     mockFetchSeriesOccupancy.mockResolvedValueOnce({
       id: 1,

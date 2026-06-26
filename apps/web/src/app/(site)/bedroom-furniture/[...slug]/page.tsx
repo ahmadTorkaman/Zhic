@@ -194,18 +194,18 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   // Pure leaf → has products, no children.
   // Hybrid → has children AND has own products. Renders the narrow-down rail
   //          above the leaf-style grid.
-  // Facet → category has axis_filter (Phase 1 schema). Auto-narrows the product
+  // Facet → category has axisFilter (Phase 1 schema). Auto-narrows the product
   //          query AND surfaces a scope indicator + locked-axis tag. Renders
   //          with leaf chrome.
   const childCats = await fetchChildCategories(category.id);
   const hasChildren = childCats.length > 0;
-  const isFacet = category.axis_filter != null && typeof category.axis_filter === 'object';
+  const isFacet = category.axisFilter != null && typeof category.axisFilter === 'object';
 
   let facetProductIds: Array<string | number> | undefined;
   if (isFacet) {
     facetProductIds = await fetchProductIdsByAxis(
-      category.axis_filter!.axis,
-      category.axis_filter!.value,
+      category.axisFilter!.axis,
+      category.axisFilter!.value,
     );
     // empty array → narrows to zero results (correct behavior; better than
     // silently falling back to the unfiltered set).

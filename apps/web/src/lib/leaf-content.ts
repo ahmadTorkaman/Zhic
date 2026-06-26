@@ -93,7 +93,7 @@ export async function getLeafContent(slug: string): Promise<LeafContent | null> 
 export const SEEDED_LEAF_SLUGS = Object.keys(SEED);
 
 /** Map live Payload products → LeafProduct cards (prices via priceStrings). */
-export function leafProductsFromPayload(products: PayloadProduct[]): LeafProduct[] {
+function leafProductsFromPayload(products: PayloadProduct[]): LeafProduct[] {
   return products.map((p) => {
     const { price, originalPrice } = priceStrings(
       p.basePriceRials ?? null,

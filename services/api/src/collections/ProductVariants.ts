@@ -47,7 +47,7 @@ export const ProductVariants: CollectionConfig = {
       type: 'array',
       label: 'محورهای واریانت',
       admin: {
-        description: 'هر سطر یک محور (مثلاً سایز=۱۲۰). کلیدها باید با allowed_axes دسته‌بندی محصول هم‌خوان باشند.',
+        description: 'هر سطر یک محور (مثلاً سایز=۱۲۰). کلیدها باید با allowedAxes دسته‌بندی محصول هم‌خوان باشند.',
       },
       fields: [
         {

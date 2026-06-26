@@ -54,7 +54,7 @@ const FAKE_PRODUCTS: PayloadProduct[] = [
     sku: 'ART-001',
     featured: true,
     gallery: [],
-    materialIds: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
+    materials: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
   } as unknown as PayloadProduct,
   {
     id: 2,
@@ -64,7 +64,7 @@ const FAKE_PRODUCTS: PayloadProduct[] = [
     availability: 'in_stock',
     sku: 'PAR-001',
     gallery: [],
-    materialIds: [{ id: 'm2', name: 'چوب بلوط', slug: 'oak' }],
+    materials: [{ id: 'm2', name: 'چوب بلوط', slug: 'oak' }],
   } as unknown as PayloadProduct,
   {
     id: 3,
@@ -74,7 +74,7 @@ const FAKE_PRODUCTS: PayloadProduct[] = [
     availability: 'in_stock',
     sku: 'DIB-001',
     gallery: [],
-    materialIds: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
+    materials: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
   } as unknown as PayloadProduct,
   {
     id: 4,
@@ -84,7 +84,7 @@ const FAKE_PRODUCTS: PayloadProduct[] = [
     availability: 'in_stock',
     sku: 'SAR-001',
     gallery: [],
-    materialIds: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
+    materials: [{ id: 'm1', name: 'چوب گردو', slug: 'walnut' }],
   } as unknown as PayloadProduct,
 ];
 
@@ -204,7 +204,7 @@ const FAKE_SHOWROOMS: PayloadShowroom[] = [
     ],
     phone: '08134256789',
     email: 'info@zhicwood.com',
-    is_central: true,
+    isCentral: true,
   } as unknown as PayloadShowroom,
 ];
 
@@ -684,7 +684,7 @@ export default function LabPage() {
             <h2 className="mb-4 text-h2 font-black text-ink">InquiryForm (full 5-field)</h2>
             <p className="mb-6 text-small text-stone">
               Dark glass card + useActionState wrapping <code>submitInquiry</code>. Includes conditional
-              <code>preferred_date</code> field when reason = &quot;رزرو بازدید از شعبه&quot;. Mockup:{' '}
+              <code>preferredDate</code> field when reason = &quot;رزرو بازدید از شعبه&quot;. Mockup:{' '}
               <a href="http://80.240.31.146:9090/.superpowers/a6-contact.html" className="underline" target="_blank" rel="noreferrer">
                 a6-contact.html
               </a>{' '}Option B (<code>.b-form-card</code>).

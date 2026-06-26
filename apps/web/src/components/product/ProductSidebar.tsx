@@ -18,7 +18,7 @@ export function ProductSidebar({ product }: ProductSidebarProps) {
   const leadTimeDays = product.leadTimeDays ?? 56;
   const warrantyYears = product.warrantyYears ?? 5;
   const afterSalesYears = product.afterSalesYears ?? 5;
-  const materials = (product.materialIds ?? []).map((m) => m.name).filter(Boolean);
+  const materials = (product.materials ?? []).map((m) => m.name).filter(Boolean);
 
   return (
     <div className="flex flex-col gap-4">

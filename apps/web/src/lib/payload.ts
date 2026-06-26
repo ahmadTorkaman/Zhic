@@ -15,7 +15,7 @@ export type PayloadDesign = {
   id: string | number;
   name: string;
   slug: string;
-  age_group?: 'infant' | 'child' | 'teen' | 'adult' | null;
+  ageGroup?: 'infant' | 'child' | 'teen' | 'adult' | null;
   /** Phase 1 (2026-05-23) — which /bedroom-set/{slug} occupancy hub pages should
    *  list this series. A series can belong to multiple (parla → all four). */
   occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
@@ -48,6 +48,9 @@ export type PayloadDesign = {
   materialCallouts?: { image?: PayloadMedia | null; label?: string | null; sub?: string | null }[] | null;
   /** 4 design-detail tiles (detail page «جزئیات طراحی»). */
   designDetails?: { image?: PayloadMedia | null; label?: string | null; description?: string | null; span?: number | null }[] | null;
+  status?: 'draft' | 'published' | null;
+  publishedAt?: string | null;
+  seo?: PayloadSeo | null;
 };
 
 export type PayloadAddress = {
@@ -107,13 +110,14 @@ export type PayloadShowroom = {
   appointmentOnly?: boolean | null;
   parkingNotes?: string | null;
   transitNotes?: string | null;
-  featuredProductIds?: PayloadProduct[] | null;
+  featuredProducts?: PayloadProduct[] | null;
   googleBusinessProfileUrl?: string | null;
   neshanProfileUrl?: string | null;
   mapEmbedUrl?: string | null;
-  manager_name?: string | null;
-  manager_phone?: string | null;
-  is_central?: boolean | null;
+  managerName?: string | null;
+  managerPhone?: string | null;
+  isCentral?: boolean | null;
+  seo?: PayloadSeo | null;
 };
 
 export type PayloadContact = {
@@ -169,7 +173,7 @@ export type PayloadArticle = {
   author?: PayloadAuthor | null;
   publishedAt?: string | null;
   body?: LexicalRoot | null;
-  tagIds?: PayloadTag[] | null;
+  tags?: PayloadTag[] | null;
   relatedProducts?: PayloadProduct[] | null;
   relatedArticles?: PayloadArticle[] | null;
   readingTimeMinutes?: number | null;
@@ -186,16 +190,16 @@ export type PayloadHomeSlide = {
 };
 
 export type PayloadHome = {
-  hero_heading?: string | null;
-  hero_subheading?: string | null;
-  hero_media?: PayloadMedia | null;
+  heroHeading?: string | null;
+  heroSubheading?: string | null;
+  heroMedia?: PayloadMedia | null;
   heroSlides?: PayloadHomeSlide[] | null;
-  brand_statement?: LexicalRoot | null;
-  about_media?: PayloadMedia | null;
-  about_background?: PayloadMedia | null;
-  featured_designs?: PayloadDesign[] | null;
-  journal_teaser_heading?: string | null;
-  inquiry_cta_heading?: string | null;
+  brandStatement?: LexicalRoot | null;
+  aboutMedia?: PayloadMedia | null;
+  aboutBackground?: PayloadMedia | null;
+  featuredDesigns?: PayloadDesign[] | null;
+  journalTeaserHeading?: string | null;
+  inquiryCtaHeading?: string | null;
 };
 
 export type LexicalNode = {
@@ -222,13 +226,13 @@ export type PayloadCategory = {
   tagline?: string | null;
   cover?: PayloadMedia | null;
   intro?: LexicalRoot | null;
-  allowed_axes?: string[] | null;
+  allowedAxes?: string[] | null;
   rule?: string | null;
   // Phase 1 (2026-05-23) — facet-page auto-filter. When set, the category
   // page pre-filters its product query by this axis/value pair. Used for
   // the 5 SEO-promoted facet sub-leaves (bed/baby/convertible + 4 wardrobe
   // door-counts).
-  axis_filter?: { axis: string; value: string | number } | null;
+  axisFilter?: { axis: string; value: string | number } | null;
   // existing:
   parent?: PayloadCategory | string | number | null;
   seo?: PayloadSeo | null;
@@ -299,10 +303,10 @@ export type PayloadProduct = {
   shortDescription?: string | null;
   longDescription?: LexicalRoot | null;
   design?: { id: string | number; name: string; slug: string } | null;
-  piece_type?: PieceTypeValue | null;
-  categoryIds?: PayloadCategory[] | null;
-  tagIds?: PayloadTag[] | null;
-  materialIds?: PayloadMaterial[] | null;
+  pieceType?: PieceTypeValue | null;
+  categories?: PayloadCategory[] | null;
+  tags?: PayloadTag[] | null;
+  materials?: PayloadMaterial[] | null;
   sku?: string | null;
   basePriceRials?: number | null;
   salePriceRials?: number | null;
@@ -316,11 +320,11 @@ export type PayloadProduct = {
   occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
   dimensions?: { width?: number; height?: number; depth?: number } | null;
   gallery?: PayloadMedia[] | null;
-  inquiry_enabled?: boolean | null;
+  inquiryEnabled?: boolean | null;
   featured?: boolean | null;
   featuredOrder?: number | null;
-  relatedProductIds?: PayloadProduct[] | null;
-  pairsWithProductIds?: PayloadProduct[] | null;
+  relatedProducts?: PayloadProduct[] | null;
+  pairsWithProducts?: PayloadProduct[] | null;
   variants?: PayloadProductVariant[] | null;
   specs?: LexicalRoot | null;
   createdAt?: string | null;
@@ -377,7 +381,7 @@ export type NavDesign = {
   id: string | number;
   name: string;
   slug: string;
-  /** Persian label derived from age_group; null if unset. */
+  /** Persian label derived from ageGroup; null if unset. */
   subtitle: string | null;
   productCount: number;
   coverUrl: string | null;
@@ -429,7 +433,7 @@ export type NavMeta = {
 
 // --- Nav meta pure helpers --------------------------------------------------
 
-const AGE_GROUP_PERSIAN: Record<NonNullable<PayloadDesign['age_group']>, string> = {
+const AGE_GROUP_PERSIAN: Record<NonNullable<PayloadDesign['ageGroup']>, string> = {
   infant: 'نوزاد',
   child: 'کودک',
   teen: 'نوجوان',
@@ -437,8 +441,8 @@ const AGE_GROUP_PERSIAN: Record<NonNullable<PayloadDesign['age_group']>, string>
 };
 
 export function designSubtitle(design: PayloadDesign): string | null {
-  if (!design.age_group) return null;
-  return AGE_GROUP_PERSIAN[design.age_group] ?? null;
+  if (!design.ageGroup) return null;
+  return AGE_GROUP_PERSIAN[design.ageGroup] ?? null;
 }
 
 function lexicalPlainText(root: LexicalRoot | null | undefined): string {
@@ -471,7 +475,7 @@ export function bucketNavCounts(
   categories: PayloadCategory[],
   designs: PayloadDesign[],
   collections: PayloadCollection[],
-  products: Pick<PayloadProduct, 'categoryIds' | 'design' | 'piece_type'>[],
+  products: Pick<PayloadProduct, 'categories' | 'design' | 'pieceType'>[],
 ): {
   categories: NavCategory[];
   designs: NavDesign[];
@@ -484,7 +488,7 @@ export function bucketNavCounts(
   const pieceCount = new Map<string, number>();
 
   for (const product of products) {
-    for (const cat of product.categoryIds ?? []) {
+    for (const cat of product.categories ?? []) {
       if (!cat?.slug) continue;
       categoryCount.set(cat.slug, (categoryCount.get(cat.slug) ?? 0) + 1);
     }
@@ -494,8 +498,8 @@ export function bucketNavCounts(
         (designCount.get(product.design.slug) ?? 0) + 1,
       );
     }
-    if (product.piece_type) {
-      pieceCount.set(product.piece_type, (pieceCount.get(product.piece_type) ?? 0) + 1);
+    if (product.pieceType) {
+      pieceCount.set(product.pieceType, (pieceCount.get(product.pieceType) ?? 0) + 1);
     }
   }
 
@@ -568,22 +572,16 @@ export type PayloadRoom = {
 export type ProductsQuery = {
   category?: string;
   materials?: string[];
-  price?: 'lt5' | '5to15' | '15to30' | 'gt30';
-  size?: 'small' | 'medium' | 'large';
   sort?: 'newest' | 'name' | 'priceAsc' | 'priceDesc';
   page?: number;
-  /** Title/tagline/shortDescription substring search. */
-  q?: string;
   /** Filter to a single design by slug. */
   design?: string;
-  /** Filter to a single occupancy / age group. Driven by /bedroom-set/[slug]?age=. */
-  occupancies?: 'baby' | 'teen' | 'double' | 'bunk';
   /** Restrict to a specific set of product IDs. Used by facet-page renderer
    *  to AND the category filter with "products whose variant axes match". */
   productIds?: Array<string | number>;
 };
 
-export const PRODUCTS_PER_PAGE = 12;
+const PRODUCTS_PER_PAGE = 12;
 
 export type PayloadList<T> = { docs: T[]; totalDocs?: number };
 type PayloadPage<T> = {
@@ -665,9 +663,7 @@ export type PayloadBedroomSetHub = {
   hiddenDesigns?: PayloadDesignRef[] | null;
   contentBody?: LexicalRoot | null;
   crossLinksHeading?: string | null;
-  seoTitle?: string | null;
-  seoDescription?: string | null;
-  seoImage?: PayloadMedia | null;
+  seo?: PayloadSeo | null;
 };
 
 /** Per-occupancy uploaded hero images for the /bedroom-set/{occupancy} hubs
@@ -695,17 +691,9 @@ export async function fetchBedroomSetHub(
   return res?.docs[0] ?? null;
 }
 
-export async function fetchShowrooms(limit = 4): Promise<PayloadShowroom[]> {
-  const list = await payloadFetch<PayloadList<PayloadShowroom>>(
-    `/api/showrooms?limit=${limit}&depth=2&sort=-is_central`,
-    'showrooms',
-  );
-  return list?.docs ?? [];
-}
-
 export async function fetchAllShowrooms(): Promise<PayloadShowroom[]> {
   const list = await payloadFetch<PayloadList<PayloadShowroom>>(
-    `/api/showrooms?limit=100&depth=2&sort=-is_central`,
+    `/api/showrooms?limit=100&depth=2&sort=-isCentral`,
     'showrooms',
   );
   return list?.docs ?? [];
@@ -835,7 +823,7 @@ export async function fetchLatestArticles(limit = 3): Promise<PayloadArticle[]> 
 
 // --- Journal (4.1) ----------------------------------------------------------
 
-export const ARTICLES_PER_PAGE = 12;
+const ARTICLES_PER_PAGE = 12;
 
 export type ArticlesQuery = {
   category?: string;
@@ -856,7 +844,7 @@ export async function fetchArticles(
     params.set('where[category.slug][equals]', query.category);
   }
   if (query.tag) {
-    params.set('where[tagIds.slug][in]', query.tag);
+    params.set('where[tags.slug][in]', query.tag);
   }
   const fallback: PayloadPage<PayloadArticle> = {
     docs: [],
@@ -932,10 +920,6 @@ export function journalCategoryPath(slug: string): string {
   return `/journal/category/${slug}`;
 }
 
-export function journalTagPath(slug: string): string {
-  return `/journal/tag/${slug}`;
-}
-
 export function mediaUrl(media: PayloadMedia | null | undefined): string | null {
   if (!media) return null;
   if (media.url) {
@@ -947,16 +931,6 @@ export function mediaUrl(media: PayloadMedia | null | undefined): string | null 
 
 // --- Catalog (3.2) ----------------------------------------------------------
 
-const PRICE_BAND_RANGE: Record<
-  NonNullable<ProductsQuery['price']>,
-  [number | null, number | null]
-> = {
-  lt5: [null, 50_000_000],
-  '5to15': [50_000_000, 150_000_000],
-  '15to30': [150_000_000, 300_000_000],
-  gt30: [300_000_000, null],
-};
-
 const SORT_TO_PAYLOAD: Record<NonNullable<ProductsQuery['sort']>, string> = {
   newest: '-createdAt',
   name: 'name',
@@ -964,13 +938,7 @@ const SORT_TO_PAYLOAD: Record<NonNullable<ProductsQuery['sort']>, string> = {
   priceDesc: '-basePriceRials',
 };
 
-export function priceBandRange(
-  band: NonNullable<ProductsQuery['price']>,
-): [number | null, number | null] {
-  return PRICE_BAND_RANGE[band];
-}
-
-export function sortToPayload(sort: ProductsQuery['sort']): string {
+function sortToPayload(sort: ProductsQuery['sort']): string {
   return SORT_TO_PAYLOAD[sort ?? 'newest'];
 }
 
@@ -984,28 +952,12 @@ export async function fetchProducts(
   params.set('sort', sortToPayload(query.sort));
   params.set('where[status][equals]', 'published');
   if (query.category) {
-    params.set('where[categoryIds.slug][equals]', query.category);
+    params.set('where[categories.slug][equals]', query.category);
   }
   if (query.materials?.length) {
     for (const m of query.materials) {
-      params.append('where[materialIds.slug][in]', m);
+      params.append('where[materials.slug][in]', m);
     }
-  }
-  if (query.price) {
-    const [gte, lt] = priceBandRange(query.price);
-    if (gte !== null) params.set('where[basePriceRials][greater_than_equal]', String(gte));
-    if (lt !== null) params.set('where[basePriceRials][less_than]', String(lt));
-  }
-  if (query.q) {
-    // Substring search across name / tagline / shortDescription.
-    // Payload's Postgres adapter compiles `contains` to ILIKE %…%.
-    params.append('where[or][0][name][contains]', query.q);
-    params.append('where[or][1][tagline][contains]', query.q);
-    params.append('where[or][2][shortDescription][contains]', query.q);
-  }
-  if (query.occupancies) {
-    // hasMany SELECT field — `in` semantics match "contains this value".
-    params.set('where[occupancies][in]', query.occupancies);
   }
   if (query.design) {
     params.set('where[design.slug][equals]', query.design);
@@ -1013,7 +965,6 @@ export async function fetchProducts(
   if (query.productIds?.length) {
     params.set('where[id][in]', query.productIds.join(','));
   }
-  // Size band is RSC-side post-fetch — handled by applyClientSizeBand in lib/products.
   const fallback: PayloadPage<PayloadProduct> = {
     docs: [],
     totalDocs: 0,
@@ -1069,6 +1020,7 @@ export async function fetchDesign(
 ): Promise<PayloadDesign | null> {
   const params = new URLSearchParams({
     'where[slug][equals]': slug,
+    'where[status][equals]': 'published',
     depth: '2',
     limit: '1',
   });
@@ -1089,7 +1041,7 @@ export async function fetchAllDesigns(): Promise<PayloadDesign[]> {
   // without imagery. When the operator adds a sliderMedia image for one,
   // it appears in the carousel automatically (5-min revalidate).
   const res = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?limit=100&sort=name&depth=2&where[sliderMedia][exists]=true',
+    '/api/designs?limit=100&sort=name&depth=2&where[sliderMedia][exists]=true&where[status][equals]=published',
     'designs',
   );
   return res?.docs ?? [];
@@ -1106,6 +1058,7 @@ export async function fetchDesignsByOccupancy(
 ): Promise<PayloadDesign[]> {
   const params = new URLSearchParams({
     'where[occupancies][contains]': occupancy,
+    'where[status][equals]': 'published',
     limit: '100',
     sort: 'name',
     depth: '2',
@@ -1201,26 +1154,10 @@ export async function fetchCollection(
   return res?.docs[0] ?? null;
 }
 
-export async function fetchCategories(): Promise<PayloadCategory[]> {
-  const res = await payloadFetch<PayloadList<PayloadCategory>>(
-    '/api/categories?limit=100&sort=name',
-    'categories',
-  );
-  return res?.docs ?? [];
-}
-
 export async function fetchAllCategories(): Promise<PayloadCategory[]> {
   const res = await payloadFetch<PayloadList<PayloadCategory>>(
     '/api/categories?limit=500&depth=1&sort=name',
     'all-categories',
-  );
-  return res?.docs ?? [];
-}
-
-export async function fetchMaterials(): Promise<PayloadMaterial[]> {
-  const res = await payloadFetch<PayloadList<PayloadMaterial>>(
-    '/api/materials?limit=100&sort=name',
-    'materials',
   );
   return res?.docs ?? [];
 }
@@ -1247,7 +1184,7 @@ async function fetchNavDesigns(): Promise<PayloadDesign[]> {
   // depth=2 ensures heroMedia / sliderMedia / gallery docs are inflated
   // with a `url` field so SetsMegaMenu can display cover images per tile.
   const res = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?limit=30&sort=name&depth=2&where[sliderMedia][exists]=true',
+    '/api/designs?limit=30&sort=name&depth=2&where[sliderMedia][exists]=true&where[status][equals]=published',
     'nav-designs',
   );
   if (!res) console.error('[fetchNavMeta] nav-designs: payloadFetch returned null');
@@ -1259,7 +1196,7 @@ async function fetchNavFeaturedDesign(): Promise<NavFeaturedDesign | null> {
   // published. If no design carries the featured flag, the aside is omitted.
   // PayloadDesign.featured is a boolean field confirmed in the type at line ~19.
   const res = await payloadFetch<PayloadList<PayloadDesign>>(
-    '/api/designs?where[featured][equals]=true&limit=1&depth=2&sort=-updatedAt',
+    '/api/designs?where[featured][equals]=true&limit=1&depth=2&sort=-updatedAt&where[status][equals]=published',
     'nav-featured-design',
   );
   if (!res) {
@@ -1287,9 +1224,9 @@ async function fetchNavCollections(): Promise<PayloadCollection[]> {
 }
 
 async function fetchNavCountingProducts(): Promise<
-  Pick<PayloadProduct, 'categoryIds' | 'design' | 'piece_type'>[]
+  Pick<PayloadProduct, 'categories' | 'design' | 'pieceType'>[]
 > {
-  // depth=1 inflates categoryIds and design into objects so we can read .slug.
+  // depth=1 inflates categories and design into objects so we can read .slug.
   // No `select` — Payload 3 REST `select` syntax is finicky and the payload
   // at depth=1 (~1-2MB at 500 products) is small enough for a 5-min cached
   // call. Limit set above the post-xlsx-import ceiling (~220 products) with
@@ -1301,9 +1238,9 @@ async function fetchNavCountingProducts(): Promise<
   );
   if (!res) console.error('[fetchNavMeta] nav-products: payloadFetch returned null');
   return (res?.docs ?? []).map((p) => ({
-    categoryIds: p.categoryIds ?? null,
+    categories: p.categories ?? null,
     design: p.design ?? null,
-    piece_type: p.piece_type ?? null,
+    pieceType: p.pieceType ?? null,
   }));
 }
 
@@ -1355,14 +1292,6 @@ export const fetchNavMeta = unstable_cache(
 
 export function productPath(slug: string): string {
   return `/products/${slug}`;
-}
-
-export function collectionPath(slug: string): string {
-  return `/collections/${slug}`;
-}
-
-export function inquiryHref(product: Pick<PayloadProduct, 'slug'>): string {
-  return `/contact?product=${encodeURIComponent(product.slug)}&reason=quote`;
 }
 
 /** A combo "earns" its own indexable page once it has a curated product or any

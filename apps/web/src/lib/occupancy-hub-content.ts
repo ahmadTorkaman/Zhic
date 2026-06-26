@@ -190,9 +190,9 @@ export async function getOccupancyHubContent(
 
   const seo = hub
     ? {
-        title: hub.seoTitle ?? undefined,
-        description: hub.seoDescription ?? undefined,
-        image: mediaUrl(hub.seoImage ?? null) ?? undefined,
+        title: hub.seo?.metaTitle ?? undefined,
+        description: hub.seo?.metaDescription ?? undefined,
+        image: mediaUrl(hub.seo?.ogImage ?? null) ?? undefined,
       }
     : null;
 

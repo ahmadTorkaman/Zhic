@@ -76,15 +76,15 @@ export async function fetchChildTilePhotos(
   if (needPhoto) {
     const allSlugs = Array.from(topBySlug.keys());
     const prods = await payloadFetch<
-      PayloadList<{ categoryIds?: PayloadCategory[] | null; gallery?: PayloadMedia[] | null }>
+      PayloadList<{ categories?: PayloadCategory[] | null; gallery?: PayloadMedia[] | null }>
     >(
-      `/api/products?where[categoryIds.slug][in]=${encodeURIComponent(allSlugs.join(','))}&where[status][equals]=published&depth=1&limit=500`,
+      `/api/products?where[categories.slug][in]=${encodeURIComponent(allSlugs.join(','))}&where[status][equals]=published&depth=1&limit=500`,
       'products',
     );
     for (const p of prods?.docs ?? []) {
       const url = p.gallery?.[0]?.url;
       if (!url) continue;
-      for (const c of p.categoryIds ?? []) {
+      for (const c of p.categories ?? []) {
         const top = topBySlug.get(c.slug);
         if (top && !photos.has(top)) photos.set(top, url);
       }
@@ -100,7 +100,7 @@ export async function fetchChildTilePhotos(
 export async function fetchDesignsForCategory(categorySlug: string): Promise<PayloadDesign[]> {
   // Step 1: products in this category (paginated to 200 — enough for any leaf)
   const products = await payloadFetch<PayloadList<{ design?: { id: Id } | Id | null }>>(
-    `/api/products?where[categoryIds.slug][equals]=${encodeURIComponent(categorySlug)}&where[status][equals]=published&depth=1&limit=200`,
+    `/api/products?where[categories.slug][equals]=${encodeURIComponent(categorySlug)}&where[status][equals]=published&depth=1&limit=200`,
     'products',
   );
   if (!products?.docs?.length) return [];
@@ -123,7 +123,7 @@ export async function fetchDesignsForCategory(categorySlug: string): Promise<Pay
 
   // Step 2: fetch those designs
   const designs = await payloadFetch<PayloadList<PayloadDesign>>(
-    `/api/designs?where[id][in]=${encodeURIComponent(designIds.join(','))}&depth=2&limit=${designIds.length}&sort=name`,
+    `/api/designs?where[id][in]=${encodeURIComponent(designIds.join(','))}&depth=2&limit=${designIds.length}&sort=name&where[status][equals]=published`,
     'designs',
   );
   return designs?.docs ?? [];
@@ -149,7 +149,7 @@ export async function fetchDesignsForParentCategory(parentSlug: string): Promise
 
   // Step 1: products in any child category
   const products = await payloadFetch<PayloadList<{ design?: { id: Id } | Id | null }>>(
-    `/api/products?where[categoryIds.slug][in]=${encodeURIComponent(childSlugs.join(','))}&where[status][equals]=published&depth=1&limit=500`,
+    `/api/products?where[categories.slug][in]=${encodeURIComponent(childSlugs.join(','))}&where[status][equals]=published&depth=1&limit=500`,
     'products',
   );
   if (!products?.docs?.length) return [];
@@ -170,7 +170,7 @@ export async function fetchDesignsForParentCategory(parentSlug: string): Promise
   if (!designIds.length) return [];
 
   const designs = await payloadFetch<PayloadList<PayloadDesign>>(
-    `/api/designs?where[id][in]=${encodeURIComponent(designIds.join(','))}&depth=2&limit=${designIds.length}&sort=name`,
+    `/api/designs?where[id][in]=${encodeURIComponent(designIds.join(','))}&depth=2&limit=${designIds.length}&sort=name&where[status][equals]=published`,
     'designs',
   );
   return designs?.docs ?? [];
@@ -188,7 +188,7 @@ export async function fetchAvailableDesigns(
   categorySlug: string,
 ): Promise<{ slug: string; name: string; count: number }[]> {
   const products = await payloadFetch<PayloadList<{ design?: PayloadDesign | Id | null }>>(
-    `/api/products?where[categoryIds.slug][equals]=${encodeURIComponent(categorySlug)}&where[status][equals]=published&depth=1&limit=500`,
+    `/api/products?where[categories.slug][equals]=${encodeURIComponent(categorySlug)}&where[status][equals]=published&depth=1&limit=500`,
     'products',
   );
   if (!products?.docs?.length) return [];
@@ -213,16 +213,16 @@ export async function fetchAvailableDesigns(
 export async function fetchAvailableMaterials(
   categorySlug: string,
 ): Promise<{ slug: string; name: string; count: number }[]> {
-  const products = await payloadFetch<PayloadList<{ materialIds?: PayloadMaterial[] | null }>>(
-    `/api/products?where[categoryIds.slug][equals]=${encodeURIComponent(categorySlug)}&where[status][equals]=published&depth=1&limit=500`,
+  const products = await payloadFetch<PayloadList<{ materials?: PayloadMaterial[] | null }>>(
+    `/api/products?where[categories.slug][equals]=${encodeURIComponent(categorySlug)}&where[status][equals]=published&depth=1&limit=500`,
     'products',
   );
   if (!products?.docs?.length) return [];
 
   const counts = new Map<string, { slug: string; name: string; count: number }>();
   for (const p of products.docs) {
-    if (!p.materialIds?.length) continue;
-    for (const m of p.materialIds) {
+    if (!p.materials?.length) continue;
+    for (const m of p.materials) {
       const slug = m.slug;
       const name = m.name;
       const prev = counts.get(slug);

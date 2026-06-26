@@ -27,7 +27,7 @@ export async function submitInquiry(
   const phone = (formData.get('phone') as string)?.trim() ?? '';
   const city = (formData.get('city') as string)?.trim() ?? '';
   const reason = formData.get('reason') as string ?? '';
-  const preferredDate = (formData.get('preferred_date') as string)?.trim() ?? '';
+  const preferredDate = (formData.get('preferredDate') as string)?.trim() ?? '';
   const message = (formData.get('message') as string)?.trim() ?? '';
   const productSlug = (formData.get('product') as string)?.trim() ?? '';
   const showroomSlug = (formData.get('showroom') as string)?.trim() ?? '';
@@ -61,7 +61,7 @@ export async function submitInquiry(
     city,
     reason,
     message: message || undefined,
-    preferred_date: preferredDate || undefined,
+    preferredDate: preferredDate || undefined,
     status: 'new',
   };
 
@@ -95,11 +95,11 @@ export async function submitInquiry(
     city !== 'سایر شهرها'
       ? showrooms.find((s) => s.address?.city === city)
       : null;
-  const centralShowroom = showrooms.find((s) => s.is_central) ?? showrooms[0] ?? null;
+  const centralShowroom = showrooms.find((s) => s.isCentral) ?? showrooms[0] ?? null;
   const routedShowroom = matchedShowroom ?? centralShowroom;
 
   if (routedShowroom) {
-    inquiryData.routed_to = routedShowroom.id;
+    inquiryData.routedTo = routedShowroom.id;
   }
 
   // --- Save to Payload ----------------------------------------------------
@@ -128,7 +128,7 @@ export async function submitInquiry(
 
   // --- Send SMS (fire-and-forget) ----------------------------------------
 
-  const managerPhone = routedShowroom?.manager_phone;
+  const managerPhone = routedShowroom?.managerPhone;
   if (managerPhone) {
     const smsText = formatInquirySms({
       name,

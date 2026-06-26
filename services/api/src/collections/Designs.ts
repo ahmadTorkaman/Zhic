@@ -1,7 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor, BlocksFeature } from '@payloadcms/richtext-lexical'
 import { slugify } from '../lib/slugify'
-import { publishedContentAccess } from '../lib/access'
+import { statusGatedContentAccess, isEditorField } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 import {
   PullQuoteBlock,
   ImageGridBlock,
@@ -14,10 +15,10 @@ export const Designs: CollectionConfig = {
   labels: { singular: 'طرح', plural: 'طرح‌ها' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'age_group', 'featured'],
+    defaultColumns: ['name', 'ageGroup', 'status', 'featured'],
     group: 'کاتالوگ',
   },
-  access: publishedContentAccess,
+  access: statusGatedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -46,7 +47,7 @@ export const Designs: CollectionConfig = {
       },
     },
     {
-      name: 'age_group',
+      name: 'ageGroup',
       type: 'select',
       label: 'گروه سنی',
       options: [
@@ -254,5 +255,33 @@ export const Designs: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'status',
+      type: 'select',
+      defaultValue: 'draft',
+      required: true,
+      label: 'وضعیت',
+      options: [
+        { label: 'پیش‌نویس', value: 'draft' },
+        { label: 'منتشرشده', value: 'published' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'طرح‌های «پیش‌نویس» روی سایت نمایش داده نمی‌شوند. فقط ویراستار یا مدیر می‌تواند منتشر کند.',
+      },
+      access: {
+        update: isEditorField,
+      },
+    },
+    {
+      name: 'publishedAt',
+      type: 'date',
+      label: 'تاریخ انتشار',
+      admin: {
+        position: 'sidebar',
+        date: { pickerAppearance: 'dayOnly' },
+      },
+    },
+    seoFields,
   ],
 }

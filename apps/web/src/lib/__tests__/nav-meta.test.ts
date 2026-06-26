@@ -10,11 +10,11 @@ import {
 } from '../payload';
 
 const cat = (id: number, slug: string): PayloadCategory => ({ id, name: slug, slug });
-const design = (id: number, slug: string, age?: PayloadDesign['age_group']): PayloadDesign => ({
+const design = (id: number, slug: string, age?: PayloadDesign['ageGroup']): PayloadDesign => ({
   id,
   name: slug,
   slug,
-  age_group: age ?? null,
+  ageGroup: age ?? null,
 });
 const coll = (id: number, slug: string, productCount = 0): PayloadCollection => ({
   id,
@@ -34,12 +34,12 @@ const product = (overrides: Partial<PayloadProduct>): PayloadProduct => ({
 });
 
 describe('bucketNavCounts', () => {
-  it('counts products per category by categoryIds membership', () => {
+  it('counts products per category by categories membership', () => {
     const cats = [cat(1, 'beds'), cat(2, 'nightstands')];
     const products = [
-      product({ id: 10, categoryIds: [cats[0]!] }),
-      product({ id: 11, categoryIds: [cats[0]!, cats[1]!] }),
-      product({ id: 12, categoryIds: [cats[1]!] }),
+      product({ id: 10, categories: [cats[0]!] }),
+      product({ id: 11, categories: [cats[0]!, cats[1]!] }),
+      product({ id: 12, categories: [cats[1]!] }),
     ];
     const result = bucketNavCounts(cats, [], [], products);
     expect(result.categories.find((c) => c.slug === 'beds')?.productCount).toBe(2);
@@ -80,15 +80,15 @@ describe('bucketNavCounts', () => {
 });
 
 describe('designSubtitle', () => {
-  it('maps age_group values to Persian labels', () => {
-    expect(designSubtitle({ age_group: 'infant' } as PayloadDesign)).toBe('نوزاد');
-    expect(designSubtitle({ age_group: 'child' } as PayloadDesign)).toBe('کودک');
-    expect(designSubtitle({ age_group: 'teen' } as PayloadDesign)).toBe('نوجوان');
-    expect(designSubtitle({ age_group: 'adult' } as PayloadDesign)).toBe('بزرگسال');
+  it('maps ageGroup values to Persian labels', () => {
+    expect(designSubtitle({ ageGroup: 'infant' } as PayloadDesign)).toBe('نوزاد');
+    expect(designSubtitle({ ageGroup: 'child' } as PayloadDesign)).toBe('کودک');
+    expect(designSubtitle({ ageGroup: 'teen' } as PayloadDesign)).toBe('نوجوان');
+    expect(designSubtitle({ ageGroup: 'adult' } as PayloadDesign)).toBe('بزرگسال');
   });
 
-  it('returns null when age_group is unset', () => {
-    expect(designSubtitle({ age_group: null } as PayloadDesign)).toBeNull();
+  it('returns null when ageGroup is unset', () => {
+    expect(designSubtitle({ ageGroup: null } as PayloadDesign)).toBeNull();
     expect(designSubtitle({} as PayloadDesign)).toBeNull();
   });
 });

@@ -47,7 +47,7 @@ describe('deriveAxisOptions', () => {
     // Updated 2026-05-23: deriveAxisOptions now UNIONS allowedAxes with the
     // axes variants actually have. This tolerates real-world data drift
     // (D4 finish heuristic adding `finish` to variants whose category's
-    // allowed_axes didn't list it).
+    // allowedAxes didn't list it).
     //
     // NB: requires ≥2 distinct values per axis to pass the picker filter,
     // so this test uses 2 variants with different values per axis.

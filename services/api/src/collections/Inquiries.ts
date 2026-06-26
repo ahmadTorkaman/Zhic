@@ -48,7 +48,7 @@ export const Inquiries: CollectionConfig = {
       ],
     },
     {
-      name: 'preferred_date',
+      name: 'preferredDate',
       type: 'text',
       label: 'تاریخ ترجیحی بازدید',
       admin: {
@@ -61,7 +61,7 @@ export const Inquiries: CollectionConfig = {
       label: 'پیام',
     },
     {
-      name: 'routed_to',
+      name: 'routedTo',
       type: 'relationship',
       relationTo: 'showrooms',
       label: 'ارجاع به شوروم',

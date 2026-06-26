@@ -25,6 +25,8 @@ import * as migration_20260625_120000_create_bedroom_set_hubs from './20260625_1
 import * as migration_20260625_120000_add_home_about_background from './20260625_120000_add_home_about_background';
 import * as migration_20260625_130000_create_series_occupancies from './20260625_130000_create_series_occupancies';
 import * as migration_20260625_140000_register_bedroom_set_hubs_locked_docs from './20260625_140000_register_bedroom_set_hubs_locked_docs';
+import * as migration_20260626_120000_rename_xids_relationship_paths from './20260626_120000_rename_xids_relationship_paths';
+import * as migration_20260626_130000_add_status_seo_to_designs_showrooms_hubs from './20260626_130000_add_status_seo_to_designs_showrooms_hubs';
 
 export const migrations = [
   {
@@ -161,5 +163,15 @@ export const migrations = [
     up: migration_20260625_140000_register_bedroom_set_hubs_locked_docs.up,
     down: migration_20260625_140000_register_bedroom_set_hubs_locked_docs.down,
     name: '20260625_140000_register_bedroom_set_hubs_locked_docs'
+  },
+  {
+    up: migration_20260626_120000_rename_xids_relationship_paths.up,
+    down: migration_20260626_120000_rename_xids_relationship_paths.down,
+    name: '20260626_120000_rename_xids_relationship_paths'
+  },
+  {
+    up: migration_20260626_130000_add_status_seo_to_designs_showrooms_hubs.up,
+    down: migration_20260626_130000_add_status_seo_to_designs_showrooms_hubs.down,
+    name: '20260626_130000_add_status_seo_to_designs_showrooms_hubs'
   },
 ];

@@ -12,7 +12,7 @@
  *   3. SEO ogImage: seed seo_og_image_id from each product's first gallery image
  *      (only when empty). Meta title/description left for the SEO specialist.
  *   4. Cross-sell: pairsWith (bed↔nightstand, desk↔chair, vanity↔vanity-chair)
- *      + relatedProductIds (same-series, priority-ordered, capped at 6).
+ *      + relatedProducts (same-series, priority-ordered, capped at 6).
  *   5. Bed (#414) placeholder images: sizes 90/140/180 had no photo — assign the
  *      closest existing size within the single/double class (TEMP — real per-size
  *      shots pending, logged in the audit). 90→100(single), 140→160 & 180→160(double).
@@ -103,10 +103,10 @@ async function main() {
   // 2. Tags
   console.log('\n2) Tags — modern -> all 12; storage -> wardrobe/file/nightstand/vanity')
   for (const p of IRON) {
-    if (!(await relExists(p.id, 'tagIds', 'tags_id', TAG_MODERN))) { console.log(`   +modern  ${p.slug}`); if (APPLY) { await insRel(p.id, 'tagIds', 'tags_id', TAG_MODERN); inserts++ } }
+    if (!(await relExists(p.id, 'tags', 'tags_id', TAG_MODERN))) { console.log(`   +modern  ${p.slug}`); if (APPLY) { await insRel(p.id, 'tags', 'tags_id', TAG_MODERN); inserts++ } }
   }
   for (const id of STORAGE_PRODUCTS) {
-    if (!(await relExists(id, 'tagIds', 'tags_id', TAG_STORAGE))) { console.log(`   +storage #${id}`); if (APPLY) { await insRel(id, 'tagIds', 'tags_id', TAG_STORAGE); inserts++ } }
+    if (!(await relExists(id, 'tags', 'tags_id', TAG_STORAGE))) { console.log(`   +storage #${id}`); if (APPLY) { await insRel(id, 'tags', 'tags_id', TAG_STORAGE); inserts++ } }
   }
 
   // 3. SEO ogImage from first gallery image
@@ -122,11 +122,11 @@ async function main() {
   }
 
   // 4. Cross-sell
-  console.log('\n4) Cross-sell — pairsWith (functional) + relatedProductIds (same-series)')
+  console.log('\n4) Cross-sell — pairsWith (functional) + relatedProducts (same-series)')
   const pairExpand: [number, number][] = []
   for (const [a, b] of PAIRS) { pairExpand.push([a, b], [b, a]) }
   for (const [a, b] of pairExpand) {
-    if (!(await relExists(a, 'pairsWithProductIds', 'products_id', b))) { console.log(`   pairsWith ${a} -> ${b}`); if (APPLY) { await insRel(a, 'pairsWithProductIds', 'products_id', b); inserts++ } }
+    if (!(await relExists(a, 'pairsWithProducts', 'products_id', b))) { console.log(`   pairsWith ${a} -> ${b}`); if (APPLY) { await insRel(a, 'pairsWithProducts', 'products_id', b); inserts++ } }
   }
   const MIRRORS = [418, 581, 423]
   for (const p of IRON) {
@@ -140,7 +140,7 @@ async function main() {
     }
     const related = pool.slice(0, RELATED_CAP)
     for (const r of related) {
-      if (!(await relExists(p.id, 'relatedProductIds', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProductIds', 'products_id', r.id); inserts++ } }
+      if (!(await relExists(p.id, 'relatedProducts', 'products_id', r.id))) { if (APPLY) { await insRel(p.id, 'relatedProducts', 'products_id', r.id); inserts++ } }
     }
     console.log(`   related ${p.slug} -> [${related.map((r) => r.slug.replace('iron-', '')).join(', ')}]`)
   }

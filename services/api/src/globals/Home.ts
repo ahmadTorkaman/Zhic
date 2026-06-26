@@ -7,19 +7,19 @@ export const Home: GlobalConfig = {
   access: publishedContentAccess,
   fields: [
     {
-      name: 'hero_media',
+      name: 'heroMedia',
       type: 'upload',
       relationTo: 'media',
       label: 'رسانه هیرو (deprecated — use heroSlides)',
       admin: { description: 'این فیلد در نسخه‌ی بعدی حذف می‌شود. به‌جای آن heroSlides را پر کنید.' },
     },
     {
-      name: 'hero_heading',
+      name: 'heroHeading',
       type: 'text',
       label: 'عنوان هیرو',
     },
     {
-      name: 'hero_subheading',
+      name: 'heroSubheading',
       type: 'text',
       label: 'زیرعنوان هیرو',
     },
@@ -52,12 +52,12 @@ export const Home: GlobalConfig = {
       ],
     },
     {
-      name: 'brand_statement',
+      name: 'brandStatement',
       type: 'richText',
       label: 'بیانیه برند',
     },
     {
-      name: 'about_media',
+      name: 'aboutMedia',
       type: 'upload',
       relationTo: 'media',
       label: 'تصویر بخش درباره (از همدان، برای ایران)',
@@ -66,7 +66,7 @@ export const Home: GlobalConfig = {
       },
     },
     {
-      name: 'about_background',
+      name: 'aboutBackground',
       type: 'upload',
       relationTo: 'media',
       label: 'تصویر پس‌زمینه‌ی بخش درباره',
@@ -76,19 +76,19 @@ export const Home: GlobalConfig = {
       },
     },
     {
-      name: 'featured_designs',
+      name: 'featuredDesigns',
       type: 'relationship',
       relationTo: 'designs',
       hasMany: true,
       label: 'طرح‌های ویژه',
     },
     {
-      name: 'journal_teaser_heading',
+      name: 'journalTeaserHeading',
       type: 'text',
       label: 'عنوان تیزر ژورنال',
     },
     {
-      name: 'inquiry_cta_heading',
+      name: 'inquiryCtaHeading',
       type: 'text',
       label: 'عنوان دکمه استعلام',
     },

@@ -134,7 +134,7 @@ export function resolveVariant(
  *
  * Tolerates drift cases:
  *  (a) Variant has an axis (e.g. `finish` derived by D4) that the
- *      category's allowed_axes didn't list. Show it anyway IF ≥2
+ *      category's allowedAxes didn't list. Show it anyway IF ≥2
  *      values across variants.
  *  (b) allowedAxes lists an axis (e.g. `footboard`) but no variant
  *      provides a value for it. Drop the empty group.

@@ -77,8 +77,8 @@ for (const p of prods.sort((a: any, b: any) => a.slug.localeCompare(b.slug))) {
           data: {
             name, slug, sku: slug,
             design: p.design, piece_type: p.piece_type,
-            occupancies: p.occupancies ?? [], categoryIds: p.categoryIds ?? [],
-            materialIds: p.materialIds ?? [], tagIds: p.tagIds ?? [],
+            occupancies: p.occupancies ?? [], categories: p.categories ?? [],
+            materials: p.materials ?? [], tags: p.tags ?? [],
             basePriceRials: p.basePriceRials ?? 0, salePriceRials: p.salePriceRials ?? undefined,
             availability: p.availability, leadTimeDays: p.leadTimeDays,
             warrantyYears: p.warrantyYears, afterSalesYears: p.afterSalesYears,

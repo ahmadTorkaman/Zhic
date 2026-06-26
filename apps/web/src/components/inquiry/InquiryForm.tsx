@@ -65,7 +65,7 @@ export function InquiryForm({ cities, productSlug, showroomSlug, tone = 'dark' }
 
         {reason === 'showroom_visit' ? (
           <FormField id="inquiry-date" label="تاریخ پیشنهادی بازدید" tone={tone} help="تاریخ میلادی — هماهنگی نهایی با شما انجام می‌شود.">
-            <Input id="inquiry-date" name="preferred_date" tone={tone} type="date" dir="ltr" />
+            <Input id="inquiry-date" name="preferredDate" tone={tone} type="date" dir="ltr" />
           </FormField>
         ) : null}
 

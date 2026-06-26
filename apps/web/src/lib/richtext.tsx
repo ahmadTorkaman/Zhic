@@ -58,11 +58,11 @@ export type EmbedContext = {
 
 export function extractEmbeddedIds(value: LexicalRoot | null | undefined): {
   productIds: (string | number)[];
-  materialIds: (string | number)[];
+  materials: (string | number)[];
 } {
   const productIds: (string | number)[] = [];
-  const materialIds: (string | number)[] = [];
-  if (!value?.root?.children) return { productIds, materialIds };
+  const materials: (string | number)[] = [];
+  if (!value?.root?.children) return { productIds, materials };
 
   const walk = (nodes: LexicalNode[]) => {
     for (const n of nodes) {
@@ -79,14 +79,14 @@ export function extractEmbeddedIds(value: LexicalRoot | null | undefined): {
           const id = typeof fields.material === 'object'
             ? (fields.material as { id?: string | number }).id
             : fields.material;
-          if (id != null) materialIds.push(id as string | number);
+          if (id != null) materials.push(id as string | number);
         }
       }
       if (n.children) walk(n.children);
     }
   };
   walk(value.root.children);
-  return { productIds, materialIds };
+  return { productIds, materials };
 }
 
 // --- Block renderers -------------------------------------------------------

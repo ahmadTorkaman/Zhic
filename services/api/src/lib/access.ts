@@ -48,6 +48,12 @@ export const isMarketingOrAbove: Access = ({ req }) => {
 /** Everyone — including anonymous. */
 export const isPublic: Access = () => true
 
+/** A CMS staff member (any back-office role, i.e. not a storefront customer). */
+function isStaff(req: { user?: unknown }): boolean {
+  const r = roleOf(req)
+  return r !== null && r !== 'customer'
+}
+
 // ─── Field-level access (must return plain boolean) ───────────────────
 
 export const isAdminField: FieldAccess = ({ req }) => roleOf(req) === 'admin'
@@ -64,6 +70,24 @@ export const isEditorField: FieldAccess = ({ req }) => {
  */
 export const publishedContentAccess = {
   read: isPublic,
+  create: isMarketingOrAbove,
+  update: isMarketingOrAbove,
+  delete: isAdmin,
+} as const
+
+/**
+ * Like {@link publishedContentAccess} but for collections that carry a
+ * draft/published `status` field (products, articles, series-occupancies).
+ * Public/anonymous (and storefront `customer`) reads are constrained to
+ * published documents via a returned `Where`; CMS staff see everything so
+ * the admin edit workflow keeps working. The frontend data layer also
+ * filters `status=published` as defense-in-depth.
+ */
+export const statusGatedContentAccess = {
+  read: (({ req }) => {
+    if (isStaff(req)) return true
+    return { status: { equals: 'published' } }
+  }) as Access,
   create: isMarketingOrAbove,
   update: isMarketingOrAbove,
   delete: isAdmin,

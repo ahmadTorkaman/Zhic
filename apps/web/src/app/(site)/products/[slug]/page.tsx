@@ -44,8 +44,8 @@ export default async function ProductPage({ params }: PageProps) {
   const gallery = product.gallery ?? [];
   const variants = sortVariants(product.variants ?? []);
   const firstVariant = variants[0] ?? null;
-  const category = typeof product.categoryIds?.[0] === 'object' ? product.categoryIds[0] : null;
-  const allowedAxes = category?.allowed_axes ?? [];
+  const category = typeof product.categories?.[0] === 'object' ? product.categories[0] : null;
+  const allowedAxes = category?.allowedAxes ?? [];
 
   // Specs are computed from product fields. The "ابعاد" row is left as
   // product-level; the picker handles the size axis. (If we want
@@ -62,8 +62,8 @@ export default async function ProductPage({ params }: PageProps) {
       specs.push({ label: 'ابعاد', content: <span dir="ltr">{parts.join(' · ')}</span> });
     }
   }
-  if (product.materialIds?.length) {
-    specs.push({ label: 'متریال', content: product.materialIds.map((m) => m.name).join(' · ') });
+  if (product.materials?.length) {
+    specs.push({ label: 'متریال', content: product.materials.map((m) => m.name).join(' · ') });
   }
   if (product.specs) {
     specs.push({ label: 'مشخصات فنی', content: <RichText value={product.specs} /> });
@@ -120,13 +120,13 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
 
         {/* Related products */}
-        {product.relatedProductIds && product.relatedProductIds.length > 0 ? (
+        {product.relatedProducts && product.relatedProducts.length > 0 ? (
           <section className="border-t border-sand py-9">
             <BlurInText as="h2" className="mb-6 text-h3 font-bold text-ink">
               محصولات مرتبط
             </BlurInText>
             <div className="grid grid-cols-2 gap-[var(--space-5)] md:grid-cols-4">
-              {product.relatedProductIds.slice(0, 4).map((rp) => (
+              {product.relatedProducts.slice(0, 4).map((rp) => (
                 <Tile
                   key={String(rp.id)}
                   href={productPath(rp.slug)}

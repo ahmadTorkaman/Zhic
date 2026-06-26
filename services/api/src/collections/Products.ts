@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
-import { publishedContentAccess, isEditorField } from '../lib/access'
+import { statusGatedContentAccess, isEditorField } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
 
 export const Products: CollectionConfig = {
@@ -8,11 +8,11 @@ export const Products: CollectionConfig = {
   labels: { singular: 'محصول', plural: 'محصولات' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'status', 'basePriceRials', 'availability', 'piece_type'],
+    defaultColumns: ['name', 'status', 'basePriceRials', 'availability', 'pieceType'],
     group: 'کاتالوگ',
     listSearchableFields: ['name', 'sku'],
   },
-  access: publishedContentAccess,
+  access: statusGatedContentAccess,
   hooks: {
     beforeValidate: [
       ({ data }) => {
@@ -70,7 +70,7 @@ export const Products: CollectionConfig = {
       label: 'طرح',
     },
     {
-      name: 'piece_type',
+      name: 'pieceType',
       type: 'select',
       label: 'نوع قطعه',
       options: [
@@ -106,21 +106,21 @@ export const Products: CollectionConfig = {
       },
     },
     {
-      name: 'categoryIds',
+      name: 'categories',
       type: 'relationship',
       relationTo: 'categories',
       hasMany: true,
       label: 'دسته‌بندی‌ها',
     },
     {
-      name: 'tagIds',
+      name: 'tags',
       type: 'relationship',
       relationTo: 'tags',
       hasMany: true,
       label: 'تگ‌ها',
     },
     {
-      name: 'materialIds',
+      name: 'materials',
       type: 'relationship',
       relationTo: 'materials',
       hasMany: true,
@@ -246,7 +246,7 @@ export const Products: CollectionConfig = {
       label: 'مشخصات فنی',
     },
     {
-      name: 'relatedProductIds',
+      name: 'relatedProducts',
       type: 'relationship',
       relationTo: 'products',
       hasMany: true,
@@ -256,7 +256,7 @@ export const Products: CollectionConfig = {
       },
     },
     {
-      name: 'pairsWithProductIds',
+      name: 'pairsWithProducts',
       type: 'relationship',
       relationTo: 'products',
       hasMany: true,
@@ -266,7 +266,7 @@ export const Products: CollectionConfig = {
       },
     },
     {
-      name: 'inquiry_enabled',
+      name: 'inquiryEnabled',
       type: 'checkbox',
       defaultValue: true,
       label: 'فعال بودن فرم استعلام',

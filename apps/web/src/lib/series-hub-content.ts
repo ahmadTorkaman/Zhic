@@ -89,6 +89,22 @@ const OCCUPANCY_TITLE: Record<string, string> = {
   bunk: 'سرویس خواب دوطبقه',
 };
 
+/**
+ * Drop the design name from a piece caption shown in the «قطعات سرویس» grid.
+ * Every product is named «{قطعه} {نام طرح}» (e.g. «تخت کارولین»), but on a
+ * series page the whole grid already belongs to one design, so repeating it on
+ * every card is redundant. Removes the name token wherever it sits — suffix
+ * («تخت کارولین» → «تخت») or mid-name before a qualifier
+ * («تخت نوزاد دومنظوره کارولین (نوجوان)» → «تخت نوزاد دومنظوره (نوجوان)») — then
+ * collapses the leftover whitespace. Falls back to the full name if stripping
+ * would empty it (a piece named exactly after the design).
+ */
+function stripDesignName(name: string, designName: string): string {
+  if (!designName) return name;
+  const stripped = name.split(designName).join(' ').replace(/\s+/g, ' ').trim();
+  return stripped || name;
+}
+
 function priceString(p: PayloadProduct): { price: string; originalPrice: string | null } {
   const base = p.basePriceRials ?? null;
   const sale = p.salePriceRials ?? null;
@@ -142,7 +158,7 @@ export async function getSeriesOccupancyContent(
     const { price, originalPrice } = priceString(p);
     return {
       key: String(p.id),
-      name: p.name,
+      name: stripDesignName(p.name, design.name),
       img: mediaUrl(p.gallery?.[0]) ?? null,
       price,
       originalPrice,

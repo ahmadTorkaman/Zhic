@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { publishedContentAccess } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 /**
  * Per-occupancy editor for the /bedroom-set/{baby,teen,double,bunk} hub pages.
@@ -121,16 +122,7 @@ export const BedroomSetHubs: CollectionConfig = {
       admin: { description: 'پیش‌فرض: «گروه‌های دیگر». لینک‌ها خودکار از دیگر گروه‌های سنی ساخته می‌شوند.' },
     },
 
-    // ── سئو (NEW — meta) ────────────────────────────────────────────────────
-    {
-      type: 'collapsible',
-      label: 'سئو (متا)',
-      admin: { initCollapsed: true },
-      fields: [
-        { name: 'seoTitle', type: 'text', label: 'عنوان سئو (متا تایتل)' },
-        { name: 'seoDescription', type: 'textarea', label: 'توضیحات سئو (متا دیسکریپشن)' },
-        { name: 'seoImage', type: 'upload', relationTo: 'media', label: 'تصویر اشتراک‌گذاری (OG)' },
-      ],
-    },
+    // ── سئو (shared seoFields group → seo.metaTitle / seo.metaDescription / seo.ogImage / …) ──
+    seoFields,
   ],
 }

@@ -132,7 +132,7 @@ async function seed() {
    *   }
    *
    * Watch out for the Payload 3 hasMany-text persistence quirk on
-   * `update()` (see handoff §5.2 + seed.ts `allowed_axes` workaround).
+   * `update()` (see handoff §5.2 + seed.ts `allowedAxes` workaround).
    */
   async function upsertBySlug<T extends WithId>(
     collection: 'categories' | 'tags' | 'materials' | 'designs' | 'products' | 'collections' | 'showrooms' | 'articles' | 'authors' | 'journal-categories' | 'rooms',
@@ -170,7 +170,7 @@ async function seed() {
     slug: 'beds',
     description: 'تخت‌خواب‌های دست‌ساز برای آرامش‌ترین لحظه‌های روز.',
     cover: 7,
-    allowed_axes: ['size', 'footboard'],
+    allowedAxes: ['size', 'footboard'],
   })
   const catWardrobes = await upsertBySlug('categories', 'wardrobes', {
     name: 'کمد',
@@ -186,7 +186,7 @@ async function seed() {
   })
   // Media id 15 = 'ayne ghadi.webp' — full-length mirror image; suitable hero for آینه‌ها parent.
   // The existing `mirrors` entry is reshaped into the hub parent: hub fields (tagline, intro,
-  // allowed_axes, explicit parent=null) are added directly here; no separate mirrors-hub record.
+  // allowedAxes, explicit parent=null) are added directly here; no separate mirrors-hub record.
   const catMirrors = await upsertBySlug('categories', 'mirrors', {
     name: 'آینه‌ها',
     slug: 'mirrors',
@@ -198,7 +198,7 @@ async function seed() {
       'قاب‌ها همگی از روکش طبیعی گردو یا راش‌اند، با تراش دستی، و در نسبت‌های طلایی برش می‌خورند.',
     ),
     parent: null,
-    allowed_axes: [],
+    allowedAxes: [],
   })
   // upsertBySlug returns the existing record without merging; force-apply hub fields so
   // re-runs on a pre-existing DB also promote mirrors to the full hub shape.
@@ -216,16 +216,16 @@ async function seed() {
         'قاب‌ها همگی از روکش طبیعی گردو یا راش‌اند، با تراش دستی، و در نسبت‌های طلایی برش می‌خورند.',
       ),
       parent: null,
-      allowed_axes: [],
+      allowedAxes: [],
     } as any,
   })
   /* eslint-enable @typescript-eslint/no-explicit-any */
-  // Force-apply allowed_axes on catBeds so existing DBs converge on re-seed.
+  // Force-apply allowedAxes on catBeds so existing DBs converge on re-seed.
   /* eslint-disable @typescript-eslint/no-explicit-any */
   await payload.update({
     collection: 'categories' as any,
     id: catBeds.id,
-    data: { allowed_axes: ['size', 'footboard'] } as any,
+    data: { allowedAxes: ['size', 'footboard'] } as any,
   })
   /* eslint-enable @typescript-eslint/no-explicit-any */
   // Payload hasMany-text persistence quirk: the update call above may not write the
@@ -258,7 +258,7 @@ async function seed() {
       'قاب‌ها از روکش طبیعی گردو و راش انتخاب می‌شوند؛ آینه با ضدبخاری مات و سطح بدون لک تولید می‌شود.',
     ),
     parent: catMirrors.id,
-    allowed_axes: ['size'],
+    allowedAxes: ['size'],
     rule: 'use where size variant exists',
   })
   // Force-apply parent link so re-runs on a pre-existing DB also wire the leaf correctly.
@@ -266,7 +266,7 @@ async function seed() {
   await payload.update({
     collection: 'categories' as any,
     id: catWallMirror.id,
-    data: { parent: catMirrors.id, allowed_axes: ['size'] } as any,
+    data: { parent: catMirrors.id, allowedAxes: ['size'] } as any,
   })
   /* eslint-enable @typescript-eslint/no-explicit-any */
   console.log(`  Hub category (leaf): آینه دیواری`)
@@ -317,16 +317,18 @@ async function seed() {
   const designAramesh = await upsertBySlug('designs', 'aramesh', {
     name: 'طرح آرامش',
     slug: 'aramesh',
-    age_group: 'adult',
+    ageGroup: 'adult',
     featured: true,
     tagline: 'سکونی برای بازگشت به خانه',
+    status: 'published',
   })
   const designBahar = await upsertBySlug('designs', 'bahar', {
     name: 'طرح بهار',
     slug: 'bahar',
-    age_group: 'child',
+    ageGroup: 'child',
     featured: true,
     tagline: 'گرم، برای رؤیاهای کودکانه',
+    status: 'published',
   })
   console.log(`  Designs: 2`)
 
@@ -346,10 +348,10 @@ async function seed() {
         'هر تخت در کارگاه ما به‌صورت دستی ساخته می‌شود و از سفارش تا تحویل، حدود هشت هفته زمان می‌برد.',
       ),
       design: designAramesh.id,
-      piece_type: 'bed',
-      categoryIds: [catBeds.id],
-      materialIds: [matWalnut.id, matLinen.id],
-      tagIds: [tagWalnut.id, tagModern.id],
+      pieceType: 'bed',
+      categories: [catBeds.id],
+      materials: [matWalnut.id, matLinen.id],
+      tags: [tagWalnut.id, tagModern.id],
       basePriceRials: 450_000_000,
       availability: 'made_to_order',
       leadTimeDays: 56,
@@ -368,10 +370,10 @@ async function seed() {
         'سطح بالایی برای یک چراغ شب و یک لیوان آب، کشوی پنهان برای کتاب و عینک.',
       ),
       design: designAramesh.id,
-      piece_type: 'nightstand',
-      categoryIds: [catBedroom.id],
-      materialIds: [matWalnut.id],
-      tagIds: [tagWalnut.id, tagStorage.id],
+      pieceType: 'nightstand',
+      categories: [catBedroom.id],
+      materials: [matWalnut.id],
+      tags: [tagWalnut.id, tagStorage.id],
       basePriceRials: 95_000_000,
       availability: 'in_stock',
       leadTimeDays: 14,
@@ -388,10 +390,10 @@ async function seed() {
         'تقسیم‌بندی داخلی شامل میله‌ی لباس، چند کشو و قفسه‌های قابل‌جابه‌جایی است.',
       ),
       design: designAramesh.id,
-      piece_type: 'closet',
-      categoryIds: [catWardrobes.id],
-      materialIds: [matWalnut.id, matBeech.id],
-      tagIds: [tagWalnut.id, tagStorage.id],
+      pieceType: 'closet',
+      categories: [catWardrobes.id],
+      materials: [matWalnut.id, matBeech.id],
+      tags: [tagWalnut.id, tagStorage.id],
       basePriceRials: 320_000_000,
       availability: 'made_to_order',
       leadTimeDays: 70,
@@ -407,10 +409,10 @@ async function seed() {
         'دراور آرامش، پنج کشو با ریل‌های آرام‌بند دارد و قابلیت قفل اختیاری برای کشوی بالایی.',
       ),
       design: designAramesh.id,
-      piece_type: 'dresser',
-      categoryIds: [catDressers.id],
-      materialIds: [matWalnut.id],
-      tagIds: [tagWalnut.id, tagStorage.id],
+      pieceType: 'dresser',
+      categories: [catDressers.id],
+      materials: [matWalnut.id],
+      tags: [tagWalnut.id, tagStorage.id],
       basePriceRials: 180_000_000,
       availability: 'in_stock',
       leadTimeDays: 21,
@@ -426,10 +428,10 @@ async function seed() {
         'آینه‌ی آرامش با قاب چوب بلوط ساخته شده و دارای پوشش ضد رطوبت در پشت قاب است.',
       ),
       design: designAramesh.id,
-      piece_type: 'mirror',
-      categoryIds: [catMirrors.id, catWallMirror.id],
-      materialIds: [matOak.id],
-      tagIds: [tagModern.id],
+      pieceType: 'mirror',
+      categories: [catMirrors.id, catWallMirror.id],
+      materials: [matOak.id],
+      tags: [tagModern.id],
       basePriceRials: 65_000_000,
       availability: 'in_stock',
       leadTimeDays: 7,
@@ -446,10 +448,10 @@ async function seed() {
         'پارچه‌ی پشتی تخت قابل‌تعویض است و در چند رنگ از کتان بلژیکی موجود است.',
       ),
       design: designBahar.id,
-      piece_type: 'bed',
-      categoryIds: [catBeds.id],
-      materialIds: [matBeech.id, matLinen.id],
-      tagIds: [tagLinen.id],
+      pieceType: 'bed',
+      categories: [catBeds.id],
+      materials: [matBeech.id, matLinen.id],
+      tags: [tagLinen.id],
       basePriceRials: 280_000_000,
       availability: 'made_to_order',
       leadTimeDays: 42,
@@ -465,10 +467,10 @@ async function seed() {
         'کمد بهار با ارتفاع کمتر از یک کمد بزرگسال طراحی شده تا کودک به‌راحتی به وسایلش دسترسی داشته باشد.',
       ),
       design: designBahar.id,
-      piece_type: 'closet',
-      categoryIds: [catWardrobes.id],
-      materialIds: [matBeech.id],
-      tagIds: [tagStorage.id],
+      pieceType: 'closet',
+      categories: [catWardrobes.id],
+      materials: [matBeech.id],
+      tags: [tagStorage.id],
       basePriceRials: 165_000_000,
       availability: 'made_to_order',
       leadTimeDays: 56,
@@ -484,10 +486,10 @@ async function seed() {
         'میز بهار با ارتفاع قابل‌تنظیم برای رشد کودک، یک کشو و سطح کار وسیع طراحی شده است.',
       ),
       design: designBahar.id,
-      piece_type: 'desk',
-      categoryIds: [catBedroom.id],
-      materialIds: [matBeech.id],
-      tagIds: [tagModern.id],
+      pieceType: 'desk',
+      categories: [catBedroom.id],
+      materials: [matBeech.id],
+      tags: [tagModern.id],
       basePriceRials: 120_000_000,
       availability: 'in_stock',
       leadTimeDays: 14,
@@ -500,7 +502,7 @@ async function seed() {
   for (const p of productSpecs) {
     const created = await upsertBySlug('products', p.slug, {
       ...p,
-      inquiry_enabled: true,
+      inquiryEnabled: true,
     })
     productIdBySlug.set(p.slug, created.id as number)
     console.log(`  Product: ${p.name}`)
@@ -519,8 +521,8 @@ async function seed() {
     collection: 'products',
     id: idAramesh,
     data: {
-      relatedProductIds: [idTakhtBahar, idKomod],
-      pairsWithProductIds: [idPatakhti, idDravar, idAiineh],
+      relatedProducts: [idTakhtBahar, idKomod],
+      pairsWithProducts: [idPatakhti, idDravar, idAiineh],
     },
   })
 
@@ -528,18 +530,18 @@ async function seed() {
     collection: 'products',
     id: idTakhtBahar,
     data: {
-      relatedProductIds: [idAramesh],
-      pairsWithProductIds: [idKomodBahar],
+      relatedProducts: [idAramesh],
+      pairsWithProducts: [idKomodBahar],
     },
   })
 
-  // Force-apply categoryIds for MIR-005 so re-runs on existing DBs assign the
+  // Force-apply categories for MIR-005 so re-runs on existing DBs assign the
   // wall-mirror leaf category (upsertBySlug skips updates on existing records).
   const idAiinehAramesh = productIdBySlug.get('aiineh-aramesh')!
   await payload.update({
     collection: 'products' as any,
     id: idAiinehAramesh,
-    data: { categoryIds: [catMirrors.id, catWallMirror.id] } as any,
+    data: { categories: [catMirrors.id, catWallMirror.id] } as any,
   })
 
   console.log('  Product relations: wired (related + pairsWith)')
@@ -584,11 +586,11 @@ async function seed() {
     parkingNotes: 'پارکینگ اختصاصی برای مهمانان شوروم در کنار ساختمان.',
     transitNotes: 'دسترسی با خط اتوبوس ارم — ایستگاه گلستان.',
     appointmentOnly: false,
-    featuredProductIds: [idAramesh, idKomod, idDravar],
+    featuredProducts: [idAramesh, idKomod, idDravar],
     neshanProfileUrl: 'https://nshn.ir/example-hamedan',
-    manager_name: 'احمد ترکمان',
-    manager_phone: '09121234567',
-    is_central: true,
+    managerName: 'احمد ترکمان',
+    managerPhone: '09121234567',
+    isCentral: true,
   })
   console.log('  Showroom: شوروم همدان')
 
@@ -618,10 +620,10 @@ async function seed() {
     ),
     transitNotes: 'نزدیک ایستگاه مترو صنعت.',
     appointmentOnly: false,
-    featuredProductIds: [idAramesh, idTakhtBahar, idAiineh],
-    manager_name: 'مهسا کیانی',
-    manager_phone: '09123456789',
-    is_central: false,
+    featuredProducts: [idAramesh, idTakhtBahar, idAiineh],
+    managerName: 'مهسا کیانی',
+    managerPhone: '09123456789',
+    isCentral: false,
   })
   console.log('  Showroom: شوروم تهران')
 
@@ -650,10 +652,10 @@ async function seed() {
     ),
     appointmentOnly: true,
     transitNotes: 'پارکینگ عمومی چهارباغ در ۱۰۰ متری.',
-    featuredProductIds: [idKomodBahar, idTakhtBahar],
-    manager_name: 'علیرضا یزدانی',
-    manager_phone: '09135678901',
-    is_central: false,
+    featuredProducts: [idKomodBahar, idTakhtBahar],
+    managerName: 'علیرضا یزدانی',
+    managerPhone: '09135678901',
+    isCentral: false,
   })
   console.log('  Showroom: شوروم اصفهان')
 
@@ -717,7 +719,7 @@ async function seed() {
     ),
     author: authorTeam.id,
     category: jcMaterials.id,
-    tagIds: [tagWalnut.id, tagModern.id],
+    tags: [tagWalnut.id, tagModern.id],
     relatedProducts: [idAramesh, idDravar],
     publishedAt: new Date().toISOString(),
     status: 'published',
@@ -744,7 +746,7 @@ async function seed() {
     ),
     author: authorSara.id,
     category: jcLifestyle.id,
-    tagIds: [tagModern.id, tagLinen.id],
+    tags: [tagModern.id, tagLinen.id],
     relatedProducts: [idAramesh, idPatakhti, idKomod],
     publishedAt: new Date().toISOString(),
     status: 'published',
@@ -769,7 +771,7 @@ async function seed() {
     ),
     author: authorTeam.id,
     category: jcCare.id,
-    tagIds: [tagWalnut.id],
+    tags: [tagWalnut.id],
     relatedProducts: [idAiineh, idDravar],
     publishedAt: new Date().toISOString(),
     status: 'published',
@@ -819,12 +821,12 @@ async function seed() {
   await payload.updateGlobal({
     slug: 'home',
     data: {
-      hero_heading: 'ساخته‌شده برای ماندن',
-      hero_subheading: 'مبلمان دست‌ساز برای خانه‌هایی که آرامش را می‌فهمند',
-      brand_statement: brandStatement,
-      featured_designs: [designAramesh.id, designBahar.id],
-      journal_teaser_heading: 'از ژورنال',
-      inquiry_cta_heading: 'سفارش و مشاوره',
+      heroHeading: 'ساخته‌شده برای ماندن',
+      heroSubheading: 'مبلمان دست‌ساز برای خانه‌هایی که آرامش را می‌فهمند',
+      brandStatement: brandStatement,
+      featuredDesigns: [designAramesh.id, designBahar.id],
+      journalTeaserHeading: 'از ژورنال',
+      inquiryCtaHeading: 'سفارش و مشاوره',
     },
   })
   console.log('  Home global: populated')

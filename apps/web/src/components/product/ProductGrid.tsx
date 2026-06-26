@@ -17,7 +17,7 @@ export function ProductGrid({ products }: ProductGridProps) {
     /* c-grid: 4/3/2/2 across xl/lg/sm/base, gap-[var(--space-5)] */
     <div className="grid grid-cols-2 gap-[var(--space-5)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((p) => {
-        const materials = p.materialIds?.map((m) => m.name) ?? [];
+        const materials = p.materials?.map((m) => m.name) ?? [];
         const meta = materials.length > 0 ? materials.join(' · ') : undefined;
 
         return (

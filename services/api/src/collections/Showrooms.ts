@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { publishedContentAccess } from '../lib/access'
+import { seoFields } from '../fields/seoFields'
 
 const PERSIAN_DAY_OPTIONS = [
   { label: 'شنبه', value: 'sat' },
@@ -25,7 +26,7 @@ export const Showrooms: CollectionConfig = {
   labels: { singular: 'شوروم', plural: 'شوروم‌ها' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'is_central', 'phone'],
+    defaultColumns: ['name', 'isCentral', 'phone'],
     group: 'شوروم‌ها',
   },
   access: publishedContentAccess,
@@ -208,7 +209,7 @@ export const Showrooms: CollectionConfig = {
       admin: { description: 'مثال: نزدیکی به مترو / ایستگاه اتوبوس' },
     },
     {
-      name: 'featuredProductIds',
+      name: 'featuredProducts',
       type: 'relationship',
       relationTo: 'products',
       hasMany: true,
@@ -234,7 +235,7 @@ export const Showrooms: CollectionConfig = {
     },
     // --- Internal / SMS routing (kept from 1.3) -----------------------------
     {
-      name: 'manager_name',
+      name: 'managerName',
       type: 'text',
       label: 'نام مدیر (داخلی)',
       admin: {
@@ -243,7 +244,7 @@ export const Showrooms: CollectionConfig = {
       },
     },
     {
-      name: 'manager_phone',
+      name: 'managerPhone',
       type: 'text',
       label: 'تلفن مدیر (داخلی)',
       admin: {
@@ -252,7 +253,7 @@ export const Showrooms: CollectionConfig = {
       },
     },
     {
-      name: 'is_central',
+      name: 'isCentral',
       type: 'checkbox',
       defaultValue: false,
       label: 'شعبه مرکزی',
@@ -261,5 +262,6 @@ export const Showrooms: CollectionConfig = {
         description: 'Fallback for SMS routing when city has no match',
       },
     },
+    seoFields,
   ],
 }

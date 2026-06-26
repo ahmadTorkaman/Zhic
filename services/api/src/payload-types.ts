@@ -210,7 +210,7 @@ export interface Design {
   /**
    * Exact age group names pending brand decision (OD-3)
    */
-  age_group?: ('infant' | 'child' | 'teen' | 'adult') | null;
+  ageGroup?: ('infant' | 'child' | 'teen' | 'adult') | null;
   /**
    * این طرح در کدام صفحات هاب «سرویس خواب /bedroom-set/{slug}» نمایش داده شود؟ انتخاب چند گزینه ممکن است. خالی یعنی هیچ هاب آرایش‌نشده‌ای نمایش نمی‌دهد.
    */
@@ -327,7 +327,7 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   design: number | Design;
-  piece_type?:
+  pieceType?:
     | (
         | 'bed'
         | 'nightstand'
@@ -349,9 +349,9 @@ export interface Product {
    * این قطعه به کدام گروه‌(های) سنی ست تعلق دارد؟ انتخاب چند گزینه ممکن است. در PDP طرح با ?age=… فیلتر می‌شود. خالی یعنی فیلتر سنی روی این قطعه اثری ندارد.
    */
   occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
-  categoryIds?: (number | Category)[] | null;
-  tagIds?: (number | Tag)[] | null;
-  materialIds?: (number | Material)[] | null;
+  categories?: (number | Category)[] | null;
+  tags?: (number | Tag)[] | null;
+  materials?: (number | Material)[] | null;
   /**
    * شناسه‌ی یکتای محصول (می‌تواند الگوی AAA-NNN یا عددی باشد).
    */
@@ -398,12 +398,12 @@ export interface Product {
   /**
    * برای ردیف «محصولات مرتبط» در صفحه‌ی محصول
    */
-  relatedProductIds?: (number | Product)[] | null;
+  relatedProducts?: (number | Product)[] | null;
   /**
    * برای ردیف «در کنار آن خوب است» در صفحه‌ی محصول
    */
-  pairsWithProductIds?: (number | Product)[] | null;
-  inquiry_enabled?: boolean | null;
+  pairsWithProducts?: (number | Product)[] | null;
+  inquiryEnabled?: boolean | null;
   featured?: boolean | null;
   /**
    * هرچه کمتر، بالاتر
@@ -562,7 +562,7 @@ export interface Category {
   /**
    * از xlsx برای leaf‌ها: size, footboard, doors, drawers, glass, width, pieces. برای parent‌ها خالی می‌ماند.
    */
-  allowed_axes?: string[] | null;
+  allowedAxes?: string[] | null;
   /**
    * از xlsx: یادداشت داخلی. روی صفحه‌ی عمومی نمایش داده نمی‌شود.
    */
@@ -570,7 +570,7 @@ export interface Category {
   /**
    * فقط برای صفحات SEO-promoted facet (مثل /storage/wardrobe/double-door). شکل: { "axis": "doors", "value": "2" }. صفحه به‌طور خودکار محصولات را با این محور فیلتر می‌کند. برای parent و leaf معمولی خالی می‌ماند.
    */
-  axis_filter?:
+  axisFilter?:
     | {
         [k: string]: unknown;
       }
@@ -711,7 +711,7 @@ export interface Article {
   cover?: (number | null) | Media;
   author: number | Author;
   category: number | JournalCategory;
-  tagIds?: (number | Tag)[] | null;
+  tags?: (number | Tag)[] | null;
   relatedProducts?: (number | Product)[] | null;
   relatedArticles?: (number | Article)[] | null;
   /**
@@ -844,7 +844,7 @@ export interface ProductVariant {
    */
   label?: string | null;
   /**
-   * هر سطر یک محور (مثلاً سایز=۱۲۰). کلیدها باید با allowed_axes دسته‌بندی محصول هم‌خوان باشند.
+   * هر سطر یک محور (مثلاً سایز=۱۲۰). کلیدها باید با allowedAxes دسته‌بندی محصول هم‌خوان باشند.
    */
   axes?:
     | {
@@ -966,7 +966,7 @@ export interface Showroom {
    * مثال: نزدیکی به مترو / ایستگاه اتوبوس
    */
   transitNotes?: string | null;
-  featuredProductIds?: (number | Product)[] | null;
+  featuredProducts?: (number | Product)[] | null;
   googleBusinessProfileUrl?: string | null;
   neshanProfileUrl?: string | null;
   /**
@@ -976,15 +976,15 @@ export interface Showroom {
   /**
    * Internal — not displayed on storefront
    */
-  manager_name?: string | null;
+  managerName?: string | null;
   /**
    * Internal — SMS routing target for inquiries (Session 5.1)
    */
-  manager_phone?: string | null;
+  managerPhone?: string | null;
   /**
    * Fallback for SMS routing when city has no match
    */
-  is_central?: boolean | null;
+  isCentral?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1117,12 +1117,12 @@ export interface Inquiry {
   phone: string;
   city: string;
   reason: 'price_inquiry' | 'showroom_visit';
-  preferred_date?: string | null;
+  preferredDate?: string | null;
   message?: string | null;
   /**
    * Auto-set by SMS routing logic (Session 5.1)
    */
-  routed_to?: (number | null) | Showroom;
+  routedTo?: (number | null) | Showroom;
   /**
    * Set when submitted from a product detail page
    */
@@ -1319,7 +1319,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface DesignsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
-  age_group?: T;
+  ageGroup?: T;
   occupancies?: T;
   description?: T;
   tagline?: T;
@@ -1342,11 +1342,11 @@ export interface ProductsSelect<T extends boolean = true> {
   shortDescription?: T;
   longDescription?: T;
   design?: T;
-  piece_type?: T;
+  pieceType?: T;
   occupancies?: T;
-  categoryIds?: T;
-  tagIds?: T;
-  materialIds?: T;
+  categories?: T;
+  tags?: T;
+  materials?: T;
   sku?: T;
   basePriceRials?: T;
   salePriceRials?: T;
@@ -1363,9 +1363,9 @@ export interface ProductsSelect<T extends boolean = true> {
       };
   gallery?: T;
   specs?: T;
-  relatedProductIds?: T;
-  pairsWithProductIds?: T;
-  inquiry_enabled?: T;
+  relatedProducts?: T;
+  pairsWithProducts?: T;
+  inquiryEnabled?: T;
   featured?: T;
   featuredOrder?: T;
   status?: T;
@@ -1513,13 +1513,13 @@ export interface ShowroomsSelect<T extends boolean = true> {
   appointmentOnly?: T;
   parkingNotes?: T;
   transitNotes?: T;
-  featuredProductIds?: T;
+  featuredProducts?: T;
   googleBusinessProfileUrl?: T;
   neshanProfileUrl?: T;
   mapEmbedUrl?: T;
-  manager_name?: T;
-  manager_phone?: T;
-  is_central?: T;
+  managerName?: T;
+  managerPhone?: T;
+  isCentral?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1535,7 +1535,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   cover?: T;
   author?: T;
   category?: T;
-  tagIds?: T;
+  tags?: T;
   relatedProducts?: T;
   relatedArticles?: T;
   readingTimeMinutes?: T;
@@ -1605,9 +1605,9 @@ export interface CategoriesSelect<T extends boolean = true> {
   tagline?: T;
   cover?: T;
   intro?: T;
-  allowed_axes?: T;
+  allowedAxes?: T;
   rule?: T;
-  axis_filter?: T;
+  axisFilter?: T;
   parent?: T;
   seo?:
     | T
@@ -1720,9 +1720,9 @@ export interface InquiriesSelect<T extends boolean = true> {
   phone?: T;
   city?: T;
   reason?: T;
-  preferred_date?: T;
+  preferredDate?: T;
   message?: T;
-  routed_to?: T;
+  routedTo?: T;
   product?: T;
   productVariant?: T;
   selectedAxes?: T;
@@ -1790,9 +1790,9 @@ export interface Home {
   /**
    * این فیلد در نسخه‌ی بعدی حذف می‌شود. به‌جای آن heroSlides را پر کنید.
    */
-  hero_media?: (number | null) | Media;
-  hero_heading?: string | null;
-  hero_subheading?: string | null;
+  heroMedia?: (number | null) | Media;
+  heroHeading?: string | null;
+  heroSubheading?: string | null;
   heroSlides?:
     | {
         image: number | Media;
@@ -1804,7 +1804,7 @@ export interface Home {
         id?: string | null;
       }[]
     | null;
-  brand_statement?: {
+  brandStatement?: {
     root: {
       type: string;
       children: {
@@ -1822,11 +1822,11 @@ export interface Home {
   /**
    * اختیاری — اگر خالی باشد، بخش درباره فقط متن نمایش می‌دهد.
    */
-  about_media?: (number | null) | Media;
-  about_background?: (number | null) | Media;
-  featured_designs?: (number | Design)[] | null;
-  journal_teaser_heading?: string | null;
-  inquiry_cta_heading?: string | null;
+  aboutMedia?: (number | null) | Media;
+  aboutBackground?: (number | null) | Media;
+  featuredDesigns?: (number | Design)[] | null;
+  journalTeaserHeading?: string | null;
+  inquiryCtaHeading?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2142,9 +2142,9 @@ export interface Term {
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
-  hero_media?: T;
-  hero_heading?: T;
-  hero_subheading?: T;
+  heroMedia?: T;
+  heroHeading?: T;
+  heroSubheading?: T;
   heroSlides?:
     | T
     | {
@@ -2153,12 +2153,12 @@ export interface HomeSelect<T extends boolean = true> {
         link?: T;
         id?: T;
       };
-  brand_statement?: T;
-  about_media?: T;
-  about_background?: T;
-  featured_designs?: T;
-  journal_teaser_heading?: T;
-  inquiry_cta_heading?: T;
+  brandStatement?: T;
+  aboutMedia?: T;
+  aboutBackground?: T;
+  featuredDesigns?: T;
+  journalTeaserHeading?: T;
+  inquiryCtaHeading?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -14,7 +14,7 @@ export default async function HomePage() {
   ]);
 
   // Prefer curated heroSlides[] from the home global. Fall back to the
-  // legacy hero_media if no slides have been seeded yet, then to a static
+  // legacy heroMedia if no slides have been seeded yet, then to a static
   // placeholder so the page never breaks during the operator's migration.
   const seededSlides: HeroSlide[] = (home?.heroSlides ?? [])
     .map<HeroSlide>((s) => ({
@@ -56,8 +56,8 @@ export default async function HomePage() {
   const slides: HeroSlide[] =
     seededSlides.length > 0
       ? seededSlides
-      : home?.hero_media?.url
-        ? [{ src: home.hero_media.url, alt: home?.hero_heading ?? '' }]
+      : home?.heroMedia?.url
+        ? [{ src: home.heroMedia.url, alt: home?.heroHeading ?? '' }]
         : FALLBACK_HERO_SLIDES;
 
   // Homepage age-band copy + order from the Kaveh mobile design (frame 19:120).
@@ -113,22 +113,22 @@ export default async function HomePage() {
       slug: s.slug,
       city: s.address?.city ?? s.name,
       coverUrl: s.cover?.url ?? null,
-      isCentral: s.is_central ?? undefined,
+      isCentral: s.isCentral ?? undefined,
     }))
     .sort((a, b) => Number(Boolean(b.isCentral)) - Number(Boolean(a.isCentral)));
 
   return (
     <>
       <HomeHeroCarousel
-        heading={home?.hero_heading ?? undefined}
-        subheading={home?.hero_subheading ?? undefined}
+        heading={home?.heroHeading ?? undefined}
+        subheading={home?.heroSubheading ?? undefined}
         slides={slides}
       />
       <HomeRoomsTiles rooms={roomTiles} />
       <HomeBrandStatement
-        statement={home?.brand_statement ?? null}
-        aboutMedia={home?.about_media ?? null}
-        backgroundTexture={home?.about_background?.url ?? undefined}
+        statement={home?.brandStatement ?? null}
+        aboutMedia={home?.aboutMedia ?? null}
+        backgroundTexture={home?.aboutBackground?.url ?? undefined}
       />
       <HomeJournalRows articles={journalArticles} />
       <HomeShowroomsTeaser showrooms={showroomCards} />
