@@ -11,6 +11,10 @@ export type PayloadMedia = {
   mimeType?: string | null;
 };
 
+/** Bedroom-set occupancy / age group. Mirrors the CMS OCCUPANCY_OPTIONS enum
+ *  (services/api/src/fields/occupancy.ts) — keep the value list in sync. */
+export type Occupancy = 'baby' | 'teen' | 'double' | 'bunk';
+
 export type PayloadDesign = {
   id: string | number;
   name: string;
@@ -18,7 +22,7 @@ export type PayloadDesign = {
   ageGroup?: 'infant' | 'child' | 'teen' | 'adult' | null;
   /** Phase 1 (2026-05-23) — which /bedroom-set/{slug} occupancy hub pages should
    *  list this series. A series can belong to multiple (parla → all four). */
-  occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
+  occupancies?: Occupancy[] | null;
   description?: LexicalRoot | null;
   gallery?: PayloadMedia[] | null;
   featured?: boolean | null;
@@ -36,7 +40,7 @@ export type PayloadDesign = {
   /** Name-mark shown in the /bedroom-set carousel glass band (SP1). Card is logo-less if null. */
   logoMedia?: PayloadMedia | null;
   /** Per-room-type card variants — the carousel cross-dissolves to one when its tab is tapped (SP1). */
-  occupancyMedia?: { occupancy: 'baby' | 'teen' | 'double' | 'bunk'; image?: PayloadMedia | null }[] | null;
+  occupancyMedia?: { occupancy: Occupancy; image?: PayloadMedia | null }[] | null;
   /** Intro editorial card (detail page). Card renders only when introMedia is set. */
   introTitle?: string | null;
   introBody?: string | null;
@@ -317,7 +321,7 @@ export type PayloadProduct = {
   /** Which age groups this piece serves. Drives the ?age=… filter on
    *  /bedroom-set/[design-slug]. Null/empty = unaffected by the filter.
    *  Plural name mirrors the auto-generated `products_occupancies` join table. */
-  occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null;
+  occupancies?: Occupancy[] | null;
   dimensions?: { width?: number; height?: number; depth?: number } | null;
   gallery?: PayloadMedia[] | null;
   inquiryEnabled?: boolean | null;
@@ -338,7 +342,7 @@ export type PayloadSeriesOccupancy = {
   title?: string | null;
   /** Relationship → designs. Object at depth ≥ 1. */
   design?: { id: string | number; name: string; slug: string } | string | number | null;
-  occupancy: 'baby' | 'teen' | 'double' | 'bunk';
+  occupancy: Occupancy;
   /** Curated, ordered «قطعات سرویس». Inflated to objects at depth ≥ 1. */
   products?: PayloadProduct[] | null;
   heroMedia?: PayloadMedia | null;
@@ -428,7 +432,7 @@ export type NavMeta = {
   featuredDesign: NavFeaturedDesign | null;
   pieceCounts: Partial<Record<PieceTypeValue, number>>;
   /** Aggregated stats per occupancy hub (baby/teen/double/bunk). */
-  occupancyCounts: Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats>;
+  occupancyCounts: Record<Occupancy, NavOccupancyStats>;
 };
 
 // --- Nav meta pure helpers --------------------------------------------------
@@ -481,7 +485,7 @@ export function bucketNavCounts(
   designs: NavDesign[];
   collections: NavCollection[];
   pieceCounts: Partial<Record<PieceTypeValue, number>>;
-  occupancyCounts: Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats>;
+  occupancyCounts: Record<Occupancy, NavOccupancyStats>;
 } {
   const categoryCount = new Map<string, number>();
   const designCount = new Map<string, number>();
@@ -535,8 +539,8 @@ export function bucketNavCounts(
 function bucketOccupancyCounts(
   designs: PayloadDesign[],
   designCount: Map<string, number>,
-): Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats> {
-  const stats: Record<'baby' | 'teen' | 'double' | 'bunk', NavOccupancyStats> = {
+): Record<Occupancy, NavOccupancyStats> {
+  const stats: Record<Occupancy, NavOccupancyStats> = {
     baby:   { designs: 0, pieces: 0 },
     teen:   { designs: 0, pieces: 0 },
     double: { designs: 0, pieces: 0 },
@@ -649,7 +653,7 @@ export type PayloadBedroomSetHeroes = {
 export type PayloadDesignRef = PayloadDesign | string | number;
 export type PayloadBedroomSetHub = {
   id: string | number;
-  occupancy: 'baby' | 'teen' | 'double' | 'bunk';
+  occupancy: Occupancy;
   heroImage?: PayloadMedia | null;
   heroTitle?: string | null;
   heroTagline?: string | null;
@@ -677,7 +681,7 @@ export async function fetchBedroomSetHeroes(): Promise<PayloadBedroomSetHeroes |
  *  Null when the operator hasn't created that doc → the page falls back to the
  *  built-in copy. */
 export async function fetchBedroomSetHub(
-  occupancy: 'baby' | 'teen' | 'double' | 'bunk',
+  occupancy: Occupancy,
 ): Promise<PayloadBedroomSetHub | null> {
   const params = new URLSearchParams({
     'where[occupancy][equals]': occupancy,
@@ -1054,7 +1058,7 @@ export async function fetchAllDesigns(): Promise<PayloadDesign[]> {
  * (migration 20260523_120000). Sorted by name.
  */
 export async function fetchDesignsByOccupancy(
-  occupancy: 'baby' | 'teen' | 'double' | 'bunk',
+  occupancy: Occupancy,
 ): Promise<PayloadDesign[]> {
   const params = new URLSearchParams({
     'where[occupancies][contains]': occupancy,
@@ -1316,7 +1320,7 @@ export function isSeriesOccupancyDifferentiated(combo: PayloadSeriesOccupancy): 
 /** Where the removed bare /bedroom-set/[series] URL sends visitors: the design's
  *  first occupancy combo, or the hub if it belongs to no occupancy. */
 export function bareSeriesRedirectTarget(
-  design: { slug: string; occupancies?: ('baby' | 'teen' | 'double' | 'bunk')[] | null },
+  design: { slug: string; occupancies?: Occupancy[] | null },
 ): string {
   const first = design.occupancies?.[0];
   return first ? `/bedroom-set/${first}/${design.slug}` : '/bedroom-set';

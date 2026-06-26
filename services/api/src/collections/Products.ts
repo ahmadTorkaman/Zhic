@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { slugify } from '../lib/slugify'
 import { statusGatedContentAccess, isEditorField } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
+import { OCCUPANCY_OPTIONS } from '../fields/occupancy'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -95,12 +96,7 @@ export const Products: CollectionConfig = {
       type: 'select',
       hasMany: true,
       label: 'گروه ست خواب',
-      options: [
-        { label: 'سرویس خواب نوزاد', value: 'baby' },
-        { label: 'سرویس خواب نوجوان', value: 'teen' },
-        { label: 'سرویس خواب دونفره', value: 'double' },
-        { label: 'سرویس خواب دوطبقه', value: 'bunk' },
-      ],
+      options: OCCUPANCY_OPTIONS,
       admin: {
         description: 'این قطعه به کدام گروه‌(های) سنی ست تعلق دارد؟ انتخاب چند گزینه ممکن است. در PDP طرح با ?age=… فیلتر می‌شود. خالی یعنی فیلتر سنی روی این قطعه اثری ندارد.',
       },

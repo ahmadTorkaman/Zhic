@@ -3,6 +3,7 @@ import { lexicalEditor, BlocksFeature } from '@payloadcms/richtext-lexical'
 import { slugify } from '../lib/slugify'
 import { statusGatedContentAccess, isEditorField } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
+import { OCCUPANCY_OPTIONS } from '../fields/occupancy'
 import {
   PullQuoteBlock,
   ImageGridBlock,
@@ -65,12 +66,7 @@ export const Designs: CollectionConfig = {
       type: 'select',
       hasMany: true,
       label: 'گروه ست خواب',
-      options: [
-        { label: 'سرویس خواب نوزاد', value: 'baby' },
-        { label: 'سرویس خواب نوجوان', value: 'teen' },
-        { label: 'سرویس خواب دونفره', value: 'double' },
-        { label: 'سرویس خواب دوطبقه', value: 'bunk' },
-      ],
+      options: OCCUPANCY_OPTIONS,
       admin: {
         description: 'این طرح در کدام صفحات هاب «سرویس خواب /bedroom-set/{slug}» نمایش داده شود؟ انتخاب چند گزینه ممکن است. خالی یعنی هیچ هاب آرایش‌نشده‌ای نمایش نمی‌دهد.',
       },
@@ -137,12 +133,7 @@ export const Designs: CollectionConfig = {
           type: 'select',
           required: true,
           label: 'نوع سرویس',
-          options: [
-            { label: 'سرویس خواب نوزاد', value: 'baby' },
-            { label: 'سرویس خواب نوجوان', value: 'teen' },
-            { label: 'سرویس خواب دونفره', value: 'double' },
-            { label: 'سرویس خواب دوطبقه', value: 'bunk' },
-          ],
+          options: OCCUPANCY_OPTIONS,
         },
         {
           name: 'image',

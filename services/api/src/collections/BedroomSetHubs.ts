@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { publishedContentAccess } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
+import { OCCUPANCY_OPTIONS } from '../fields/occupancy'
 
 /**
  * Per-occupancy editor for the /bedroom-set/{baby,teen,double,bunk} hub pages.
@@ -14,13 +15,6 @@ import { seoFields } from '../fields/seoFields'
  * Seeded with the 4 docs (scripts/seed-bedroom-set-hubs.py) carrying today's
  * hardcoded copy, so the live pages look identical until the operator edits.
  */
-const OCCUPANCY_OPTIONS = [
-  { label: 'سرویس خواب نوزاد', value: 'baby' },
-  { label: 'سرویس خواب نوجوان', value: 'teen' },
-  { label: 'سرویس خواب دونفره', value: 'double' },
-  { label: 'سرویس خواب دوطبقه', value: 'bunk' },
-]
-
 export const BedroomSetHubs: CollectionConfig = {
   slug: 'bedroom-set-hubs',
   labels: { singular: 'هاب سرویس خواب (گروه سنی)', plural: 'هاب‌های سرویس خواب' },

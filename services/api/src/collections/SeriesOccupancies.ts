@@ -1,13 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { statusGatedContentAccess, isEditorField } from '../lib/access'
 import { seoFields } from '../fields/seoFields'
-
-const OCCUPANCY_OPTIONS = [
-  { label: 'سرویس خواب نوزاد', value: 'baby' },
-  { label: 'سرویس خواب نوجوان', value: 'teen' },
-  { label: 'سرویس خواب دونفره', value: 'double' },
-  { label: 'سرویس خواب دوطبقه', value: 'bunk' },
-]
+import { OCCUPANCY_OPTIONS } from '../fields/occupancy'
 
 /**
  * One document per (design × occupancy). The document IS the page rendered at
