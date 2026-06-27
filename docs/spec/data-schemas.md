@@ -456,6 +456,16 @@ Tree taxonomy of product type ("تخت", "مبلمان", "کاناپه").
 | `slug` | text | yes (unique) |
 | `description` (L) | textarea | no |
 | `parentId` | relation → `categories` | no |
+| `mosaicTileImage` | upload → media | no |
+| `mosaicTilePosition` | select (`top`/`center`/`bottom`) | no |
+
+`mosaicTileImage` is the dedicated image for this category's tile in the parent
+hub `CategoryMosaic` (`/bedroom-furniture/<parent>`). Independent of `cover`;
+when blank the tile falls back to `cover`, then the first product photo in the
+subtree (`hubContentFromPayload` / `fetchChildTilePhotos`). `mosaicTilePosition`
+sets the tile crop anchor (blank == center, `50% 50%`). Both added 2026-06-27
+(migration `20260627_120000_add_mosaic_tile_to_categories`); mirror the
+`collectionTileImage` pattern on `products`.
 
 ### `tags`
 
