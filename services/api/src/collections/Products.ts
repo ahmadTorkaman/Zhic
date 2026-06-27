@@ -200,7 +200,7 @@ export const Products: CollectionConfig = {
     {
       name: 'warrantyYears',
       type: 'number',
-      defaultValue: 5,
+      defaultValue: 3,
       label: 'گارانتی (سال)',
       min: 0,
       admin: {

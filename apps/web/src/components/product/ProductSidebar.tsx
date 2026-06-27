@@ -16,7 +16,7 @@ export function ProductSidebar({ product }: ProductSidebarProps) {
   const designName = typeof product.design === 'object' && product.design ? product.design.name : null;
   const designSlug = typeof product.design === 'object' && product.design ? product.design.slug : null;
   const leadTimeDays = product.leadTimeDays ?? 56;
-  const warrantyYears = product.warrantyYears ?? 5;
+  const warrantyYears = product.warrantyYears ?? 3;
   const afterSalesYears = product.afterSalesYears ?? 5;
   const materials = (product.materials ?? []).map((m) => m.name).filter(Boolean);
 
