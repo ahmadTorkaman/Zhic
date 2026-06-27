@@ -229,6 +229,8 @@ export type PayloadCategory = {
   // NEW fields (sub-project D):
   tagline?: string | null;
   cover?: PayloadMedia | null;
+  mosaicTileImage?: PayloadMedia | null;
+  mosaicTilePosition?: 'top' | 'center' | 'bottom' | null;
   intro?: LexicalRoot | null;
   allowedAxes?: string[] | null;
   rule?: string | null;

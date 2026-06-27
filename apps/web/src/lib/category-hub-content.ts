@@ -102,10 +102,12 @@ export async function getHubContent(slug: string): Promise<HubContent | null> {
 
 /**
  * Build live HubContent from Payload: one tile per child category, photo =
- * `cover` ?? a representative product photo (`photos` map from
- * `fetchChildTilePhotos`), hero = category name + tagline/description. Tiles are
- * ordered photo-first so the featured (first) tile always has an image.
- * `basePath` is the parent's canonical path, e.g. `/bedroom-furniture/bed`.
+ * `mosaicTileImage` ?? `cover` ?? a representative product photo (`photos` map
+ * from `fetchChildTilePhotos`); tile crop = `mosaicTilePosition` (top/center/
+ * bottom → object-position), default center. Hero = category name +
+ * tagline/description. Tiles are ordered photo-first so the featured (first)
+ * tile always has an image. `basePath` is the parent's canonical path, e.g.
+ * `/bedroom-furniture/bed`.
  */
 export function hubContentFromPayload(
   category: PayloadCategory,
@@ -113,10 +115,12 @@ export function hubContentFromPayload(
   photos: Map<string, string>,
   basePath: string,
 ): HubContent {
+  const POS = { top: '50% 0%', center: '50% 50%', bottom: '50% 100%' } as const;
   const tiles: SimpleTile[] = children.map((c) => ({
     key: c.slug,
     name: c.name,
-    img: c.cover?.url ?? photos.get(c.slug) ?? undefined,
+    img: c.mosaicTileImage?.url ?? c.cover?.url ?? photos.get(c.slug) ?? undefined,
+    pos: c.mosaicTilePosition ? POS[c.mosaicTilePosition] : undefined,
     href: `${basePath}/${c.slug}`,
   }));
   // featured-first: tiles with a photo before sand-fallback tiles (stable).
