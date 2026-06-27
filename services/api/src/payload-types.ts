@@ -543,6 +543,14 @@ export interface Category {
    */
   cover?: (number | null) | Media;
   /**
+   * تصویر این دسته در موزاییکِ صفحه‌ی دسته‌بندی والد. مستقل از «تصویر hero» است و فقط در کاشی‌های موزاییک استفاده می‌شود. اگر خالی بماند، «تصویر hero» و سپس اولین عکس محصولِ زیرمجموعه استفاده می‌شود.
+   */
+  mosaicTileImage?: (number | null) | Media;
+  /**
+   * نقطه‌ی برش تصویر کاشی در موزاییک. پیش‌فرض وسط است.
+   */
+  mosaicTilePosition?: ('top' | 'center' | 'bottom') | null;
+  /**
    * ۲ تا ۳ پاراگراف کوتاه پس از hero. متن اصلی SEO صفحه. حدود ۱۰۰ کلمه.
    */
   intro?: {
@@ -1606,6 +1614,8 @@ export interface CategoriesSelect<T extends boolean = true> {
   description?: T;
   tagline?: T;
   cover?: T;
+  mosaicTileImage?: T;
+  mosaicTilePosition?: T;
   intro?: T;
   allowedAxes?: T;
   rule?: T;
