@@ -74,6 +74,29 @@ export const Categories: CollectionConfig = {
       },
     },
     {
+      name: 'mosaicTileImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'تصویر کاشی در دسته‌بندی والد',
+      admin: {
+        description:
+          'تصویر این دسته در موزاییکِ صفحه‌ی دسته‌بندی والد. مستقل از «تصویر hero» است و فقط در کاشی‌های موزاییک استفاده می‌شود. اگر خالی بماند، «تصویر hero» و سپس اولین عکس محصولِ زیرمجموعه استفاده می‌شود.',
+      },
+    },
+    {
+      name: 'mosaicTilePosition',
+      type: 'select',
+      label: 'برش تصویر کاشی',
+      options: [
+        { label: 'بالا', value: 'top' },
+        { label: 'وسط', value: 'center' },
+        { label: 'پایین', value: 'bottom' },
+      ],
+      admin: {
+        description: 'نقطه‌ی برش تصویر کاشی در موزاییک. پیش‌فرض وسط است.',
+      },
+    },
+    {
       name: 'intro',
       type: 'richText',
       label: 'مقدمه',
