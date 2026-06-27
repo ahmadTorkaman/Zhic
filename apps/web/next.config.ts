@@ -70,6 +70,13 @@ const nextConfig: NextConfig = {
       // (sub-project E cleanup). PDP route /products/[slug] is unaffected — the
       // source `/products` matches exactly, not /products/<slug>. 301 permanent so
       // search engines update.
+      // Catalog audit 2026-06-26: each split design's merged teen+double bed was retired
+      // and replaced by `{design}-bed-teen` + `{design}-bed-double`. 301 the old slug to the
+      // double bed. (parla/loof/skate kept their `-bed` slug → no redirect.)
+      ...['iron', 'lotus', 'lukaplus', 'verna', 'jacqueline', 'caroline', 'baloot', 'sento', 'elizabeth'].map(
+        (d) => ({ source: `/products/${d}-bed`, destination: `/products/${d}-bed-double`, permanent: true }),
+      ),
+
       { source: '/products', destination: '/bedroom-furniture', permanent: true },
       { source: '/categories', destination: '/bedroom-furniture', permanent: true },
       { source: '/categories/:path*', destination: '/bedroom-furniture/:path*', permanent: true },

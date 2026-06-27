@@ -1,0 +1,274 @@
+design,name,slug,occupancies,variants,variant_axes
+adrian,تخت دوطبقه آدرین,adrian-bunk-bed,bunk,2,bunk_configuration: full_bunk/lower_bed
+baloot,آینه رومیزی بلوط,baloot-console-vanity-mirror,"baby,double,teen",0,-
+baloot,آینه قدی بلوط,baloot-standing-mirror,"baby,double,teen",0,-
+baloot,تخت بلوط,baloot-bed,"baby,double,teen",8,footboard: high/low · size: 100/120/160/180
+baloot,تخت نوزاد دومنظوره بلوط (نوجوان),baloot-convertible-teen,"baby,double,teen",1,-
+baloot,شلف دیواری بلوط,baloot-wall-shelf,"baby,double,teen",0,-
+baloot,صفحه تعویض بلوط,baloot-changing-top,"baby,double,teen",0,-
+baloot,صندلی میز آرایش بلوط,baloot-vanity-chair,"baby,double,teen",0,-
+baloot,صندلی میز تحریر بلوط,baloot-study-chair,"baby,double,teen",0,-
+baloot,لاوست بلوط,baloot-loveseat,"baby,double,teen",0,-
+baloot,میز آرایش بلوط,baloot-vanity,"baby,double,teen",1,drawers: 4
+baloot,میز تحریر بلوط,baloot-study-desk,"baby,double,teen",0,-
+baloot,پاتختی بلوط,baloot-nightstand,"baby,double,teen",0,-
+baloot,کتابخانه بلوط,baloot-bookcase,"baby,double,teen",0,-
+baloot,کمد بلوط,baloot-wardrobe,"baby,double,teen",2,doors: 2/3
+baloot,کنسول بلوط,baloot-console,"baby,double,teen",1,drawers: 3
+bw,آینه دیواری بلک اند وایت,bw-wall-mirror,teen,1,shape: round
+bw,آینه رومیزی بلک اند وایت,bw-console-vanity-mirror,teen,0,-
+bw,آینه قدی بلک اند وایت,bw-standing-mirror,teen,0,-
+bw,تخت بلک اند وایت,bw-bed,teen,2,size: 100/120
+bw,شلف دیواری بلک اند وایت,bw-wall-shelf,teen,0,-
+bw,صندلی میز آرایش بلک اند وایت,bw-vanity-chair,teen,0,-
+bw,صندلی میز تحریر بلک اند وایت,bw-study-chair,teen,0,-
+bw,میز آرایش بلک اند وایت,bw-vanity,teen,1,drawers: 3
+bw,میز تحریر بلک اند وایت,bw-study-desk,teen,0,-
+bw,پاتختی بلک اند وایت,bw-nightstand,teen,0,-
+bw,کتابخانه بلک اند وایت,bw-bookcase,teen,0,-
+bw,کمد بلک اند وایت,bw-wardrobe,teen,4,door_material: mdf/glass · doors: 1/2
+caroline,آینه رومیزی کارولین,caroline-console-vanity-mirror,double,0,-
+caroline,آینه قدی کارولین,caroline-standing-mirror,double,0,-
+caroline,باکس تخت کارولین,caroline-bed-box,"baby,double,teen",0,-
+caroline,تخت نوزاد دومنظوره کارولین (نوجوان),caroline-convertible-teen,"baby,double,teen",1,-
+caroline,تخت نوزاد دومنظوره کارولین (کاناپه‌ای),caroline-convertible-sofa,"baby,double,teen",1,-
+caroline,تخت کارولین,caroline-bed,"baby,double,teen",6,size: 90/100/120/140/160/180
+caroline,شلف دیواری کارولین,caroline-wall-shelf,"baby,double,teen",0,-
+caroline,صفحه تعویض کارولین,caroline-changing-top,baby,0,-
+caroline,صندلی میز آرایش کارولین,caroline-vanity-chair,double,0,-
+caroline,صندلی میز تحریر کارولین,caroline-study-chair,teen,0,-
+caroline,فایل کارولین,caroline-file,"baby,double,teen",1,drawers: 5
+caroline,میز آرایش کارولین,caroline-vanity,double,2,drawers: 3/6
+caroline,میز تحریر کارولین,caroline-study-desk,teen,0,-
+caroline,پاتختی کارولین,caroline-nightstand,"baby,double,teen",0,-
+caroline,کتابخانه کارولین,caroline-bookcase,teen,0,-
+caroline,کمد کارولین,caroline-wardrobe,"baby,double,teen",2,doors: 2/3
+catherine,آینه دیواری کاترین,catherine-wall-mirror,"baby,double,teen",2,shape: oval/round
+catherine,آینه رومیزی کاترین,catherine-console-vanity-mirror,"baby,double,teen",2,pieces: 1/3
+catherine,آینه قدی کاترین,catherine-standing-mirror,"baby,double,teen",0,-
+catherine,تخت نوزاد دومنظوره کاترین (نوجوان),catherine-convertible-teen,"baby,double,teen",1,-
+catherine,تخت کاترین,catherine-bed,"baby,double,teen",6,headboard_style: new/prime · size: 120/160/180
+catherine,شلف دیواری کاترین,catherine-wall-shelf,"baby,double,teen",0,-
+catherine,صندلی میز تحریر کاترین,catherine-study-chair,"baby,double,teen",0,-
+catherine,میز آرایش کاترین,catherine-vanity,"baby,double,teen",1,drawers: 4
+catherine,میز تحریر کاترین,catherine-study-desk,"baby,double,teen",0,-
+catherine,میز تعویض کاترین,catherine-changing-table,"baby,double,teen",0,-
+catherine,پاتختی کاترین,catherine-nightstand,"baby,double,teen",0,-
+catherine,کتابخانه کاترین,catherine-bookcase,"baby,double,teen",0,-
+catherine,کمد کاترین,catherine-wardrobe,"baby,double,teen",2,doors: 2/3
+catherine,کنسول کاترین,catherine-console,"baby,double,teen",2,drawers: 1/5
+celine,آینه رومیزی سلین,celine-console-vanity-mirror,double,1,pieces: 3
+celine,آینه قدی سلین,celine-standing-mirror,double,0,-
+celine,تخت سلین,celine-bed,double,2,size: 160/180
+celine,صندلی میز آرایش سلین,celine-vanity-chair,double,0,-
+celine,فایل سلین,celine-file,double,1,drawers: 5
+celine,میز آرایش سلین,celine-vanity,double,1,drawers: 5
+celine,پاتختی سلین,celine-nightstand,double,0,-
+classic,آینه رومیزی کلاسیک,classic-console-vanity-mirror,"double,teen",0,-
+classic,آینه قدی کلاسیک,classic-standing-mirror,"double,teen",0,-
+classic,تخت کلاسیک,classic-bed,"double,teen",3,size: 90/120/160
+classic,شلف دیواری کلاسیک,classic-wall-shelf,"double,teen",0,-
+classic,میز آرایش کلاسیک,classic-vanity,"double,teen",1,drawers: 4
+classic,میز تحریر کلاسیک,classic-study-desk,"double,teen",0,-
+classic,پاتختی کلاسیک,classic-nightstand,"double,teen",0,-
+classic,کتابخانه کلاسیک,classic-bookcase,"double,teen",0,-
+classic,کمد کلاسیک,classic-wardrobe,"double,teen",2,doors: 2/3
+elegance,آینه دیواری الگانس,elegance-wall-mirror,teen,1,shape: round
+elegance,آینه رومیزی الگانس,elegance-console-vanity-mirror,teen,0,-
+elegance,آینه قدی الگانس,elegance-standing-mirror,teen,0,-
+elegance,تخت الگانس,elegance-bed,teen,2,size: 100/120
+elegance,صندلی میز تحریر الگانس,elegance-study-chair,teen,0,-
+elegance,میز آرایش الگانس,elegance-vanity,teen,1,drawers: 4
+elegance,میز تحریر الگانس,elegance-study-desk,teen,0,-
+elegance,پاتختی الگانس,elegance-nightstand,teen,0,-
+elegance,کتابخانه الگانس,elegance-bookcase,teen,0,-
+elegance,کمد الگانس,elegance-wardrobe,teen,2,doors: 2/3
+elegance,کنسول الگانس,elegance-console,teen,1,drawers: 2
+eliza,آینه رومیزی الیزا,eliza-console-vanity-mirror,"double,teen",0,-
+eliza,آینه قدی الیزا,eliza-standing-mirror,"double,teen",0,-
+eliza,تخت الیزا,eliza-bed,"double,teen",3,size: 90/120/160
+eliza,شلف دیواری الیزا,eliza-wall-shelf,"double,teen",0,-
+eliza,میز آرایش الیزا,eliza-vanity,"double,teen",1,drawers: 3
+eliza,میز تحریر الیزا,eliza-study-desk,"double,teen",0,-
+eliza,پاتختی الیزا,eliza-nightstand,"double,teen",0,-
+eliza,کتابخانه الیزا,eliza-bookcase,"double,teen",0,-
+eliza,کمد الیزا,eliza-wardrobe,"double,teen",2,doors: 2/3
+elizabeth,آینه رومیزی الیزابت,elizabeth-console-vanity-mirror,"baby,double,teen",0,-
+elizabeth,آینه قدی الیزابت,elizabeth-standing-mirror,"baby,double,teen",2,finish: cream/gray
+elizabeth,تخت الیزابت,elizabeth-bed,"baby,double,teen",7,finish: cream/gray · size: 100/120/160/180
+elizabeth,تخت نوزاد دومنظوره الیزابت (نوجوان),elizabeth-convertible-teen,"baby,double,teen",2,finish: cream/gray
+elizabeth,شلف دیواری الیزابت,elizabeth-wall-shelf,"baby,double,teen",2,finish: cream/gray
+elizabeth,صندلی میز آرایش الیزابت,elizabeth-vanity-chair,"baby,double,teen",0,-
+elizabeth,صندلی میز تحریر الیزابت,elizabeth-study-chair,"baby,double,teen",0,-
+elizabeth,فایل الیزابت,elizabeth-file,"baby,double,teen",2,drawers: 5 · finish: cream/gray
+elizabeth,لاوست الیزابت,elizabeth-loveseat,"baby,double,teen",2,fabric: cream/gray
+elizabeth,میز آرایش الیزابت,elizabeth-vanity,"baby,double,teen",2,drawers: 4 · finish: cream/gray
+elizabeth,میز تحریر الیزابت,elizabeth-study-desk,"baby,double,teen",2,finish: cream/gray
+elizabeth,پاتختی الیزابت,elizabeth-nightstand,"baby,double,teen",2,finish: cream/gray
+elizabeth,کتابخانه الیزابت,elizabeth-bookcase,"baby,double,teen",2,finish: cream/gray
+elizabeth,کمد الیزابت,elizabeth-wardrobe,"baby,double,teen",4,doors: 2/3 · finish: cream/gray
+elizabeth,کنسول الیزابت,elizabeth-console,"baby,double,teen",1,drawers: 2
+gandom,تخت نوزاد گندم,gandom-baby-bed,baby,0,-
+gandom,شلف دیواری گندم,gandom-wall-shelf,baby,0,-
+gandom,فایل گندم,gandom-file,baby,2,drawers: 3/6
+gandom,ویترین گندم,gandom-display-cabinet,baby,0,-
+gandom,کمد گندم,gandom-wardrobe,baby,1,doors: 2
+general,جک کفی تخت,bed-jack,-,2,size: 100/120
+iron,آینه دیواری آیرون,iron-wall-mirror,"double,teen",0,-
+iron,آینه قدی آیرون,iron-standing-mirror,"double,teen",1,-
+iron,آینه قدی رگال آیرون,iron-standing-mirror-regal,"double,teen",0,-
+iron,تخت آیرون,iron-bed,"double,teen",6,size: 90/100/120/140/160/180
+iron,صندلی میز آرایش آیرون,iron-vanity-chair,"double,teen",0,-
+iron,صندلی میز تحریر آیرون,iron-study-chair,"double,teen",0,-
+iron,فایل آیرون,iron-file,"double,teen",1,drawers: 5
+iron,میز آرایش آیرون,iron-vanity,"double,teen",1,drawers: 3
+iron,میز تحریر آیرون,iron-study-desk,"double,teen",0,-
+iron,پاتختی آیرون,iron-nightstand,"double,teen",0,-
+iron,کتابخانه آیرون,iron-bookcase,"double,teen",0,-
+iron,کمد آیرون,iron-wardrobe,"double,teen",4,door_material: glass/mdf · doors: 1/2
+jacqueline,آینه رومیزی ژاکلین,jacqueline-console-vanity-mirror,"double,teen",0,-
+jacqueline,تخت نوزاد دومنظوره ژاکلین (نوجوان),jacqueline-convertible-teen,"double,teen",1,-
+jacqueline,تخت ژاکلین,jacqueline-bed,"double,teen",6,size: 90/100/120/140/160/180
+jacqueline,فایل ژاکلین,jacqueline-file,"double,teen",1,drawers: 6
+jacqueline,میز آرایش ژاکلین,jacqueline-vanity,"double,teen",1,drawers: 3
+jacqueline,میز تحریر ژاکلین,jacqueline-study-desk,"double,teen",0,-
+jacqueline,پاتختی ژاکلین,jacqueline-nightstand,"double,teen",0,-
+jacqueline,کتابخانه ژاکلین,jacqueline-bookcase,"double,teen",0,-
+jacqueline,کمد ژاکلین,jacqueline-wardrobe,"double,teen",2,doors: 2/3
+loof,آینه رومیزی لوف,loof-console-vanity-mirror,teen,0,-
+loof,آینه قدی لوف,loof-standing-mirror,teen,2,finish: cream/green
+loof,باکس تخت لوف,loof-bed-box,"baby,teen",0,-
+loof,تخت لوف,loof-bed,"baby,teen",5,size: 90/100/120/140 · finish: cream/green
+loof,تخت نوزاد دومنظوره لوف (نوجوان),loof-convertible-teen,"baby,teen",1,finish: cream
+loof,حفاظ تخت لوف,loof-bed-guard,baby,0,-
+loof,شلف دیواری لوف,loof-wall-shelf,"baby,teen",2,finish: cream/green
+loof,صفحه تعویض لوف,loof-changing-top,baby,0,-
+loof,صندلی میز آرایش لوف,loof-vanity-chair,teen,0,-
+loof,صندلی میز تحریر لوف,loof-study-chair,teen,0,-
+loof,میز آرایش لوف,loof-vanity,teen,2,drawers: 3 · finish: cream/green
+loof,میز تحریر لوف,loof-study-desk,teen,2,finish: cream/green
+loof,میز تعویض لوف,loof-changing-table,baby,2,finish: cream/green
+loof,ویترین لوف,loof-display-cabinet,baby,2,finish: cream/green
+loof,پاتختی لوف,loof-nightstand,"baby,teen",2,finish: cream/green
+loof,کتابخانه لوف,loof-bookcase,teen,2,finish: cream/green
+loof,کمد لوف,loof-wardrobe,"baby,teen",4,doors: 2/3 · finish: cream/green
+lorena,آینه رومیزی لورنا,lorena-console-vanity-mirror,double,0,-
+lorena,آینه قدی لورنا,lorena-standing-mirror,double,0,-
+lorena,تخت لورنا,lorena-bed,double,2,size: 160/180
+lorena,صندلی میز آرایش لورنا,lorena-vanity-chair,double,0,-
+lorena,پاتختی لورنا,lorena-nightstand,double,0,-
+lorena,کنسول لورنا,lorena-console,double,1,drawers: 1
+lotus,آینه دیواری لوتوس,lotus-wall-mirror,"double,teen",0,-
+lotus,آینه قدی لوتوس,lotus-standing-mirror,"double,teen",0,-
+lotus,تخت لوتوس,lotus-bed,"double,teen",5,size: 90/100/120/140/160
+lotus,حفاظ تخت لوتوس,lotus-bed-guard,"double,teen",0,-
+lotus,شلف دیواری لوتوس,lotus-wall-shelf,"double,teen",0,-
+lotus,فایل لوتوس,lotus-file,"double,teen",1,drawers: 6
+lotus,میز آرایش لوتوس,lotus-vanity,"double,teen",1,drawers: 3
+lotus,میز تحریر لوتوس,lotus-study-desk,"double,teen",0,-
+lotus,پاتختی لوتوس,lotus-nightstand,"double,teen",0,-
+lotus,کتابخانه لوتوس,lotus-bookcase,"double,teen",0,-
+lotus,کمد لوتوس,lotus-wardrobe,"double,teen",1,doors: 2
+lukaplus,آینه رومیزی لوکاپلاس,lukaplus-console-vanity-mirror,double,0,-
+lukaplus,آینه قدی لوکاپلاس,lukaplus-standing-mirror,double,0,-
+lukaplus,تخت لوکاپلاس,lukaplus-bed,"double,teen",5,size: 90/100/120/140/160
+lukaplus,حفاظ تخت لوکاپلاس,lukaplus-bed-guard,"double,teen",0,-
+lukaplus,شلف دیواری لوکاپلاس,lukaplus-wall-shelf,"double,teen",0,-
+lukaplus,صندلی میز آرایش لوکاپلاس,lukaplus-vanity-chair,double,0,-
+lukaplus,صندلی میز تحریر لوکاپلاس,lukaplus-study-chair,teen,0,-
+lukaplus,میز آرایش لوکاپلاس,lukaplus-vanity,double,1,drawers: 4
+lukaplus,میز تحریر لوکاپلاس,lukaplus-study-desk,teen,0,-
+lukaplus,پاتختی لوکاپلاس,lukaplus-nightstand,"double,teen",0,-
+lukaplus,کتابخانه لوکاپلاس,lukaplus-bookcase,teen,0,-
+lukaplus,کمد لوکاپلاس,lukaplus-wardrobe,"double,teen",2,doors: 2/3
+mocha,آینه رومیزی موکا,mocha-console-vanity-mirror,teen,0,-
+mocha,آینه قدی موکا,mocha-standing-mirror,teen,0,-
+mocha,تخت موکا,mocha-bed,teen,2,size: 100/120
+mocha,صندلی میز آرایش موکا,mocha-vanity-chair,teen,0,-
+mocha,صندلی میز تحریر موکا,mocha-study-chair,teen,0,-
+mocha,میز آرایش موکا,mocha-vanity,teen,1,drawers: 3
+mocha,میز تحریر موکا,mocha-study-desk,teen,0,-
+mocha,پاتختی موکا,mocha-nightstand,teen,0,-
+mocha,کتابخانه موکا,mocha-bookcase,teen,0,-
+mocha,کمد موکا,mocha-wardrobe,teen,2,doors: 2/3
+mocha,کنسول موکا,mocha-console,teen,1,drawers: 4
+nikan,تخت دوطبقه نیکان,nikan-bunk-bed,bunk,3,bunk_configuration: bunk_with_trundle/full_bunk/lower_bed
+nikan,میز تحریر نیکان,nikan-study-desk,bunk,0,-
+nikan,کمد نیکان,nikan-wardrobe,bunk,1,doors: 2
+parla,آینه رومیزی پارلا,parla-console-vanity-mirror,"baby,double,teen",0,-
+parla,آینه قدی پارلا,parla-standing-mirror,"baby,double,teen",0,-
+parla,باکس تخت پارلا,parla-bed-box,"baby,double,teen",0,-
+parla,تخت دو نفره پارلا,,double,0,-
+parla,تخت دوطبقه پارلا,parla-bunk-bed,bunk,2,bunk_configuration: full_bunk · finish: cream/green
+parla,تخت نوجوان پارلا,parla-bed,teen,9,size: 90/100/120/140/160/180 · finish: cream/green
+parla,تخت نوزاد دومنظوره پارلا ,parla-convertible-teen,baby,2,finish: cream/green
+parla,حفاظ تخت پارلا,parla-bed-guard,baby,0,-
+parla,شلف دیواری پارلا,parla-wall-shelf,"baby,double,teen",0,-
+parla,صندلی میز آرایش پارلا,parla-vanity-chair,"baby,double,teen",0,-
+parla,صندلی میز تحریر پارلا,parla-study-chair,teen,0,-
+parla,میز آرایش پارلا,parla-vanity,"baby,double,teen",2,drawers: 4 · finish: cream/green
+parla,میز تحریر پارلا,parla-study-desk,teen,0,-
+parla,میز تعویض پارلا,parla-changing-table,baby,0,-
+parla,ویترین پارلا,parla-display-cabinet,"baby,double,teen",0,-
+parla,پاتختی پارلا,parla-nightstand,"baby,double,teen",0,-
+parla,کتابخانه پارلا,parla-bookcase,"baby,double,teen",0,-
+parla,کمد تلفیقی پارلا,parla-combined-wardrobe,"baby,double,teen",0,-
+parla,کمد ریلی پارلا,parla-sliding-wardrobe,"baby,double,teen",1,width: 2m
+parla,کمد پارلا,parla-wardrobe,"baby,double,teen",4,doors: 2/3 · finish: cream/green
+roco,آینه رومیزی روکو,roco-console-vanity-mirror,"double,teen",2,pieces: 1/3
+roco,آینه قدی روکو,roco-standing-mirror,"double,teen",0,-
+roco,تخت روکو,roco-bed,"double,teen",3,size: 120/160/180
+roco,تخت نوزاد روکو,roco-baby-bed,"double,teen",0,-
+roco,صندلی میز آرایش روکو,roco-vanity-chair,"double,teen",0,-
+roco,صندلی میز تحریر روکو,roco-study-chair,"double,teen",0,-
+roco,میز آرایش روکو,roco-vanity,"double,teen",2,drawers: 4/5
+roco,میز تحریر روکو,roco-study-desk,"double,teen",0,-
+roco,پاتختی روکو,roco-nightstand,"double,teen",0,-
+roco,کتابخانه روکو,roco-bookcase,"double,teen",0,-
+roco,کمد روکو,roco-wardrobe,"double,teen",1,doors: 2
+romantic,آینه رومیزی رمانتیک,romantic-console-vanity-mirror,"double,teen",0,-
+romantic,آینه قدی رمانتیک,romantic-standing-mirror,"double,teen",0,-
+romantic,تخت رمانتیک,romantic-bed,"double,teen",3,size: 120/160/180
+romantic,صندلی میز آرایش رمانتیک,romantic-vanity-chair,"double,teen",0,-
+romantic,صندلی میز تحریر رمانتیک,romantic-study-chair,"double,teen",0,-
+romantic,میز تحریر رمانتیک,romantic-study-desk,"double,teen",0,-
+romantic,پاتختی رمانتیک,romantic-nightstand,"double,teen",0,-
+romantic,کتابخانه رمانتیک,romantic-bookcase,"double,teen",0,-
+romantic,کمد رمانتیک,romantic-wardrobe,"double,teen",1,doors: 2
+romantic,کنسول رمانتیک,romantic-console,"double,teen",1,drawers: 2
+sento,آینه رومیزی سنتو,sento-console-vanity-mirror,"baby,double,teen",0,-
+sento,آینه قدی سنتو,sento-standing-mirror,"baby,double,teen",0,-
+sento,تخت سنتو,sento-bed,"baby,double,teen",6,size: 90/100/120/140/160/180
+sento,شلف دیواری سنتو,sento-wall-shelf,"baby,double,teen",0,-
+sento,فایل سنتو,sento-file,"baby,double,teen",2,drawers: 5/6
+sento,میز آرایش سنتو,sento-vanity,"baby,double,teen",1,drawers: 3
+sento,میز تحریر سنتو,sento-study-desk,"baby,double,teen",0,-
+sento,پاتختی سنتو,sento-nightstand,"baby,double,teen",0,-
+sento,کتابخانه سنتو,sento-bookcase,"baby,double,teen",0,-
+sento,کمد سنتو,sento-wardrobe,"baby,double,teen",2,doors: 2/3
+shaylin,آینه رومیزی شایلین,shaylin-console-vanity-mirror,double,2,pieces: 1/3
+shaylin,آینه قدی شایلین,shaylin-standing-mirror,double,0,-
+shaylin,تخت شایلین,shaylin-bed,double,2,size: 160/180
+shaylin,صندلی میز آرایش شایلین,shaylin-vanity-chair,double,0,-
+shaylin,فایل شایلین,shaylin-file,double,1,drawers: 5
+shaylin,لاوست شایلین,shaylin-loveseat,double,0,-
+shaylin,میز آرایش شایلین,shaylin-vanity,double,1,drawers: 3
+shaylin,پاتختی شایلین,shaylin-nightstand,double,0,-
+skate,آینه دیواری اسکیت,skate-wall-mirror,"baby,teen",0,-
+skate,آینه قدی اسکیت,skate-standing-mirror,"baby,teen",0,-
+skate,تخت اسکیت,skate-bed,"baby,teen",3,size: 90/100/120
+skate,تخت نوزاد دومنظوره اسکیت (کاناپه‌ای),skate-convertible-sofa,"baby,teen",1,-
+skate,شلف دیواری اسکیت,skate-wall-shelf,"baby,teen",0,-
+skate,صندلی میز تحریر اسکیت,skate-study-chair,"baby,teen",0,-
+skate,میز آرایش اسکیت,skate-vanity,"baby,teen",1,drawers: 3
+skate,میز تحریر اسکیت,skate-study-desk,"baby,teen",0,-
+skate,پاتختی اسکیت,skate-nightstand,"baby,teen",0,-
+skate,کتابخانه اسکیت,skate-bookcase,"baby,teen",2,drawers: 1
+skate,کمد اسکیت,skate-wardrobe,"baby,teen",1,doors: 3
+verna,آینه رومیزی ورنا,verna-console-vanity-mirror,"double,teen",0,-
+verna,تخت ورنا,verna-bed,"double,teen",5,size: 90/100/120/140/160
+verna,میز آرایش ورنا,verna-vanity,"double,teen",1,drawers: 3
+verna,میز تحریر ورنا,verna-study-desk,"double,teen",0,-
+verna,پاتختی ورنا,verna-nightstand,"double,teen",0,-
+verna,کتابخانه ورنا,verna-bookcase,"double,teen",0,-
+verna,کمد ورنا,verna-wardrobe,"double,teen",1,doors: 2
