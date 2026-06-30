@@ -60,7 +60,7 @@ const nextConfig: NextConfig = {
       // Origin is env-configurable: defaults to the co-located API (loopback) on
       // the VPS; on Vercel set MEDIA_ORIGIN=http://<vps-ip>:3001 so the HTTPS
       // frontend serves media same-origin (proxied) with no mixed-content.
-      { source: '/api/media/:path*', destination: `${process.env.MEDIA_ORIGIN ?? 'http://127.0.0.1:3001'}/api/media/:path*` },
+      { source: '/api/media/:path*', destination: `${process.env.MEDIA_ORIGIN ?? (process.env.VERCEL ? 'http://45.140.42.57:3001' : 'http://127.0.0.1:3001')}/api/media/:path*` },
     ];
   },
   async headers() {

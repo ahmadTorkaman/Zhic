@@ -550,3 +550,31 @@ access from here) or hand over a Vercel token to drive via CLI.
 
 **Residual risk:** Vercel→Iran VPS HTTP reachability is unverified until first
 deploy; fallback = move media to Abr Arvan S3 (already wired).
+
+---
+
+## 2026-06-30 (cont. 2) — storefront LIVE on Vercel (HTTPS)
+
+Deployed `apps/web` to Vercel via CLI (project **zhic-storefront**, team
+ahmadreza-torkamans-projects, root dir `apps/web`, Node 22, framework nextjs).
+**Live: https://zhic-storefront.vercel.app** — pages 200, media (raw + optimized)
+200, no mixed-content. VPS stays the HTTP backend.
+
+- **Iran reachability CONFIRMED**: Vercel SSR + media proxy reach the Pars Pack VPS
+  (45.140.42.57:3001) fine. The big unknown is resolved — it works.
+- **Gotcha fixed**: next.config `/api/media` rewrite read `process.env.MEDIA_ORIGIN`
+  at BUILD, but the custom env var wasn't applied to the build → fell back to
+  127.0.0.1 → Vercel blocked it (`DNS_HOSTNAME_RESOLVED_PRIVATE`). Fix: also key off
+  Vercel's auto-set `VERCEL` build flag → `http://45.140.42.57:3001` (committed).
+  (API_URL worked because it's read at runtime, not build.)
+- Env vars set on the project: API_URL, MEDIA_ORIGIN (=VPS:3001), SITE_URL,
+  NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_API_URL (=https://zhicwood.store), NOINDEX=true.
+- **Domain** zhicwood.store + www added to the project (ownership verified);
+  awaiting DNS. Apex A → 216.198.79.1 (or 76.76.21.21); www CNAME → cname.vercel-dns.com.
+  TLS auto-issues once DNS resolves.
+- Token was used in-memory only (never written/committed); `.vercel` + root
+  `.env.local` gitignored.
+
+NOTE: deployed from the **feat/journal-rebuild working tree via CLI** (not Git),
+because GitHub's default branch lacks these commits. To enable auto-deploy on push,
+set the project's production branch to feat/journal-rebuild or merge to main.

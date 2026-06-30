@@ -1,0 +1,6 @@
+ops/media-incoming
+services/api/media
+ops/*.csv
+ops/*.json
+*.log
+.next
