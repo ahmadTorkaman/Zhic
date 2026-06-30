@@ -519,3 +519,34 @@ Nothing else blocks the bedroom-furniture/design-page polish.
 **Repo housekeeping.** Moved `docs/state.md` → `STATE.md`, `CLAUDE.md` →
 `.claude/CLAUDE.md`; added `HANDOFF.md` + `IDEAS.md`; `.claude/CLAUDE.md` now
 mandates updating these three every session.
+
+---
+
+## 2026-06-30 (cont.) — storefront → Vercel prep (HTTPS at zhicwood.store)
+
+Operator wants the storefront on **Vercel** at **zhicwood.store** for HTTPS, with
+the **VPS kept as the HTTP test backend** (API/DB/media stay on 45.140.42.57).
+(First tried Caddy-on-box, then switched to Vercel.)
+
+**Core blocker solved — same-origin relative media URLs (no mixed-content).**
+The API baked an absolute host into `media.url` (serverURL=NEXT_PUBLIC_SERVER_URL),
+which would be mixed-content-blocked on an HTTPS Vercel page. Fixed at the data
+boundary so all consumers (mediaUrl + the many direct `.url` reads) go same-origin:
+- `payload-internal.ts` `payloadFetch`: regex-strip any `https?://host/api/media/`
+  → `/api/media/` on every API response (single ingress for all catalog data).
+- `payload.ts` `mediaUrl()`: return the URL path (host-stripped); dropped the dead
+  `API_URL` import.
+- `seo.ts` `mediaToUrl()`: build absolute OG/canonical URLs from `SITE_URL` + path.
+- `next.config.ts`: `/api/media` rewrite origin is now env-configurable
+  (`MEDIA_ORIGIN`, default loopback) so Vercel proxies media to the VPS.
+Verified: 0 hardcoded `http://45.140…` media refs across /, /bedroom-furniture(/*),
+/bedroom-set(/*), /journal, /showrooms; VPS site still serves media same-origin.
+Note: needed a **clean `.next` rebuild** — static pages + `unstable_cache` (nav
+megamenu) had baked the old absolute URLs.
+
+**Deploy guide:** `ops/VERCEL-DEPLOY.md` (Vercel project = root dir `apps/web`,
+env var table, domain+DNS). Operator must create the Vercel project (no account
+access from here) or hand over a Vercel token to drive via CLI.
+
+**Residual risk:** Vercel→Iran VPS HTTP reachability is unverified until first
+deploy; fallback = move media to Abr Arvan S3 (already wired).

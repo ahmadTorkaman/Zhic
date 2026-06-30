@@ -1,5 +1,4 @@
 import { unstable_cache } from 'next/cache';
-import { API_URL } from './env';
 import { payloadFetch } from './payload-internal';
 export { payloadFetch } from './payload-internal';
 
@@ -930,12 +929,18 @@ export function journalCategoryPath(slug: string): string {
 }
 
 export function mediaUrl(media: PayloadMedia | null | undefined): string | null {
-  if (!media) return null;
-  if (media.url) {
-    if (media.url.startsWith('http')) return media.url;
-    return `${API_URL}${media.url}`;
+  if (!media?.url) return null;
+  // Normalize to a same-origin path. The API may bake an absolute host into
+  // `media.url` (NEXT_PUBLIC_SERVER_URL), but on-page images must load over the
+  // *page's* own scheme/host so there's no mixed-content (https Vercel) and no
+  // hard-coded backend host. The storefront proxies `/api/media/*` to the real
+  // API origin via the next.config rewrite (MEDIA_ORIGIN), so a bare path works
+  // on both the Vercel frontend and the VPS test box.
+  try {
+    return new URL(media.url).pathname; // absolute -> path
+  } catch {
+    return media.url; // already relative
   }
-  return null;
 }
 
 // --- Catalog (3.2) ----------------------------------------------------------

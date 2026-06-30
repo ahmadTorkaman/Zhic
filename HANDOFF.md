@@ -46,6 +46,12 @@ root `.env` (consumed by docker-compose).
 
 ## Immediate next actions
 
+0. **Vercel storefront at zhicwood.store (in progress).** Storefront goes on
+   Vercel for HTTPS; the VPS stays as the HTTP backend (API/DB/media). The
+   no-mixed-content work is DONE (media URLs are now same-origin relative). Follow
+   `ops/VERCEL-DEPLOY.md`: create the Vercel project (root dir `apps/web`), set the
+   env vars, add the `zhicwood.store` domain + DNS. The one unknown is whether
+   Vercel can reach the Iran VPS over HTTP — validate on first deploy.
 1. **Source the missing art** — `ops/MEDIA-NEEDS-ART.md` is the single list of
    every image the catalog references but doesn't have. It's the one thing
    blocking the remaining bedroom-furniture / design-page polish. Hand it to the

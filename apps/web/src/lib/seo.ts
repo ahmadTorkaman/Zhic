@@ -21,13 +21,20 @@
 
 import type { Metadata } from 'next';
 import type { PayloadSeo, PayloadMedia } from './payload';
-
-const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? '';
+import { SITE_URL } from './env';
 
 function mediaToUrl(media?: PayloadMedia | null): string | undefined {
   if (!media?.url) return undefined;
-  // Payload returns relative URLs like /media/xyz.jpg; prepend API origin
-  return media.url.startsWith('http') ? media.url : `${API_URL}${media.url}`;
+  // OG/canonical images must be ABSOLUTE on the public origin (https on Vercel).
+  // The API may bake a backend host into media.url — strip it to the path and
+  // re-root on SITE_URL so the image is served same-origin (proxied to the API).
+  let path: string;
+  try {
+    path = new URL(media.url).pathname;
+  } catch {
+    path = media.url;
+  }
+  return `${SITE_URL}${path}`;
 }
 
 export type BuildMetadataInput = {

@@ -57,7 +57,10 @@ const nextConfig: NextConfig = {
       // origin so it's served same-origin from :3000. The API builds media URLs
       // with NEXT_PUBLIC_SERVER_URL set to the storefront origin (not :3001).
       // Scoped to /api/media so the storefront's own /api/* routes are untouched.
-      { source: '/api/media/:path*', destination: 'http://127.0.0.1:3001/api/media/:path*' },
+      // Origin is env-configurable: defaults to the co-located API (loopback) on
+      // the VPS; on Vercel set MEDIA_ORIGIN=http://<vps-ip>:3001 so the HTTPS
+      // frontend serves media same-origin (proxied) with no mixed-content.
+      { source: '/api/media/:path*', destination: `${process.env.MEDIA_ORIGIN ?? 'http://127.0.0.1:3001'}/api/media/:path*` },
     ];
   },
   async headers() {
