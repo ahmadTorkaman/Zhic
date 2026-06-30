@@ -4,7 +4,7 @@
 
 .hero {
   text-align: center;
-  padding-inline: 6.5cqw;
+  padding-inline: 3cqw;
 }
 
 .title {
@@ -15,7 +15,11 @@
   letter-spacing: -0.02em; /* tracking -0.8311px */
   color: var(--color-forest-deep); /* #2E3B2F */
 }
-.title span {
+/* Only the explicit two-line title (titleLines mode) stacks onto rows. Scoped
+   to direct children so a single multi-word title's per-word spans — and the
+   whitespace spans between them — keep flowing inline instead of each word
+   dropping onto its own line (which jammed the headers). */
+.title > span {
   display: block;
 }
 

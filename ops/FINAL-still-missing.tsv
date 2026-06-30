@@ -1,0 +1,113 @@
+filename	sources
+b&w-1.webp	designs.logo_media_id
+baby-mosaic-tile.jpg	categories.mosaic_tile_image_id
+bedroom-set-baloot-teen-poster-1.webp	designs.slider_media_id
+bedroom-set-celine-double-poster-1.webp	designs.slider_media_id
+bedroom-set-elizabeth-double-poster-1.webp	designs.hero_media_id
+bedroom-set-elizabeth-double-poster-3.webp	designs.slider_media_id
+bedroom-set-loof-poster.webp	designs.slider_media_id
+bedroom-set-lorena-double-poster-1.webp	designs.slider_media_id
+bedroom-set-lukaplus-poster.webp	designs.slider_media_id
+bedroom-set-mocha-teen-poster-1.webp	designs.slider_media_id
+bedroom-set-nikan-bunk-poster-1.webp	designs.hero_media_id
+bedroom-set-parla-poster.webp	designs.slider_media_id
+bedroom-set-shaylin-double-poster-1.webp	designs.slider_media_id
+bedroom-set-verna-poster-1.webp	designs.slider_media_id
+bunk-mosaic-tile.jpg	categories.mosaic_tile_image_id
+bw-scene-all-picture.webp	designs_rels
+bw-scene-half-3-picture-v2.webp	designs_rels
+bw-scene-half-3-picture.webp	designs_rels
+bw-single-bed-120-picture-v2.webp	product_variants.image_id; products_rels
+bw-vanity-3-drawers-picture-v2.webp	products_rels
+changing-top-mosaic-tile.jpg	categories.mosaic_tile_image_id
+detail-headboard.jpg	designs_design_details.image_id
+detail-metal.jpg	designs_design_details.image_id
+detail-pegboard.jpg	designs_design_details.image_id
+detail-personalize.jpg	designs_design_details.image_id
+elizabeth-wall-shelf-cream.webp	product_variants.image_id; products.seo_og_image_id; products_rels
+elizabeth-wall-shelf-gray.webp	product_variants.image_id; products_rels
+factory-homepage-aboutus.jpg	home.about_background_id
+intro.jpg	designs.intro_media_id
+iron-bookcase-picture.webp	products_rels
+iron-nightstand-picture.webp	products_rels
+loof-convertible-bed-teen-picture-cream.webp	products_rels
+loof-cream-kid-loof-scene-half-picture-cream.webp	designs_rels
+loof-cream-teen-loof-scene-half-picture-v2-cream.webp	designs_rels
+loof-display-cabinet-picture-cream.webp	products_rels
+loof-scene-all-picture-v2-cream.webp	designs_rels
+loof-scene-sun-light-picture-cream.webp	designs_rels
+loof-single-bed-120-picture-v2-cream.webp	products_rels
+loof-standing-mirror-picture-v2-cream.webp	products_rels
+lorena-1.webp	designs.logo_media_id
+lotus-bookcase-picture-v2.webp	categories.mosaic_tile_image_id; products_rels
+lotus-factor-picture-v0.webp	designs_rels
+lotus-nightstand-picture-v4.webp	products_rels
+lotus-scene-all-picture-v2.webp	designs_rels
+lotus-scene-half-2-picture.webp	designs_rels
+lotus-scene-half-3-picture.webp	designs_rels
+lotus-scene-half-4-picture-v2.webp	designs_rels
+lotus-scene-half-6-picture-v2.webp	designs_rels
+lotus-scene-rim-light-picture.webp	designs_rels
+lotus-single-bed-120-picture-v2.webp	product_variants.image_id; products_rels
+lotus-standing-mirror-picture-v4.webp	products_rels
+lotus-standing-mirror-picture.webp	products_rels
+lotus-study-desk-picture-v4.webp	products_rels
+lotus-takht2-picture-v2.webp	designs_rels
+lotus-vanity-3-drawers-picture-v4.webp	products_rels
+lotus-wardrobe-2-doors-mdf-picture-v4.webp	products_rels
+lukaplus-bookcase-picture-v2.webp	products_rels
+lukaplus-couple-lukaplus-nightstand-picture-v2.webp	products_rels
+lukaplus-teen-lukaplus-nightstand-picture.webp	products_rels
+mat-fabric.jpg	designs_material_callouts.image_id
+mat-mdf.jpg	designs_material_callouts.image_id
+mat-metal.jpg	designs_material_callouts.image_id
+material.jpg	designs_design_details.image_id
+material1.jpg	designs_design_details.image_id
+namemark-adrian.webp	designs.logo_media_id
+namemark-baloot.webp	designs.logo_media_id
+namemark-caroline.webp	designs.logo_media_id
+namemark-catherine.webp	designs.logo_media_id
+namemark-celine.webp	designs.logo_media_id
+namemark-classic.webp	designs.logo_media_id
+namemark-elegance.webp	designs.logo_media_id
+namemark-eliza.webp	designs.logo_media_id
+namemark-elizabeth.webp	designs.logo_media_id
+namemark-gandom.webp	designs.logo_media_id
+namemark-iron.webp	designs.logo_media_id
+namemark-jacqueline.webp	designs.logo_media_id
+namemark-loof.webp	designs.logo_media_id
+namemark-lotus.webp	designs.logo_media_id
+namemark-lukaplus.webp	designs.logo_media_id
+namemark-mocha.webp	designs.logo_media_id
+namemark-nikan.webp	designs.logo_media_id
+namemark-parla.webp	designs.logo_media_id
+namemark-shaylin.webp	designs.logo_media_id
+namemark-skate.webp	designs.logo_media_id
+room-baloot-convertible-bed-teen-picture.webp	designs_occupancy_media.image_id
+room-bw-scene-half-3-picture-v3.webp	designs.hero_media_id
+room-caroline-baby-bed.webp	bedroom_furniture_rooms.image_id; designs_occupancy_media.image_id
+room-caroline-collection-v3.webp	designs.hero_media_id; designs_occupancy_media.image_id
+room-iron-scene-half-picture.webp	designs.hero_media_id
+room-jacqueline-scene-half-picture.webp	designs.hero_media_id
+room-loof-cream-kid-loof-scene-half-picture-v2-cream.webp	designs_occupancy_media.image_id
+room-loof-cream-teen-loof-scene-half-picture-cream.webp	designs_occupancy_media.image_id
+room-loof-scene-half-picture-v2-cream-v2.webp	designs.hero_media_id
+room-lotus-scene-half-6-picture.webp	bedroom_furniture_rooms.image_id; designs.hero_media_id
+room-lukaplus-couple-lukaplus-scene-half-picture.webp	designs_occupancy_media.image_id
+room-lukaplus-scene-half-picture-v3.webp	designs.hero_media_id
+room-lukaplus-teen-lukaplus-scene-half-picture-v2.webp	designs_occupancy_media.image_id
+room-mocha-scene-half.webp	designs.hero_media_id
+room-parla-bunk-bed-full-green.webp	bedroom_furniture_rooms.image_id; designs_occupancy_media.image_id
+room-parla-display-cabinet-green.webp	bedroom_furniture_showcase.arch_image_id
+room-parla-nightstand-green.webp	bedroom_furniture_showcase.arch_image_id
+room-parla-scene-all-v3.webp	designs.hero_media_id; designs_occupancy_media.image_id
+room-parla-scene-all-v5.webp	designs_occupancy_media.image_id
+room-parla-scene-half-v2.webp	bedroom_furniture_showcase.arch_image_id
+room-parla-standing-mirror-v2-green.webp	bedroom_furniture_showcase.arch_image_id
+room-parla-study-desk-v2-green.webp	bedroom_furniture_showcase.arch_image_id; categories.cover_id
+room-parla-wall-shelf-v2-green.webp	bedroom_furniture_showcase.arch_image_id
+room-parla-wardrobe-2-doors-mdf-green.webp	bedroom_furniture_showcase.arch_image_id
+story.jpg	designs.story_media_id
+verna-1.webp	designs.logo_media_id
+verna-nightstand-picture.webp	products_rels
+wall-mirror-mosaic-tile.jpg	categories.mosaic_tile_image_id

@@ -18,7 +18,7 @@ Related:
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-06-28 |
+| Last updated | 2026-06-30 |
 | Current phase | Package 1, Month 1 — **app code complete; go-live infra (7.1) outstanding** |
 | Current session | Catalog live (285 products / 206 variants / 26 designs / 36 categories) on `feat/pre-import-refactors`. `/bedroom-set/[slug]` hero now reuses each set's carousel media (`sliderMedia` → header, GIF/video-aware); a scroll-driven hero treatment is in design (mockup `/docs/bedroom-set-hero-scroll-mockup.html`: full-bleed contain fit + stage handoff + blur-in name settling ~10vh high — not yet in `DesignHero`). Package 1 remaining captured in new §"Package 1 — remaining to deliver". **2026-05-30:** `/bedroom-set` filmstrip (`DesignsSlider`) perf overhaul — decoupled the snap/drag loop from per-frame React state, moved blur/transition/`will-change` off the hot path, and switched card stills to `next/image` (display-sized webp) to kill the image-scroll lag (`d8b38cd`). Rebuilt + restarted the review box to serve it (box runs `next start`, **no HMR** — see [[project-zhic-review-box-media]]). **2026-06-06:** `/bedroom-set` rebuilt as a **1:1 React port of the `bedroom-set-v2` mockup** — `<BedroomSetLanding>` (carousel w/ 3D flip-logo + glass band, category tabs, writing section w/ fading green border, swipe-up featured overlay) + placeholder data in `apps/web/src/components/bedroom-set/`, merged from `feat/bedroom-set-port` (20 commits). Route now prerenders **static**; 27 unit tests, tsc/eslint/build clean, headless pixel-parity verified vs the live mockup. Frontend-first (SP2). **SP1 = Payload data-wiring next:** add `Designs.logoMedia` (+ ~26 logos), banner media, writing-copy richText, «پرفروش‌ترین» best-sellers Collection; make tabs filter by `occupancies`; plain `<img>`→`next/image` (see FU-IMG-a); swap `placeholder-data.ts` for fetches. See [[project-zhic-bedroom-set-port]]. (Pre-existing unrelated test fail: `PickerBar.test.tsx` 4/4 — fails on base too, not from this work.) **2026-06-06 (cont., merged):** carousel polish (5 more commits): swipe affordance = peeking neighbours + one-time nudge (dropped the bottom prompt/counter); category tabs reflect the focused design's real `occupancies` and **swap the carousel card per room-type** (kid/teen/double/bunk variants, `cardForOccupancy`); real room-scene cards + bilingual name-mark logos from the **2026-06-05 asset drop** (PNG→webp); now **10 designs** (7 fully assetted + bw/verna/monte card-only → logo-less, band/flip hidden). 29 unit tests, build/static OK. **2026-06-06 (cont.):** more UX polish — logos slide-replace sequentially like the headline (`RotatingLogo`); only the focused card changes on a tab tap and it **cross-dissolves** (`CardImage`); deferred carousel `setPointerCapture` to drag-start so mouse clicks on dots/tabs aren't swallowed; footer hidden on `/bedroom-set` (`FOOTER_HIDDEN_ROUTES`) + featured overlay **auto-raises on scroll** to the writing's end. **SP1 — Payload data-wiring DONE** (api `d8d6a58`/`6007655`, web `0cbde23`): `Designs.logoMedia` + `Designs.occupancyMedia` array (room-type card variants) + a `bedroom-set` global (writing copy); **hand-written migration** `20260606` because migrate:create hangs on the manually-created `designs_occupancies` snapshot drift (prompts to "rename" the table, no-TTY → exit 13); `scripts/seed-bedroom-set.mts` (idempotent) uploads the 7 name-marks + 6 room-type cards + 2 missing base cards (jacqueline/verna), relinks iron to its rounded poster, flags one flagship bed per design featured, writes the copy. Web: `components/bedroom-set/server-data.ts` maps Payload→DesignCard/FeaturedPage/WritingContent, `page.tsx` fetches w/ placeholder fallback, featured = Products.featured + `-createdAt`, real nav (card→/bedroom-set/[slug], tile→/products/[slug]). Live hub = **~15 real designs** (all rounded posters) + real best-sellers + global copy, 36 tests, 0 console errors. monte isn't a catalog design. |
 | 2026-06-08 | **URL-list↔catalog reconciliation done** (271==271 spec/live slugs) + **/bedroom-set occupancy retag (Stage 6)**. Reports: `docs/reports/url-list-vs-catalog-diff-2026-06-08.md`, scene-request list `docs/reports/bedroom-set-scene-requests-2026-06-08.md`. Stage 6 (`scripts/reconcile-06-occupancy-retag.mts`, backup `~/zhic-catalog-backups/2026-06-08-1657-pre-occupancy/`): re-tagged **45 products** across the 4 scened designs (caroline/loof/lukaplus/parla) from blanket age-sets to scene-accurate `occupancies` (e.g. `parla-bunk-bed`→`[bunk]`, `*-study-*`→`[teen]`, `*-changing-*`/`*-bed-guard`→`[baby]`). **Note: latent** — `product.occupancies` has no live consumer; all storefront age filters read `design.occupancies`/`occupancyMedia` (already correct; only caroline/baby + parla/double posters missing, both artist gaps). **Blocked:** 22 designs + 2 partial = 41 per-age set scenes owed by the 3D artist (request list above). |
@@ -472,3 +472,50 @@ Legend: ⬜ not started · 🟡 in progress · ✅ shipped · 🚧 blocked
   - `pnpm --filter @zhic/<pkg> lint`
 - Verification surfaces: `/lab/tokens`, `/lab/locale`, `/lab/ui` (now covers 2.1 atoms + 2.2 organisms + 2.3 cards/gallery/money/date), `/lab/type`, `/lab/color`, `/lab/motion`, `/lab/three`. Real pages: `/`, `/products`, `/products/[slug]`, `/collections/[slug]`, `/showrooms`, `/showrooms/[slug]`, `/contact`, `/privacy`, `/terms`, `/returns`, `/shipping-and-delivery`, `/thank-you`, `/_not-found`.
 - Unit tests: `pnpm --filter @zhic/locale test` (69), `pnpm --filter @zhic/money test` (27), `pnpm --filter @zhic/web test` (29). Runner = Vitest 2.x, per package.
+
+---
+
+## 2026-06-30 — dev-box bring-up, Neon restore, media wiring, design-page audit
+
+**Environment.** Stood up the whole stack on this dev/review box (public IP
+`45.140.42.57`): Node 22 + pnpm 10.33 in `~/.local`, Docker Postgres 16
+(`zhic-postgres-1`), API :3001, storefront :3000. Restored the DB from the
+**Neon** dump (source of truth) → 282 products / 1352 media / 1 admin user.
+Media on local disk (`services/api/media/`, S3 disabled). Installed Claude Code
+on the box. Bring-up steps live in `HANDOFF.md`.
+
+**Incident (resolved).** A **parallel Claude session** (not malware) re-provisioned
+Postgres mid-work — new password + wiped DB. Recovered: realigned the role
+password to `.env`, re-restored from Neon, rotated the DB password, removed a
+stray plaintext password file, and stopped the rogue session. Lesson: don't run a
+second Claude against this box's DB. (Backups + SSH hardening parked in `IDEAS.md`.)
+
+**Public-URL + next/image fix.** Set `NEXT_PUBLIC_SERVER_URL` and `apps/web`
+public URLs to `45.140.42.57`, and added that host to `next.config.ts`
+`images.remotePatterns` (next/image-rendered modules were blank because only
+`localhost`/old box IP were allowlisted). Also fixed the `MosaicHero` header
+(jammed multi-word titles): `.title span`→`.title > span` + wider padding.
+
+**Media wiring (big batch).** Content-fingerprint matcher
+(`services/api/scripts/wire-media.mjs`) + targeted repoints:
+- **bedroom-set** posters: re-pointed `-N` dedup variants → base `-poster`; nulled
+  phantom posters for loof/lukaplus/parla (no art).
+- **namemarks**: wired all 23 design logos (Finglish→`namemark-*`).
+- **bedroom-furniture carousel**: all 8 showcase slots wired (parla scene set).
+- **bed facets**: removed teen beds from `/bed/double`, double beds from
+  `/bed/single` (mirror fix); added convertible baby beds to `/bed/baby`; new
+  opaque baby/bunk mosaic tiles; stripped `(نوجوان)` from baloot baby bed.
+- **furniture transparents**: ~22 "use transparent" repoints + verna nightstand +
+  bookcase mosaic tile.
+- **design pages**: audited all series-hub modules → missing 31→11; regenerated 17
+  `room-*` heroes/cards from upload twins (fixes design headers **and** MosaicStrip).
+- **Sento** unpublished; **changing-table** products unpublished.
+
+**What's left = artist art only.** Every remaining gap is catalogued in
+`ops/MEDIA-NEEDS-ART.md` (imageless study-chairs/vanity-chairs/consoles/mirrors/
+bed-guards; the iron/verna design-page close-ups; the wall-mirror opaque tile).
+Nothing else blocks the bedroom-furniture/design-page polish.
+
+**Repo housekeeping.** Moved `docs/state.md` → `STATE.md`, `CLAUDE.md` →
+`.claude/CLAUDE.md`; added `HANDOFF.md` + `IDEAS.md`; `.claude/CLAUDE.md` now
+mandates updating these three every session.

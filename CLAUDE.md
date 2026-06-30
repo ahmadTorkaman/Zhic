@@ -6,6 +6,23 @@ at the start of every session.
 
 ---
 
+## ⚠️ Session bookkeeping — update these every session
+
+**The last step of every session is to update the three live docs below.**
+A session is not complete until they are current:
+
+| File | What it holds | When to update |
+| --- | --- | --- |
+| `STATE.md` | Live status board — what's done, in flight, blocked, open decisions | End of **every** session |
+| `HANDOFF.md` | The next session's starting point — how to bring the stack up, what to do next, gotchas | Whenever the actionable next-steps change |
+| `IDEAS.md` | Backlog of ideas, deferrals, and improvements not yet scheduled | Whenever a new idea/deferral surfaces |
+
+If you changed anything (data, media, code, infra), reflect it in `STATE.md`
+and refresh `HANDOFF.md`. Park anything you thought of but didn't act on in
+`IDEAS.md` so it isn't lost.
+
+---
+
 ## What is Zhic?
 
 An Iranian furniture company. The software platform covers: a Persian-first
@@ -24,11 +41,10 @@ The detailed plan lives in `docs/package1-month1.md` — that file is the
 **single source of truth** for Month 1 scope, stack, and schedule. When any
 other doc conflicts with it, `package1-month1.md` wins.
 
-**Read `docs/state.md` at session start.** It is the live status board:
-which sessions are shipped, which are unblocked next, what is deferred,
-and what open decisions are gating work. **The last step of every
-session is to update `docs/state.md`.** If the file is not updated, the
-session is not complete.
+**Read `STATE.md` (repo root) at session start.** It is the live status
+board: which sessions are shipped, which are unblocked next, what is
+deferred, and what open decisions are gating work. See the session-bookkeeping
+block above — `STATE.md` must be updated as the last step of every session.
 
 ---
 
@@ -138,7 +154,9 @@ the monorepo split. It is not thrown away.
 
 | File | Purpose |
 | --- | --- |
-| `docs/state.md` | **Live status board** — read first, update last. Session status, commits, follow-ups, open decisions |
+| `STATE.md` | **Live status board** — read first, update last. Session status, commits, follow-ups, open decisions |
+| `HANDOFF.md` | **Next-session starting point** — bring-up steps, current next actions, gotchas. Refresh when next steps change |
+| `IDEAS.md` | **Backlog** — ideas, deferrals, improvements not yet scheduled. Append whenever something surfaces |
 | `docs/package1-month1.md` | **Month 1 source of truth** — week-by-week schedule, stack, pages, CMS collections, inquiry form, exit criteria |
 | `docs/roadmap.md` | Full 4-package delivery plan with payment triggers |
 | `docs/sessions.md` | Session-based execution plan for Month 1 |

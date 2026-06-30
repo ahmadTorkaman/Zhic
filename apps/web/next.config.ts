@@ -34,6 +34,20 @@ const nextConfig: NextConfig = {
         port: '3000',
         pathname: '/api/media/**',
       },
+      // Current box (45.140.42.57) — media served on :3001 (NEXT_PUBLIC_SERVER_URL)
+      // and proxied via the storefront on :3000. Both allowed for next/image.
+      {
+        protocol: 'http',
+        hostname: '45.140.42.57',
+        port: '3001',
+        pathname: '/api/media/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '45.140.42.57',
+        port: '3000',
+        pathname: '/api/media/**',
+      },
     ],
   },
   async rewrites() {

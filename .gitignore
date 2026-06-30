@@ -58,3 +58,6 @@ services/api/media/
 
 # media re-sync operational backups (machine-local)
 services/api/scripts/backups/
+
+# Machine-local raw media upload (643MB, not for git — wired into services/api/media/)
+ops/media-incoming/

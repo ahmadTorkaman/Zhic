@@ -1,0 +1,84 @@
+{
+  "design.designDetail": {
+    "total": 18,
+    "miss": 6,
+    "list": [
+      "iron : detail-headboard.jpg",
+      "iron : detail-pegboard.jpg",
+      "iron : detail-personalize.jpg",
+      "iron : detail-metal.jpg",
+      "verna : material1.jpg",
+      "verna : material.jpg"
+    ]
+  },
+  "design.hero": {
+    "total": 19,
+    "miss": 9,
+    "list": [
+      "bw : room-bw-scene-half-3-picture-v3.webp",
+      "caroline : room-caroline-collection-v3.webp",
+      "iron : room-iron-scene-half-picture.webp",
+      "jacqueline : room-jacqueline-scene-half-picture.webp",
+      "loof : room-loof-scene-half-picture-v2-cream-v2.webp",
+      "lotus : room-lotus-scene-half-6-picture.webp",
+      "lukaplus : room-lukaplus-scene-half-picture-v3.webp",
+      "mocha : room-mocha-scene-half.webp",
+      "parla : room-parla-scene-all-v3.webp"
+    ]
+  },
+  "design.intro": {
+    "total": 1,
+    "miss": 1,
+    "list": [
+      "iron : intro.jpg"
+    ]
+  },
+  "design.logo": {
+    "total": 23,
+    "miss": 0,
+    "list": []
+  },
+  "design.materialCallout": {
+    "total": 3,
+    "miss": 3,
+    "list": [
+      "iron : mat-metal.jpg",
+      "iron : mat-mdf.jpg",
+      "iron : mat-fabric.jpg"
+    ]
+  },
+  "design.occupancyMedia": {
+    "total": 11,
+    "miss": 11,
+    "list": [
+      "baloot : room-baloot-convertible-bed-teen-picture.webp",
+      "caroline : room-caroline-collection-v3.webp",
+      "caroline : room-caroline-collection-v3.webp",
+      "caroline : room-caroline-baby-bed.webp",
+      "loof : room-loof-cream-kid-loof-scene-half-picture-v2-cream.webp",
+      "loof : room-loof-cream-teen-loof-scene-half-picture-cream.webp",
+      "lukaplus : room-lukaplus-couple-lukaplus-scene-half-picture.webp",
+      "lukaplus : room-lukaplus-teen-lukaplus-scene-half-picture-v2.webp",
+      "parla : room-parla-bunk-bed-full-green.webp",
+      "parla : room-parla-scene-all-v5.webp",
+      "parla : room-parla-scene-all-v3.webp"
+    ]
+  },
+  "design.slider": {
+    "total": 13,
+    "miss": 0,
+    "list": []
+  },
+  "design.story": {
+    "total": 1,
+    "miss": 1,
+    "list": [
+      "iron : story.jpg"
+    ]
+  },
+  "soc.hero": {
+    "total": 2,
+    "miss": 0,
+    "list": []
+  }
+}
