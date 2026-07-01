@@ -32,6 +32,18 @@ Vercel fetches the VPS over HTTP server-side. SSR data fetches use `API_URL`
 | `NEXT_PUBLIC_API_URL` | `https://zhicwood.store` |
 | `NOINDEX` | `true`  ← keep the preview out of search engines |
 
+> **Built-in Vercel defaults (since 2026-07-01).** The code now hard-defaults on
+> Vercel so the storefront works even if these are missed:
+> - `API_URL` / `MEDIA_ORIGIN` default to `http://45.140.42.57:3001` when
+>   `process.env.VERCEL` is set (`src/lib/env.ts`, `next.config.ts`) — no more
+>   silent `localhost:3001` → empty "database not loaded" storefront.
+> - `NOINDEX` defaults to **true** on Vercel (robots.txt `Disallow:/`, `<meta
+>   robots>`, and an `X-Robots-Tag` header). **To index a real Vercel production
+>   (zhicwood.com), set `NOINDEX=false` explicitly.**
+> - Still set `SITE_URL` / `NEXT_PUBLIC_SITE_URL` for correct canonical/OG URLs.
+>
+> An explicitly-set env var always overrides the default.
+
 ### 3. Domain
 - Project → Settings → Domains → add **`zhicwood.store`** (and `www` if you want).
 - Vercel shows the exact DNS record (an `A` to Vercel, or a `CNAME`). Add it at

@@ -4,6 +4,13 @@ const ABR_ARVAN_S3_HOST = process.env.S3_ENDPOINT
   ? new URL(process.env.S3_ENDPOINT).hostname
   : 's3.ir-thr-at1.arvanstorage.ir';
 
+// Keep in sync with NOINDEX in src/lib/env.ts. On Vercel (the temporary
+// zhicwood.store preview) default to no-index unless NOINDEX=false. Used to add
+// an X-Robots-Tag header so non-HTML responses are covered too.
+const NOINDEX =
+  process.env.NOINDEX === 'true' ||
+  (!!process.env.VERCEL && process.env.NOINDEX !== 'false');
+
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['80.240.31.146'],
   images: {
@@ -65,6 +72,17 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // Belt-and-suspenders no-index for the preview: an X-Robots-Tag header on
+      // every response (covers non-HTML too — JSON, /invoices PDFs, sitemap).
+      // robots.txt + <meta robots> are emitted separately via NOINDEX.
+      ...(NOINDEX
+        ? [
+            {
+              source: '/:path*',
+              headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+            },
+          ]
+        : []),
       // Media files are UUID-named (content-addressed), so they never mutate —
       // safe to cache for a year. Payload's media response has no Cache-Control,
       // which made the browser re-download all media on every navigation/refresh.

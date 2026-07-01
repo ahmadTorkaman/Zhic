@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { NOINDEX } from '@/lib/env';
 import './globals.css';
 
 const ayandeh = localFont({
@@ -16,10 +17,7 @@ const ayandeh = localFont({
 export const metadata: Metadata = {
   title: { template: '%s — ژیک', default: 'ژیک' },
   description: 'مبلمان دست‌ساز ژیک — از همدان، برای ایران.',
-  robots:
-    process.env.NOINDEX === 'true'
-      ? { index: false, follow: false, nocache: true }
-      : undefined,
+  robots: NOINDEX ? { index: false, follow: false, nocache: true } : undefined,
 };
 
 export default function RootLayout({

@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
-import { SITE_URL } from '@/lib/env';
+import { SITE_URL, NOINDEX } from '@/lib/env';
 
 export default function robots(): MetadataRoute.Robots {
-  if (process.env.NOINDEX === 'true') {
+  if (NOINDEX) {
     return {
       rules: { userAgent: '*', disallow: '/' },
       // Intentionally no sitemap — don't help crawlers index the review tier.
