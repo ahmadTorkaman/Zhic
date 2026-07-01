@@ -154,7 +154,13 @@ export async function getSeriesOccupancyContent(
   const ageTitle = OCCUPANCY_TITLE[occupancy];
 
   // Products: curated from the published combo only (manual curation; no auto-tag).
-  const items: SeriesProductCard[] = (combo?.products ?? []).map((p) => {
+  // A curated product that is later unpublished is excluded from population by the
+  // storefront fetch, so its relationship comes back as a bare id (not an object).
+  // Drop those — a draft piece shouldn't render on the storefront anyway, and
+  // mapping it would crash on the undefined name (`stripDesignName` → `.split`).
+  const items: SeriesProductCard[] = (combo?.products ?? [])
+    .filter((p): p is PayloadProduct => typeof p === 'object' && p !== null && typeof p.name === 'string')
+    .map((p) => {
     const { price, originalPrice } = priceString(p);
     return {
       key: String(p.id),

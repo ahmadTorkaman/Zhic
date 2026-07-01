@@ -45,3 +45,12 @@ _Last updated: 2026-06-30._
   sorting as categories get wired.
 - **Stale handoff docs.** `docs/superpowers/handoff-2026-05-2x.md` predate this
   workflow; fold anything still relevant into `HANDOFF.md` and archive the rest.
+
+## Bugs (fixed)
+- **`/bedroom-set/baby/{caroline,loof,parla}` → 500** — FIXED 2026-06-30.
+  Root cause: each baby combo curates a now-unpublished `changing-top`/`changing-table`
+  product; the storefront fetch excludes drafts from population, so the relationship
+  returns a bare id (not an object), and `stripDesignName(p.name, …)` crashed on the
+  undefined name (`.split`). Fix in `series-hub-content.ts`: filter `combo.products`
+  to populated objects before mapping. Any curated product that gets unpublished is
+  now silently dropped (reappears if re-published).

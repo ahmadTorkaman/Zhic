@@ -20,7 +20,7 @@ export function SeriesHubBody({ content }: { content: SeriesHubContent }) {
       <SeriesDetailHero img={hero.img} alt={hero.alt} name={title.name} subtitle={title.subtitle} />
 
       {intro ? (
-        <SeriesLinkCard title={intro.title} body={intro.body} href={intro.href} img={intro.img} imageWidthPct={57} showMore={false} />
+        <SeriesLinkCard title={intro.title} body={intro.body} href={intro.href} img={intro.img} imageWidthPct={57} />
       ) : null}
 
       {collection.items.length > 0 ? (

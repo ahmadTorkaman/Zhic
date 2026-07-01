@@ -10,6 +10,10 @@
   gap: 2.6cqw;
   aspect-ratio: 405 / 177;
 }
+/* Expanded read-more: drop the fixed ratio so the card grows to fit the body. */
+.card.expanded {
+  aspect-ratio: auto;
+}
 
 .photo {
   position: relative;
@@ -46,18 +50,43 @@
   line-height: 1.6;
   color: var(--color-ink-soft);
 }
+/* Clamp to N lines (line count set inline from clampLines). */
+.body.clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-.more {
+/* Minimal inline read-more toggle — text + a small chevron, no chrome. */
+.toggle {
   margin-top: auto;
+  padding-top: 1.6cqw;
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 1.2cqw;
+  gap: 1cqw;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
   font-weight: 400;
   font-size: 2.1cqw; /* 9.034px */
   color: var(--color-forest-muted);
 }
-.arrow {
-  width: 4.25cqw; /* ~18.3px */
+.toggle:hover {
+  color: var(--color-forest-deep);
+}
+.chev {
+  width: 2.8cqw;
   height: auto;
-  color: var(--color-gold);
+  transition: transform 0.3s ease;
+}
+.toggle[aria-expanded='true'] .chev {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .chev {
+    transition: none;
+  }
 }

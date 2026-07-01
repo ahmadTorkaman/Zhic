@@ -236,6 +236,44 @@
   line-height: 1.35; color: var(--color-charcoal); margin: 0 0 clamp(18px, 3.4vh, 30px);
 }
 .zh-bs-wbody { font-size: clamp(14px, 3.9vw, 17px); line-height: 2.05; color: var(--color-stone); margin: 0; }
+
+/* Phone-only "read more": clamp the writing copy to ~10 lines and reveal it with
+   an eased height transition. `.is-collapsible` is only added (in JS) when the
+   text actually overflows on a phone, so desktop and short copy are untouched. */
+.zh-bs-wbodywrap { overflow: hidden; }
+.zh-bs-wbodywrap.is-collapsible {
+  position: relative;
+  transition: max-height 0.55s var(--ease-out-soft);
+}
+.zh-bs-wbodywrap.is-collapsed::after {
+  content: '';
+  position: absolute; inset-inline: 0; bottom: 0; height: 5em;
+  background: linear-gradient(to top, var(--color-ivory) 12%, transparent);
+  pointer-events: none;
+}
+.zh-bs-wmore {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin-top: clamp(16px, 2.6vh, 22px);
+  padding: 9px 20px 9px 22px;
+  font-family: inherit; font-weight: 700; font-size: 13.5px; line-height: 1;
+  color: var(--color-forest);
+  background: color-mix(in srgb, var(--color-forest) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-forest) 32%, transparent);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease-out-soft), border-color 0.25s var(--ease-out-soft), color 0.25s var(--ease-out-soft);
+}
+.zh-bs-wmore:hover {
+  background: color-mix(in srgb, var(--color-forest) 13%, transparent);
+  border-color: color-mix(in srgb, var(--color-forest) 50%, transparent);
+  color: var(--color-charcoal);
+}
+.zh-bs-wmore-chev { width: 16px; height: 16px; transition: transform 0.4s var(--ease-out-soft); }
+.zh-bs-wmore[aria-expanded='true'] .zh-bs-wmore-chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .zh-bs-wbodywrap.is-collapsible { transition: none; }
+  .zh-bs-wmore-chev { transition: none; }
+}
 .zh-bs-wpanel {
   position: relative; border-radius: 0 18px 18px 0;
   padding: clamp(24px, 4.6vh, 42px) clamp(20px, 5vw, 38px);
